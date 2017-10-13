@@ -1,0 +1,19 @@
+image: node:6.9.2
+pages:
+  stage: deploy
+  script:
+  - rm -R build-web || true
+#  - rm -R node_modules
+#  - npm install
+  - chmod a+x node_modules/.bin/*
+  - npm run tsc  
+  - npm run test
+  - mkdir build-web
+  - node build-node/packGameData.js
+  - npm run build
+  - mv build-web public
+  artifacts:
+    paths:
+    - public
+  only:
+  - master

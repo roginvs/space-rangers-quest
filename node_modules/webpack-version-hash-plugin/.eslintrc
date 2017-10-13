@@ -1,0 +1,12 @@
+{
+  "extends": [
+    "airbnb-base",
+    "plugin:ava/recommended",
+  ],
+  "plugins": [
+    "ava"
+  ],
+  "rules": {
+    "semi": ["error", "never"]
+  }
+}

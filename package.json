@@ -1,0 +1,54 @@
+{
+  "name": "space-rangers-quest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "@types/bootstrap": "^3.3.33",
+    "@types/jquery": "^2.0.45",
+    "@types/mocha": "^2.2.41",
+    "@types/node": "^8.0.3",
+    "@types/pako": "^1.0.0",
+    "@types/react": "^15.0.28",
+    "@types/react-addons-css-transition-group": "^15.0.2",
+    "@types/react-dom": "^15.5.0",
+    "@types/reflect-metadata": "0.0.5",
+    "@types/tether": "^1.4.1",
+    "bootstrap": "^4.0.0-alpha.6",
+    "font-awesome": "^4.7.0",
+    "mocha": "^3.4.2",
+    "pako": "^1.0.5",
+    "react": "^15.5.4",
+    "react-addons-css-transition-group": "^15.6.0",
+    "react-dom": "^15.5.4",
+    "reflect-metadata": "^0.1.10"
+  },
+  "devDependencies": {
+    "@types/deep-diff": "0.0.31",
+    "copy-webpack-plugin": "^4.0.1",
+    "css-loader": "^0.28.4",
+    "deep-diff": "^0.3.8",
+    "extract-text-webpack-plugin": "^2.1.2",
+    "file-loader": "^0.11.2",
+    "source-map-loader": "^0.2.1",
+    "style-loader": "^0.18.2",
+    "ts-loader": "^2.0.3",
+    "typescript": "~2.3.2",
+    "url-loader": "^0.5.9",
+    "webpack": "^2.6.1",
+    "webpack-dev-server": "^2.4.5",
+    "webpack-version-hash-plugin": "0.0.2"
+  },
+  "scripts": {
+    "tsc": "tsc",
+    "test": "tsc && mocha --bail build-node/test",
+    "build": "webpack -p --devtool nosources-source-map --progress",
+    "start": "webpack-dev-server --progress"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@gitlab.qtel.se:vasilii/space-rangers-quest.git"
+  },
+  "author": "",
+  "license": "ISC"
+}
