@@ -387,7 +387,9 @@ export class GameList extends React.Component<{
                 </div>
 
                 <footer className="footer">
-                    <p className="text-center"><a href="https://gitlab.com/vasiliy0/vasiliy0.gitlab.io">https://gitlab.com/vasiliy0/vasiliy0.gitlab.io</a></p>
+		    <div className="pt-2 pb-1 px-1">
+                        <p className="text-center"><a href="https://github.com/roginvs/space-rangers-quest">https://github.com/roginvs/space-rangers-quest</a></p>
+		    </div>
                 </footer>
             </div >
         } else {
