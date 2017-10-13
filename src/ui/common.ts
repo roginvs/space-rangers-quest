@@ -39,6 +39,10 @@ export function getBinary(url: string, inflate = false) {
             }
         };
 
+	xhr.onerror = e => {
+	    reject(new Error(e.message))
+	}
+
         xhr.send();
     })
 }
