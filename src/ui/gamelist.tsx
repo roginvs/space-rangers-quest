@@ -119,7 +119,7 @@ export class GameList extends React.Component<{
     private updateUsedSpace() {
         if ('webkitTemporaryStorage' in navigator) {
             (navigator as any).webkitTemporaryStorage.queryUsageAndQuota((used: number, remaining: number) => {
-                console.log(new Date() + " Used quota: " + used + ", remaining quota: " + remaining);
+                // console.log(new Date() + " Used quota: " + used + ", remaining quota: " + remaining);
                 this.setState({
                     usedSpace: used
                 })
@@ -305,14 +305,21 @@ export class GameList extends React.Component<{
                         } else {
                             this.setState({
                                 serviceWorkerBusy: 'Uninstalling'
+                            }, async () => {
+                                console.info(`Starting to uninstall service worker`);
+                                const r = await navigator.serviceWorker.getRegistration();
+                                if (!r) {
+                                    console.warn('No registration!')
+                                    return
+                                } else {
+                                    console.info(`Got registration`)
+                                }
+                                await r.unregister();
+                                console.info(`Cleaning cache`)
+                                await window.caches.delete(CACHE_NAME);
+                                console.info(`Reloading page`);
+                                document.location.reload();                                
                             })
-                            console.info(`Starting to uninstall service worker`);
-                            navigator.serviceWorker.getRegistration()
-                                .then(r => r && r.unregister())
-                                .then(() => window.caches.delete(CACHE_NAME))
-                                .then(() => {
-                                    document.location.reload();
-                                })
                         }
                     })
                 }}>{this.state.serviceWorkerBusy ||
