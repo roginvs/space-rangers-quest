@@ -14,6 +14,7 @@
     "@types/react-dom": "^15.5.0",
     "@types/reflect-metadata": "0.0.5",
     "@types/tether": "^1.4.1",
+    "@types/text-encoding": "0.0.32",
     "bootstrap": "^4.0.0-alpha.6",
     "font-awesome": "^4.7.0",
     "mocha": "^3.4.2",
@@ -21,7 +22,8 @@
     "react": "^15.5.4",
     "react-addons-css-transition-group": "^15.6.0",
     "react-dom": "^15.5.4",
-    "reflect-metadata": "^0.1.10"
+    "reflect-metadata": "^0.1.10",
+    "text-encoding": "^0.6.4"
   },
   "devDependencies": {
     "@types/deep-diff": "0.0.31",
