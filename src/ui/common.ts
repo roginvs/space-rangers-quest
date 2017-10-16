@@ -1,5 +1,6 @@
 import * as pako from 'pako';
-import 'text-encoding';
+//import 'text-encoding';
+import { TextDecoder } from 'text-encoding';
 
 export const CACHE_NAME = 'SpaceRangersCache';
 
