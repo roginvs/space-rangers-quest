@@ -1,3 +1,5 @@
+//import 'text-encoding';
+
 export const LOCATION_TEXTS = 10;
 
 class Reader {
@@ -8,11 +10,11 @@ class Reader {
     int32() {
         const result = this.data.readInt32LE(this.i);
         /*
-        this.data[this.i] +
+        const result = this.data[this.i] +
                       this.data[this.i + 1] * 0x100 +
                     this.data[this.i + 2] * 0x10000 +
                     this.data[this.i + 3] * 0x1000000;
-                    */
+          */          
         this.i += 4;
         return result;
     }
@@ -21,6 +23,7 @@ class Reader {
         if (ifString) {
             const strLen = this.int32();
             const str = this.data.slice(this.i, this.i + strLen * 2).toString('utf16le');
+            //const str = new TextDecoder("utf16le").decode(this.data.slice(this.i, this.i + strLen * 2))
             this.i += strLen * 2;
             return str
         } else {
