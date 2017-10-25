@@ -325,16 +325,27 @@ export class GameList extends React.Component<{
                                 console.info(`Starting to uninstall service worker`);
                                 const r = await navigator.serviceWorker.getRegistration();
                                 if (!r) {
-                                    console.warn('No registration!')
+                                    console.warn('No registration!');
+                                    this.setState({
+                                        serviceWorkerBusy: 'No registration!'
+                                    })
                                     return
                                 } else {
                                     console.info(`Got registration`)
                                 }
                                 await r.unregister();
-                                console.info(`Cleaning cache`)
+                                console.info(`Cleaning cache`);
+                                this.setState({
+                                    serviceWorkerBusy: 'Cleaning cache'
+                                })
                                 await window.caches.delete(CACHE_NAME);
+                                this.setState({
+                                    serviceWorkerBusy: 'Reloading page'
+                                })
                                 console.info(`Reloading page`);
-                                document.location.reload();                                
+                                setTimeout(() => {
+                                    location.reload();
+                                }, 3000);                             
                             })
                         }
                     })
