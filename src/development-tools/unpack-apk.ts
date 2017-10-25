@@ -50,7 +50,7 @@ for (const f of fs.readdirSync(dirToScan).sort((a, b) => a > b ? 1 : -1)) {
 
         let writefname = dirToCopy + fname + '.qmm';
         let i = 0;
-        while (!true) { // Enable to add prefix
+        while (true) {
             writefname = dirToCopy + fname +
                 (i ? i : '') +
                 '.qmm';
