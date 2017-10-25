@@ -30,7 +30,8 @@ self.addEventListener("install", (event: ExtendableEvent) => {
             console.info(new Date() + ` Serviceworker opened cache`);
             const data = await getIndex();
 
-            for (const dir of [data.dir.quests, data.dir.images]) {                
+            // for (const dir of [data.dir.quests, data.dir.images]) {
+            for (const dir of [data.dir.quests]) {
                 const urlsToCache = engineUrls.concat(
                     ...dir.files
                         .map(x => x.path)
