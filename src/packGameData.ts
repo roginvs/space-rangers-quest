@@ -113,6 +113,62 @@ function checkQm(q: QM) {
     // asd
 }
 
+function areThereAnyQmmImages(qmmQuest: QM) {
+    let images: {
+        [imageName: string]: string[],
+    } = {};
+    let tracks: (string | undefined)[] = [];
+    let sounds: (string | undefined)[] = [];
+
+    const addImg = (name: string | undefined, place: string) => {
+        if (!name) {
+            return
+        }
+        if (images[name]) {
+            images[name].push(place)
+        } else {
+            images[name] = [place]
+        }
+    }
+
+    qmmQuest.params.map((p, pid) => {
+        addImg(p.img, `Param p${pid}`);
+        tracks.push(p.track)
+        sounds.push(p.sound)
+    })
+
+    for (const l of qmmQuest.locations) {
+        l.media.map(x => x.img).map(x => addImg(x, `Loc ${l.id}`))
+        tracks.concat(...l.media.map(x => x.track));
+        sounds.concat(...l.media.map(x => x.sound));
+
+        l.paramsChanges.map((p, pid) => {
+            l.media.map(x => x.img).map(x => addImg(x, `Loc ${l.id} p${pid + 1}`))
+            tracks.push(p.track)
+            sounds.push(p.sound)
+        })
+    }
+
+    qmmQuest.jumps.map((j, jid) => {
+        addImg(j.img, `Jump ${jid}`)
+
+        tracks.push(j.track)
+        sounds.push(j.sound)
+
+
+        j.paramsChanges.map((p, pid) => {
+            addImg(p.img, `Jump ${jid} p${pid}`)
+            tracks.push(p.track)
+            sounds.push(p.sound)
+        })
+    });
+
+    tracks = tracks.filter(x => x);
+    sounds = sounds.filter(x => x);
+
+    return Object.keys(images);
+}
+
 
 console.info(`Creating destination folders`)
 if (!fs.existsSync(dataDstPath)) {
@@ -181,7 +237,7 @@ console.info(`Found ${Object.keys(pqi).length} quests in PQI.txt`);
 console.info(`Scanning quests`);
 let seenQuests: string[] = [];
 for (const origin of fs.readdirSync(dataSrcPath + '/qm')) {
-    console.info(`Scanning origin ${origin}`)
+    console.info(`\n\nScanning origin ${origin}`)
     const qmDir = dataSrcPath + '/qm/' + origin + '/';
     for (const qmShortName of fs.readdirSync(qmDir)) {
         if (seenQuests.indexOf(qmShortName) > -1) {
@@ -206,7 +262,7 @@ for (const origin of fs.readdirSync(dataSrcPath + '/qm')) {
         const player = new QMPlayer(quest, undefined, lang, oldTge);
         player.start();
 
-
+        
 
         const probablyThisQuestImages = allImages
             .filter(x => x.toLowerCase().startsWith(gameName.toLowerCase()));
@@ -219,28 +275,31 @@ for (const origin of fs.readdirSync(dataSrcPath + '/qm')) {
             }
         })
 
+        const qmmImagesList = getImagesListFromQmm(quest);
+
         const pqiImages = pqi[gameName.toLowerCase()];
-        const images = pqiImages || randomImages;
+        const images = qmmImagesList.length > 0 ? [] : (pqiImages || randomImages) ;
         //if (pqi[gameName.toLowerCase()]) {
         //pqiFound.push(gameName.toLowerCase());
         //}
-        if (pqiImages) {
-            for (const pqiImage of pqiImages) {
-                if (allImages.indexOf(pqiImage.filename.toLowerCase()) < 0) {
-                    warns.push(`Image ${pqiImage.filename} is from PQI for ${qmShortName}, ` +
-                        `but not found in img dir`)
+        if (qmmImagesList.length > 0) {
+            console.info(`Have ${qmmImagesList.length} qmm images`)
+            for (const imgFromQmm of qmmImagesList) {
+                if (allImages.indexOf(imgFromQmm.toLowerCase() + '.jpg') < 0) {
+                    warns.push(`Image ${imgFromQmm} is from ${qmShortName}, but not found in img dir`)
+                }
+            };    
+        } else {
+            if (pqiImages) {
+                for (const pqiImage of pqiImages) {
+                    if (allImages.indexOf(pqiImage.filename.toLowerCase()) < 0) {
+                        warns.push(`Image ${pqiImage.filename} is from PQI for ${qmShortName}, ` +
+                            `but not found in img dir`)
+                    }
                 }
             }
         }
-
-
-        for (const imgFromQmm of getImagesListFromQmm(quest)) {
-            if (allImages.indexOf(imgFromQmm.toLowerCase() + '.jpg') < 0) {
-                warns.push(`Image ${imgFromQmm} is from ${qmShortName}, but not found in img dir`)
-            }
-        };
-
-
+    
         const gameFilePath = 'qm/' + qmShortName + '.gz';
         const game: Game = {
             filename: gameFilePath,
