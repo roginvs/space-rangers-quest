@@ -240,11 +240,23 @@ export class GameList extends React.Component<{
                                 this.updateUsedSpace()
                             }, 1000) as any;
                             this.setState({
-                                serviceWorkerBusy: 'Unregistering old'
+                                serviceWorkerBusy: 'Unregistering old (if any)'
                             })
                             console.info(`Starting to install service worker`);
                             navigator.serviceWorker.getRegistration()
-                                .then(r => r && r.unregister())
+                                .then(r => {                                         
+                                    if (r) {
+                                        this.setState({
+                                            serviceWorkerBusy: 'Calling unregister'
+                                        })   
+                                        return r.unregister();
+                                    } else {
+                                        this.setState({
+                                            serviceWorkerBusy: 'No old'
+                                        })   
+                                        return Promise.resolve();
+                                    }
+                                })
                                 .then(() => {
                                     this.setState({
                                         serviceWorkerBusy: 'Registering'
@@ -261,7 +273,7 @@ export class GameList extends React.Component<{
                                     registration.onupdatefound = () => {
                                         console.info('onupdatefound')
                                         this.setState({
-                                            serviceWorkerBusy: 'Downloading'
+                                            serviceWorkerBusy: 'Downloading (onupdatefound)'
                                         })
                                         const installingWorker = registration.installing;
                                         if (installingWorker) {
@@ -272,7 +284,7 @@ export class GameList extends React.Component<{
                                                 })
                                                 if (installingWorker.state === 'activated') {
                                                     this.setState({
-                                                        serviceWorkerBusy: 'Reloading'
+                                                        serviceWorkerBusy: 'Reloading (activated)'
                                                     })
                                                     setTimeout(() => {
                                                         location.reload();
@@ -297,11 +309,15 @@ export class GameList extends React.Component<{
                                         }
                                     };
 
-                                }, err => {
-                                    // registration failed :(
-                                    console.log('ServiceWorker registration failed: ', err);
-                                    document.location.reload();
-                                });
+                                }).catch(e => {
+                                    this.setState({
+                                        serviceWorkerBusy: `Error: ${e} ${e.message}`
+                                    });
+                                    console.log('ServiceWorker registration failed: ', e);
+                                    setTimeout(() => {
+                                        location.reload();
+                                    }, 3000);
+                                })
                         } else {
                             this.setState({
                                 serviceWorkerBusy: 'Uninstalling'
