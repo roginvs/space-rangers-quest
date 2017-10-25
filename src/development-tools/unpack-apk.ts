@@ -74,10 +74,12 @@ for (const f of fs.readdirSync(dirToScan).sort((a, b) => a > b ? 1 : -1)) {
         }
     }
 
+    /*
     if (headerBE === 0xffd8ffe0) {
         let writefname = dirToCopy + fname + '.jpg';        
         fs.writeFileSync(writefname, data.slice(dataStartsFromShifted, dataStartsFromShifted + dataLen))
     }
+    */
 
 }
 // 81+32 == 113 from simple file lookup

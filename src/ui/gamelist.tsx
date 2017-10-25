@@ -70,7 +70,7 @@ export class GameList extends React.Component<{
                 passedQuestsGameNames = JSON.parse(fromLocal)
             }
         } catch (e) {
-            console.warn(`Unable to read stored pasesd quests`, e)
+            console.warn(`Unable to read stored passed quests`, e)
         };
         this.state = {
             passedQuestsGameNames,
@@ -82,7 +82,7 @@ export class GameList extends React.Component<{
             usedSpace: undefined,
         };
         (async () => {
-            const index = await getJson(INDEX_JSON, true) as Index;
+            const index = await getJson(INDEX_JSON) as Index;
             this.setState({
                 index
             })

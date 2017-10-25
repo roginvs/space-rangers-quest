@@ -44,7 +44,7 @@ let warns: string[] = [];
 const dataSrcPath = __dirname + '/../borrowed'
 const dataDstPath = __dirname + '/../build-web/data'
 
-const resultJsonFile = dataDstPath + '/index.json.gz';
+const resultJsonFile = dataDstPath + '/index.json';
 
 
 function readPqi(filename: string) {
@@ -270,8 +270,8 @@ for (const origin of fs.readdirSync(dataSrcPath + '/qm')) {
 index.quests = index.quests.sort((a, b) =>
     a.hardness - b.hardness || (a.gameName > b.gameName ? 1 : -1));
 console.info(`Done read, writing result into ${resultJsonFile}`);
-fs.writeFileSync(resultJsonFile, new Buffer(pako.gzip(JSON.stringify(index, null, 4))));
-//fs.writeFileSync(resultJsonFile, JSON.stringify(index, null, 4));
+// fs.writeFileSync(resultJsonFile, new Buffer(pako.gzip(JSON.stringify(index, null, 4))));
+fs.writeFileSync(resultJsonFile, JSON.stringify(index));
 
 if (warns.length === 0) {
     console.info('All done, no warnings')

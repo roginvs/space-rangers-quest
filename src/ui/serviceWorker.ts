@@ -1,7 +1,5 @@
 import { INDEX_JSON, DATA_DIR, CACHE_NAME } from "./common";
 import { Index } from "../packGameData";
-import * as pako from "pako";
-import "text-encoding";
 
 const engineUrls = ["/", "bundle.js", "bundle.css", INDEX_JSON];
 declare function skipWaiting(): void;
@@ -20,14 +18,8 @@ interface FetchEvent extends Event {
 https://github.com/inexorabletash/text-encoding
 */
 
-async function getIndex() {
-    const raw = await fetch(INDEX_JSON);
-    const rawBuf = await raw.arrayBuffer();
-    const ungzippedData = pako.ungzip(new Uint8Array(rawBuf));
-    const parsedData = JSON.parse(
-        new TextDecoder("utf-8").decode(ungzippedData)
-    );
-    return parsedData as Index;
+function getIndex() {
+    return fetch(INDEX_JSON).then(data => data.json()) as Promise<Index>    
 }
 self.addEventListener("install", (event: ExtendableEvent) => {
     // Perform install steps
