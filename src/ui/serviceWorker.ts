@@ -1,7 +1,7 @@
 import { INDEX_JSON, DATA_DIR, CACHE_NAME } from "./common";
 import { Index } from "../packGameData";
 
-const engineUrls = ["/", "bundle.js", "bundle.css", INDEX_JSON];
+const engineUrls = ["/", "bundle.js", "bundle.css", "favicon.png", "manifest.json", INDEX_JSON];
 declare function skipWaiting(): void;
 
 interface ExtendableEvent extends Event {
