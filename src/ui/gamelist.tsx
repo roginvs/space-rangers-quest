@@ -119,12 +119,12 @@ export class GameList extends React.Component<{
 
     private spaceTimer: number | undefined;
     private updateUsedSpace() {
-        if ('webkitTemporaryStorage' in navigator) {
-            (navigator as any).webkitTemporaryStorage.queryUsageAndQuota((used: number, remaining: number) => {
+        if ('storage' in navigator) {            
+            (navigator as any).storage.estimate().then( (q: {quota: number, usage: number}) => {
                 // console.log(new Date() + " Used quota: " + used + ", remaining quota: " + remaining);
                 this.setState({
-                    usedSpace: used,
-                    remainingSpace: remaining
+                    usedSpace: q.usage,
+                    remainingSpace: q.quota
                 })
             }, (e: Error) => {
                 console.log('Error', e);
