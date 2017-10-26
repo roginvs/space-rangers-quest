@@ -59,6 +59,7 @@ export class GameList extends React.Component<{
         lang: 'rus' | 'eng',
         serviceWorkerBusy: string | undefined,
         usedSpace: number | undefined,
+        remainingSpace: number | undefined,
     }> {
     constructor(props: any) {
         super(props);
@@ -80,6 +81,7 @@ export class GameList extends React.Component<{
             lang: localStorage.getItem(LANG) !== 'eng' ? 'rus' : 'eng',
             serviceWorkerBusy: undefined,
             usedSpace: undefined,
+            remainingSpace: undefined,
         };
         (async () => {
             const index = await getJson(INDEX_JSON) as Index;
@@ -121,7 +123,8 @@ export class GameList extends React.Component<{
             (navigator as any).webkitTemporaryStorage.queryUsageAndQuota((used: number, remaining: number) => {
                 // console.log(new Date() + " Used quota: " + used + ", remaining quota: " + remaining);
                 this.setState({
-                    usedSpace: used
+                    usedSpace: used,
+                    remainingSpace: remaining
                 })
             }, (e: Error) => {
                 console.log('Error', e);
@@ -272,8 +275,8 @@ export class GameList extends React.Component<{
 
                                     registration.onupdatefound = () => {
                                         console.info('onupdatefound')
-                                        this.setState({
-                                            serviceWorkerBusy: 'Downloading (onupdatefound)'
+                                        this.setState({                                            
+                                            serviceWorkerBusy: 'Installing'
                                         })
                                         const installingWorker = registration.installing;
                                         if (installingWorker) {
@@ -350,8 +353,13 @@ export class GameList extends React.Component<{
                         }
                     })
                 }}>{this.state.serviceWorkerBusy ||
-                    (navigator.serviceWorker.controller ? 'Uninstall' : 'Install')}{this.state.usedSpace ?
-                        ' [used ' + Math.round(this.state.usedSpace / 1000000).toString() + 'mb]' : ''}</a>
+                    (navigator.serviceWorker.controller ? 'Uninstall' : 'Install')}{
+                        this.state.usedSpace !== undefined ?
+                        ' [used ' + Math.round(this.state.usedSpace / 1000000).toString() + 'mb from ' +
+                       (this.state.remainingSpace !== undefined?
+                        this.state.remainingSpace < 1000*1000*1000 ?
+                        Math.round(this.state.remainingSpace / 1000000).toString()
+                        :'>1gb' : 'unknown') + ']' : ''}</a>
             </li> : null;
 
             return <div>
