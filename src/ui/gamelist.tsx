@@ -58,8 +58,11 @@ export class GameList extends React.Component<{
         passedQuestsGameNames: string[],
         lang: 'rus' | 'eng',
         serviceWorkerBusy: string | undefined,
-        usedSpace: number | undefined,
-        remainingSpace: number | undefined,
+        storageInfo?: {
+            used: number,
+            remaining: number,
+            persistent: boolean | undefined
+        }
     }> {
     constructor(props: any) {
         super(props);
@@ -80,8 +83,7 @@ export class GameList extends React.Component<{
             error: undefined,
             lang: localStorage.getItem(LANG) !== 'eng' ? 'rus' : 'eng',
             serviceWorkerBusy: undefined,
-            usedSpace: undefined,
-            remainingSpace: undefined,
+            storageInfo: undefined
         };
         (async () => {
             const index = await getJson(INDEX_JSON) as Index;
@@ -118,17 +120,36 @@ export class GameList extends React.Component<{
     }
 
     private spaceTimer: number | undefined;
-    private updateUsedSpace() {
+    private async updateUsedSpace() {
+        try {
         if ('storage' in navigator) {            
-            (navigator as any).storage.estimate().then( (q: {quota: number, usage: number}) => {
-                // console.log(new Date() + " Used quota: " + used + ", remaining quota: " + remaining);
+                const quota: {quota: number, usage: number} = await (navigator as any).storage.estimate();
+                const persistent: boolean = await (navigator as any).storage.persisted();                
                 this.setState({
-                    usedSpace: q.usage,
-                    remainingSpace: q.quota
+                    storageInfo: {
+                        used: quota.usage,
+                        remaining: quota.quota,
+                        persistent: persistent
+                    }
                 })
-            }, (e: Error) => {
+            
+            } if ('webkitTemporaryStorage' in navigator) {
+             const [used, remaining ] = await new Promise<[number, number]>(resolv => 
+                    (navigator as any).webkitTemporaryStorage.queryUsageAndQuota(
+                        (used: number, remaining: number) => resolv([used, remaining])));
+                     this.setState({
+                     storageInfo: {
+                        used,
+                        remaining,
+                        persistent: undefined
+                    }
+                    })
+                }                                
+
+            } catch(e) {
+            
                 console.log('Error', e);
-            });
+            
         }
     }
     componentDidMount() {
@@ -354,12 +375,12 @@ export class GameList extends React.Component<{
                     })
                 }}>{this.state.serviceWorkerBusy ||
                     (navigator.serviceWorker.controller ? 'Uninstall' : 'Install')}{
-                        this.state.usedSpace !== undefined ?
-                        ' [used ' + Math.round(this.state.usedSpace / 1000000).toString() + 'mb from ' +
-                       (this.state.remainingSpace !== undefined?
-                        this.state.remainingSpace < 1000*1000*1000 ?
-                        Math.round(this.state.remainingSpace / 1000000).toString()
-                        :'>1gb' : 'unknown') + ']' : ''}</a>
+                        this.state.storageInfo ?
+                        ' [used ' + Math.round(this.state.storageInfo.used / 1000000).toString() + 'mb from ' +                                              
+                        Math.round(this.state.storageInfo.remaining / 1000000).toString() +
+                        (this.state.storageInfo.persistent !== undefined ? 
+                            this.state.storageInfo.persistent ? ' P' : ' p' : '') +
+                          ']' : ''}</a>
             </li> : null;
 
             return <div>
