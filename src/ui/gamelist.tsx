@@ -122,7 +122,7 @@ export class GameList extends React.Component<{
     private spaceTimer: number | undefined;
     private async updateUsedSpace() {
         try {
-        if ('storage' in navigator) {            
+            if ('storage' in navigator) {            
                 const quota: {quota: number, usage: number} = await (navigator as any).storage.estimate();
                 const persistent: boolean = await (navigator as any).storage.persisted();                
                 this.setState({
@@ -131,25 +131,22 @@ export class GameList extends React.Component<{
                         remaining: quota.quota,
                         persistent: persistent
                     }
-                })
-            
-            } if ('webkitTemporaryStorage' in navigator) {
-             const [used, remaining ] = await new Promise<[number, number]>(resolv => 
+                })            
+            } else if ('webkitTemporaryStorage' in navigator) {
+                const [used, remaining ] = await new Promise<[number, number]>(resolv => 
                     (navigator as any).webkitTemporaryStorage.queryUsageAndQuota(
                         (used: number, remaining: number) => resolv([used, remaining])));
-                     this.setState({
+                this.setState({
                      storageInfo: {
                         used,
                         remaining,
                         persistent: undefined
                     }
-                    })
-                }                                
+                })
+            }                                
 
-            } catch(e) {
-            
-                console.log('Error', e);
-            
+        } catch(e) {            
+            console.log('Error', e);            
         }
     }
     componentDidMount() {
@@ -377,7 +374,7 @@ export class GameList extends React.Component<{
                     (navigator.serviceWorker.controller ? 'Uninstall' : 'Install')}{
                         this.state.storageInfo ?
                         ' [used ' + Math.round(this.state.storageInfo.used / 1000000).toString() + 'mb from ' +                                              
-                        Math.round(this.state.storageInfo.remaining / 1000000).toString() +
+                        Math.round(this.state.storageInfo.remaining / 1000000).toString() + 'mb' +
                         (this.state.storageInfo.persistent !== undefined ? 
                             this.state.storageInfo.persistent ? ' P' : ' p' : '') +
                           ']' : ''}</a>
