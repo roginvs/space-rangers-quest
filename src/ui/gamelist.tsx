@@ -280,6 +280,19 @@ export class GameList extends React.Component<{
                                 })
                                 .then(() => {
                                     this.setState({
+                                        serviceWorkerBusy: 'Requesting persistent storage'
+                                    })   
+                                    return (navigator as any).storage.persist()
+                                }).catch(e => undefined)
+                                .then((r: boolean | undefined) => {
+                                    console.info(`Persistent r=${r}`)
+                                    this.setState({
+                                        serviceWorkerBusy: r === undefined ? "Persistent storage failed" :
+                                            `Persistent = ${r}`
+                                    })   
+                                })
+                                .then(() => {
+                                    this.setState({
                                         serviceWorkerBusy: 'Registering'
                                     })
                                     return navigator.serviceWorker.register('serviceWorker.js')
@@ -376,7 +389,7 @@ export class GameList extends React.Component<{
                         ' [used ' + Math.round(this.state.storageInfo.used / 1000000).toString() + 'mb from ' +                                              
                         Math.round(this.state.storageInfo.remaining / 1000000).toString() + 'mb' +
                         (this.state.storageInfo.persistent !== undefined ? 
-                            this.state.storageInfo.persistent ? ' P' : ' p' : '') +
+                            this.state.storageInfo.persistent ? ' persisted' : ' not persisted' : '') +
                           ']' : ''}</a>
             </li> : null;
 
