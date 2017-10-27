@@ -85,6 +85,7 @@ self.addEventListener("activate", (event: ActivateEvent) => {
 });
 
 self.addEventListener("fetch", (event: FetchEvent) => {
+
     const headersRange = event.request.headers.get("range");
     if (headersRange) {
         console.info(`headersRange='${headersRange}'`);
@@ -104,18 +105,19 @@ self.addEventListener("fetch", (event: FetchEvent) => {
         event.respondWith(
             caches
                 .open(CACHE_NAME)
-                .then(function(cache) {
-                    console.info(`Cache audio hit for ${event.request.url}`);
+                .then(function(cache) {                    
                     return cache.match(event.request.url);
                 })
                 .then(function(res) {
                     if (!res) {
-                        console.warn(`No audio cache for ${event.request.url}`);
+                        console.info(`No audio cache for ${event.request.url}`);
                         return fetch(event.request).then(res => {
                             return res.arrayBuffer();
                         });
-                    }
-                    return res.arrayBuffer();
+                    } else {
+                        console.info(`Cache audio hit for ${event.request.url}`);
+                        return res.arrayBuffer();
+                    }                    
                 })
                 .then(function(ab) {
                     return new Response(ab.slice(pos), {
@@ -139,6 +141,23 @@ self.addEventListener("fetch", (event: FetchEvent) => {
     } else {
         event.respondWith(
             (async () => {
+                const cache = await caches.open(CACHE_NAME);
+                const response = await cache.match(event.request);
+                if (response) {
+                    console.info(
+                        `Cache hit for ${event.request
+                            .url}`
+                    );
+                    return response;
+                } else {
+                    console.info(
+                        `No cache for ${event.request
+                            .url}`
+                    );
+                    return fetch(event.request);
+                }
+
+                /*
                 try {
                     const res = await fetch(event.request);
                     console.info(
@@ -162,6 +181,7 @@ self.addEventListener("fetch", (event: FetchEvent) => {
                     );
                     return fetch(event.request);
                 }
+                */
             })()
         );
     }
