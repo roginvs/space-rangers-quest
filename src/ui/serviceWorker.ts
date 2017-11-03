@@ -14,9 +14,6 @@ interface FetchEvent extends Event {
     respondWith(response: Promise<Response> | Response): Promise<Response>;
 }
 
-/*
-https://github.com/inexorabletash/text-encoding
-*/
 
 function getIndex() {
     return fetch(INDEX_JSON).then(data => data.json()) as Promise<Index>    

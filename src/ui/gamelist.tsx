@@ -37,6 +37,20 @@ const SHOW_ALLOWED_QUESTS = 500;
 const PASSED_QUESTS = 'SpaceRangersPassedQuests';
 const LANG = 'SpaceRangersLang';
 
+declare global {
+    interface Navigator {
+        storage?: {
+            estimate: () => Promise<{quota: number, usage: number}>,
+            persisted: () => Promise<boolean>,
+            persist: () => Promise<boolean>,            
+        },
+        webkitTemporaryStorage?: {
+            queryUsageAndQuota: (f: (used: number, remaining: number) => void) => void
+        }
+    }
+}
+
+
 async function loadGame(game: Game) {
     const data = await getBinary(DATA_DIR + game.filename, true)
     const qm = parse(new Buffer(data));
@@ -122,9 +136,9 @@ export class GameList extends React.Component<{
     private spaceTimer: number | undefined;
     private async updateUsedSpace() {
         try {
-            if ('storage' in navigator) {            
-                const quota: {quota: number, usage: number} = await (navigator as any).storage.estimate();
-                const persistent: boolean = await (navigator as any).storage.persisted();                
+            if (navigator.storage) {
+                const quota = await navigator.storage.estimate();
+                const persistent: boolean = await navigator.storage.persisted();                
                 this.setState({
                     storageInfo: {
                         used: quota.usage,
@@ -132,7 +146,7 @@ export class GameList extends React.Component<{
                         persistent: persistent
                     }
                 })            
-            } else if ('webkitTemporaryStorage' in navigator) {
+            } else if (navigator.webkitTemporaryStorage) {
                 const [used, remaining ] = await new Promise<[number, number]>(resolv => 
                     (navigator as any).webkitTemporaryStorage.queryUsageAndQuota(
                         (used: number, remaining: number) => resolv([used, remaining])));
@@ -282,7 +296,8 @@ export class GameList extends React.Component<{
                                     this.setState({
                                         serviceWorkerBusy: 'Requesting persistent storage'
                                     })   
-                                    return (navigator as any).storage.persist()
+                                    return navigator.storage ?
+                                        navigator.storage.persist() : Promise.resolve(undefined)
                                 }).catch(e => undefined)
                                 .then((r: boolean | undefined) => {
                                     console.info(`Persistent r=${r}`)
