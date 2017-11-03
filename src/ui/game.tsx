@@ -115,7 +115,8 @@ export class GamePlay extends React.Component<{
         }
     }
 
-    private audio: HTMLAudioElement | null;
+    private jumbotron: HTMLDivElement | null = null;
+    private audio: HTMLAudioElement | null = null;
     private play(restart: boolean) {
         if (this.audio) {
             if (!this.audio.src || restart) {
@@ -163,6 +164,9 @@ export class GamePlay extends React.Component<{
                     this.setState({
                         jumpsCountForAnimation: this.state.jumpsCountForAnimation + 1
                     })
+                    if (this.jumbotron) {
+                        this.jumbotron.scrollIntoView({block: "start", behavior: "smooth"})
+                    }
                 }}
                     className={'game ' + (choice.active ? '' : 'disabled')}
                     dangerouslySetInnerHTML={this.replaceTags(choice.text)}
@@ -220,7 +224,7 @@ export class GamePlay extends React.Component<{
                 </div>
             </nav>
 
-            <div className="jumbotron">
+            <div className="jumbotron" ref={e => this.jumbotron=e}>
                 <div className="container">
                     <div className="row mb-1">
                         <div className="col-12 col-sm-8 mb-3">
