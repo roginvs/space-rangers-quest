@@ -20,7 +20,7 @@ function getIndex() {
 }
 self.addEventListener("install", (event: ExtendableEvent) => {
     // Perform install steps
-    console.info(new Date() + ` Serviceworker got install event`);
+    console.info(new Date() + ` Serviceworker got install event.`);
     event.waitUntil(
         (async () => {
             const cache = await caches.open(CACHE_NAME);
