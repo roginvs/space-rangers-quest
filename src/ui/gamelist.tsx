@@ -8,7 +8,8 @@ import { GamePlay } from './game';
 
 import './gamelist.css';
 import { Index, Game } from '../packGameData';
-import { getBinary, getJson, DATA_DIR, INDEX_JSON, CACHE_NAME } from './common';
+import { INDEX_JSON, DATA_DIR, CACHE_NAME } from "./consts";
+import { getBinary, getJson } from './common';
 
 export const GAME_NAME = 'SpaceRangesGameName';
 export const GAME_LIST_FILTER = 'SpaceRangesGameListFilter';

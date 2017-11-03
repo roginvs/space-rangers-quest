@@ -1,11 +1,8 @@
 import * as pako from 'pako';
-//import 'text-encoding';
+
 import { TextDecoder } from 'text-encoding';
 
-export const CACHE_NAME = 'SpaceRangersCache';
-
-export const DATA_DIR = 'data/';
-export const INDEX_JSON = DATA_DIR + 'index.json';
+import { INDEX_JSON, DATA_DIR, CACHE_NAME } from "./consts";
 
 export function getJson(url: string, inflate = false) {
     return getBinary(url, inflate).then(data => {

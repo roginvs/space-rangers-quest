@@ -8,7 +8,8 @@ import { GAME_NAME } from './gamelist';
 import './game.css';
 
 import * as ReactCSSTransitionGroup from "react-addons-css-transition-group";
-import { DATA_DIR } from './common';
+
+import { DATA_DIR } from "./consts";
 
 const GAME_STATE = 'SpaceRangesGameState';
 const MUSIC_STATE = 'SpaceRangesMusicIsOff';

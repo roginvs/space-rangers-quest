@@ -1,4 +1,4 @@
-import { INDEX_JSON, DATA_DIR, CACHE_NAME } from "./common";
+import { INDEX_JSON, DATA_DIR, CACHE_NAME } from "./consts";
 import { Index } from "../packGameData";
 
 const engineUrls = ["/", "bundle.js", "bundle.css", "favicon.png", "manifest.json", INDEX_JSON];
