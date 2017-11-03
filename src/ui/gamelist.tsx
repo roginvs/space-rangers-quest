@@ -132,6 +132,7 @@ export class GameList extends React.Component<{
             this.setState({ error: `Ошибка: ${e.message}` })
         })
 
+        
         if (navigator.storage) {
             navigator.storage.persisted().then(persisted => {                
                 console.info(`Constructor persisted=${persisted}`)
@@ -141,7 +142,7 @@ export class GameList extends React.Component<{
                     })
                 }
             })
-        }
+        }    
     }
 
     private spaceTimer: number | undefined;
@@ -246,21 +247,6 @@ export class GameList extends React.Component<{
 
 
             /*
-            navigator.webkitTemporaryStorage.queryUsageAndQuota(function(used, remaining) {
-              console.log("Used quota: " + used + ", remaining quota: " + remaining);
-            }, function(e) {
-              console.log('Error', e); 
-            } );
-            
-            navigator.webkitPersistentStorage.queryUsageAndQuota(webkitStorageInfo.TEMPORARY,             
-            function(used, remaining) {
-              console.log("Used quota: " + used + ", remaining quota: " + remaining);
-            }, function(e) {
-              console.log('Error', e); 
-            } );
-            
-
-
             self.addEventListener('message', function(event){
                 console.log("SW Received Message: " + event.data);
             });
@@ -504,8 +490,7 @@ export class GameList extends React.Component<{
                             })
                             localStorage.setItem(PASSED_QUESTS, JSON.stringify(newList));
                         }
-                    }
-                    //asdasd
+                    }                    
                 }}
                 onReturn={(gameName) => {
                     this.setState({
