@@ -131,6 +131,17 @@ export class GameList extends React.Component<{
             console.info(e);
             this.setState({ error: `Ошибка: ${e.message}` })
         })
+
+        if (navigator.storage) {
+            navigator.storage.persisted().then(persisted => {                
+                console.info(`Constructor persisted=${persisted}`)
+                if (navigator.storage && !persisted) {                    
+                    navigator.storage.persist().then(persistResult => {
+                        console.info(`Constructor persistResult=${persistResult}`)
+                    })
+                }
+            })
+        }
     }
 
     private spaceTimer: number | undefined;
