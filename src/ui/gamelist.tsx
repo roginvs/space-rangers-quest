@@ -258,6 +258,12 @@ export class GameList extends React.Component<{
             */
             // navigator.serviceWorker.getRegistration().then(r => r.unregister()).then(x => console.info(x))
             // navigator.serviceWorker.controller
+            /*
+
+                Service workers сделаны коряво
+                TODO: переделать
+
+            */
             const serviceWorker = 'serviceWorker' in navigator ? <li className='nav-item'>
                 <a className={"nav-link " + (this.state.serviceWorkerBusy ? "disabled" : "")} href="#" onClick={e => {
                     e.preventDefault();
