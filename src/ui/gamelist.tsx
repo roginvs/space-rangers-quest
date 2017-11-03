@@ -240,7 +240,7 @@ export class GameList extends React.Component<{
             })
             const mainView = this.state.error ? <div className='text-warning'>{this.state.error}</div> :
                 this.state.loading ? <div
-                    className="gamelist-saving">{this.state.loading}<span>.</span><span>.</span><span>.</span></div> :
+                    className="threedots">{this.state.loading}<span>.</span><span>.</span><span>.</span></div> :
                     <div className="list-group">
                         {allQuests}
                     </div>

@@ -1,33 +1,5 @@
 .gamelist-maxheight {
-    max-height: 6.3em;    
+    max-height: 16.3em;    
     overflow-y: hidden;
     display: block;    
-}
-
-
-.gamelist-saving span {  
-  animation-name: gamelist-blink;
-  animation-duration: 1.4s;
-  animation-iteration-count: infinite;
-  animation-fill-mode: both;
-}
-
-.gamelist-saving span:nth-child(2) {
-  animation-delay: .2s;
-}
-
-.gamelist-saving span:nth-child(3) {
-  animation-delay: .4s;
-}
-
-@keyframes gamelist-blink {
-  0% {
-    opacity: .2;
-  }
-  20% {
-    opacity: 1;
-  }
-  100% {
-    opacity: .2;
-  }
 }
