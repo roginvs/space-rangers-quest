@@ -32,20 +32,20 @@ export interface Player {
     FromStar: string;
     ToPlanet: string;
     ToStar: string;
-    Date: string;
-    Day: string;
-    CurDate: string;
+    Date: string; // Дата дедлайна
+    Day: string; // Кол-во дней
+    CurDate: string; // Текущая дата
 }
 export interface GameState {
     state:
-        | "starting"
-        | "location"
-        | "jump" // Если переход с описанием и следующая локация не пустая
-        | "jumpandnextcrit" // Если переход с описанием и следующая локация не пустая, и параметры достигли критичного
-        | "critonlocation" // Параметр стал критичным на локации, доступен только один переход далее
-        | "critonlocationlastmessage" // Параметр стал критичным на локации, показывается сообщение последнее
-        | "critonjump" // Параметр стал критичным на переходе без описания
-        | "returnedending";
+    | "starting"
+    | "location"
+    | "jump" // Если переход с описанием и следующая локация не пустая
+    | "jumpandnextcrit" // Если переход с описанием и следующая локация не пустая, и параметры достигли критичного
+    | "critonlocation" // Параметр стал критичным на локации, доступен только один переход далее
+    | "critonlocationlastmessage" // Параметр стал критичным на локации, показывается сообщение последнее
+    | "critonjump" // Параметр стал критичным на переходе без описания
+    | "returnedending";
     critParamId?: number;
     locationId: number;
     lastJumpId: number | undefined;
@@ -77,6 +77,8 @@ interface PlayerState {
     choices: Choice[];
     gameState: "running" | "fail" | "win" | "dead";
 }
+const DEFAULT_DAYS_TO_PASS_QUEST = 35;
+
 export class QMPlayer {
     private state: GameState;
 
@@ -103,40 +105,40 @@ export class QMPlayer {
 
     private player: Player = this.lang === "rus"
         ? {
-              Ranger: "Ололош",
-              Player: "Ололош",
-              FromPlanet: "Трололо",
-              FromStar: "Мемная",
-              ToPlanet: "Пыщьпыщь",
-              ToStar: "Куку",
-              Date: "кекцотое лулзаля",
-              Day: "кек",
-              Money: "олололион",
-              CurDate: "докекецотое"
-          }
+            Ranger: "Греф",
+            Player: "Греф",
+            FromPlanet: "Трололо",
+            FromStar: "Мемная",
+            ToPlanet: "Пыщьпыщь",
+            ToStar: "Куку",
+            Date: "кекцотое лулзаля",
+            Day: `${DEFAULT_DAYS_TO_PASS_QUEST}`,
+            Money: "65535",
+            CurDate: "докекецотое"
+        }
         : {
-              Ranger: "Ranger",
-              Player: "Player",
-              FromPlanet: "FromPlanet",
-              FromStar: "FromStar",
-              ToPlanet: "ToPlanet",
-              ToStar: "ToStar",
-              Date: "Date",
-              Day: "Day",
-              Money: "Money",
-              CurDate: "CurDate"
-          };
+            Ranger: "Ranger",
+            Player: "Player",
+            FromPlanet: "FromPlanet",
+            FromStar: "FromStar",
+            ToPlanet: "ToPlanet",
+            ToStar: "ToStar",
+            Date: "Date",
+            Day: "Day",
+            Money: "Money",
+            CurDate: "CurDate"
+        };
     private texts = this.lang === "rus"
         ? {
-              iAgree: "Я берусь за это задание",
-              next: "Далее",
-              goBackToShip: "Вернуться на корабль"
-          }
+            iAgree: "Я берусь за это задание",
+            next: "Далее",
+            goBackToShip: "Вернуться на корабль"
+        }
         : {
-              iAgree: "I agree",
-              next: "Next",
-              goBackToShip: "Go back to ship"
-          };
+            iAgree: "I agree",
+            next: "Next",
+            goBackToShip: "Go back to ship"
+        };
 
     start() {
         const startLocation = this.quest.locations.find(x => x.isStarting);
@@ -165,7 +167,12 @@ export class QMPlayer {
     private replace(str: string, diamondIndex?: number) {
         return substitute(
             str,
-            this.player,
+            {
+                ...this.player,
+                Day: `${DEFAULT_DAYS_TO_PASS_QUEST - this.state.daysPassed}`,
+                Date: this.SRDateToString(DEFAULT_DAYS_TO_PASS_QUEST),
+                CurDate: this.SRDateToString(this.state.daysPassed),
+            },
             this.state.paramValues,
             diamondIndex
         );
@@ -266,38 +273,38 @@ export class QMPlayer {
                 choices:
                     this.state.state === "location"
                         ? location.isFaily || location.isFailyDeadly
-                          ? []
-                          : location.isSuccess
-                            ? [
-                                  {
-                                      jumpId: JUMP_GO_BACK_TO_SHIP,
-                                      text: this.texts.goBackToShip,
-                                      active: true
-                                  }
-                              ]
-                            : this.state.possibleJumps.map(x => {
-                                  const jump = this.quest.jumps.find(
-                                      y => y.id === x.id
-                                  );
-                                  if (!jump) {
-                                      throw new Error("Unknown error");
-                                  }
-                                  return {
-                                      text:
-                                          this.replace(jump.text) ||
-                                          this.texts.next,
-                                      jumpId: x.id,
-                                      active: x.active
-                                  };
-                              })
+                            ? []
+                            : location.isSuccess
+                                ? [
+                                    {
+                                        jumpId: JUMP_GO_BACK_TO_SHIP,
+                                        text: this.texts.goBackToShip,
+                                        active: true
+                                    }
+                                ]
+                                : this.state.possibleJumps.map(x => {
+                                    const jump = this.quest.jumps.find(
+                                        y => y.id === x.id
+                                    );
+                                    if (!jump) {
+                                        throw new Error("Unknown error");
+                                    }
+                                    return {
+                                        text:
+                                            this.replace(jump.text) ||
+                                            this.texts.next,
+                                        jumpId: x.id,
+                                        active: x.active
+                                    };
+                                })
                         : [
-                              {
-                                  // critonlocation
-                                  jumpId: JUMP_NEXT,
-                                  text: this.texts.next,
-                                  active: true
-                              }
-                          ],
+                            {
+                                // critonlocation
+                                jumpId: JUMP_NEXT,
+                                text: this.texts.next,
+                                active: true
+                            }
+                        ],
 
                 gameState: location.isFailyDeadly
                     ? "dead"
@@ -320,18 +327,18 @@ export class QMPlayer {
             return {
                 text: this.replace(
                     jump.paramsChanges[critId].critText ||
-                        this.quest.params[critId].critValueString
+                    this.quest.params[critId].critValueString
                 ),
                 paramsState: this.getParamsState(),
                 choices:
                     param.type === ParamType.Успешный
                         ? [
-                              {
-                                  jumpId: JUMP_GO_BACK_TO_SHIP,
-                                  text: this.texts.goBackToShip,
-                                  active: true
-                              }
-                          ]
+                            {
+                                jumpId: JUMP_GO_BACK_TO_SHIP,
+                                text: this.texts.goBackToShip,
+                                active: true
+                            }
+                        ]
                         : [],
                 gameState:
                     param.type === ParamType.Успешный
@@ -379,18 +386,18 @@ export class QMPlayer {
             return {
                 text: this.replace(
                     location.paramsChanges[critId].critText ||
-                        this.quest.params[critId].critValueString
+                    this.quest.params[critId].critValueString
                 ),
                 paramsState: this.getParamsState(),
                 choices:
                     param.type === ParamType.Успешный
                         ? [
-                              {
-                                  jumpId: JUMP_GO_BACK_TO_SHIP,
-                                  text: this.texts.goBackToShip,
-                                  active: true
-                              }
-                          ]
+                            {
+                                jumpId: JUMP_GO_BACK_TO_SHIP,
+                                text: this.texts.goBackToShip,
+                                active: true
+                            }
+                        ]
                         : [],
                 gameState:
                     param.type === ParamType.Успешный
@@ -476,11 +483,11 @@ export class QMPlayer {
             jumpForImg && jumpForImg.img
                 ? jumpForImg.img.toLowerCase() + ".jpg"
                 : this.images
-                      .filter(
-                          x => !!x.jumpIds && x.jumpIds.indexOf(jumpId) > -1
-                      )
-                      .map(x => x.filename)
-                      .shift();
+                    .filter(
+                    x => !!x.jumpIds && x.jumpIds.indexOf(jumpId) > -1
+                    )
+                    .map(x => x.filename)
+                    .shift();
         if (image) {
             this.state.imageFilename = image;
         }
@@ -540,14 +547,14 @@ export class QMPlayer {
                     const image = qmmImage
                         ? qmmImage.toLowerCase() + ".jpg"
                         : this.images
-                              .filter(
-                                  x =>
-                                      !!x.critParams &&
-                                      x.critParams.indexOf(this.state
-                                          .critParamId as number) > -1
-                              )
-                              .map(x => x.filename)
-                              .shift();
+                            .filter(
+                            x =>
+                                !!x.critParams &&
+                                x.critParams.indexOf(this.state
+                                    .critParamId as number) > -1
+                            )
+                            .map(x => x.filename)
+                            .shift();
                     if (image) {
                         this.state.imageFilename = image;
                     }
@@ -582,14 +589,14 @@ export class QMPlayer {
             const image = qmmImg
                 ? qmmImg.toLowerCase() + ".jpg"
                 : this.images
-                      .filter(
-                          x =>
-                              !!x.critParams &&
-                              x.critParams.indexOf(this.state
-                                  .critParamId as number) > -1
-                      )
-                      .map(x => x.filename)
-                      .shift();
+                    .filter(
+                    x =>
+                        !!x.critParams &&
+                        x.critParams.indexOf(this.state
+                            .critParamId as number) > -1
+                    )
+                    .map(x => x.filename)
+                    .shift();
 
             if (image) {
                 this.state.imageFilename = image;
@@ -643,7 +650,7 @@ export class QMPlayer {
             const textNum =
                 locationTextsWithText.length > 0
                     ? this.state.locationVisitCount[location.id] %
-                      locationTextsWithText.length
+                    locationTextsWithText.length
                     : 0;
 
             return (
@@ -699,7 +706,7 @@ export class QMPlayer {
                     if (
                         toLocation.maxVisits &&
                         this.state.locationVisitCount[jump.toLocationId] + 1 >=
-                            toLocation.maxVisits
+                        toLocation.maxVisits
                     ) {
                         return false;
                     }
@@ -722,7 +729,7 @@ export class QMPlayer {
                             x =>
                                 x.jumpingCountLimit &&
                                 this.state.jumpedCount[x.id] >=
-                                    x.jumpingCountLimit
+                                x.jumpingCountLimit
                         ).length === jumpsFromDestination.length
                     ) {
                         return false;
@@ -750,9 +757,9 @@ export class QMPlayer {
                             if (this.quest.params[i].active) {
                                 if (
                                     this.state.paramValues[i] >
-                                        jump.paramsConditions[i].mustTo ||
+                                    jump.paramsConditions[i].mustTo ||
                                     this.state.paramValues[i] <
-                                        jump.paramsConditions[i].mustFrom
+                                    jump.paramsConditions[i].mustFrom
                                 ) {
                                     return false;
                                 }
@@ -764,7 +771,7 @@ export class QMPlayer {
                                         i
                                     ].mustEqualValues.filter(
                                         x => x === this.state.paramValues[i]
-                                    );
+                                        );
                                     if (
                                         jump.paramsConditions[i]
                                             .mustEqualValuesEqual &&
@@ -788,7 +795,7 @@ export class QMPlayer {
                                         i
                                     ].mustModValues.filter(
                                         x => this.state.paramValues[i] % x === 0
-                                    );
+                                        );
                                     if (
                                         jump.paramsConditions[i]
                                             .mustModValuesMod &&
@@ -819,7 +826,7 @@ export class QMPlayer {
                         if (
                             jump.jumpingCountLimit &&
                             this.state.jumpedCount[jump.id] >=
-                                jump.jumpingCountLimit
+                            jump.jumpingCountLimit
                         ) {
                             return false;
                         }
@@ -924,7 +931,7 @@ export class QMPlayer {
             const gotCritWithChoices =
                 (this.quest.params[critParam].type === ParamType.Провальный ||
                     this.quest.params[critParam].type ===
-                        ParamType.Смертельный) &&
+                    ParamType.Смертельный) &&
                 this.state.possibleJumps.filter(x => x.active).length > 0;
             if (!this.oldTgeBehaviour || !gotCritWithChoices) {
                 const lastjump = this.quest.jumps.find(
@@ -932,8 +939,8 @@ export class QMPlayer {
                 );
                 this.state.state = location.isEmpty
                     ? this.state.lastJumpId && lastjump && lastjump.description
-                      ? "critonlocation"
-                      : "critonlocationlastmessage"
+                        ? "critonlocation"
+                        : "critonlocationlastmessage"
                     : "critonlocation";
                 this.state.critParamId = critParam;
 
@@ -943,13 +950,13 @@ export class QMPlayer {
                 const image = qmmImg
                     ? qmmImg.toLowerCase() + ".jpg"
                     : this.images
-                          .filter(
-                              x =>
-                                  !!x.critParams &&
-                                  x.critParams.indexOf(critParam) > -1
-                          )
-                          .map(x => x.filename)
-                          .shift();
+                        .filter(
+                        x =>
+                            !!x.critParams &&
+                            x.critParams.indexOf(critParam) > -1
+                        )
+                        .map(x => x.filename)
+                        .shift();
                 if (image) {
                     this.state.imageFilename = image;
                 }
@@ -983,5 +990,39 @@ export class QMPlayer {
                 this.performJump(jump.id);
             }
         }
+    };
+
+    private SRDateToString(daysToAdd: number, initialDate: Date = new Date()) {
+        const d = new Date(initialDate.getTime() + 1000 * 60 * 60 * 24 * daysToAdd);
+        const months = this.lang === 'eng' ?
+            ["January",
+                "February",
+                "March",
+                "April",
+                "May",
+                "June",
+                "July",
+                "August",
+                "September",
+                "October",
+                "November",
+                "December"
+            ] : [
+                "Января",
+                "Февраля",
+                "Марта",
+                "Апреля",
+                "Мая",
+                "Июня",
+                "Июля",
+                "Августа",
+                "Сентября",
+                "Октября",
+                "Ноября",
+                "Декабря"
+            ]
+        return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 1000}`
     }
 }
+
+
