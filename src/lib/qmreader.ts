@@ -1,5 +1,3 @@
-//import 'text-encoding';
-
 export const LOCATION_TEXTS = 10;
 
 class Reader {
@@ -8,12 +6,11 @@ class Reader {
     int32() {
         const result = this.data.readInt32LE(this.i);
         /*
-        const result = this.data[this.i] +
+        this.data[this.i] +
                       this.data[this.i + 1] * 0x100 +
                     this.data[this.i + 2] * 0x10000 +
                     this.data[this.i + 3] * 0x1000000;
-          */
-
+                    */
         this.i += 4;
         return result;
     }
@@ -24,7 +21,6 @@ class Reader {
             const str = this.data
                 .slice(this.i, this.i + strLen * 2)
                 .toString("utf16le");
-            //const str = new TextDecoder("utf16le").decode(this.data.slice(this.i, this.i + strLen * 2))
             this.i += strLen * 2;
             return str;
         } else {
@@ -128,6 +124,9 @@ interface QMBase {
     changeLogString?: string;
     majorVersion?: number;
     minorVersion?: number;
+
+    screenSizeX: number;
+    screenSizeY: number;
 }
 
 function parseBase(r: Reader, header: HeaderMagic): QMBase {
@@ -164,7 +163,9 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
             paramsCount,
             changeLogString,
             majorVersion,
-            minorVersion
+            minorVersion,
+            screenSizeX,
+            screenSizeY
         };
     } else {
         const paramsCount =
@@ -201,7 +202,11 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
             playerRace,
             defaultJumpCountLimit,
             hardness,
-            paramsCount
+            paramsCount,
+
+            // TODO
+            screenSizeX: 200,
+             screenSizeY: 200
         };
     }
 }
@@ -458,6 +463,8 @@ export interface Location {
     isTextByFormula: boolean;
     textSelectFurmula: string;
     maxVisits: number;
+    locX: number;
+    locY: number;
 }
 function parseLocation(r: Reader, paramsCount: number): Location {
     const dayPassed = !!r.int32();
@@ -519,7 +526,11 @@ function parseLocation(r: Reader, paramsCount: number): Location {
         media,
         isTextByFormula,
         textSelectFurmula,
-        maxVisits: 0
+        maxVisits: 0,
+
+        // TODO
+        locX: 50,
+        locY: 50
     };
 }
 function parseLocationQmm(r: Reader, paramsCount: number): Location {
@@ -613,7 +624,9 @@ function parseLocationQmm(r: Reader, paramsCount: number): Location {
         media,
         isTextByFormula,
         textSelectFurmula,
-        maxVisits
+        maxVisits,
+        locX,
+        locY
     };
 }
 
