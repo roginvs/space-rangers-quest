@@ -22,14 +22,13 @@ interface FetchEvent extends Event {
     respondWith(response: Promise<Response> | Response): Promise<Response>;
 }
 
-
 function getIndex() {
     return fetch(INDEX_JSON).then(data => data.json()) as Promise<Index>    
 }
-self.addEventListener("install", (event: ExtendableEvent) => {
+self.addEventListener("install", event => {
     // Perform install steps
     console.info(new Date() + ` Serviceworker got install event.`);
-    event.waitUntil(
+    (event as ExtendableEvent).waitUntil(
         (async () => {
             const cache = await caches.open(CACHE_NAME);
             console.info(new Date() + ` Serviceworker opened cache`);
@@ -64,9 +63,9 @@ self.addEventListener("install", (event: ExtendableEvent) => {
     );
 });
 
-self.addEventListener("activate", (event: ActivateEvent) => {
+self.addEventListener("activate", event => {
     console.log(new Date() + " ServiceWorker activation started");
-    event.waitUntil(
+    (event as ActivateEvent).waitUntil(
         (async () => {
             (await caches.keys()).map((x: string) => {
                 console.info(`Have cache key:`, x);
@@ -89,8 +88,8 @@ self.addEventListener("activate", (event: ActivateEvent) => {
     );
 });
 
-self.addEventListener("fetch", (event: FetchEvent) => {
-
+self.addEventListener("fetch", eventRaw => {
+    const event = eventRaw as FetchEvent;
     const headersRange = event.request.headers.get("range");
     if (headersRange) {
         console.info(`headersRange='${headersRange}'`);
