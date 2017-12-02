@@ -1,14 +1,17 @@
 import { INDEX_JSON, DATA_DIR, CACHE_NAME } from "./consts";
 import { Index } from "../packGameData";
 
-const engineUrls = ["/", "bundle.js", "bundle.css", "favicon.png", "manifest.json", INDEX_JSON];
-
 /* 
     Not used now, but maybe I will use this in the future.
     Right now only purpose of this is to make serviceWorker code changed
         in order to make all installions to reinstall to most up-to-date version
 */
 const ENGINE_VERSION = 1;
+
+const engineUrls = ["/", "bundle.js", "bundle.css", "favicon.png", "manifest.json", 
+INDEX_JSON, `version.json?${ENGINE_VERSION}`];
+
+
 
 //declare function skipWaiting(): void;
 
