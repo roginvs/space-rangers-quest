@@ -68,7 +68,11 @@ function argToNumber(arg: Arg) {
                 rnd
             }, null, 4))
         } else {
-            const r = parseInt(arg);
+            /*
+                Is that code even reachable? String Arg could be returned
+                only from "to" operator, and that one returned range
+                */
+            const r = parseFloat(arg.replace(',', '.'));
             if (isNaN(r)) {
                 throw new Error(`Unknown arg = '${arg}'`)
             } else {
@@ -354,8 +358,7 @@ function parseRecursive(deep: number, str: string, params: Params): number | str
         return str
     } else if (operands.length === 0) {
         debug(deep, `String '${str}' have no operands`);
-
-        const val = parseInt(str);
+        const val = parseFloat(str.replace(',', '.'));
         if (isNaN(val)) {
             throw new Error(`Unknown elementary value '${str}'`)
         }
