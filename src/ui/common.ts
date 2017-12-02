@@ -2,7 +2,7 @@ import * as pako from 'pako';
 
 import { TextDecoder } from 'text-encoding';
 
-import { INDEX_JSON, DATA_DIR, CACHE_NAME } from "./consts";
+import { INDEX_JSON, DATA_DIR } from "./consts";
 
 export function getJson(url: string, inflate = false) {
     return getBinary(url, inflate).then(data => {
