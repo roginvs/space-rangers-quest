@@ -8,10 +8,15 @@ import { Index } from "../packGameData";
 */
 const ENGINE_VERSION = 1;
 
-const engineUrls = ["/", "bundle.js", "bundle.css", "favicon.png", "manifest.json", 
-INDEX_JSON, `version.json?${ENGINE_VERSION}`];
-
-
+const engineUrls = [
+    "/",
+    "bundle.js",
+    "bundle.css",
+    "favicon.png",
+    "manifest.json",
+    INDEX_JSON,
+    `version.json?${ENGINE_VERSION}`
+];
 
 //declare function skipWaiting(): void;
 
@@ -26,7 +31,7 @@ interface FetchEvent extends Event {
 }
 
 function getIndex() {
-    return fetch(INDEX_JSON).then(data => data.json()) as Promise<Index>    
+    return fetch(INDEX_JSON).then(data => data.json()) as Promise<Index>;
 }
 self.addEventListener("install", event => {
     // Perform install steps
@@ -112,7 +117,7 @@ self.addEventListener("fetch", eventRaw => {
         event.respondWith(
             caches
                 .open(CACHE_NAME)
-                .then(function(cache) {                    
+                .then(function(cache) {
                     return cache.match(event.request.url);
                 })
                 .then(function(res) {
@@ -122,9 +127,11 @@ self.addEventListener("fetch", eventRaw => {
                             return res.arrayBuffer();
                         });
                     } else {
-                        console.info(`Cache audio hit for ${event.request.url}`);
+                        console.info(
+                            `Cache audio hit for ${event.request.url}`
+                        );
                         return res.arrayBuffer();
-                    }                    
+                    }
                 })
                 .then(function(ab) {
                     return new Response(ab.slice(pos), {
@@ -151,16 +158,10 @@ self.addEventListener("fetch", eventRaw => {
                 const cache = await caches.open(CACHE_NAME);
                 const response = await cache.match(event.request);
                 if (response) {
-                    console.info(
-                        `Cache hit for ${event.request
-                            .url}`
-                    );
+                    console.info(`Cache hit for ${event.request.url}`);
                     return response;
                 } else {
-                    console.info(
-                        `No cache for ${event.request
-                            .url}`
-                    );
+                    console.info(`No cache for ${event.request.url}`);
                     return fetch(event.request);
                 }
 
