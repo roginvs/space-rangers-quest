@@ -103,31 +103,6 @@ export class QMPlayer {
         this.start();
     }
 
-    private player: Player = this.lang === "rus"
-        ? {
-            Ranger: "Греф",
-            Player: "Греф",
-            FromPlanet: "Трололо",
-            FromStar: "Мемная",
-            ToPlanet: "Пыщьпыщь",
-            ToStar: "Куку",
-            Date: "кекцотое лулзаля",
-            Day: `${DEFAULT_DAYS_TO_PASS_QUEST}`,
-            Money: "65535",
-            CurDate: "докекецотое"
-        }
-        : {
-            Ranger: "Ranger",
-            Player: "Player",
-            FromPlanet: "FromPlanet",
-            FromStar: "FromStar",
-            ToPlanet: "ToPlanet",
-            ToStar: "ToStar",
-            Date: "Date",
-            Day: "Day",
-            Money: "Money",
-            CurDate: "CurDate"
-        };
     private texts = this.lang === "rus"
         ? {
             iAgree: "Я берусь за это задание",
@@ -167,8 +142,14 @@ export class QMPlayer {
     private replace(str: string, diamondIndex?: number) {
         return substitute(
             str,
-            {
-                ...this.player,
+            {                                
+                Ranger: this.lang === "rus" ? "Греф" : "Ranger",
+                Player: this.lang === "rus" ? "Греф" : "Player",
+                FromPlanet: this.lang === "rus" ? "Земля" : "FromPlanet",
+                FromStar: this.lang === "rus" ? "Солнечная" : "FromStar",
+                ToPlanet: this.lang === "rus" ? "Боннасис" : "ToPlanet",
+                ToStar: this.lang === "rus" ? "Процион" : "ToStar",
+                Money: "65535",
                 Day: `${DEFAULT_DAYS_TO_PASS_QUEST - this.state.daysPassed}`,
                 Date: this.SRDateToString(DEFAULT_DAYS_TO_PASS_QUEST),
                 CurDate: this.SRDateToString(this.state.daysPassed),
