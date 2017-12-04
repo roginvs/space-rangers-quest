@@ -38,14 +38,14 @@ export class GamePlay extends React.Component<{
     onPassed: () => void
 }, {
         music: boolean,
-        jumpsCountForAnimation: number
+        jumpsCountForAnimation: number,        
         // game: GameState
     }> {
     constructor(props: any) {
         super(props);
         this.state = {
             music: localStorage.getItem(MUSIC_STATE) ? false : true,
-            jumpsCountForAnimation: 0
+            jumpsCountForAnimation: 0,
         }
         const oldGame = localStorage.getItem(GAME_NAME);
         if (oldGame === this.props.gameName) {
@@ -140,132 +140,145 @@ export class GamePlay extends React.Component<{
     }
     */
     render() {
-        const st = this.props.player.getState();
-        if (st.gameState === 'win') {
-            this.props.onPassed();
-        }
-        const image = st.imageFileName ?
-            <img className="game-img" src={DATA_DIR + 'img/' + st.imageFileName} /> :
-            null
-        // <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" width="343" height="392" alt="" />
-        const choices = st.choices.map(choice => {
-            return <li key={choice.jumpId} className="mb-4">
-                <a href="#" onClick={(e) => {
-                    if (this.state.music && this.audio) {
-                        this.audio.play();
-                    }
-
-                    e.preventDefault();
-                    this.props.player.performJump(choice.jumpId);
-                    this.saveState();
-                    if (this.props.player.getState().gameState === 'win') {
-                        this.props.onPassed();
-                    }
-                    this.setState({
-                        jumpsCountForAnimation: this.state.jumpsCountForAnimation + 1
-                    })
-                    if (this.jumbotron) {
-                        this.jumbotron.scrollIntoView({block: "start", behavior: "smooth"})
-                    }
-                }}
-                    className={'game ' + (choice.active ? '' : 'disabled')}
-                    dangerouslySetInnerHTML={this.replaceTags(choice.text)}
-                ></a></li>
-        })
-
-
-        const music = this.state.music ?
-            <audio autoPlay={true} controls={false} onEnded={e => this.play(true)} ref={e => {
-                this.audio = e;
-                this.play(false);
-            }}></audio> : null;
-        const imagesPreloaded = this.props.player.getAllImagesToPreload().map(x => {
-            return <img key={x} src={DATA_DIR + 'img/' + x} style={{ display: 'none' }} />
-        })
-        return <div>
-            <nav className=
-                "navbar navbar-toggleable navbar-inverse bg-inverse">
-                <button
-                    className="navbar-toggler navbar-toggler-right"
-                    type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
-                    aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
-                    <span className="navbar-toggler-icon"></span>
-                </button>
-                <a className="navbar-brand" href="#">{this.props.gameName}</a>
-
-                <div className="collapse navbar-collapse" id="navbarsExampleDefault">
-                    <ul className="navbar-nav mr-auto">
-                        <li className="nav-item">
-                            <a className="nav-link" href="#" onClick={e => {
-                                e.preventDefault();
-                                this.props.player.start();
-                                this.forceUpdate();
-                            }}>{this.props.lang === 'rus' ? 'Сначала' : 'Restart'}</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className={'nav-link ' + (this.state.music ? '' : 'text-muted')} href="#" onClick={e => {
-                                e.preventDefault();
-                                this.setState({
-                                    music: !this.state.music
-                                })
-                                setTimeout(() => {
-                                    this.saveState();
-                                }, 10);
-                            }}>{this.props.lang === 'rus' ? 'Музыка' : 'Music'}</a>
-                        </li>
-                        <li className="nav-item">
-                            <a className="nav-link" href="#" onClick={e => {
-                                e.preventDefault();
-                                document.location.hash = "";
-                                this.props.onReturn(this.props.gameName);
-                            }}>{this.props.lang === 'rus' ? 'Выход' : 'Exit'}</a>
-                        </li>
-                    </ul>
-                </div>
-            </nav>
-
-            <div className="jumbotron" ref={e => this.jumbotron=e}>
-                <div className="container">
-                    <div className="row mb-1">
-                        <div className="col-12 col-sm-8 mb-3">
-                            <TransitionInOpacity>
-                                <div key={st.text + '#' + this.state.jumpsCountForAnimation}
-                                    dangerouslySetInnerHTML={this.replaceTags(st.text)}>
-                                </div>
-                            </TransitionInOpacity>
+        try {                 
+            const st = this.props.player.getState();
+            if (st.gameState === 'win') {
+                this.props.onPassed();
+            }
+            const image = st.imageFileName ?
+                <img className="game-img" src={DATA_DIR + 'img/' + st.imageFileName} /> :
+                null
+            // <img src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" width="343" height="392" alt="" />
+            const choices = st.choices.map(choice => {
+                return <li key={choice.jumpId} className="mb-4">
+                    <a href="#" onClick={(e) => {
+                        if (this.state.music && this.audio) {
+                            this.audio.play();
+                        }
+    
+                        e.preventDefault();
+                        this.props.player.performJump(choice.jumpId);
+                        this.saveState();
+                        if (this.props.player.getState().gameState === 'win') {
+                            this.props.onPassed();
+                        }
+                        this.setState({
+                            jumpsCountForAnimation: this.state.jumpsCountForAnimation + 1
+                        })
+                        if (this.jumbotron) {
+                            this.jumbotron.scrollIntoView({block: "start", behavior: "smooth"})
+                        }
+                    }}
+                        className={'game ' + (choice.active ? '' : 'disabled')}
+                        dangerouslySetInnerHTML={this.replaceTags(choice.text)}
+                    ></a></li>
+            })
+    
+    
+            const music = this.state.music ?
+                <audio autoPlay={true} controls={false} onEnded={e => this.play(true)} ref={e => {
+                    this.audio = e;
+                    this.play(false);
+                }}></audio> : null;
+            const imagesPreloaded = this.props.player.getAllImagesToPreload().map(x => {
+                return <img key={x} src={DATA_DIR + 'img/' + x} style={{ display: 'none' }} />
+            })
+            return <div>
+                <nav className=
+                    "navbar navbar-toggleable navbar-inverse bg-inverse">
+                    <button
+                        className="navbar-toggler navbar-toggler-right"
+                        type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
+                        aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+                        <span className="navbar-toggler-icon"></span>
+                    </button>
+                    <a className="navbar-brand" href="#">{this.props.gameName}</a>
+    
+                    <div className="collapse navbar-collapse" id="navbarsExampleDefault">
+                        <ul className="navbar-nav mr-auto">
+                            <li className="nav-item">
+                                <a className="nav-link" href="#" onClick={e => {
+                                    e.preventDefault();
+                                    this.props.player.start();
+                                    this.forceUpdate();
+                                }}>{this.props.lang === 'rus' ? 'Сначала' : 'Restart'}</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className={'nav-link ' + (this.state.music ? '' : 'text-muted')} href="#" onClick={e => {
+                                    e.preventDefault();
+                                    this.setState({
+                                        music: !this.state.music
+                                    })
+                                    setTimeout(() => {
+                                        this.saveState();
+                                    }, 10);
+                                }}>{this.props.lang === 'rus' ? 'Музыка' : 'Music'}</a>
+                            </li>
+                            <li className="nav-item">
+                                <a className="nav-link" href="#" onClick={e => {
+                                    e.preventDefault();
+                                    document.location.hash = "";
+                                    this.props.onReturn(this.props.gameName);
+                                }}>{this.props.lang === 'rus' ? 'Выход' : 'Exit'}</a>
+                            </li>
+                        </ul>
+                    </div>
+                </nav>
+    
+                <div className="jumbotron" ref={e => this.jumbotron=e}>
+                    <div className="container">
+                        <div className="row mb-1">
+                            <div className="col-12 col-sm-8 mb-3">
+                                <TransitionInOpacity>
+                                    <div key={st.text + '#' + this.state.jumpsCountForAnimation}
+                                        dangerouslySetInnerHTML={this.replaceTags(st.text)}>
+                                    </div>
+                                </TransitionInOpacity>
+                            </div>
+                            <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
+                                {imagesPreloaded}
+                                <TransitionInOpacity>
+                                    {image}
+                                </TransitionInOpacity>
+                            </div>
                         </div>
-                        <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
-                            {imagesPreloaded}
-                            <TransitionInOpacity>
-                                {image}
-                            </TransitionInOpacity>
+                        <div className="row">
+                            <div className="col-12 col-sm-8 mb-3">
+                                <TransitionInOpacity>
+                                    <ul key={choices.join('#') + '#' + this.state.jumpsCountForAnimation}>{choices}</ul>
+                                </TransitionInOpacity>
+                            </div>
+                            <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
+                                <TransitionInOpacity>
+                                    {([] as string[]).concat(
+                                        ...st.paramsState.map(x => x.split('<br>'))
+                                    ).map((paramText, index) => {
+                                        return <div key={paramText + "###" + index}
+                                            style={{
+                                                whiteSpace: 'pre',
+                                                textAlign: 'center'
+                                            }}
+                                            dangerouslySetInnerHTML={this.replaceTags(paramText)}
+                                        />
+                                    })}
+                                </TransitionInOpacity>
+                            </div>
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col-12 col-sm-8 mb-3">
-                            <TransitionInOpacity>
-                                <ul key={choices.join('#') + '#' + this.state.jumpsCountForAnimation}>{choices}</ul>
-                            </TransitionInOpacity>
-                        </div>
-                        <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
-                            <TransitionInOpacity>
-                                {([] as string[]).concat(
-                                    ...st.paramsState.map(x => x.split('<br>'))
-                                ).map((paramText, index) => {
-                                    return <div key={paramText + "###" + index}
-                                        style={{
-                                            whiteSpace: 'pre',
-                                            textAlign: 'center'
-                                        }}
-                                        dangerouslySetInnerHTML={this.replaceTags(paramText)}
-                                    />
-                                })}
-                            </TransitionInOpacity>
-                        </div>
-                    </div>
                 </div>
+                {music}
             </div>
-            {music}
-        </div>
-    }
-}
+        } catch (e) {
+            console.error(e);
+            return <div className="p-3">
+            <div>Error: {e.message}</div>
+            <div><a href="#" onClick={e => {
+                e.preventDefault();
+                this.props.onReturn(this.props.gameName);
+            }}>Выход</a>
+            </div>
+            </div>
+        }
+    }    
+}    
+    
