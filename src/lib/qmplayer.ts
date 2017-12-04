@@ -210,7 +210,7 @@ export class QMPlayer {
                 x => x.id === this.state.lastJumpId
             );
             if (!jump) {
-                throw new Error("internal error");
+                throw new Error(`Internal error: no last jump id=${this.state.lastJumpId}`);
             }
             return {
                 text: this.replace(jump.description),
@@ -233,7 +233,7 @@ export class QMPlayer {
                 x => x.id === this.state.locationId
             );
             if (!location) {
-                throw new Error("Internal error");
+                throw new Error(`Internal error: no state loc id=${this.state.locationId}`);
             }
 
             const locTextId = this.calculateLocationShowingTextId(location);
@@ -268,7 +268,7 @@ export class QMPlayer {
                                         y => y.id === x.id
                                     );
                                     if (!jump) {
-                                        throw new Error("Unknown error");
+                                        throw new Error(`Internal error: no jump ${x.id} in possible jumps`);
                                     }
                                     return {
                                         text:
@@ -359,8 +359,11 @@ export class QMPlayer {
                 x => x.id === this.state.locationId
             );
 
-            if (critId === undefined || !location) {
-                throw new Error("Internal error");
+            if (critId === undefined) {
+                throw new Error(`Internal error: no critId`);
+            }
+            if (!location) {
+                throw new Error(`Internal error: no crit state location ${this.state.locationId}`);
             }
             const param = this.quest.params[critId];
 
@@ -481,7 +484,7 @@ export class QMPlayer {
                 x => x.id === this.state.lastJumpId
             );
             if (!jump) {
-                throw new Error("Internal error");
+                throw new Error(`Internal error: no just ${this.state.lastJumpId}`);
             }
             this.state.locationId = jump.toLocationId;
             this.state.state = "location";
@@ -494,7 +497,7 @@ export class QMPlayer {
             }
             const jump = this.quest.jumps.find(x => x.id === jumpId);
             if (!jump) {
-                throw new Error("Internal Error");
+                throw new Error(`"Internal Error: no jump id=${jumpId} from possible jump list`);
             }
             this.state.lastJumpId = jumpId;
             if (jump.dayPassed) {
@@ -514,7 +517,7 @@ export class QMPlayer {
                 x => x.id === jump.toLocationId
             );
             if (!nextLocation) {
-                throw new Error("Internal error");
+                throw new Error(`Internal error: no next location ${jump.toLocationId}`);
             }
 
             if (!jump.description) {
@@ -651,7 +654,7 @@ export class QMPlayer {
             x => x.id === this.state.locationId
         );
         if (!location) {
-            throw new Error("Internal error");
+            throw new Error(`Internal error: no state location ${this.state.locationId}`);
         }
 
         const locImgId = this.calculateLocationShowingTextId(location);
