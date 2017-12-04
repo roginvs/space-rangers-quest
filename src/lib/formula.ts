@@ -203,7 +203,7 @@ const operations: Operation[] = [
                             typeof (a) === 'string' && typeof (b) === 'number' ? [b, a] :
                                 [undefined, undefined];
                 if (val === undefined || ranges === undefined) {
-                    throw new Error("Internal error")
+                    throw new Error("Internal error: no val or no ranges")
                 }
                 for (const range of parseRange(ranges)) {
                     if (val >= range[0] && val <= range[1]) {
@@ -274,7 +274,7 @@ function findClosingBrackedIndex(str: string, openBrackedIndex: number, type: 'r
     const open = type === 'round' ? '(' : type === 'square' ? '[' : undefined;
     const close = type === 'round' ? ')' : type === 'square' ? ']' : undefined;
     if (!open || !close) {
-        throw new Error(`Internal error`)
+        throw new Error(`Internal error: no open or no close bracket`)
     }
     if (str[openBrackedIndex] === open) {
         let opencount = 1;
@@ -372,7 +372,7 @@ function parseRecursive(deep: number, str: string, params: Params): number | str
         if (!oper) {
             debug(deep, `String '${str}', operands are: ` +
                 operands.map(x => `pos=${x.pos} symbol=${x.operation.longSymbol}/${x.operation.shortSymbol}`).join('; '));
-            throw new Error("Must be defined!")
+            throw new Error("Operand must be defined!")
         }
 
         const a = str.slice(0, oper.pos);
