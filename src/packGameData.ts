@@ -112,10 +112,6 @@ function readPqi(filename: string) {
 }
 
 
-function checkQm(q: QM) {
-    // asd
-}
-
 function areThereAnyQmmImages(qmmQuest: QM) {
     let images: {
         [imageName: string]: string[],
@@ -282,7 +278,7 @@ for (const origin of fs.readdirSync(dataSrcPath + '/qm')) {
         const qmmImagesList = getImagesListFromQmm(quest);
 
         const pqi2Images = pqiSR2Parsed[gameName.toLowerCase()];
-        const pqi1Images = pqiSR1Parsed[qmShortName];
+        const pqi1Images = pqiSR1Parsed[gameName];
         const images = qmmImagesList.length > 0 ? [] : (pqi2Images || pqi1Images || randomImages);
         if (images === randomImages) {
             warns.push(`No images for ${qmShortName}, using random`);

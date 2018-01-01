@@ -439,7 +439,12 @@ questRawPQI.split('\n').filter(x => x).map(line => {
         throw new Error();
     }
         
-    const questName = questIdToName[questId] !== 'Prison.qm' ? questIdToName[questId] : 'Prison1.qm';
+    const questFileName = (questIdToName[questId] !== 'Prison.qm' ? questIdToName[questId] : 'Prison1.qm')
+    const questName = questFileName.slice(0,-3)
+    if (!questFileName.endsWith('.qm')) {
+        throw new Error();
+    }
+
     if (!imagesPerQuest[questName]) {
         imagesPerQuest[questName] = [];
     }

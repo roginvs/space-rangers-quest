@@ -1,5 +1,5 @@
 {
-    "Bank.qm": [
+    "Bank": [
         {
             "filename": "Newflora_01.jpg",
             "locationIds": [
@@ -283,7 +283,7 @@
             ]
         }
     ],
-    "Boat.qm": [
+    "Boat": [
         {
             "filename": "Boat_00.jpg",
             "locationIds": [
@@ -343,7 +343,7 @@
             ]
         }
     ],
-    "Penetrator.qm": [
+    "Penetrator": [
         {
             "filename": "Hachball_04.jpg",
             "locationIds": [
@@ -511,7 +511,7 @@
             ]
         }
     ],
-    "Poroda.qm": [
+    "Poroda": [
         {
             "filename": "Gladiator_00.jpg",
             "locationIds": [
@@ -597,7 +597,7 @@
             ]
         }
     ],
-    "Rush.qm": [
+    "Rush": [
         {
             "filename": "Rush_01.jpg",
             "locationIds": [
@@ -643,7 +643,7 @@
             ]
         }
     ],
-    "Spy.qm": [
+    "Spy": [
         {
             "filename": "Galaxy_02.jpg",
             "locationIds": [
@@ -950,7 +950,7 @@
             ]
         }
     ],
-    "Tomb.qm": [
+    "Tomb": [
         {
             "filename": "Menzols_01.jpg",
             "locationIds": [
@@ -997,7 +997,7 @@
             ]
         }
     ],
-    "Gladiator.qm": [
+    "Gladiator": [
         {
             "filename": "Gladiator_00.jpg",
             "locationIds": [
@@ -1108,7 +1108,7 @@
             ]
         }
     ],
-    "Hachball.qm": [
+    "Hachball": [
         {
             "filename": "Examen_06.jpg",
             "locationIds": [
@@ -1175,7 +1175,7 @@
             ]
         }
     ],
-    "Energy.qm": [
+    "Energy": [
         {
             "filename": "Spy_00.jpg",
             "locationIds": [
@@ -1231,7 +1231,7 @@
             ]
         }
     ],
-    "Gobsaur.qm": [
+    "Gobsaur": [
         {
             "filename": "Gobsaur_03.jpg",
             "locationIds": [
@@ -1294,7 +1294,7 @@
             ]
         }
     ],
-    "Menzols.qm": [
+    "Menzols": [
         {
             "filename": "Menzols_01.jpg",
             "locationIds": [
@@ -1465,7 +1465,7 @@
             ]
         }
     ],
-    "Newflora.qm": [
+    "Newflora": [
         {
             "filename": "Newflora_00.jpg",
             "locationIds": [
@@ -1537,7 +1537,7 @@
             ]
         }
     ],
-    "Siege.qm": [
+    "Siege": [
         {
             "filename": "Siege_01.jpg",
             "locationIds": [
@@ -1645,7 +1645,7 @@
             ]
         }
     ],
-    "Casino.qm": [
+    "Casino": [
         {
             "filename": "Newflora_01.jpg",
             "locationIds": [
@@ -1707,7 +1707,7 @@
             ]
         }
     ],
-    "Bondiana.qm": [
+    "Bondiana": [
         {
             "filename": "Murder_03.jpg",
             "locationIds": [
@@ -1924,7 +1924,7 @@
             ]
         }
     ],
-    "Build.qm": [
+    "Build": [
         {
             "filename": "Penetrator_01.jpg",
             "locationIds": [
@@ -2073,7 +2073,7 @@
             ]
         }
     ],
-    "Diamond.qm": [
+    "Diamond": [
         {
             "filename": "Menzols_06.jpg",
             "locationIds": [
@@ -2307,7 +2307,7 @@
             ]
         }
     ],
-    "Commando.qm": [
+    "Commando": [
         {
             "filename": "Commando_00.jpg",
             "locationIds": [
@@ -2429,7 +2429,7 @@
             ]
         }
     ],
-    "Diehard.qm": [
+    "Diehard": [
         {
             "filename": "Energy_00.jpg",
             "locationIds": [
@@ -2501,7 +2501,7 @@
             ]
         }
     ],
-    "Examen.qm": [
+    "Examen": [
         {
             "filename": "Ikebana_00.jpg",
             "locationIds": [
@@ -2585,7 +2585,7 @@
             ]
         }
     ],
-    "Fishing.qm": [
+    "Fishing": [
         {
             "filename": "Hachball_00.jpg",
             "locationIds": [
@@ -2660,7 +2660,7 @@
             ]
         }
     ],
-    "Galaxy.qm": [
+    "Galaxy": [
         {
             "filename": "Galaxy_03.jpg",
             "locationIds": [
@@ -2793,7 +2793,7 @@
             ]
         }
     ],
-    "Ikebana.qm": [
+    "Ikebana": [
         {
             "filename": "Ikebana_00.jpg",
             "locationIds": [
@@ -2832,7 +2832,7 @@
             ]
         }
     ],
-    "Murder.qm": [
+    "Murder": [
         {
             "filename": "Murder_00.jpg",
             "locationIds": [
@@ -2912,7 +2912,7 @@
             ]
         }
     ],
-    "Prison1.qm": [
+    "Prison1": [
         {
             "filename": "Prison_00.jpg",
             "locationIds": [
