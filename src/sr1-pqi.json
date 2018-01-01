@@ -1,0 +1,3070 @@
+{
+    "Bank.qm": [
+        {
+            "filename": "Newflora_01.jpg",
+            "locationIds": [
+                1,
+                68,
+                70,
+                72,
+                75,
+                80,
+                81,
+                82
+            ]
+        },
+        {
+            "filename": "Bank_02.jpg",
+            "locationIds": [
+                101
+            ]
+        },
+        {
+            "filename": "Examen_01.jpg",
+            "locationIds": [
+                15,
+                17,
+                18
+            ]
+        },
+        {
+            "filename": "Hachball_04.jpg",
+            "locationIds": [
+                19
+            ]
+        },
+        {
+            "filename": "Bank_01.jpg",
+            "locationIds": [
+                20
+            ]
+        },
+        {
+            "filename": "Newflora_05.jpg",
+            "locationIds": [
+                32
+            ]
+        },
+        {
+            "filename": "Newflora_02.jpg",
+            "locationIds": [
+                33
+            ]
+        },
+        {
+            "filename": "Diehard_00.jpg",
+            "locationIds": [
+                34,
+                39
+            ]
+        },
+        {
+            "filename": "Bank_05.jpg",
+            "locationIds": [
+                35,
+                36,
+                37,
+                38
+            ]
+        },
+        {
+            "filename": "Bank_00.jpg",
+            "locationIds": [
+                4,
+                61,
+                66,
+                67
+            ]
+        },
+        {
+            "filename": "Hachball_00.jpg",
+            "locationIds": [
+                40,
+                57,
+                58,
+                59
+            ]
+        },
+        {
+            "filename": "Bank_08.jpg",
+            "locationIds": [
+                41
+            ]
+        },
+        {
+            "filename": "Newflora_06.jpg",
+            "locationIds": [
+                46
+            ]
+        },
+        {
+            "filename": "Bank_07.jpg",
+            "locationIds": [
+                47,
+                50,
+                51
+            ]
+        },
+        {
+            "filename": "Bank_04.jpg",
+            "locationIds": [
+                54,
+                76,
+                78,
+                79,
+                85,
+                86,
+                87,
+                88
+            ]
+        },
+        {
+            "filename": "Bank_06.jpg",
+            "locationIds": [
+                55,
+                90,
+                91,
+                92,
+                93,
+                94,
+                95,
+                96,
+                97,
+                98,
+                100
+            ]
+        },
+        {
+            "filename": "Bank_09.jpg",
+            "locationIds": [
+                65
+            ]
+        },
+        {
+            "filename": "Hachball_03.jpg",
+            "locationIds": [
+                89
+            ]
+        },
+        {
+            "filename": "Commando_03.jpg",
+            "locationIds": [
+                99
+            ]
+        },
+        {
+            "filename": "Bank_08.jpg",
+            "jumpIds": [
+                162,
+                163,
+                164
+            ]
+        },
+        {
+            "filename": "Bank_05.jpg",
+            "jumpIds": [
+                240,
+                241,
+                242,
+                243,
+                279,
+                280,
+                282,
+                283,
+                305,
+                306,
+                307
+            ]
+        },
+        {
+            "filename": "Hachball_00.jpg",
+            "jumpIds": [
+                35,
+                224,
+                308
+            ]
+        },
+        {
+            "filename": "Tomb_03.jpg",
+            "jumpIds": [
+                40,
+                41
+            ]
+        },
+        {
+            "filename": "Galaxy_01.jpg",
+            "jumpIds": [
+                42,
+                43
+            ]
+        },
+        {
+            "filename": "Fishing_04.jpg",
+            "jumpIds": [
+                45,
+                90
+            ]
+        },
+        {
+            "filename": "Hachball_03.jpg",
+            "jumpIds": [
+                49,
+                89,
+                234,
+                244
+            ]
+        },
+        {
+            "filename": "Bank_03.jpg",
+            "jumpIds": [
+                54,
+                91,
+                232,
+                248,
+                255,
+                257,
+                258,
+                260,
+                285,
+                289
+            ]
+        },
+        {
+            "filename": "Poroda_00.jpg",
+            "jumpIds": [
+                92,
+                93,
+                231,
+                245,
+                286,
+                290,
+                293,
+                296,
+                299,
+                303
+            ]
+        },
+        {
+            "filename": "Bank_02.jpg",
+            "jumpIds": [
+                94,
+                95,
+                153,
+                154,
+                233,
+                246,
+                287,
+                291,
+                294,
+                297,
+                300,
+                302
+            ]
+        },
+        {
+            "filename": "Ikebana_02.jpg",
+            "jumpIds": [
+                96,
+                97,
+                238,
+                249,
+                251,
+                252,
+                253,
+                254,
+                284,
+                288
+            ]
+        },
+        {
+            "filename": "Penetrator_03.jpg",
+            "critParams": [
+                5
+            ]
+        }
+    ],
+    "Boat.qm": [
+        {
+            "filename": "Boat_00.jpg",
+            "locationIds": [
+                1,
+                2
+            ]
+        },
+        {
+            "filename": "Boat_02.jpg",
+            "locationIds": [
+                3
+            ]
+        },
+        {
+            "filename": "Boat_01.jpg",
+            "locationIds": [
+                5,
+                6,
+                14
+            ]
+        },
+        {
+            "filename": "Boat_02.jpg",
+            "jumpIds": [
+                14,
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24,
+                25
+            ]
+        },
+        {
+            "filename": "Boat_03.jpg",
+            "jumpIds": [
+                26,
+                27,
+                28,
+                29
+            ]
+        },
+        {
+            "filename": "Boat_00.jpg",
+            "critParams": [
+                1
+            ]
+        },
+        {
+            "filename": "Boat_00.jpg",
+            "critParams": [
+                2
+            ]
+        }
+    ],
+    "Penetrator.qm": [
+        {
+            "filename": "Hachball_04.jpg",
+            "locationIds": [
+                1,
+                3,
+                5
+            ]
+        },
+        {
+            "filename": "Gladiator_00.jpg",
+            "locationIds": [
+                1,
+                6,
+                12,
+                15,
+                48,
+                51,
+                52,
+                53,
+                57
+            ]
+        },
+        {
+            "filename": "Penetrator_03.jpg",
+            "locationIds": [
+                13,
+                28,
+                34,
+                36
+            ]
+        },
+        {
+            "filename": "Penetrator_05.jpg",
+            "locationIds": [
+                14,
+                40
+            ]
+        },
+        {
+            "filename": "Penetrator_04.jpg",
+            "locationIds": [
+                16,
+                22,
+                23,
+                24,
+                25,
+                26,
+                35,
+                39,
+                41,
+                42,
+                44,
+                46,
+                47,
+                64,
+                65
+            ]
+        },
+        {
+            "filename": "Penetrator_00.jpg",
+            "locationIds": [
+                2
+            ]
+        },
+        {
+            "filename": "Penetrator_02.jpg",
+            "locationIds": [
+                27
+            ]
+        },
+        {
+            "filename": "Bank_08.jpg",
+            "locationIds": [
+                4
+            ]
+        },
+        {
+            "filename": "Penetrator_01.jpg",
+            "locationIds": [
+                7,
+                8,
+                9,
+                10,
+                11,
+                29,
+                30,
+                32,
+                37,
+                38,
+                43,
+                45,
+                48,
+                49,
+                50,
+                51,
+                52,
+                53,
+                54,
+                55,
+                56,
+                57,
+                58
+            ]
+        },
+        {
+            "filename": "Penetrator_04.jpg",
+            "jumpIds": [
+                11,
+                12,
+                14,
+                15,
+                16,
+                19,
+                20,
+                27,
+                41,
+                43,
+                44,
+                50,
+                57,
+                58,
+                59,
+                60,
+                62,
+                64,
+                76,
+                85,
+                89,
+                91,
+                93,
+                95,
+                126
+            ]
+        },
+        {
+            "filename": "Penetrator_01.jpg",
+            "jumpIds": [
+                13,
+                28,
+                29,
+                30,
+                34,
+                55,
+                61,
+                87
+            ]
+        },
+        {
+            "filename": "Penetrator_02.jpg",
+            "jumpIds": [
+                69
+            ]
+        },
+        {
+            "filename": "Gladiator_00.jpg",
+            "critParams": [
+                1,
+                4
+            ]
+        },
+        {
+            "filename": "Penetrator_05.jpg",
+            "critParams": [
+                6
+            ]
+        }
+    ],
+    "Poroda.qm": [
+        {
+            "filename": "Gladiator_00.jpg",
+            "locationIds": [
+                1,
+                3,
+                25
+            ]
+        },
+        {
+            "filename": "Poroda_05.jpg",
+            "locationIds": [
+                14
+            ]
+        },
+        {
+            "filename": "Poroda_02.jpg",
+            "locationIds": [
+                15
+            ]
+        },
+        {
+            "filename": "Poroda_03.jpg",
+            "locationIds": [
+                16
+            ]
+        },
+        {
+            "filename": "Poroda_04.jpg",
+            "locationIds": [
+                17
+            ]
+        },
+        {
+            "filename": "Poroda_01.jpg",
+            "locationIds": [
+                18
+            ]
+        },
+        {
+            "filename": "Siege_03.jpg",
+            "locationIds": [
+                2
+            ]
+        },
+        {
+            "filename": "Poroda_00.jpg",
+            "locationIds": [
+                4,
+                13,
+                32,
+                33,
+                34,
+                35,
+                36,
+                37,
+                38,
+                39,
+                40,
+                41
+            ]
+        },
+        {
+            "filename": "Bank_09.jpg",
+            "locationIds": [
+                5,
+                7,
+                8,
+                9,
+                10,
+                11,
+                12
+            ]
+        },
+        {
+            "filename": "Poroda_00.jpg",
+            "critParams": [
+                2,
+                3,
+                4,
+                5,
+                6,
+                7
+            ]
+        }
+    ],
+    "Rush.qm": [
+        {
+            "filename": "Rush_01.jpg",
+            "locationIds": [
+                19,
+                25,
+                31,
+                32,
+                33,
+                34
+            ]
+        },
+        {
+            "filename": "Rush_04.jpg",
+            "locationIds": [
+                20
+            ]
+        },
+        {
+            "filename": "Rush_00.jpg",
+            "locationIds": [
+                29
+            ]
+        },
+        {
+            "filename": "Rush_03.jpg",
+            "locationIds": [
+                4
+            ]
+        },
+        {
+            "filename": "Rush_03.jpg",
+            "jumpIds": [
+                64,
+                65,
+                66,
+                93
+            ]
+        },
+        {
+            "filename": "Rush_02.jpg",
+            "jumpIds": [
+                97
+            ]
+        }
+    ],
+    "Spy.qm": [
+        {
+            "filename": "Galaxy_02.jpg",
+            "locationIds": [
+                1,
+                39
+            ]
+        },
+        {
+            "filename": "Galaxy_01.jpg",
+            "locationIds": [
+                10
+            ]
+        },
+        {
+            "filename": "Spy_00.jpg",
+            "locationIds": [
+                12,
+                54,
+                56,
+                72,
+                73,
+                74,
+                80,
+                81,
+                92
+            ]
+        },
+        {
+            "filename": "Tomb_01.jpg",
+            "locationIds": [
+                13
+            ]
+        },
+        {
+            "filename": "Ikebana_01.jpg",
+            "locationIds": [
+                14
+            ]
+        },
+        {
+            "filename": "Casino_00.jpg",
+            "locationIds": [
+                15
+            ]
+        },
+        {
+            "filename": "Rush_02.jpg",
+            "locationIds": [
+                17
+            ]
+        },
+        {
+            "filename": "Bank_07.jpg",
+            "locationIds": [
+                18
+            ]
+        },
+        {
+            "filename": "Examen_01.jpg",
+            "locationIds": [
+                2
+            ]
+        },
+        {
+            "filename": "Prison_07.jpg",
+            "locationIds": [
+                20
+            ]
+        },
+        {
+            "filename": "Murder_02.jpg",
+            "locationIds": [
+                21
+            ]
+        },
+        {
+            "filename": "Murder_01.jpg",
+            "locationIds": [
+                25
+            ]
+        },
+        {
+            "filename": "Boat_01.jpg",
+            "locationIds": [
+                26
+            ]
+        },
+        {
+            "filename": "Spy_01.jpg",
+            "locationIds": [
+                3,
+                7,
+                16,
+                19,
+                22,
+                23,
+                29,
+                57,
+                70
+            ]
+        },
+        {
+            "filename": "Ikebana_02.jpg",
+            "locationIds": [
+                30,
+                61
+            ]
+        },
+        {
+            "filename": "Prison_05.jpg",
+            "locationIds": [
+                32
+            ]
+        },
+        {
+            "filename": "Newflora_03.jpg",
+            "locationIds": [
+                34
+            ]
+        },
+        {
+            "filename": "Tomb_03.jpg",
+            "locationIds": [
+                36
+            ]
+        },
+        {
+            "filename": "Prison_02.jpg",
+            "locationIds": [
+                4,
+                40
+            ]
+        },
+        {
+            "filename": "Prison_06.jpg",
+            "locationIds": [
+                42
+            ]
+        },
+        {
+            "filename": "Penetrator_02.jpg",
+            "locationIds": [
+                43
+            ]
+        },
+        {
+            "filename": "Galaxy_00.jpg",
+            "locationIds": [
+                44
+            ]
+        },
+        {
+            "filename": "Casino_04.jpg",
+            "locationIds": [
+                45
+            ]
+        },
+        {
+            "filename": "Examen_00.jpg",
+            "locationIds": [
+                46
+            ]
+        },
+        {
+            "filename": "Spy_02.jpg",
+            "locationIds": [
+                49
+            ]
+        },
+        {
+            "filename": "Hachball_04.jpg",
+            "locationIds": [
+                5,
+                27,
+                28,
+                31,
+                47,
+                50
+            ]
+        },
+        {
+            "filename": "Energy_00.jpg",
+            "locationIds": [
+                51,
+                90
+            ]
+        },
+        {
+            "filename": "Bank_09.jpg",
+            "locationIds": [
+                52,
+                86
+            ]
+        },
+        {
+            "filename": "Diehard_00.jpg",
+            "locationIds": [
+                59
+            ]
+        },
+        {
+            "filename": "Prison_08.jpg",
+            "locationIds": [
+                6
+            ]
+        },
+        {
+            "filename": "Examen_03.jpg",
+            "locationIds": [
+                60
+            ]
+        },
+        {
+            "filename": "Rush_01.jpg",
+            "locationIds": [
+                62,
+                63,
+                67,
+                68
+            ]
+        },
+        {
+            "filename": "Murder_05.jpg",
+            "locationIds": [
+                64,
+                79
+            ]
+        },
+        {
+            "filename": "Murder_04.jpg",
+            "locationIds": [
+                65
+            ]
+        },
+        {
+            "filename": "Newflora_06.jpg",
+            "locationIds": [
+                8,
+                24,
+                33,
+                35,
+                37,
+                38,
+                41,
+                77
+            ]
+        },
+        {
+            "filename": "Prison_04.jpg",
+            "locationIds": [
+                83,
+                84,
+                91
+            ]
+        },
+        {
+            "filename": "Newflora_04.jpg",
+            "locationIds": [
+                9
+            ]
+        },
+        {
+            "filename": "Galaxy_02.jpg",
+            "jumpIds": [
+                136
+            ]
+        },
+        {
+            "filename": "Ikebana_02.jpg",
+            "jumpIds": [
+                176
+            ]
+        },
+        {
+            "filename": "Spy_00.jpg",
+            "jumpIds": [
+                179,
+                182,
+                196,
+                205,
+                206,
+                220,
+                222
+            ]
+        },
+        {
+            "filename": "Galaxy_01.jpg",
+            "jumpIds": [
+                93
+            ]
+        },
+        {
+            "filename": "Spy_00.jpg",
+            "critParams": [
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+            ]
+        }
+    ],
+    "Tomb.qm": [
+        {
+            "filename": "Menzols_01.jpg",
+            "locationIds": [
+                1,
+                24
+            ]
+        },
+        {
+            "filename": "Tomb_03.jpg",
+            "locationIds": [
+                14
+            ]
+        },
+        {
+            "filename": "Tomb_02.jpg",
+            "locationIds": [
+                15,
+                26
+            ]
+        },
+        {
+            "filename": "Rush_00.jpg",
+            "locationIds": [
+                17
+            ]
+        },
+        {
+            "filename": "Tomb_00.jpg",
+            "jumpIds": [
+                2
+            ]
+        },
+        {
+            "filename": "Siege_01.jpg",
+            "jumpIds": [
+                45
+            ]
+        },
+        {
+            "filename": "Tomb_01.jpg",
+            "jumpIds": [
+                5,
+                56
+            ]
+        }
+    ],
+    "Gladiator.qm": [
+        {
+            "filename": "Gladiator_00.jpg",
+            "locationIds": [
+                56,
+                62,
+                73,
+                89,
+                92
+            ]
+        },
+        {
+            "filename": "Bank_05.jpg",
+            "locationIds": [
+                57
+            ]
+        },
+        {
+            "filename": "Hachball_05.jpg",
+            "locationIds": [
+                58,
+                70,
+                72,
+                74,
+                83,
+                93,
+                94
+            ]
+        },
+        {
+            "filename": "Gladiator_01.jpg",
+            "locationIds": [
+                59
+            ]
+        },
+        {
+            "filename": "Gladiator_02.jpg",
+            "locationIds": [
+                63,
+                79
+            ]
+        },
+        {
+            "filename": "Penetrator_00.jpg",
+            "locationIds": [
+                65
+            ]
+        },
+        {
+            "filename": "Gladiator_03.jpg",
+            "locationIds": [
+                68
+            ]
+        },
+        {
+            "filename": "Diamond_00.jpg",
+            "locationIds": [
+                75,
+                85
+            ]
+        },
+        {
+            "filename": "Newflora_07.jpg",
+            "locationIds": [
+                77
+            ]
+        },
+        {
+            "filename": "Casino_04.jpg",
+            "locationIds": [
+                82
+            ]
+        },
+        {
+            "filename": "Bank_09.jpg",
+            "locationIds": [
+                90
+            ]
+        },
+        {
+            "filename": "Diamond_00.jpg",
+            "jumpIds": [
+                107,
+                133
+            ]
+        },
+        {
+            "filename": "Penetrator_00.jpg",
+            "jumpIds": [
+                134,
+                154,
+                159
+            ]
+        },
+        {
+            "filename": "Gladiator_00.jpg",
+            "jumpIds": [
+                158,
+                134,
+                154
+            ]
+        },
+        {
+            "filename": "Gladiator_00.jpg",
+            "critParams": [
+                1,
+                2,
+                3
+            ]
+        }
+    ],
+    "Hachball.qm": [
+        {
+            "filename": "Examen_06.jpg",
+            "locationIds": [
+                1
+            ]
+        },
+        {
+            "filename": "Hachball_04.jpg",
+            "locationIds": [
+                11
+            ]
+        },
+        {
+            "filename": "Hachball_02.jpg",
+            "locationIds": [
+                12,
+                57,
+                65
+            ]
+        },
+        {
+            "filename": "Hachball_03.jpg",
+            "locationIds": [
+                16,
+                17,
+                18,
+                19,
+                20,
+                21,
+                22,
+                23,
+                24
+            ]
+        },
+        {
+            "filename": "Hachball_00.jpg",
+            "locationIds": [
+                3,
+                8,
+                10,
+                53,
+                54,
+                63,
+                64
+            ]
+        },
+        {
+            "filename": "Hachball_01.jpg",
+            "locationIds": [
+                56
+            ]
+        },
+        {
+            "filename": "Hachball_05.jpg",
+            "locationIds": [
+                58,
+                59
+            ]
+        },
+        {
+            "filename": "Hachball_01.jpg",
+            "critParams": [
+                5
+            ]
+        }
+    ],
+    "Energy.qm": [
+        {
+            "filename": "Spy_00.jpg",
+            "locationIds": [
+                1,
+                35,
+                50,
+                51,
+                52
+            ]
+        },
+        {
+            "filename": "Energy_00.jpg",
+            "locationIds": [
+                11,
+                19,
+                27,
+                40
+            ]
+        },
+        {
+            "filename": "Newflora_06.jpg",
+            "locationIds": [
+                26,
+                38
+            ]
+        },
+        {
+            "filename": "Prison_02.jpg",
+            "locationIds": [
+                9,
+                34,
+                39,
+                53
+            ]
+        },
+        {
+            "filename": "Prison_02.jpg",
+            "jumpIds": [
+                113,
+                114
+            ]
+        },
+        {
+            "filename": "Energy_00.jpg",
+            "jumpIds": [
+                188
+            ]
+        },
+        {
+            "filename": "Energy_01.jpg",
+            "critParams": [
+                10
+            ]
+        }
+    ],
+    "Gobsaur.qm": [
+        {
+            "filename": "Gobsaur_03.jpg",
+            "locationIds": [
+                1
+            ]
+        },
+        {
+            "filename": "Casino_03.jpg",
+            "locationIds": [
+                13
+            ]
+        },
+        {
+            "filename": "Gobsaur_00.jpg",
+            "locationIds": [
+                3,
+                16
+            ]
+        },
+        {
+            "filename": "Gobsaur_02.jpg",
+            "locationIds": [
+                5,
+                6
+            ]
+        },
+        {
+            "filename": "Gobsaur_02.jpg",
+            "jumpIds": [
+                18,
+                34,
+                49,
+                62
+            ]
+        },
+        {
+            "filename": "Gobsaur_01.jpg",
+            "jumpIds": [
+                27,
+                36,
+                50,
+                56,
+                58,
+                59,
+                60,
+                83
+            ]
+        },
+        {
+            "filename": "Gobsaur_03.jpg",
+            "jumpIds": [
+                84,
+                85
+            ]
+        },
+        {
+            "filename": "Gobsaur_02.jpg",
+            "critParams": [
+                4
+            ]
+        }
+    ],
+    "Menzols.qm": [
+        {
+            "filename": "Menzols_01.jpg",
+            "locationIds": [
+                1,
+                2,
+                74,
+                198,
+                199,
+                200
+            ]
+        },
+        {
+            "filename": "Menzols_02.jpg",
+            "locationIds": [
+                105,
+                168
+            ]
+        },
+        {
+            "filename": "Menzols_04.jpg",
+            "locationIds": [
+                106,
+                120,
+                121,
+                169
+            ]
+        },
+        {
+            "filename": "Bank_03.jpg",
+            "locationIds": [
+                117
+            ]
+        },
+        {
+            "filename": "Fishing_03.jpg",
+            "locationIds": [
+                136,
+                174
+            ]
+        },
+        {
+            "filename": "Menzols_00.jpg",
+            "locationIds": [
+                29,
+                77,
+                79,
+                131,
+                132
+            ]
+        },
+        {
+            "filename": "Bank_03.jpg",
+            "locationIds": [
+                30
+            ]
+        },
+        {
+            "filename": "Menzols_03.jpg",
+            "locationIds": [
+                31,
+                100
+            ]
+        },
+        {
+            "filename": "Menzols_05.jpg",
+            "locationIds": [
+                32,
+                164,
+                166,
+                167,
+                202,
+                203
+            ]
+        },
+        {
+            "filename": "Menzols_04.jpg",
+            "locationIds": [
+                43,
+                170
+            ]
+        },
+        {
+            "filename": "Menzols_02.jpg",
+            "locationIds": [
+                46
+            ]
+        },
+        {
+            "filename": "Gobsaur_03.jpg",
+            "locationIds": [
+                5,
+                107,
+                175,
+                197
+            ]
+        },
+        {
+            "filename": "Bank_03.jpg",
+            "locationIds": [
+                78,
+                120,
+                130,
+                206
+            ]
+        },
+        {
+            "filename": "Bank_03.jpg",
+            "jumpIds": [
+                25,
+                66,
+                268,
+                371
+            ]
+        },
+        {
+            "filename": "Menzols_04.jpg",
+            "jumpIds": [
+                266,
+                272
+            ]
+        },
+        {
+            "filename": "Menzols_04.jpg",
+            "jumpIds": [
+                267,
+                270
+            ]
+        },
+        {
+            "filename": "Menzols_06.jpg",
+            "jumpIds": [
+                27,
+                28,
+                104,
+                126,
+                240
+            ]
+        },
+        {
+            "filename": "Fishing_03.jpg",
+            "jumpIds": [
+                410
+            ]
+        },
+        {
+            "filename": "Menzols_00.jpg",
+            "jumpIds": [
+                43,
+                222,
+                390,
+                411,
+                424,
+                426,
+                431,
+                455,
+                456,
+                457,
+                458,
+                459,
+                540,
+                555
+            ]
+        },
+        {
+            "filename": "Menzols_03.jpg",
+            "jumpIds": [
+                79
+            ]
+        }
+    ],
+    "Newflora.qm": [
+        {
+            "filename": "Newflora_00.jpg",
+            "locationIds": [
+                1
+            ]
+        },
+        {
+            "filename": "Newflora_05.jpg",
+            "locationIds": [
+                11,
+                18
+            ]
+        },
+        {
+            "filename": "Newflora_06.jpg",
+            "locationIds": [
+                23,
+                101
+            ]
+        },
+        {
+            "filename": "Galaxy_01.jpg",
+            "locationIds": [
+                29
+            ]
+        },
+        {
+            "filename": "Examen_04.jpg",
+            "locationIds": [
+                37
+            ]
+        },
+        {
+            "filename": "Newflora_01.jpg",
+            "locationIds": [
+                38,
+                48
+            ]
+        },
+        {
+            "filename": "Newflora_07.jpg",
+            "locationIds": [
+                46,
+                100
+            ]
+        },
+        {
+            "filename": "Newflora_04.jpg",
+            "locationIds": [
+                56
+            ]
+        },
+        {
+            "filename": "Newflora_03.jpg",
+            "locationIds": [
+                60
+            ]
+        },
+        {
+            "filename": "Newflora_02.jpg",
+            "locationIds": [
+                61
+            ]
+        },
+        {
+            "filename": "Casino_04.jpg",
+            "locationIds": [
+                87
+            ]
+        }
+    ],
+    "Siege.qm": [
+        {
+            "filename": "Siege_01.jpg",
+            "locationIds": [
+                1,
+                15,
+                26
+            ]
+        },
+        {
+            "filename": "Siege_00.jpg",
+            "locationIds": [
+                12,
+                16
+            ]
+        },
+        {
+            "filename": "Siege_02.jpg",
+            "locationIds": [
+                19
+            ]
+        },
+        {
+            "filename": "Diamond_00.jpg",
+            "locationIds": [
+                24
+            ]
+        },
+        {
+            "filename": "Hachball_04.jpg",
+            "locationIds": [
+                36
+            ]
+        },
+        {
+            "filename": "Siege_03.jpg",
+            "locationIds": [
+                37
+            ]
+        },
+        {
+            "filename": "Commando_03.jpg",
+            "locationIds": [
+                42,
+                52
+            ]
+        },
+        {
+            "filename": "Gladiator_00.jpg",
+            "locationIds": [
+                46,
+                51
+            ]
+        },
+        {
+            "filename": "Penetrator_01.jpg",
+            "jumpIds": [
+                102,
+                105,
+                114,
+                121
+            ]
+        },
+        {
+            "filename": "Siege_02.jpg",
+            "jumpIds": [
+                136,
+                137
+            ]
+        },
+        {
+            "filename": "Tomb_02.jpg",
+            "jumpIds": [
+                50,
+                51,
+                52
+            ]
+        },
+        {
+            "filename": "Penetrator_03.jpg",
+            "jumpIds": [
+                56,
+                57,
+                59
+            ]
+        },
+        {
+            "filename": "Commando_02.jpg",
+            "jumpIds": [
+                62
+            ]
+        },
+        {
+            "filename": "Diamond_00.jpg",
+            "jumpIds": [
+                80,
+                89,
+                95,
+                123
+            ]
+        },
+        {
+            "filename": "Energy_01.jpg",
+            "critParams": [
+                17
+            ]
+        }
+    ],
+    "Casino.qm": [
+        {
+            "filename": "Newflora_01.jpg",
+            "locationIds": [
+                1,
+                99,
+                100
+            ]
+        },
+        {
+            "filename": "Casino_00.jpg",
+            "locationIds": [
+                2,
+                3,
+                75,
+                76,
+                77,
+                97
+            ]
+        },
+        {
+            "filename": "Casino_01.jpg",
+            "locationIds": [
+                28,
+                86
+            ]
+        },
+        {
+            "filename": "Casino_02.jpg",
+            "locationIds": [
+                35,
+                87
+            ]
+        },
+        {
+            "filename": "Casino_03.jpg",
+            "locationIds": [
+                44,
+                88
+            ]
+        },
+        {
+            "filename": "Casino_04.jpg",
+            "locationIds": [
+                54,
+                89
+            ]
+        },
+        {
+            "filename": "Casino_05.jpg",
+            "locationIds": [
+                62,
+                90
+            ]
+        },
+        {
+            "filename": "Newflora_01.jpg",
+            "jumpIds": [
+                2
+            ]
+        }
+    ],
+    "Bondiana.qm": [
+        {
+            "filename": "Murder_03.jpg",
+            "locationIds": [
+                11
+            ]
+        },
+        {
+            "filename": "Galaxy_01.jpg",
+            "locationIds": [
+                117,
+                119
+            ]
+        },
+        {
+            "filename": "Newflora_05.jpg",
+            "locationIds": [
+                118
+            ]
+        },
+        {
+            "filename": "Siege_02.jpg",
+            "locationIds": [
+                16,
+                60,
+                69,
+                77,
+                80,
+                112
+            ]
+        },
+        {
+            "filename": "Build_01.jpg",
+            "locationIds": [
+                18
+            ]
+        },
+        {
+            "filename": "Boat_01.jpg",
+            "locationIds": [
+                19,
+                43
+            ]
+        },
+        {
+            "filename": "Gobsaur_00.jpg",
+            "locationIds": [
+                21,
+                27,
+                61,
+                66,
+                79
+            ]
+        },
+        {
+            "filename": "Hachball_00.jpg",
+            "locationIds": [
+                22,
+                75,
+                78,
+                81,
+                82,
+                83,
+                102,
+                109,
+                110,
+                114,
+                115,
+                116
+            ]
+        },
+        {
+            "filename": "Galaxy_02.jpg",
+            "locationIds": [
+                23,
+                24
+            ]
+        },
+        {
+            "filename": "Gobsaur_01.jpg",
+            "locationIds": [
+                30,
+                62
+            ]
+        },
+        {
+            "filename": "Bank_06.jpg",
+            "locationIds": [
+                31
+            ]
+        },
+        {
+            "filename": "Gobsaur_02.jpg",
+            "locationIds": [
+                35,
+                58,
+                59
+            ]
+        },
+        {
+            "filename": "Newflora_06.jpg",
+            "locationIds": [
+                36,
+                70
+            ]
+        },
+        {
+            "filename": "Newflora_02.jpg",
+            "locationIds": [
+                37
+            ]
+        },
+        {
+            "filename": "Hachball_01.jpg",
+            "locationIds": [
+                38
+            ]
+        },
+        {
+            "filename": "Prison_02.jpg",
+            "locationIds": [
+                4,
+                113
+            ]
+        },
+        {
+            "filename": "Bank_07.jpg",
+            "locationIds": [
+                40,
+                67
+            ]
+        },
+        {
+            "filename": "Murder_04.jpg",
+            "locationIds": [
+                41,
+                45,
+                68
+            ]
+        },
+        {
+            "filename": "Newflora_07.jpg",
+            "locationIds": [
+                42
+            ]
+        },
+        {
+            "filename": "Bondiana_00.jpg",
+            "locationIds": [
+                48,
+                71,
+                72
+            ]
+        },
+        {
+            "filename": "Bank_09.jpg",
+            "locationIds": [
+                53
+            ]
+        },
+        {
+            "filename": "Newflora_00.jpg",
+            "locationIds": [
+                55
+            ]
+        },
+        {
+            "filename": "Diehard_03.jpg",
+            "locationIds": [
+                56,
+                84
+            ]
+        },
+        {
+            "filename": "Gobsaur_01.jpg",
+            "jumpIds": [
+                143
+            ]
+        },
+        {
+            "filename": "Prison_07.jpg",
+            "jumpIds": [
+                36
+            ]
+        },
+        {
+            "filename": "Siege_02.jpg",
+            "jumpIds": [
+                91,
+                96,
+                101,
+                102,
+                103,
+                104,
+                105,
+                211,
+                212,
+                219
+            ]
+        },
+        {
+            "filename": "Galaxy_01.jpg",
+            "jumpIds": [
+                97,
+                98,
+                99,
+                100
+            ]
+        },
+        {
+            "filename": "Gobsaur_02.jpg",
+            "critParams": [
+                5,
+                6
+            ]
+        }
+    ],
+    "Build.qm": [
+        {
+            "filename": "Penetrator_01.jpg",
+            "locationIds": [
+                1
+            ]
+        },
+        {
+            "filename": "Rush_00.jpg",
+            "locationIds": [
+                16
+            ]
+        },
+        {
+            "filename": "Siege_03.jpg",
+            "locationIds": [
+                2,
+                3,
+                4,
+                5
+            ]
+        },
+        {
+            "filename": "Build_00.jpg",
+            "locationIds": [
+                36,
+                40,
+                42,
+                44
+            ]
+        },
+        {
+            "filename": "Prison_01.jpg",
+            "locationIds": [
+                51,
+                52,
+                53,
+                54
+            ]
+        },
+        {
+            "filename": "Build_01.jpg",
+            "locationIds": [
+                8,
+                22,
+                46
+            ]
+        },
+        {
+            "filename": "Penetrator_00.jpg",
+            "locationIds": [
+                9,
+                17
+            ]
+        },
+        {
+            "filename": "Prison_01.jpg",
+            "jumpIds": [
+                134
+            ]
+        },
+        {
+            "filename": "Siege_02.jpg",
+            "jumpIds": [
+                16,
+                18,
+                34,
+                35,
+                52,
+                53,
+                69,
+                70
+            ]
+        },
+        {
+            "filename": "Prison_01.jpg",
+            "jumpIds": [
+                17,
+                36,
+                54,
+                71,
+                131,
+                133,
+                135,
+                138
+            ]
+        },
+        {
+            "filename": "Rush_00.jpg",
+            "jumpIds": [
+                19,
+                20,
+                33,
+                37,
+                51,
+                55,
+                68,
+                72,
+                76,
+                191,
+                192,
+                193,
+                194
+            ]
+        },
+        {
+            "filename": "Menzols_00.jpg",
+            "jumpIds": [
+                2,
+                77,
+                136,
+                137
+            ]
+        },
+        {
+            "filename": "Build_02.jpg",
+            "jumpIds": [
+                3
+            ]
+        },
+        {
+            "filename": "Gobsaur_03.jpg",
+            "jumpIds": [
+                4,
+                130,
+                195
+            ]
+        },
+        {
+            "filename": "Fishing_04.jpg",
+            "jumpIds": [
+                5,
+                82,
+                139
+            ]
+        },
+        {
+            "filename": "Siege_02.jpg",
+            "jumpIds": [
+                78
+            ]
+        },
+        {
+            "filename": "Build_01.jpg",
+            "critParams": [
+                2
+            ]
+        }
+    ],
+    "Diamond.qm": [
+        {
+            "filename": "Menzols_06.jpg",
+            "locationIds": [
+                18
+            ]
+        },
+        {
+            "filename": "Penetrator_00.jpg",
+            "locationIds": [
+                20
+            ]
+        },
+        {
+            "filename": "Hachball_04.jpg",
+            "locationIds": [
+                21,
+                23,
+                25,
+                27,
+                57
+            ]
+        },
+        {
+            "filename": "Siege_03.jpg",
+            "locationIds": [
+                29
+            ]
+        },
+        {
+            "filename": "Boat_01.jpg",
+            "locationIds": [
+                30
+            ]
+        },
+        {
+            "filename": "Bank_02.jpg",
+            "locationIds": [
+                31,
+                47
+            ]
+        },
+        {
+            "filename": "Newflora_06.jpg",
+            "locationIds": [
+                32,
+                34
+            ]
+        },
+        {
+            "filename": "Penetrator_03.jpg",
+            "locationIds": [
+                33
+            ]
+        },
+        {
+            "filename": "Diamond_01.jpg",
+            "locationIds": [
+                35
+            ]
+        },
+        {
+            "filename": "Diamond_00.jpg",
+            "locationIds": [
+                37,
+                38,
+                39,
+                44,
+                48
+            ]
+        },
+        {
+            "filename": "Commando_04.jpg",
+            "locationIds": [
+                40,
+                42
+            ]
+        },
+        {
+            "filename": "Gladiator_00.jpg",
+            "locationIds": [
+                41,
+                45,
+                49,
+                52,
+                53,
+                54,
+                55,
+                59
+            ]
+        },
+        {
+            "filename": "Prison_02.jpg",
+            "locationIds": [
+                43
+            ]
+        },
+        {
+            "filename": "Examen_02.jpg",
+            "locationIds": [
+                46
+            ]
+        },
+        {
+            "filename": "Commando_02.jpg",
+            "locationIds": [
+                50
+            ]
+        },
+        {
+            "filename": "Bank_06.jpg",
+            "locationIds": [
+                51,
+                63
+            ]
+        },
+        {
+            "filename": "Examen_04.jpg",
+            "jumpIds": [
+                175,
+                301,
+                302,
+                303
+            ]
+        },
+        {
+            "filename": "Diamond_00.jpg",
+            "jumpIds": [
+                188,
+                211,
+                225,
+                227,
+                231,
+                241,
+                243,
+                259,
+                261,
+                279,
+                281,
+                345
+            ]
+        },
+        {
+            "filename": "Bank_06.jpg",
+            "jumpIds": [
+                200,
+                226,
+                228,
+                233,
+                238,
+                240,
+                242,
+                260,
+                262,
+                275,
+                280,
+                282,
+                347
+            ]
+        },
+        {
+            "filename": "Diamond_01.jpg",
+            "jumpIds": [
+                229,
+                230,
+                250,
+                251,
+                252,
+                253,
+                254
+            ]
+        },
+        {
+            "filename": "Galaxy_01.jpg",
+            "jumpIds": [
+                235,
+                270,
+                331,
+                336
+            ]
+        },
+        {
+            "filename": "Commando_01.jpg",
+            "jumpIds": [
+                239,
+                244
+            ]
+        },
+        {
+            "filename": "Bank_02.jpg",
+            "jumpIds": [
+                255,
+                256
+            ]
+        },
+        {
+            "filename": "Commando_02.jpg",
+            "jumpIds": [
+                258,
+                263,
+                277,
+                278,
+                283,
+                284
+            ]
+        },
+        {
+            "filename": "Prison_10.jpg",
+            "jumpIds": [
+                267
+            ]
+        },
+        {
+            "filename": "Gladiator_03.jpg",
+            "jumpIds": [
+                271,
+                272
+            ]
+        },
+        {
+            "filename": "Prison_01.jpg",
+            "jumpIds": [
+                346,
+                352
+            ]
+        },
+        {
+            "filename": "Gladiator_00.jpg",
+            "critParams": [
+                9,
+                10
+            ]
+        }
+    ],
+    "Commando.qm": [
+        {
+            "filename": "Commando_00.jpg",
+            "locationIds": [
+                11,
+                26,
+                27,
+                31,
+                33,
+                34,
+                35,
+                43,
+                49
+            ]
+        },
+        {
+            "filename": "Siege_02.jpg",
+            "locationIds": [
+                22,
+                40
+            ]
+        },
+        {
+            "filename": "Commando_01.jpg",
+            "locationIds": [
+                29
+            ]
+        },
+        {
+            "filename": "Commando_02.jpg",
+            "locationIds": [
+                38,
+                47,
+                51
+            ]
+        },
+        {
+            "filename": "Penetrator_03.jpg",
+            "locationIds": [
+                39
+            ]
+        },
+        {
+            "filename": "Bank_00.jpg",
+            "locationIds": [
+                46,
+                49
+            ]
+        },
+        {
+            "filename": "Tomb_02.jpg",
+            "jumpIds": [
+                106
+            ]
+        },
+        {
+            "filename": "Siege_00.jpg",
+            "jumpIds": [
+                28
+            ]
+        },
+        {
+            "filename": "Commando_03.jpg",
+            "jumpIds": [
+                49,
+                50,
+                69,
+                72,
+                94,
+                95,
+                112
+            ]
+        },
+        {
+            "filename": "Commando_04.jpg",
+            "jumpIds": [
+                51,
+                55,
+                57,
+                58,
+                59,
+                60,
+                62,
+                63,
+                64,
+                65,
+                66,
+                67,
+                148,
+                149,
+                150,
+                152,
+                153,
+                154
+            ]
+        },
+        {
+            "filename": "Commando_01.jpg",
+            "jumpIds": [
+                71,
+                74,
+                76,
+                77,
+                78
+            ]
+        },
+        {
+            "filename": "Penetrator_03.jpg",
+            "jumpIds": [
+                98,
+                100,
+                101
+            ]
+        },
+        {
+            "filename": "Commando_02.jpg",
+            "critParams": [
+                1,
+                3
+            ]
+        }
+    ],
+    "Diehard.qm": [
+        {
+            "filename": "Energy_00.jpg",
+            "locationIds": [
+                1
+            ]
+        },
+        {
+            "filename": "Diehard_01.jpg",
+            "locationIds": [
+                2,
+                23,
+                26
+            ]
+        },
+        {
+            "filename": "Diehard_03.jpg",
+            "locationIds": [
+                20
+            ]
+        },
+        {
+            "filename": "Diehard_02.jpg",
+            "locationIds": [
+                22
+            ]
+        },
+        {
+            "filename": "Ikebana_00.jpg",
+            "locationIds": [
+                28,
+                30,
+                34
+            ]
+        },
+        {
+            "filename": "Diehard_00.jpg",
+            "locationIds": [
+                31,
+                41
+            ]
+        },
+        {
+            "filename": "Diehard_01.jpg",
+            "jumpIds": [
+                2,
+                4,
+                7,
+                45
+            ]
+        },
+        {
+            "filename": "Diehard_03.jpg",
+            "jumpIds": [
+                53
+            ]
+        },
+        {
+            "filename": "Ikebana_00.jpg",
+            "critParams": [
+                1,
+                2,
+                5
+            ]
+        },
+        {
+            "filename": "Diehard_03.jpg",
+            "critParams": [
+                3
+            ]
+        }
+    ],
+    "Examen.qm": [
+        {
+            "filename": "Ikebana_00.jpg",
+            "locationIds": [
+                1,
+                7,
+                14,
+                17,
+                18,
+                37
+            ]
+        },
+        {
+            "filename": "Examen_02.jpg",
+            "locationIds": [
+                10
+            ]
+        },
+        {
+            "filename": "Examen_04.jpg",
+            "locationIds": [
+                11,
+                23
+            ]
+        },
+        {
+            "filename": "Examen_01.jpg",
+            "locationIds": [
+                13
+            ]
+        },
+        {
+            "filename": "Diamond_00.jpg",
+            "locationIds": [
+                20
+            ]
+        },
+        {
+            "filename": "Examen_03.jpg",
+            "locationIds": [
+                22
+            ]
+        },
+        {
+            "filename": "Examen_06.jpg",
+            "locationIds": [
+                33
+            ]
+        },
+        {
+            "filename": "Examen_00.jpg",
+            "locationIds": [
+                6,
+                32,
+                34,
+                35
+            ]
+        },
+        {
+            "filename": "Examen_05.jpg",
+            "locationIds": [
+                9,
+                19
+            ]
+        },
+        {
+            "filename": "Examen_00.jpg",
+            "jumpIds": [
+                18
+            ]
+        },
+        {
+            "filename": "Examen_05.jpg",
+            "jumpIds": [
+                25
+            ]
+        },
+        {
+            "filename": "Ikebana_00.jpg",
+            "critParams": [
+                7
+            ]
+        }
+    ],
+    "Fishing.qm": [
+        {
+            "filename": "Hachball_00.jpg",
+            "locationIds": [
+                131,
+                144,
+                145,
+                170
+            ]
+        },
+        {
+            "filename": "Fishing_03.jpg",
+            "locationIds": [
+                143,
+                156
+            ]
+        },
+        {
+            "filename": "Fishing_04.jpg",
+            "locationIds": [
+                144,
+                145,
+                148,
+                149,
+                170
+            ]
+        },
+        {
+            "filename": "Fishing_02.jpg",
+            "locationIds": [
+                147
+            ]
+        },
+        {
+            "filename": "Fishing_05.jpg",
+            "locationIds": [
+                167
+            ]
+        },
+        {
+            "filename": "Fishing_01.jpg",
+            "locationIds": [
+                172
+            ]
+        },
+        {
+            "filename": "Fishing_00.jpg",
+            "locationIds": [
+                35,
+                132,
+                142,
+                154
+            ]
+        },
+        {
+            "filename": "Fishing_01.jpg",
+            "jumpIds": [
+                340
+            ]
+        },
+        {
+            "filename": "Fishing_02.jpg",
+            "jumpIds": [
+                341
+            ]
+        },
+        {
+            "filename": "Fishing_06.jpg",
+            "jumpIds": [
+                375,
+                376,
+                378
+            ]
+        }
+    ],
+    "Galaxy.qm": [
+        {
+            "filename": "Galaxy_03.jpg",
+            "locationIds": [
+                1,
+                6,
+                9
+            ]
+        },
+        {
+            "filename": "Newflora_01.jpg",
+            "locationIds": [
+                10,
+                76,
+                84
+            ]
+        },
+        {
+            "filename": "Fishing_04.jpg",
+            "locationIds": [
+                11
+            ]
+        },
+        {
+            "filename": "Murder_01.jpg",
+            "locationIds": [
+                26
+            ]
+        },
+        {
+            "filename": "Prison_03.jpg",
+            "locationIds": [
+                27
+            ]
+        },
+        {
+            "filename": "Murder_03.jpg",
+            "locationIds": [
+                28
+            ]
+        },
+        {
+            "filename": "Murder_04.jpg",
+            "locationIds": [
+                35,
+                47,
+                73
+            ]
+        },
+        {
+            "filename": "Galaxy_01.jpg",
+            "locationIds": [
+                39,
+                40
+            ]
+        },
+        {
+            "filename": "Newflora_06.jpg",
+            "locationIds": [
+                4
+            ]
+        },
+        {
+            "filename": "Galaxy_00.jpg",
+            "locationIds": [
+                5,
+                56
+            ]
+        },
+        {
+            "filename": "Bank_08.jpg",
+            "locationIds": [
+                58
+            ]
+        },
+        {
+            "filename": "Examen_03.jpg",
+            "locationIds": [
+                59
+            ]
+        },
+        {
+            "filename": "Murder_05.jpg",
+            "locationIds": [
+                60
+            ]
+        },
+        {
+            "filename": "Murder_02.jpg",
+            "locationIds": [
+                61
+            ]
+        },
+        {
+            "filename": "Newflora_04.jpg",
+            "locationIds": [
+                62
+            ]
+        },
+        {
+            "filename": "Examen_02.jpg",
+            "locationIds": [
+                7,
+                55
+            ]
+        },
+        {
+            "filename": "Galaxy_02.jpg",
+            "locationIds": [
+                74
+            ]
+        },
+        {
+            "filename": "Bank_05.jpg",
+            "jumpIds": [
+                154,
+                155
+            ]
+        },
+        {
+            "filename": "Bank_02.jpg",
+            "jumpIds": [
+                4
+            ]
+        },
+        {
+            "filename": "Prison_02.jpg",
+            "jumpIds": [
+                57,
+                96
+            ]
+        }
+    ],
+    "Ikebana.qm": [
+        {
+            "filename": "Ikebana_00.jpg",
+            "locationIds": [
+                1,
+                12
+            ]
+        },
+        {
+            "filename": "Ikebana_01.jpg",
+            "locationIds": [
+                11
+            ]
+        },
+        {
+            "filename": "Examen_00.jpg",
+            "locationIds": [
+                3,
+                6,
+                7,
+                8,
+                9,
+                10
+            ]
+        },
+        {
+            "filename": "Ikebana_02.jpg",
+            "locationIds": [
+                4,
+                17
+            ]
+        },
+        {
+            "filename": "Ikebana_00.jpg",
+            "critParams": [
+                1
+            ]
+        }
+    ],
+    "Murder.qm": [
+        {
+            "filename": "Murder_00.jpg",
+            "locationIds": [
+                1,
+                47
+            ]
+        },
+        {
+            "filename": "Hachball_04.jpg",
+            "locationIds": [
+                12,
+                14
+            ]
+        },
+        {
+            "filename": "Prison_00.jpg",
+            "locationIds": [
+                16
+            ]
+        },
+        {
+            "filename": "Murder_05.jpg",
+            "locationIds": [
+                19,
+                37
+            ]
+        },
+        {
+            "filename": "Murder_01.jpg",
+            "locationIds": [
+                2,
+                9,
+                10,
+                11,
+                13,
+                15,
+                57
+            ]
+        },
+        {
+            "filename": "Murder_04.jpg",
+            "locationIds": [
+                20,
+                23,
+                59
+            ]
+        },
+        {
+            "filename": "Murder_03.jpg",
+            "locationIds": [
+                21,
+                44,
+                56
+            ]
+        },
+        {
+            "filename": "Siege_01.jpg",
+            "locationIds": [
+                36
+            ]
+        },
+        {
+            "filename": "Murder_02.jpg",
+            "locationIds": [
+                8,
+                17
+            ]
+        },
+        {
+            "filename": "Murder_02.jpg",
+            "jumpIds": [
+                37,
+                38,
+                39,
+                40,
+                41
+            ]
+        }
+    ],
+    "Prison1.qm": [
+        {
+            "filename": "Prison_00.jpg",
+            "locationIds": [
+                1
+            ]
+        },
+        {
+            "filename": "Galaxy_02.jpg",
+            "locationIds": [
+                110
+            ]
+        },
+        {
+            "filename": "Ikebana_01.jpg",
+            "locationIds": [
+                111
+            ]
+        },
+        {
+            "filename": "Hachball_05.jpg",
+            "locationIds": [
+                113
+            ]
+        },
+        {
+            "filename": "Prison_01.jpg",
+            "locationIds": [
+                13,
+                18,
+                23,
+                28,
+                96
+            ]
+        },
+        {
+            "filename": "Prison_09.jpg",
+            "locationIds": [
+                22
+            ]
+        },
+        {
+            "filename": "Prison_02.jpg",
+            "locationIds": [
+                24,
+                29,
+                30
+            ]
+        },
+        {
+            "filename": "Prison_05.jpg",
+            "locationIds": [
+                25,
+                48,
+                89
+            ]
+        },
+        {
+            "filename": "Prison_10.jpg",
+            "locationIds": [
+                34
+            ]
+        },
+        {
+            "filename": "Siege_03.jpg",
+            "locationIds": [
+                37,
+                105
+            ]
+        },
+        {
+            "filename": "Prison_07.jpg",
+            "locationIds": [
+                46
+            ]
+        },
+        {
+            "filename": "Prison_06.jpg",
+            "locationIds": [
+                49
+            ]
+        },
+        {
+            "filename": "Prison_08.jpg",
+            "locationIds": [
+                50
+            ]
+        },
+        {
+            "filename": "Prison_03.jpg",
+            "locationIds": [
+                52
+            ]
+        },
+        {
+            "filename": "Bank_09.jpg",
+            "locationIds": [
+                66
+            ]
+        },
+        {
+            "filename": "Hachball_01.jpg",
+            "locationIds": [
+                95
+            ]
+        },
+        {
+            "filename": "Prison_04.jpg",
+            "locationIds": [
+                98
+            ]
+        },
+        {
+            "filename": "Prison_02.jpg",
+            "jumpIds": [
+                106,
+                353
+            ]
+        },
+        {
+            "filename": "Examen_02.jpg",
+            "jumpIds": [
+                340,
+                341,
+                342
+            ]
+        },
+        {
+            "filename": "Fishing_01.jpg",
+            "jumpIds": [
+                39,
+                117,
+                123,
+                144,
+                174,
+                188,
+                220,
+                264,
+                333
+            ]
+        },
+        {
+            "filename": "Galaxy_02.jpg",
+            "jumpIds": [
+                55
+            ]
+        },
+        {
+            "filename": "Bank_09.jpg",
+            "jumpIds": [
+                87,
+                89
+            ]
+        }
+    ]
+}

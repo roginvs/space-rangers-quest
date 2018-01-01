@@ -5,6 +5,9 @@ import * as fs from 'fs';
 
 import { QMPlayer, QMImages } from './lib/qmplayer'
 
+const pqiSR1Parsed = JSON.parse(fs.readFileSync(__dirname + '/../src/sr1-pqi.json').toString()) as {
+    [questName: string]: QMImages
+};
 
 export type Origin = string;
 
@@ -229,8 +232,8 @@ const music = fs.readdirSync(dataSrcPath + '/music')
 
 
 
-const pqi = readPqi(dataSrcPath + '/PQI.txt');
-console.info(`Found ${Object.keys(pqi).length} quests in PQI.txt`);
+const pqiSR2Parsed = readPqi(dataSrcPath + '/PQI.txt');
+console.info(`Found ${Object.keys(pqiSR2Parsed).length} quests in PQI.txt`);
 //let pqiFound: string[] = [];
 
 
@@ -274,32 +277,30 @@ for (const origin of fs.readdirSync(dataSrcPath + '/qm')) {
                     .filter(id => (id - 1) % probablyThisQuestImages.length === fileIndex)
             }
         })
+        
 
         const qmmImagesList = getImagesListFromQmm(quest);
 
-        const pqiImages = pqi[gameName.toLowerCase()];
-        const images = qmmImagesList.length > 0 ? [] : (pqiImages || randomImages) ;
+        const pqi2Images = pqiSR2Parsed[gameName.toLowerCase()];
+        const pqi1Images = pqiSR1Parsed[qmShortName];
+        const images = qmmImagesList.length > 0 ? [] : (pqi2Images || pqi1Images || randomImages);
+        if (images === randomImages) {
+            warns.push(`No images for ${qmShortName}, using random`);
+        }
         //if (pqi[gameName.toLowerCase()]) {
         //pqiFound.push(gameName.toLowerCase());
         //}
         if (qmmImagesList.length > 0) {
             console.info(`Have ${qmmImagesList.length} qmm images`)
-            for (const imgFromQmm of qmmImagesList) {
-                if (allImages.indexOf(imgFromQmm.toLowerCase() + '.jpg') < 0) {
-                    warns.push(`Image ${imgFromQmm} is from ${qmShortName}, but not found in img dir`)
-                }
-            };    
-        } else {
-            if (pqiImages) {
-                for (const pqiImage of pqiImages) {
-                    if (allImages.indexOf(pqiImage.filename.toLowerCase()) < 0) {
-                        warns.push(`Image ${pqiImage.filename} is from PQI for ${qmShortName}, ` +
-                            `but not found in img dir`)
-                    }
-                }
+        }
+        
+        for (const pqiImage of images) {
+            if (allImages.indexOf(pqiImage.filename.toLowerCase()) < 0) {
+                warns.push(`Image ${pqiImage.filename} is from PQI for ${qmShortName}, ` +
+                    `but not found in img dir`)
             }
         }
-    
+        
         const gameFilePath = 'qm/' + qmShortName + '.gz';
         const game: Game = {
             filename: gameFilePath,
