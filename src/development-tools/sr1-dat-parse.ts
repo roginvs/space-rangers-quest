@@ -449,7 +449,7 @@ questRawPQI.split('\n').filter(x => x).map(line => {
         imagesPerQuest[questName] = [];
     }
     imagesPerQuest[questName].push({
-        filename: imageName + '.jpg',
+        filename: imageName.toLowerCase() + '.jpg',
         ...(type === 'L' ? {
             locationIds: ids.map(x => parseInt(x))
         } : undefined),
