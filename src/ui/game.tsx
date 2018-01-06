@@ -194,13 +194,14 @@ export class GamePlay extends React.Component<
                                 this.setState({
                                     jumpsCountForAnimation:
                                         this.state.jumpsCountForAnimation + 1
-                                });
-                                if (this.jumbotron) {
-                                    this.jumbotron.scrollIntoView({
-                                        block: "start",
-                                        behavior: "smooth"
-                                    });
-                                }
+                                }, () => {
+                                    if (this.jumbotron) {
+                                        this.jumbotron.scrollIntoView({
+                                            block: "start",
+                                            behavior: "smooth"
+                                        });
+                                    }
+                                })
                             }}
                             className={
                                 "game " + (choice.active ? "" : "disabled")
@@ -286,10 +287,7 @@ export class GamePlay extends React.Component<
                                             e.preventDefault();
                                             this.setState({
                                                 music: !this.state.music
-                                            });
-                                            setTimeout(() => {
-                                                this.saveState();
-                                            }, 10);
+                                            }, () => this.saveState())                                            
                                         }}
                                     >
                                         {this.props.lang === "rus"
