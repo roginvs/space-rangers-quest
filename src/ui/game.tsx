@@ -176,13 +176,13 @@ export class GamePlay extends React.Component<
                 return (
                     <li key={choice.jumpId} className="mb-4">
                         <a
-                            href="#"
+                            href={`#${this.props.gameName}`}
                             onClick={e => {
                                 if (this.state.music && this.audio) {
                                     this.audio.play();
                                 }
 
-                                e.preventDefault();
+                                // e.preventDefault();
                                 this.props.player.performJump(choice.jumpId);
                                 this.saveState();
                                 if (
@@ -194,13 +194,14 @@ export class GamePlay extends React.Component<
                                 this.setState({
                                     jumpsCountForAnimation:
                                         this.state.jumpsCountForAnimation + 1
-                                }, () => {
+                                }, () => {   
+                                    /*                                 
                                     if (this.jumbotron) {
                                         this.jumbotron.scrollIntoView({
                                             block: "start",
                                             behavior: "smooth"
                                         });
-                                    }
+                                    }*/                                                      
                                 })
                             }}
                             className={
@@ -316,6 +317,7 @@ export class GamePlay extends React.Component<
                         </div>
                     </nav>
 
+                    <div id={this.props.gameName}/>
                     <div className="jumbotron" ref={e => (this.jumbotron = e)}>
                         <div className="container">
                             <div className="row mb-1">
