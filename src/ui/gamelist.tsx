@@ -77,7 +77,11 @@ export class GameList extends React.Component<{
             used: number,
             remaining: number,
             persistent: boolean | undefined
-        }
+        },
+        buildInfo?: {
+            "hash": string,
+            "date": string
+          }
     }> {
     constructor(props: any) {
         super(props);
@@ -133,6 +137,7 @@ export class GameList extends React.Component<{
             this.setState({ error: `Ошибка: ${e.message}` })
         })
 
+        getJson('version.json').then(buildInfo => this.setState({buildInfo}));
         
         if (navigator.storage) {
             navigator.storage.persisted().then(persisted => {                
@@ -479,8 +484,11 @@ export class GameList extends React.Component<{
                 </div>
 
                 <footer className="footer">
-		    <div className="pt-2 pb-1 px-1">
-                        <p className="text-center"><a href="https://github.com/roginvs/space-rangers-quest">https://github.com/roginvs/space-rangers-quest</a></p>
+		    <div className="pt-2 pb-1 px-1">                    
+                        <p className="text-center">
+                        Build at {this.state.buildInfo ? new Date(this.state.buildInfo.date).toLocaleString() : '<loading>'}
+                        <br/>
+                        <a href="https://github.com/roginvs/space-rangers-quest">https://github.com/roginvs/space-rangers-quest</a></p>                        
 		    </div>
                 </footer>
             </div >
