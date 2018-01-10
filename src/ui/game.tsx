@@ -375,8 +375,9 @@ export class GamePlay extends React.Component<
                                                             index
                                                         }
                                                         style={{
-                                                            // whiteSpace: "pre",
-                                                            textAlign: "center"
+                                                            whiteSpace: "pre-wrap",
+                                                            textAlign: "center",
+                                                            minHeight: '1em'
                                                         }}
                                                         dangerouslySetInnerHTML={this.replaceTags(
                                                             paramText
