@@ -15,6 +15,7 @@ const engineUrls = [
     "favicon.png",
     "manifest.json",
     INDEX_JSON,
+    `version.json`,
     `version.json?${ENGINE_VERSION}`
 ];
 
