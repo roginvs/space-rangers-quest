@@ -167,10 +167,8 @@ export class QMPlayer {
                 if (val !== 0 || param.showWhenZero) {
                     for (const range of param.showingInfo) {
                         if (val >= range.from && val <= range.to) {
-                            let str = this.replace(range.str, i);
-                            if (str) {
-                                paramsState.push(str);
-                            }
+                            let str = this.replace(range.str, i);                            
+                            paramsState.push(str);                            
                             break;
                         }
                     }
