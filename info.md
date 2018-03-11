@@ -7,8 +7,10 @@
         - [d1], [d1:2] 
     - check all quests for locationVisitLimit
     
-    
-#Веб версия
+# qmplayer
+	- Seedable random, do not store "possible jumps" in saving
+	
+# Веб версия
     - serviceWorker установка сделать прилично
     - Установку вынести в отдельный view
         - Отдельные кнопки чтобы класть в кэш музыку и картинки
@@ -18,6 +20,8 @@
     - Включаемый фон из оригинальной игры
     - Редактирование имени рейнджера
 
+	- интергация c VK, запись пройденных игр, статус прохождения, настройки имён
+	
     + ios safari no music (wontfix)
     + img 343 * 392
     + Header: Имя, Сначала, Музыка, Выход
