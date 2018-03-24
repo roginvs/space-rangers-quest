@@ -62,13 +62,13 @@ async function loadGame(game: Game) {
     return player
 }
 export class GameList extends React.Component<{
+    index: Index,
 }, {
         gamePlaying?: {
             player: QMPlayer,
             gameName: string,
         },
-        loading?: string,
-        index?: Index,
+        loading?: string,        
         error?: string,
         passedQuestsGameNames: string[],
         lang: 'rus' | 'eng',
@@ -96,19 +96,13 @@ export class GameList extends React.Component<{
             console.warn(`Unable to read stored passed quests`, e)
         };
         this.state = {
-            passedQuestsGameNames,
-            loading: 'Загрузка списка',
-            index: undefined,
+            passedQuestsGameNames,            
             error: undefined,
             lang: localStorage.getItem(LANG) !== 'eng' ? 'rus' : 'eng',
             serviceWorkerBusy: undefined,
             storageInfo: undefined
         };
-        (async () => {
-            const index = await getJson(INDEX_JSON) as Index;
-            this.setState({
-                index
-            })
+        (async () => {            
             const runningGame = localStorage.getItem(GAME_NAME) || document.location.hash.replace(/^#/, '');
             if (runningGame) {
                 const game = this.quests.find(x => x.gameName === runningGame);
@@ -189,12 +183,8 @@ export class GameList extends React.Component<{
             clearInterval(this.spaceTimer);
         }
     }
-    get quests() {
-        if (!this.state.index) {
-            return []
-        } else {
-            return this.state.index.quests.filter(x => x.lang === this.state.lang)
-        }
+    get quests() {    
+            return this.props.index.quests.filter(x => x.lang === this.state.lang)        
     };
     render() {
         const currentSelectedOrigin = localStorage.getItem(GAME_LIST_FILTER);
@@ -298,7 +288,7 @@ export class GameList extends React.Component<{
                                         this.setState({
                                             serviceWorkerBusy: 'No old'
                                         })   
-                                        return Promise.resolve();
+                                        return Promise.resolve(true);
                                     }
                                 })
                                 .then(() => {
@@ -495,7 +485,7 @@ export class GameList extends React.Component<{
         } else {
             return <GamePlay {...this.state.gamePlaying}
                 lang={this.state.lang}
-                musicList={this.state.index ? this.state.index.dir.music.files.map(x => x.path) : []}
+                musicList={this.props.index ? this.props.index.dir.music.files.map(x => x.path) : []}
                 onPassed={() => {
                     if (this.state.gamePlaying) {
                         if (this.state.passedQuestsGameNames.indexOf(this.state.gamePlaying.gameName) < 0) {
