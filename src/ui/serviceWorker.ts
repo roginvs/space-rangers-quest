@@ -6,7 +6,7 @@ import { Index } from "../packGameData";
     Right now only purpose of this is to make serviceWorker code changed
         in order to make all installions to reinstall to most up-to-date version
 */
-const ENGINE_VERSION = 7;
+const ENGINE_VERSION = 8;
 
 const engineUrls = [
     "/",
