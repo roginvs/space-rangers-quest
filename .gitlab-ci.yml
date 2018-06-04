@@ -7,8 +7,8 @@ pages:
 #  - npm install
   - chmod a+x node_modules/.bin/*
   - mkdir build-web
-  - npm run tsc  
-  - npm run test  
+  - npm run tsc
+  - npm run test
   - mv coverage build-web
   - node build-node/packGameData.js
   - npm run build
