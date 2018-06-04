@@ -6,9 +6,10 @@ pages:
 #  - rm -R node_modules
 #  - npm install
   - chmod a+x node_modules/.bin/*
-  - npm run tsc  
-  - npm run test
   - mkdir build-web
+  - npm run tsc  
+  - npm run test  
+  - mv coverage build-web
   - node build-node/packGameData.js
   - npm run build
   - mv build-web public

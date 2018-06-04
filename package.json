@@ -33,6 +33,7 @@
     "deep-diff": "^0.3.8",
     "extract-text-webpack-plugin": "^2.1.2",
     "file-loader": "^0.11.2",
+    "nyc": "^12.0.2",
     "source-map-loader": "^0.2.1",
     "style-loader": "^0.18.2",
     "ts-loader": "^2.0.3",
@@ -44,7 +45,7 @@
   },
   "scripts": {
     "tsc": "tsc",
-    "test": "tsc && mocha --bail build-node/test",
+    "test": "tsc && nyc --reporter=html --reported=text mocha --bail build-node/test",
     "build": "webpack -p --devtool nosources-source-map --progress",
     "start": "webpack-dev-server --progress"
   },
