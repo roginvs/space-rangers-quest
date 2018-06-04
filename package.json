@@ -45,7 +45,7 @@
   },
   "scripts": {
     "tsc": "tsc",
-    "test": "tsc && nyc --reporter=html --reported=text mocha --bail build-node/test",
+    "test": "tsc && nyc --reporter=html --reporter=text mocha --bail build-node/test",
     "build": "webpack -p --devtool nosources-source-map --progress",
     "start": "webpack-dev-server --progress"
   },
