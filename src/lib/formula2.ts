@@ -1,3 +1,5 @@
+import * as assert from 'assert';
+
 export const MAX_NUMBER = 2000000000;
 type Params = number[];
 
@@ -91,13 +93,14 @@ function Scanner(str: string) {
         char === '[' ? SyntaxKind.OpenParenToken :
         char === ']' ? SyntaxKind.CloseParenToken :
         char === '/' ? SyntaxKind.SlashToken :
-        char === '+' ? SyntaxKind.AsteriskToken :
-        char === '-' ? SyntaxKind.AsteriskToken :
+        char === '*' ? SyntaxKind.AsteriskToken :
+        char === '+' ? SyntaxKind.PlusToken :
+        char === '-' ? SyntaxKind.MinusToken  :
         char === '=' ? SyntaxKind.EqualsToken :
         undefined
     } 
-    function lookAhead() {
-        return pos < end - 1 ? str[pos+1] : undefined
+    function lookAhead(charCount: number = 1) {
+        return pos + charCount < end ? str[pos + charCount] : undefined
     }
 
     function scanIdentifierOrKeyword(): Token | undefined {     
@@ -118,37 +121,34 @@ function Scanner(str: string) {
 
     function scanNumber() {
         let dotSeen = false;
-
         const start = pos;
-        while (pos < end) {
-            pos++;
+
+        while (pos < end) {            
             const char = str[pos];
-            if (!char) {
-                break
-            } else if (isDigit(char)) {
+            if (isDigit(char)) {
                 // ok
             } else if (char === '.') {
                 if (dotSeen) {
                     break
                 }
-                const nextChar = lookAhead();
-                if (nextChar !== '.') {
+                const nextNextChar = lookAhead();
+                if (nextNextChar !== '.') {
                     dotSeen = true;                    
-                } else {
-                    pos--;
+                } else {                    
                     break
                 }
             } else {
                 break
             }
-        }
+
+            pos++;
+        }        
         const token = {
             kind: SyntaxKind.NumericLiteral,
             start,
-            end: pos + 1,
-            text: str.slice(start, pos + 1),
-        }
-        pos++;
+            end: pos,
+            text: str.slice(start, pos),
+        }        
         return token
     }
 
@@ -248,19 +248,25 @@ function Scanner(str: string) {
 
 
 export function parse(str: string, params: Params = []) {
-    const tokens: Token[] = [];
+    const tokensAndWhitespace: Token[] = [];
     const scanner = Scanner(str);
-    console.info(str);
     while (true) {
         const token = scanner();
         if (token) {
-            tokens.push(token)
-            console.info(token)
+            tokensAndWhitespace.push(token);
+   //         console.info(token);
         } else {
             break
         }
     }
-    
+    for (const sanityCheckToken of tokensAndWhitespace) {
+        assert.strictEqual(sanityCheckToken.text, str.slice(sanityCheckToken.start, sanityCheckToken.end));
+        assert.strictEqual(sanityCheckToken.text.length, sanityCheckToken.end - sanityCheckToken.start);
+    }
+//    console.info(str);
+//    console.info(tokensAndWhitespace.map(x => x.text).join(''))
+    assert.strictEqual(str, tokensAndWhitespace.map(x => x.text).join(''));
+    const tokens = tokensAndWhitespace.filter(x => x.kind !== SyntaxKind.WhiteSpaceTrivia);
     // console.info(tokens);
 }
 
