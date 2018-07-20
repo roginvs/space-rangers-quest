@@ -62,6 +62,14 @@ interface Token {
     text: string,
 }
 
+const enum ExpressionType {
+    Number = 'number',
+    Range = 'range',
+    Parameter = 'parameter',
+    Binary = 'binary',
+    Unary = 'unary',
+}
+
 function Scanner(str: string) {
     let pos = 0;
     let end = str.length;
@@ -246,6 +254,9 @@ function Scanner(str: string) {
     return scan;
 }
 
+function tokenStreamToAst(tokens: Token[]) {
+    //
+}
 
 export function parse(str: string, params: Params = []) {
     const tokensAndWhitespace: Token[] = [];
