@@ -38,22 +38,25 @@ describe(`Checking all quests for formulas and params substitution`, function ()
                     }
                 }
                 function checkFormula(str: string, place = '') {
-                    const staticRandom = Array(20).fill(0).map(x => Math.random());
-                    function createRandom() {
+                    const staticRandomGenerated = Array(4).fill(0).map(x => Math.random());
+                    function createRandom(staticRandom: number[]) {
                         let i = 0;                        
                         return () => {
                             i++;
                             if (i >= staticRandom.length) {
+                                throw new Error(`Lots of random`)
                                 i = 0;
                             }
                             return staticRandom[i]
                         }
                     }
                     try {
-                        const oldFormulaResult = formula.parse(str, params, createRandom());
-                        const newFormulaResult = formula2.parse(str, params, createRandom());
+                        const oldFormulaResult = formula.parse(str, params, createRandom(staticRandomGenerated));
+                        const newFormulaResult = formula2.parse(str, params, createRandom(staticRandomGenerated));
                         if (oldFormulaResult !== newFormulaResult) {
-                            console.info(`!!!!! staticRandom=[${staticRandom.join(', ')}]\n` + 
+                            console.info(`!!!!!\n\nconst staticRandom=[${staticRandomGenerated.join(', ')}];\n` + 
+                            `const params=[${params.join(', ')}];\n` +
+                            `const str="${str}";\n` +
                         `oldFormulaResult=${oldFormulaResult} newFormulaResult=${newFormulaResult}\n`+
                          `'${str}'`);
                             throw new Error('New formula fail')

@@ -146,12 +146,12 @@ function Scanner(str: string) {
             const char = str[pos];
             if (isDigit(char)) {
                 // ok
-            } else if (char === ".") {
+            } else if (char === "." || char === ",") {
                 if (dotSeen) {
                     break;
                 }
                 const nextNextChar = lookAhead();
-                if (nextNextChar !== ".") {
+                if (nextNextChar !== "." && nextNextChar !== ",") {
                     dotSeen = true;
                 } else {
                     break;
@@ -371,12 +371,15 @@ function parseParenExpression(tokens: Token[]) {
         const ranges: Range[] = [];
 
         let i = 0;
-        while (i < tokens.length) {                        
-            if (i < tokens.length && tokens[i].kind === SyntaxKind.SemicolonToken) {                             
+        while (i < tokens.length) {
+            if (
+                i < tokens.length &&
+                tokens[i].kind === SyntaxKind.SemicolonToken
+            ) {
                 i++;
-            }            
+            }
             if (i >= tokens.length) {
-                throw new Error(`Expected values at ${i}`)
+                throw new Error(`Expected values at ${i}`);
             }
 
             const rangePartStart = i;
@@ -385,7 +388,7 @@ function parseParenExpression(tokens: Token[]) {
                 tokens[i].kind !== SyntaxKind.SemicolonToken
             ) {
                 i++;
-            }                    
+            }
             const rangePartEnd = i;
 
             let rangeLeftI = rangePartStart;
@@ -425,7 +428,7 @@ function parseParenExpression(tokens: Token[]) {
                     )
                 });
             }
-        }        
+        }
         const exp: RangeExpression = {
             type: ExpressionType.Range,
             ranges
@@ -451,7 +454,7 @@ function makeFlatExpression(tokens: Token[]) {
         } else if (token.kind === SyntaxKind.NumericLiteral) {
             const exp: NumberExpression = {
                 type: ExpressionType.Number,
-                value: parseFloat(token.text)
+                value: parseFloat(token.text.replace(",", "."))
             };
             flatExpression.push(exp);
         } else if (token.kind === SyntaxKind.OpenBraceToken) {
@@ -546,6 +549,7 @@ function parseExpression(tokensInput: Token[]): Expression {
                   }
                 | undefined = undefined;
             let i = 1;
+            
             while (i + 1 < exps.length) {
                 const left = exps[i - 1];
                 const middle = exps[i];
@@ -560,7 +564,7 @@ function parseExpression(tokensInput: Token[]): Expression {
                             }`
                         );
                     }
-                    if (!lowest || lowest.prio > prio) {
+                    if (!lowest || lowest.prio >= prio) {
                         lowest = {
                             idx: i,
                             prio,
@@ -577,7 +581,7 @@ function parseExpression(tokensInput: Token[]): Expression {
             const left = exps.slice(0, lowest.idx);
             const right = exps.slice(lowest.idx + 1);
             const exp: BinaryExpression = {
-                type: ExpressionType.Binary,
+                type: ExpressionType.Binary,                                
                 left: parseFlatExpression(left),
                 right: parseFlatExpression(right),
                 operator: lowest.oper
@@ -593,17 +597,14 @@ function numberMinMax(n: number) {
 }
 
 interface RangeCalculated {
-    from: number,
-    to: number
+    from: number;
+    to: number;
 }
 
-function pickRandomForRanges(
-    ranges: RangeCalculated[],    
-    random: () => number
-) {
+function pickRandomForRanges(ranges: RangeCalculated[], random: () => number) {
     const totalValuesAmount = ranges.reduce((totalItems, range) => {
         return totalItems + range.to - range.from + 1;
-    }, 0);    
+    }, 0);
     let rnd = Math.floor(random() * totalValuesAmount);
     for (const range of ranges) {
         const len = range.to - range.from + 1;
@@ -679,12 +680,10 @@ function calculateAst(
                 to: newRangeMax
             }
         ];
-        return newRanges;    
+        return newRanges;
     }
     function calculateRange(node: Expression): RangeCalculated[] {
-        if (
-            node.type !== ExpressionType.Range
-        ) {
+        if (node.type !== ExpressionType.Range) {
             throw new Error("Wrong usage");
         }
         return node.ranges.map(range => {
@@ -693,9 +692,9 @@ function calculateAst(
             const reversed = from > to;
             return {
                 from: reversed ? to : from,
-                to: reversed ? from : to,
-            }
-        })
+                to: reversed ? from : to
+            };
+        });
     }
 
     if (ast.type === ExpressionType.Number) {
@@ -749,9 +748,7 @@ function calculateAst(
             const left = reversed ? ast.right : ast.left;
             const right = reversed ? ast.left : ast.right;
 
-            const leftVal = numberMinMax(
-                calculateAst(left, params, random)
-            );
+            const leftVal = numberMinMax(calculateAst(left, params, random));
             const ranges =
                 right.type === ExpressionType.Range
                     ? calculateRange(right)
@@ -821,7 +818,7 @@ function calculateAst(
         } else {
             throw new Error(`Unknown unary operator`);
         }
-    } else if (ast.type === ExpressionType.Range) {        
+    } else if (ast.type === ExpressionType.Range) {
         return pickRandomForRanges(calculateRange(ast), random);
     } else {
         throw new Error(`Unknown ast type`);
@@ -829,7 +826,7 @@ function calculateAst(
 }
 
 export function parse(str: string, params: Params = [], random = Math.random) {
-    //console.info(`Parsing '${str}'`);
+    // console.info(`Parsing '${str}'`);
     const tokensAndWhitespace: Token[] = [];
     const scanner = Scanner(str);
     while (true) {
@@ -871,4 +868,24 @@ export function parse(str: string, params: Params = [], random = Math.random) {
 
 // console.info(parse("[-2]"));
 //console.info(parse("[-3;-3;-3..-3]"));
-console.info(parse("3 + [1;3;6..9] - 3"));
+//console.info(parse("3 + [1;3;6..9] - 3"));
+//console.info(parse("[p11]-[5..30]*0,4"));
+
+const staticRandom=[0.13909467986421675, 0.3896875703739122, 0.9433468264037868, 0.47331477136290645];
+const params=[0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256, 289, 324, 361, 400, 441, 484, 529, 576, 625, 676, 729, 784, 841, 900, 961, 1024, 1089, 1156, 1225, 1296, 1369, 1444, 1521, 1600, 1681, 1764, 1849, 1936, 2025, 2116, 2209, 2304, 2401, 2500, 2601, 2704, 2809, 2916, 3025, 3136, 3249, 3364, 3481, 3600, 3721, 3844, 3969, 4096, 4225, 4356, 4489, 4624, 4761, 4900, 5041, 5184, 5329, 5476, 5625, 5776, 5929, 6084, 6241, 6400, 6561, 6724, 6889, 7056, 7225, 7396, 7569, 7744, 7921, 8100, 8281, 8464, 8649, 8836, 9025];
+const str="[110..140]-[10..20]*[p46]";
+// expected = -397
+
+function createRandom() {
+    let i = 0;
+    return () => {
+        i++;
+        if (i >= staticRandom.length) {
+            i = 0;
+        }
+        return staticRandom[i];
+    };
+}
+
+console.info(parse(str, params, createRandom()));
+console.info(params[46], 'want ~ -28000');
