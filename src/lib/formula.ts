@@ -5,7 +5,7 @@ interface Operation {
     longSymbol: string,
     shortSymbol: string,
     prio: number,
-    fBinary: (a: Arg, b: Arg) => Arg
+    fBinary: (a: Arg, b: Arg, random: () => number) => Arg
 }
 
 export const MAX_NUMBER = 2000000000;
@@ -36,7 +36,7 @@ function parseRange(arg: string) {
     });
 }
 
-function argToNumber(arg: Arg) {
+function argToNumber(arg: Arg, random: () => number) {
     if (typeof (arg) === 'number') {
         return arg
     } else {
@@ -50,7 +50,7 @@ function argToNumber(arg: Arg) {
                 const [low, high] = range;
                 return totalItems + high - low + 1;
             }, 0);
-            let rnd = Math.floor(Math.random() * totalValuesAmount);
+            let rnd = Math.floor(random() * totalValuesAmount);
             for (const range of ranges) {
                 const len = range[1] - range[0] + 1;
                 // console.info(`Range=${range[0]}..${range[1]}, rnd=${rnd}, len=${len}`)
@@ -106,9 +106,9 @@ const operations: Operation[] = [
         longSymbol: '/',
         shortSymbol: '/',
         prio: 1,
-        fBinary: (a, b) => {
-            const numA = argToNumber(a);
-            const numB = argToNumber(b);
+        fBinary: (a, b, random) => {
+            const numA = argToNumber(a, random);
+            const numB = argToNumber(b, random);
             if (numB !== 0) {
                 return numA / numB
             } else {
@@ -120,9 +120,9 @@ const operations: Operation[] = [
         longSymbol: 'div',
         shortSymbol: 'f',
         prio: 1,
-        fBinary: (a, b) => {
-            const numA = argToNumber(a);
-            const numB = argToNumber(b);
+        fBinary: (a, b, random) => {
+            const numA = argToNumber(a, random);
+            const numB = argToNumber(b, random);
             if (numB !== 0) {
                 const div = numA / numB;
                 return floorCeil(div)
@@ -135,9 +135,9 @@ const operations: Operation[] = [
         longSymbol: 'mod',
         shortSymbol: 'g',
         prio: 1,
-        fBinary: (a, b) => {
-            const numA = argToNumber(a);
-            const numB = argToNumber(b);
+        fBinary: (a, b, random) => {
+            const numA = argToNumber(a, random);
+            const numB = argToNumber(b, random);
             if (numB !== 0) {
                 return numA % numB
             } else {
@@ -150,27 +150,27 @@ const operations: Operation[] = [
         longSymbol: '*',
         shortSymbol: '*',
         prio: 2,
-        fBinary: (a, b) => {
-            return argToNumber(a) * argToNumber(b)
+        fBinary: (a, b, random) => {
+            return argToNumber(a, random) * argToNumber(b, random)
         }
     },
     {
         longSymbol: '-',
         shortSymbol: '-',
         prio: 3,
-        fBinary: (a, b) => argToNumber(a) - argToNumber(b),
+        fBinary: (a, b, random) => argToNumber(a, random) - argToNumber(b, random),
     },
     {
         longSymbol: '+',
         shortSymbol: '+',
         prio: 4,
-        fBinary: (a, b) => argToNumber(a) + argToNumber(b)
+        fBinary: (a, b, random) => argToNumber(a, random) + argToNumber(b, random)
     },
     {
         longSymbol: 'to',
         shortSymbol: '$',
         prio: 5,
-        fBinary: (a, b) => {
+        fBinary: (a, b, random) => {
             const rangeA = typeof (a) === 'string' ? parseRange(a) : [[a, a]];
             const rangeB = typeof (b) === 'string' ? parseRange(b) : [[b, b]];
             if (rangeA.length === 0) {
@@ -193,12 +193,12 @@ const operations: Operation[] = [
         longSymbol: 'in',
         shortSymbol: '#',
         prio: 6,
-        fBinary: (a, b) => {
+        fBinary: (a, b, random) => {
             if (typeof (a) === 'number' && typeof (b) === 'number') {
                 return a === b ? 1 : 0
             } else {
                 let [val, ranges] =
-                    typeof (a) === 'string' && typeof (b) === 'string' ? [argToNumber(a), b] :
+                    typeof (a) === 'string' && typeof (b) === 'string' ? [argToNumber(a, random), b] :
                         typeof (a) === 'number' && typeof (b) === 'string' ? [a, b] :
                             typeof (a) === 'string' && typeof (b) === 'number' ? [b, a] :
                                 [undefined, undefined];
@@ -223,50 +223,50 @@ const operations: Operation[] = [
         longSymbol: '>=',
         shortSymbol: 'c',
         prio: 7,
-        fBinary: (a, b) => argToNumber(a) >= argToNumber(b) ? 1 : 0
+        fBinary: (a, b, random) => argToNumber(a, random) >= argToNumber(b, random) ? 1 : 0
     },
     {
         longSymbol: '<=',
         shortSymbol: 'b',
         prio: 7,
-        fBinary: (a, b) => argToNumber(a) <= argToNumber(b) ? 1 : 0
+        fBinary: (a, b, random) => argToNumber(a, random) <= argToNumber(b, random) ? 1 : 0
     },
     {
         longSymbol: '>',
         shortSymbol: '>',
         prio: 7,
-        fBinary: (a, b) => argToNumber(a) > argToNumber(b) ? 1 : 0
+        fBinary: (a, b, random) => argToNumber(a, random) > argToNumber(b, random) ? 1 : 0
     },
     {
         longSymbol: '<',
         shortSymbol: '<',
         prio: 7,
-        fBinary: (a, b) => argToNumber(a) < argToNumber(b) ? 1 : 0
+        fBinary: (a, b, random) => argToNumber(a, random) < argToNumber(b, random) ? 1 : 0
     },
     {
         longSymbol: '=',
         shortSymbol: '=',
         prio: 7,
-        fBinary: (a, b) => argToNumber(a) === argToNumber(b) ? 1 : 0
+        fBinary: (a, b, random) => argToNumber(a, random) === argToNumber(b, random) ? 1 : 0
     },
     {
         longSymbol: '<>',
         shortSymbol: 'e',
         prio: 7,
-        fBinary: (a, b) => argToNumber(a) !== argToNumber(b) ? 1 : 0
+        fBinary: (a, b, random) => argToNumber(a, random) !== argToNumber(b, random) ? 1 : 0
     },
 
     {
         longSymbol: 'and',
         shortSymbol: '&',
         prio: 8,
-        fBinary: (a, b) => argToNumber(a) && argToNumber(b) ? 1 : 0
+        fBinary: (a, b, random) => argToNumber(a, random) && argToNumber(b, random) ? 1 : 0
     },
     {
         longSymbol: 'or',
         shortSymbol: '|',
         prio: 9,
-        fBinary: (a, b) => argToNumber(a) || argToNumber(b) ? 1 : 0
+        fBinary: (a, b, random) => argToNumber(a, random) || argToNumber(b, random) ? 1 : 0
     },
 ]
 
@@ -303,7 +303,7 @@ function debug(deep: number, text: string) {
 }
 type Params = number[];
 
-function parseRecursive(deep: number, str: string, params: Params): number | string {
+function parseRecursive(deep: number, str: string, params: Params, random: () => number): number | string {
     debug(deep, `Parsing str='${str}'`)
     if (!str) {
         // return 0
@@ -381,13 +381,13 @@ function parseRecursive(deep: number, str: string, params: Params): number | str
         debug(deep, `String '${str}' have operand ${oper.operation.longSymbol}, ` +
             `will parse '${a}' and '${b}'`);
         if (a) {
-            const aparse = parseRecursive(deep + 1, a, params);
-            const bparse = parseRecursive(deep + 1, b, params);
+            const aparse = parseRecursive(deep + 1, a, params, random);
+            const bparse = parseRecursive(deep + 1, b, params, random);
             debug(deep, `String '${str}' have one operand ${oper.operation.longSymbol}, ` +
                 `will call operand with a='${a}',aparsed='${aparse}',atype=${typeof (aparse)} ` +
                 `and b='${b}',bparsed='${bparse}',type=${typeof (bparse)}`);
             if (oper.operation.fBinary) {
-                const val = oper.operation.fBinary(aparse, bparse);
+                const val = oper.operation.fBinary(aparse, bparse, random);
                 debug(deep, `Operand ${oper.operation.longSymbol} returned '${val}'`)
                 return val;
             } else {
@@ -395,10 +395,10 @@ function parseRecursive(deep: number, str: string, params: Params): number | str
             }
         } else {
             if (oper.operation.shortSymbol === '-') {
-                const bparse = parseRecursive(deep + 1, b, params);
+                const bparse = parseRecursive(deep + 1, b, params, random);
                 debug(deep, `String '${str}' have one operand ${oper.operation.longSymbol}, ` +
                     `will call operand with unary '${b}'`);
-                return 0 - argToNumber(bparse)
+                return 0 - argToNumber(bparse, random)
             } else {
                 throw new Error(`Usage of ${oper.operation.longSymbol} as Unary in ${str}`)
             }
@@ -406,7 +406,7 @@ function parseRecursive(deep: number, str: string, params: Params): number | str
     }
 }
 
-export function parse(str: string, params: Params = []) {
+export function parse(str: string, params: Params = [], random = Math.random) {
     debug(0, `\nInput=${str}`);
     while (true) {
         let wasOneReplace = false;
@@ -423,9 +423,9 @@ export function parse(str: string, params: Params = []) {
     }
     str = str.replace(/\r|\n/g,'').replace(/ /g, '');
     debug(0, `Preprocessed=${str}`)
-    const parsed = parseRecursive(0, str, params);
+    const parsed = parseRecursive(0, str, params, random);
     debug(0, `Parsed=${parsed}`);
-    const result = Math.round(argToNumber(parsed));
+    const result = Math.round(argToNumber(parsed, random));
     debug(0, `Result=${result}`)
     return result
 }

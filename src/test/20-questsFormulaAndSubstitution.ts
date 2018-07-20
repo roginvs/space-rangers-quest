@@ -6,6 +6,7 @@ import { QMPlayer, GameState, Player } from '../lib/qmplayer'
 import { parse, QM } from '../lib/qmreader';
 import { substitute } from '../lib/substitution';
 import * as formula from '../lib/formula';
+import * as formula2 from '../lib/formula2';
 
 
 const srcDir = __dirname + `/../../borrowed/qm/`;
@@ -37,8 +38,26 @@ describe(`Checking all quests for formulas and params substitution`, function ()
                     }
                 }
                 function checkFormula(str: string, place = '') {
+                    const staticRandom = Array(20).fill(0).map(x => Math.random());
+                    function createRandom() {
+                        let i = 0;                        
+                        return () => {
+                            i++;
+                            if (i >= staticRandom.length) {
+                                i = 0;
+                            }
+                            return staticRandom[i]
+                        }
+                    }
                     try {
-                        formula.parse(str, params);
+                        const oldFormulaResult = formula.parse(str, params, createRandom());
+                        const newFormulaResult = formula2.parse(str, params, createRandom());
+                        if (oldFormulaResult !== newFormulaResult) {
+                            console.info(`!!!!! staticRandom=[${staticRandom.join(', ')}]\n` + 
+                        `oldFormulaResult=${oldFormulaResult} newFormulaResult=${newFormulaResult}\n`+
+                         `'${str}'`);
+                            throw new Error('New formula fail')
+                        }
                     } catch (e) {
                         throw new Error(`String failed '${str}' with ${e} in ${place}`);
                     }
