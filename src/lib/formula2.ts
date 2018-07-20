@@ -156,6 +156,8 @@ function Scanner(str: string) {
                 } else {
                     break;
                 }
+            } else if (char === "-" && pos === start) {
+                // Ok here
             } else {
                 break;
             }
@@ -245,7 +247,10 @@ function Scanner(str: string) {
             return token;
         }
 
-        if (isDigit(char)) {
+        if (
+            isDigit(char) ||
+            (char === "-" && lookAheadChar && isDigit(lookAheadChar))
+        ) {
             return scanNumber();
         }
         const oneCharKind = oneCharTokenToKind(char);
@@ -365,37 +370,55 @@ function parseParenExpression(tokens: Token[]) {
     } else {
         const ranges: Range[] = [];
         let i = 0;
+
+        throw new Error('TODO TODO: make it work')
         while (i < tokens.length) {
-            if (i + 2 >= tokens.length) {
-                throw new Error(`Unknown ranges at ${tokens[i].start}`);
-            }
-            const fromToken = tokens[i];
-            if (fromToken.kind !== SyntaxKind.NumericLiteral) {
+            const firstToken = tokens[i];
+            if (firstToken.kind !== SyntaxKind.NumericLiteral) {
                 throw new Error(
-                    `Range start expecting to be a number at ${fromToken.start}`
+                    `Range start expecting to be a number at ${
+                        firstToken.start
+                    }`
                 );
             }
-            const dotdotToken = tokens[i + 1];
-            if (dotdotToken.kind !== SyntaxKind.DotDotToken) {
-                throw new Error(`Range expecting .. at ${dotdotToken.start}`);
-            }
-            const toToken = tokens[i + 2];
-            if (toToken.kind !== SyntaxKind.NumericLiteral) {
-                throw new Error(
-                    `Range end expecting to be a number at ${toToken.start}`
-                );
-            }
-            ranges.push({
-                from: parseInt(fromToken.text),
-                to: parseInt(toToken.text)
-            });
-            i += 3;
+            i++;
             if (i < tokens.length) {
-                const semiColonToken = tokens[i];
-                if (semiColonToken.kind !== SyntaxKind.SemicolonToken) {
-                    throw new Error(`Expected ; at ${semiColonToken.start}`);
+                const secondToken = tokens[i];
+                if (secondToken.kind === SyntaxKind.DotDotToken) {
+                    i++;
+                    if (i < tokens.length) {
+                        throw new Error(
+                            `Expecting a value after ${secondToken.start}`
+                        );
+                    }
+                    const toToken = tokens[i];
+                    if (toToken.kind !== SyntaxKind.NumericLiteral) {
+                        throw new Error(
+                            `Range end expecting to be a number at ${
+                                toToken.start
+                            }`
+                        );
+                    }
+                    i++;
+                    ranges.push({
+                        from: parseInt(firstToken.text),
+                        to: parseInt(toToken.text)
+                    });
+                } else {
+                    ranges.push({
+                        from: parseInt(firstToken.text),
+                        to: parseInt(firstToken.text),
+                    })
                 }
-                i++;
+                if (i < tokens.length) {
+                    const semiColonToken = tokens[i];
+                    if (semiColonToken.kind !== SyntaxKind.SemicolonToken) {
+                        throw new Error(
+                            `Expected ; at ${semiColonToken.start}`
+                        );
+                    }
+                    i++;
+                }
             }
         }
         const exp: RangeExpression = {
@@ -517,7 +540,7 @@ function parseExpression(tokensInput: Token[]): Expression {
                       oper: SyntaxKind;
                   }
                 | undefined = undefined;
-            let i = 1;            
+            let i = 1;
             while (i + 1 < exps.length) {
                 const left = exps[i - 1];
                 const middle = exps[i];
@@ -545,7 +568,7 @@ function parseExpression(tokensInput: Token[]): Expression {
             if (!lowest) {
                 console.info(exps);
                 throw new Error(`Unable to find binary operator`);
-            }            
+            }
             const left = exps.slice(0, lowest.idx);
             const right = exps.slice(lowest.idx + 1);
             const exp: BinaryExpression = {
@@ -564,8 +587,8 @@ function numberMinMax(n: number) {
     return Math.min(Math.max(n, -MAX_NUMBER), MAX_NUMBER);
 }
 
-function pickRandomForRanges(ranges: Range[], random: () => number) {    
-    const totalValuesAmount = ranges.reduce((totalItems, range) => {        
+function pickRandomForRanges(ranges: Range[], random: () => number) {
+    const totalValuesAmount = ranges.reduce((totalItems, range) => {
         return totalItems + range.to - range.from + 1;
     }, 0);
     let rnd = Math.floor(random() * totalValuesAmount);
@@ -573,24 +596,79 @@ function pickRandomForRanges(ranges: Range[], random: () => number) {
         const len = range.to - range.from + 1;
         // console.info(`Range=${range[0]}..${range[1]}, rnd=${rnd}, len=${len}`)
         if (rnd >= len) {
-            rnd = rnd - len
+            rnd = rnd - len;
         } else {
             const result = rnd + range.from;
             // debug(0, `Range ${arg} returned random ${result}`);
             return result;
         }
     }
-    throw new Error("Error in finding random value for " + JSON.stringify({        
-        ranges,
-        rnd
-    }, null, 4))
-    
+    throw new Error(
+        "Error in finding random value for " +
+            JSON.stringify(
+                {
+                    ranges,
+                    rnd
+                },
+                null,
+                4
+            )
+    );
 }
+
 function calculateAst(
     ast: Expression,
     params: Params = [],
     random: () => number
-): number {    
+): number {
+    function transformToIntoRanges(node: Expression) {
+        if (
+            node.type !== ExpressionType.Binary ||
+            node.operator !== SyntaxKind.ToKeyword
+        ) {
+            throw new Error("Wrong usage");
+        }
+        const valToRanges = (val: number) => [
+            {
+                from: val,
+                to: val
+            }
+        ];
+
+        const left = node.left;
+        const right = node.right;
+        const leftRanges =
+            left.type === ExpressionType.Range
+                ? left.ranges
+                : valToRanges(calculateAst(left, params, random));
+
+        const rightRanges =
+            right.type === ExpressionType.Range
+                ? right.ranges
+                : valToRanges(calculateAst(right, params, random));
+
+        const leftRangeMax = Math.max(...leftRanges.map(x => x.to), 0);
+        const rightRangeMax = Math.max(...rightRanges.map(x => x.to), 0);
+
+        const leftRangeMin = Math.min(
+            ...leftRanges.map(x => x.from),
+            MAX_NUMBER
+        );
+        const rightRangeMin = Math.min(
+            ...rightRanges.map(x => x.from),
+            MAX_NUMBER
+        );
+        const newRangeMax = Math.max(leftRangeMax, rightRangeMax);
+        const newRangeMin = Math.min(leftRangeMin, rightRangeMin);
+        const newRanges = [
+            {
+                from: newRangeMin,
+                to: newRangeMax
+            }
+        ];
+        return newRanges;
+    }
+
     if (ast.type === ExpressionType.Number) {
         return ast.value;
     } else if (ast.type === ExpressionType.Parameter) {
@@ -633,83 +711,91 @@ function calculateAst(
                     calculateAst(ast.right, params, random)
             );
         } else if (ast.operator === SyntaxKind.ToKeyword) {
-            const valToRanges = (val: number) => ([
-                    {
-                        from: val,
-                        to: val
-                    }
-                ]);
-            
-            const left = ast.left;
-            const right = ast.right;
-            const leftRanges =
-                left.type === ExpressionType.Range
-                    ? left.ranges
-                    : valToRanges(calculateAst(left, params, random));
-
-            const rightRanges =
-                right.type === ExpressionType.Range
-                    ? right.ranges
-                    : valToRanges(calculateAst(right, params, random));
-
-            const leftRangeMax = Math.max(...leftRanges.map(x => x.to), 0);
-            const rightRangeMax = Math.max(...rightRanges.map(x => x.to), 0);
- 
-            const leftRangeMin = Math.min(...leftRanges.map(x => x.from), MAX_NUMBER);
-            const rightRangeMin = Math.min(...rightRanges.map(x => x.from), MAX_NUMBER);
-            const newRangeMax = Math.max(leftRangeMax, rightRangeMax);
-            const newRangeMin = Math.min(leftRangeMin, rightRangeMin);
-            return pickRandomForRanges([{
-                from: newRangeMin,
-                to: newRangeMax
-            }], random)
-        } else if (ast.operator === SyntaxKind.InKeyword) {                        
-            const reversed = ast.left.type === ExpressionType.Range && 
+            const newRanges = transformToIntoRanges(ast);
+            return pickRandomForRanges(newRanges, random);
+        } else if (ast.operator === SyntaxKind.InKeyword) {
+            const reversed =
+                ast.left.type === ExpressionType.Range &&
                 ast.right.type !== ExpressionType.Range;
             const left = reversed ? ast.right : ast.left;
             const right = reversed ? ast.left : ast.right;
-                       
-            const leftVal = numberMinMax(calculateAst(ast.left, params, random));
-            if (right.type === ExpressionType.Range) {
-                for (const range of right.ranges) {
+
+            const leftVal = numberMinMax(
+                calculateAst(ast.left, params, random)
+            );
+            const ranges =
+                right.type === ExpressionType.Range
+                    ? right.ranges
+                    : right.type === ExpressionType.Binary &&
+                      right.operator === SyntaxKind.ToKeyword
+                        ? transformToIntoRanges(right)
+                        : undefined;
+            if (ranges) {
+                for (const range of ranges) {
                     if (leftVal >= range.from && leftVal <= range.to) {
-                        return 1
+                        return 1;
                     }
                 }
-                return 0
+                return 0;
             } else {
-                const rightVal = numberMinMax(calculateAst(ast.right, params, random));
+                const rightVal = numberMinMax(
+                    calculateAst(ast.right, params, random)
+                );
                 return leftVal === rightVal ? 1 : 0;
             }
-        }  else if (ast.operator === SyntaxKind.GreaterThanEqualsToken) {
-            return calculateAst(ast.left, params, random) >= calculateAst(ast.right, params, random) ? 1 : 0            
+        } else if (ast.operator === SyntaxKind.GreaterThanEqualsToken) {
+            return calculateAst(ast.left, params, random) >=
+                calculateAst(ast.right, params, random)
+                ? 1
+                : 0;
         } else if (ast.operator === SyntaxKind.GreaterThanToken) {
-            return calculateAst(ast.left, params, random) > calculateAst(ast.right, params, random) ? 1 : 0            
+            return calculateAst(ast.left, params, random) >
+                calculateAst(ast.right, params, random)
+                ? 1
+                : 0;
         } else if (ast.operator === SyntaxKind.LessThanEqualsToken) {
-            return calculateAst(ast.left, params, random) <= calculateAst(ast.right, params, random) ? 1 : 0            
+            return calculateAst(ast.left, params, random) <=
+                calculateAst(ast.right, params, random)
+                ? 1
+                : 0;
         } else if (ast.operator === SyntaxKind.LessThanToken) {
-            return calculateAst(ast.left, params, random) < calculateAst(ast.right, params, random) ? 1 : 0            
+            return calculateAst(ast.left, params, random) <
+                calculateAst(ast.right, params, random)
+                ? 1
+                : 0;
         } else if (ast.operator === SyntaxKind.EqualsToken) {
-            return calculateAst(ast.left, params, random) === calculateAst(ast.right, params, random) ? 1 : 0            
+            return calculateAst(ast.left, params, random) ===
+                calculateAst(ast.right, params, random)
+                ? 1
+                : 0;
         } else if (ast.operator === SyntaxKind.NotEqualsToken) {
-            return calculateAst(ast.left, params, random) !== calculateAst(ast.right, params, random) ? 1 : 0            
+            return calculateAst(ast.left, params, random) !==
+                calculateAst(ast.right, params, random)
+                ? 1
+                : 0;
         } else if (ast.operator === SyntaxKind.AndKeyword) {
-            return calculateAst(ast.left, params, random) && calculateAst(ast.right, params, random) ? 1 : 0            
+            return calculateAst(ast.left, params, random) &&
+                calculateAst(ast.right, params, random)
+                ? 1
+                : 0;
         } else if (ast.operator === SyntaxKind.OrKeyword) {
-            return calculateAst(ast.left, params, random) || calculateAst(ast.right, params, random) ? 1 : 0            
+            return calculateAst(ast.left, params, random) ||
+                calculateAst(ast.right, params, random)
+                ? 1
+                : 0;
         } else {
-            throw new Error(`Unknown operator '${ast.operator}'`)
+            throw new Error(`Unknown operator '${ast.operator}'`);
         }
     } else if (ast.type === ExpressionType.Unary) {
         if (ast.operator === SyntaxKind.MinusToken) {
-            return -calculateAst(ast.expression, params, random)
+            return -calculateAst(ast.expression, params, random);
         } else {
-            throw new Error(`Unknown unary operator`)
+            throw new Error(`Unknown unary operator`);
         }
     } else if (ast.type === ExpressionType.Range) {
-        return pickRandomForRanges(ast.ranges, random)
+        return pickRandomForRanges(ast.ranges, random);
     } else {
-        throw new Error(`Unknown ast type`)
+        throw new Error(`Unknown ast type`);
     }
 }
 
@@ -720,6 +806,9 @@ export function parse(str: string, params: Params = [], random = Math.random) {
         const token = scanner();
         if (token) {
             tokensAndWhitespace.push(token);
+            if (token.kind !== SyntaxKind.WhiteSpaceTrivia) {
+                console.info(token);
+            }
         } else {
             break;
         }
@@ -746,7 +835,8 @@ export function parse(str: string, params: Params = [], random = Math.random) {
     return Math.round(value);
 }
 
-
 //console.info(parse('2 +  2 * 2 +2+2'))
 //console.info(parse('2 + 2 * 2 + 2'))
-console.info(parse('2 in 2 to 3'));
+//console.info(parse("2 in 2 to 3"));
+
+console.info(parse("[-2]"));
