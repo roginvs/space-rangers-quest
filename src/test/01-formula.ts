@@ -169,7 +169,7 @@ describe('Formula parser test', function () {
                 assert.ok(
                     (random === 1 ||
                         random === 3 ||
-                        (random >= 6 && random <= 9))
+                        (random >= 6 && random <= 9)), `Random value=${random}`
                 )
                 if (random in values) {
                     values[random]++
@@ -178,8 +178,8 @@ describe('Formula parser test', function () {
                 }
             }
             for (const x of Object.keys(values).map(x => parseInt(x))) {                
-                assert.ok(values[x] > 10000 / 6 * 0.9);
-                assert.ok(values[x] < 10000 / 6 * 1.1);
+                assert.ok(values[x] > 10000 / 6 * 0.9, `Values=${JSON.stringify(values, null, 4)}`);
+                assert.ok(values[x] < 10000 / 6 * 1.1, `Values=${JSON.stringify(values, null, 4)}`);
             }
         })
     })
