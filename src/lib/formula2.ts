@@ -331,12 +331,12 @@ function getBinaryTokenPrecedence(token: SyntaxKind) {
             return 6;
 
         case SyntaxKind.AsteriskToken:
-            return 5;
+            return 7;
 
         case SyntaxKind.SlashToken:
         case SyntaxKind.DivKeyword:
         case SyntaxKind.ModKeyword:
-            return 6;
+            return 8;
     }
     return 0;
 }
@@ -517,7 +517,7 @@ function parseExpression(tokensInput: Token[]): Expression {
                       oper: SyntaxKind;
                   }
                 | undefined = undefined;
-            let i = 1;
+            let i = 1;            
             while (i + 1 < exps.length) {
                 const left = exps[i - 1];
                 const middle = exps[i];
@@ -545,7 +545,7 @@ function parseExpression(tokensInput: Token[]): Expression {
             if (!lowest) {
                 console.info(exps);
                 throw new Error(`Unable to find binary operator`);
-            }
+            }            
             const left = exps.slice(0, lowest.idx);
             const right = exps.slice(lowest.idx + 1);
             const exp: BinaryExpression = {
@@ -743,8 +743,10 @@ export function parse(str: string, params: Params = [], random = Math.random) {
     const ast = parseExpression(tokens);
     console.info(JSON.stringify(ast, null, 4));
     const value = calculateAst(ast, params, random);
-    return value
+    return Math.round(value);
 }
 
 
-console.info(parse('2 +  2 * 2 +2+2'))
+//console.info(parse('2 +  2 * 2 +2+2'))
+//console.info(parse('2 + 2 * 2 + 2'))
+console.info(parse('2 in 2 to 3'));
