@@ -4,6 +4,7 @@ import { Scanner } from "./formulaScanner";
 import { parseExpression } from "./formulaParser";
 import { calculateAst } from "./formulaCalculator";
 
+
 export function parse(str: string, params: Params = [], random = Math.random) {
     // console.info(`New parsing '${str}'`);
     const tokensAndWhitespace: Token[] = [];
