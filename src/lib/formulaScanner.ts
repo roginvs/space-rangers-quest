@@ -12,9 +12,7 @@ const keywordsToKind = {
 export function Scanner(str: string) {
     let pos = 0;
     let end = str.length;
-
-    type LastCharCheck = (char: string, text: string) => boolean;
-
+    
     function isWhitespace(char: string) {
         return char === " " || char === "\n" || char === "\r" || char === "\t";
     }
@@ -64,6 +62,8 @@ export function Scanner(str: string) {
     function scanIdentifierOrKeyword(): Token | undefined {
         const start = pos;
 
+        let text = '';
+        let keywordKind :SyntaxKind | undefined = undefined;
         while (
             pos < end &&
             "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM01234567890_".indexOf(
@@ -71,10 +71,16 @@ export function Scanner(str: string) {
             ) > -1
         ) {
             pos++;
+            text = str.slice(start, pos);
+            keywordKind = text in keywordsToKind ? keywordsToKind[text as keyof typeof keywordsToKind] : undefined;
+            if (keywordKind) {
+                // Some quests have "[p1] mod1000" (without spaces)
+                break
+            }
         }
-        const text = str.slice(start, pos);
+        
         const kind =
-            keywordsToKind[text as keyof typeof keywordsToKind] ||
+            keywordKind !== undefined ? keywordKind :
             SyntaxKind.Identifier;
         return {
             kind,

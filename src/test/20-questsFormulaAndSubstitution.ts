@@ -37,7 +37,27 @@ describe(`Checking all quests for formulas and params substitution`, function ()
                     }
                 }
                 function checkFormula(str: string, place = '') {
-                    const staticRandomGenerated = Array(4).fill(0).map(x => Math.random());
+                    const staticRandomGenerated = [ 0.8098721706321894,
+                        0.7650745137670785,
+                        0.5122628148859116,
+                        0.7001314250579083,
+                        0.9777148783782501,
+                        0.6484951526791192,
+                        0.6277520602629139,
+                        0.6271209273581702,
+                        0.5929518455455183,
+                        0.555114104030954,
+                        0.8769248658117874,
+                        0.9012611135928128,
+                        0.9887903872842161,
+                        0.9032020764410791,
+                        0.09244706438405847,
+                        0.6841815116128189,
+                        0.26661520895002355,
+                        0.95424331893931,
+                        0.8900907263092355,
+                        0.9796112746203975 ];
+                      
                     function createRandom(staticRandom: number[]) {
                         let i = 0;                        
                         return () => {

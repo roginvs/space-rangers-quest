@@ -80,7 +80,7 @@ interface PlayerState {
 const DEFAULT_DAYS_TO_PASS_QUEST = 35;
 
 export class QMPlayer {
-    private state: GameState;
+    private state!: GameState;
 
     private locationsIds = this.quest.locations.map(x => x.id);
     private jumpsIds = this.quest.jumps.map(x => x.id);
