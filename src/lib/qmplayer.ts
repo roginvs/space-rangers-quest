@@ -63,6 +63,8 @@ export interface GameState {
     };
     daysPassed: number;
     imageFilename?: string;
+
+    randomSeed: number;
 }
 interface Choice {
     text: string;
@@ -82,8 +84,8 @@ const DEFAULT_DAYS_TO_PASS_QUEST = 35;
 export class QMPlayer {
     private state!: GameState;
 
-    private locationsIds = this.quest.locations.map(x => x.id);
-    private jumpsIds = this.quest.jumps.map(x => x.id);
+//    private locationsIds = this.quest.locations.map(x => x.id);
+//    private jumpsIds = this.quest.jumps.map(x => x.id);
     constructor(
         private quest: QM,
         private images: QMImages = [],
@@ -135,7 +137,8 @@ export class QMPlayer {
             jumpedCount: {},
             locationVisitCount: {},
             daysPassed: 0,
-            imageFilename: undefined
+            imageFilename: undefined,
+            randomSeed: 0,
         };
     }
 
