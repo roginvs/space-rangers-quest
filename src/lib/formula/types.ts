@@ -1,4 +1,3 @@
-export const MAX_NUMBER = 2000000000;
 export type Params = number[];
 
 const MINUS_TOKEN = "minus token";

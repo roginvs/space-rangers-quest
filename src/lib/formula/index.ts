@@ -1,9 +1,10 @@
 import * as assert from "assert";
-import { Params, Token, SyntaxKind } from "./formulaTypes";
-import { Scanner } from "./formulaScanner";
-import { parseExpression } from "./formulaParser";
-import { calculateAst } from "./formulaCalculator";
+import { Params, Token, SyntaxKind } from "./types";
+import { Scanner } from "./scanner";
+import { parseExpression } from "./parser";
+import { calculateAst } from "./calculator";
 
+export { MAX_NUMBER } from './consts';
 
 export function parse(str: string, params: Params = [], random = Math.random) {
     // console.info(`New parsing '${str}'`);

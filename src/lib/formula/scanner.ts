@@ -1,4 +1,4 @@
-import { SyntaxKind, Token, SyntaxKindBinary } from "./formulaTypes";
+import { SyntaxKind, Token, SyntaxKindBinary } from "./types";
 
 const keywordsToKind: {
     [keyword: string]: SyntaxKindBinary

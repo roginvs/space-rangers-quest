@@ -1,4 +1,5 @@
-import { SyntaxKind, ExpressionType, MAX_NUMBER, Expression, Params } from "./formulaTypes";
+import { SyntaxKind, ExpressionType, Expression, Params } from "./types";
+import { MAX_NUMBER } from './consts';
 
 export function assertNever(x: never): never {
     throw new Error(`Unexpected object: ${x}`);

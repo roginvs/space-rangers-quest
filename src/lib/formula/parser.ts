@@ -1,4 +1,4 @@
-import { Token, RangePart, Expression, SyntaxKind, ParameterExpression, ExpressionType, BinaryExpression, UnaryExpression, RangeExpression, NumberExpression, SyntaxKindBinary } from "./formulaTypes";
+import { Token, RangePart, Expression, SyntaxKind, ParameterExpression, ExpressionType, BinaryExpression, UnaryExpression, RangeExpression, NumberExpression, SyntaxKindBinary } from "./types";
 
 
 type TokenOrExpression = Token | Expression;
