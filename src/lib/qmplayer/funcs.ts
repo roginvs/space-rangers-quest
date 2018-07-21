@@ -878,7 +878,7 @@ function calculateLocation(quest: Quest,
         .sort((a, b) => {
             return a.showingOrder !== b.showingOrder
                 ? a.showingOrder - b.showingOrder
-                : Math.floor(Math.random() * 2) * 2 - 1;
+                : random(2) * 2 - 1;
         })
         .map(jump => {
             return {
@@ -983,7 +983,7 @@ function calculateLocation(quest: Quest,
             );
             if (jumpsWithSameText.length === 1) {
                 if (j.jump.prio < 1 && j.active) {
-                    j.active = Math.random() < j.jump.prio;
+                    j.active = random() < j.jump.prio; // TODO: change!
                     // console.info(`Jump ${j.jump.text} is now ${j.active} by random`)
                 }
                 if (j.active || j.jump.alwaysShow) {

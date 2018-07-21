@@ -12,8 +12,7 @@ export class QMPlayer {
     constructor(
         private quest: QM,   
         private images: PQImages = [],
-        private lang: "rus" | "eng",        
-        oldTge: boolean // TODO remove me
+        private lang: "rus" | "eng",
     ) {
         this.state = initGame(this.quest, Math.random().toString(36));
     }

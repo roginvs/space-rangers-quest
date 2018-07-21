@@ -13,6 +13,7 @@ import { parse } from "../formula";
 import { substitute } from "../substitution";
 import { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP} from "./defs";
 import { PQImages } from "../pqImages";
+import { randomFromMathRandom } from "../randomFunc";
 
 export { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP } from './defs';
 
@@ -116,7 +117,7 @@ export class QMPlayer {
             throw new Error("No start location!");
         }
         const startingParams = this.quest.params.map((param, index) => {
-            return param.active ? parse(param.starting, [], n => Math.floor(Math.random() * n)) : 0;
+            return param.active ? parse(param.starting, [], randomFromMathRandom) : 0;
         });
         const startingShowing = this.quest.params.map(() => true);
 
@@ -152,7 +153,7 @@ export class QMPlayer {
                 lang: "rus"
             },
             this.state.paramValues,
-            n => Math.floor(Math.random() * n),
+            randomFromMathRandom,
             diamondIndex
         );
     }
@@ -418,7 +419,7 @@ export class QMPlayer {
                 );
             } else if (change.isChangeFormula) {
                 if (change.changingFormula) {
-                    newValues[i] = parse(change.changingFormula, oldValues, n => Math.floor(Math.random() * n));
+                    newValues[i] = parse(change.changingFormula, oldValues, randomFromMathRandom);
                 }
             } else {
                 newValues[i] = oldValues[i] + change.change;
@@ -607,7 +608,7 @@ export class QMPlayer {
         if (location.textSelectFurmula) {
             if (location.textSelectFurmula) {
                 const id =
-                    parse(location.textSelectFurmula, this.state.paramValues, n => Math.floor(Math.random() * n)) -
+                    parse(location.textSelectFurmula, this.state.paramValues, randomFromMathRandom) -
                     1;
                 if (location.texts[id]) {
                     return id;
@@ -798,7 +799,7 @@ export class QMPlayer {
                                 parse(
                                     jump.formulaToPass,
                                     this.state.paramValues,
-                                    n => Math.floor(Math.random() * n)
+                                    randomFromMathRandom
                                 ) === 0
                             ) {
                                 return false;
