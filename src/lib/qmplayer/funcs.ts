@@ -563,16 +563,21 @@ function calculateParamsUpdate(quest: Quest, stateOriginal: GameState, random: R
 export function performJump(jumpId: number, quest: Quest, stateOriginal: GameState, images: PQImages = []): GameState {
     const alea = new Alea(stateOriginal.aleaState.slice());
     const random = alea.random;
-    let state = stateOriginal;
-
+    const state = performJumpInternal(jumpId, quest, stateOriginal, images, random);
+    return {
+        ...state,
+        aleaState: alea.exportState(),
+    }
+}
+function performJumpInternal(jumpId: number, quest: Quest, stateOriginal: GameState, images: PQImages = [], random: RandomFunc): GameState {
     if (jumpId === JUMP_GO_BACK_TO_SHIP) {        
         return {
-            ...state,
-            state: "returnedending",
-            aleaState: alea.exportState(),
+            ...stateOriginal,
+            state: "returnedending",    
         };
     }
 
+    let state = stateOriginal;    
     const jumpForImg = quest.jumps.find(
         x => x.id === state.lastJumpId
     );
@@ -758,10 +763,7 @@ export function performJump(jumpId: number, quest: Quest, stateOriginal: GameSta
         throw new Error(`Unknown state ${state.state} in performJump`);
     }
 
-    return {
-        ...state,
-        aleaState: alea.exportState(),
-    };
+    return state;
 }
 
 
@@ -1109,6 +1111,10 @@ function calculateLocation(quest: Quest,
         }
     }
 
+    
+    // calculateLocation is always called when state.state === "location"
+
+
     /* А это дикий костыль для пустых локаций и переходов */
     const stateUI = getUIState(quest, state, DEFAULT_RUS_PLAYER);
     if (stateUI.choices.length === 1) {
@@ -1133,11 +1139,12 @@ function calculateLocation(quest: Quest,
                 `Performinig autojump from loc=${state
                     .locationId} via jump=${jump.id}`
             );
-            state = performJump(
+            state = performJumpInternal(
                 jump.id,
                 quest,
                 state,
                 images,
+                random
             );
         }
     }
