@@ -8,9 +8,9 @@ import {
     Jump,
     getImagesListFromQmm,
     ParameterChange
-} from "./qmreader";
-import { parse } from "./formula";
-import { substitute } from "./substitution";
+} from "../qmreader";
+import { parse } from "../formula";
+import { substitute } from "../substitution";
 
 export const JUMP_I_AGREE = -1;
 export const JUMP_NEXT = -2;
