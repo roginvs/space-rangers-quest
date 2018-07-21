@@ -5,7 +5,6 @@ import { parse } from "../formula";
 import { DeepImmutable } from "./deepImmutable";
 import { RandomFunc } from "../randomFunc";
 import { substitute } from "../substitution";
-import { stat } from "fs";
 import { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP } from "./defs";
 import { assertNever } from "../formula/calculator";
 
@@ -983,7 +982,8 @@ function calculateLocation(quest: Quest,
             );
             if (jumpsWithSameText.length === 1) {
                 if (j.jump.prio < 1 && j.active) {
-                    j.active = random() < j.jump.prio; // TODO: change!
+                    const ACCURACY = 1000;
+                    j.active = random(ACCURACY) < j.jump.prio * ACCURACY;
                     // console.info(`Jump ${j.jump.text} is now ${j.active} by random`)
                 }
                 if (j.active || j.jump.alwaysShow) {
@@ -993,7 +993,7 @@ function calculateLocation(quest: Quest,
                 const jumpsActiveWithSameText = jumpsWithSameText.filter(
                     x => x.active
                 );
-                if (jumpsActiveWithSameText.length > 0) {
+                if (jumpsActiveWithSameText.length > 0) {                    
                     const maxPrio = jumpsActiveWithSameText.reduce(
                         (max, jump) =>
                             jump.jump.prio > max ? jump.jump.prio : max,
@@ -1005,15 +1005,16 @@ function calculateLocation(quest: Quest,
                     const prioSum = jumpsWithNotSoLowPrio
                         .map(x => x.jump.prio)
                         .reduce((sum, i) => i + sum, 0);
-                    let rnd = Math.random() * prioSum;
+                    const ACCURACY = 1000000;
+                    let rnd = random(ACCURACY)/ACCURACY * prioSum;
                     for (const jj of jumpsWithNotSoLowPrio) {
-                        if (jj.jump.prio >= rnd) {
+                        if (jj.jump.prio >= rnd || jj === jumpsWithNotSoLowPrio.slice(-1).pop()) {
                             newJumps.push(jj);
                             break;
                         } else {
                             rnd = rnd - jj.jump.prio;
                         }
-                    }
+                    }                
                 } else {
                     const alLeastOneWithAlwaysShow = jumpsWithSameText
                         .filter(x => x.jump.alwaysShow)

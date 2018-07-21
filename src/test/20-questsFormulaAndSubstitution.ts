@@ -7,6 +7,7 @@ import { parse, QM } from '../lib/qmreader';
 import { substitute } from '../lib/substitution';
 import * as formula from '../lib/formula';
 import { PlayerSubstitute } from '../lib/qmplayer/funcs';
+import { randomFromMathRandom } from '../lib/randomFunc';
 
 
 const srcDir = __dirname + `/../../borrowed/qm/`;
@@ -33,7 +34,7 @@ describe(`Checking all quests for formulas and params substitution`, function ()
                 }
                 function check(str: string, place = '', isDiamond = false) {
                     try {
-                        substitute(str, player, params, n => Math.floor(Math.random() * n), isDiamond ? 1 : undefined);
+                        substitute(str, player, params, randomFromMathRandom, isDiamond ? 1 : undefined);
                     } catch (e) {
                         throw new Error(`String failed '${str}' with ${e} in ${place}`);
                     }
