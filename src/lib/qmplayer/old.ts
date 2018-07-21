@@ -15,10 +15,8 @@ import { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP} from "./defs";
 import { PQImages } from "../pqImages";
 import { randomFromMathRandom } from "../randomFunc";
 
-export { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP } from './defs';
 
-
-export interface Player {
+interface Player {
     Ranger: string;
     Player: string;
     Money: string;
@@ -30,7 +28,7 @@ export interface Player {
     Day: string; // Кол-во дней
     CurDate: string; // Текущая дата
 }
-export interface GameState {
+interface GameState {
     state:
     | "starting"
     | "location"
@@ -75,7 +73,7 @@ interface PlayerState {
 }
 const DEFAULT_DAYS_TO_PASS_QUEST = 35;
 
-export class QMPlayer {
+class QMPlayer {
     private state!: GameState;
 
 //    private locationsIds = this.quest.locations.map(x => x.id);

@@ -8,7 +8,7 @@ interface Operation {
     fBinary: (a: Arg, b: Arg, random: () => number) => Arg
 }
 
-export const MAX_NUMBER = 2000000000;
+const MAX_NUMBER = 2000000000;
 
 
 function parseRange(arg: string) {
@@ -408,7 +408,7 @@ function parseRecursive(deep: number, str: string, params: Params, random: () =>
     }
 }
 
-export function parse(str: string, params: Params = [], random = Math.random) {
+function parse(str: string, params: Params = [], random = Math.random) {
     debug(0, `\nInput=${str}`);
     while (true) {
         let wasOneReplace = false;
