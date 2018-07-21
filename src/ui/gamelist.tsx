@@ -57,7 +57,7 @@ async function loadGame(game: Game) {
     const qm = parse(new Buffer(data));
     const player = new QMPlayer(qm, game.images,
         game.filename.toLowerCase().endsWith('_eng.qm') ? 'eng' : 'rus',
-        // game.oldTgeBehaviour
+        game.oldTgeBehaviour
     )
     return player
 }

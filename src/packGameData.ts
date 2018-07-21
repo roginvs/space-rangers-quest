@@ -259,7 +259,7 @@ for (const origin of fs.readdirSync(dataSrcPath + '/qm')) {
         }
 
         const quest = parse(data);
-        const player = new QMPlayer(quest, undefined, lang); // oldTge
+        const player = new QMPlayer(quest, undefined, lang, oldTge); // 
         player.start();
 
         

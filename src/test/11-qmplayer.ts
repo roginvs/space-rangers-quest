@@ -24,7 +24,7 @@ describe(`Player on test10-locationtexts.${ext}`, function () {
     before(`Reads and parses quest`, () => {
         const data = fs.readFileSync(__dirname + `/../../src/test/test10-locationtexts.${ext}`);
         const qm = parse(data);
-        player = new QMPlayer(qm, undefined, 'rus'); // false
+        player = new QMPlayer(qm, undefined, 'rus', false); //
         player.start();
         player.performJump(JUMP_I_AGREE)
     })    
@@ -94,7 +94,7 @@ describe('Player on test10-deadly-loc.qmm', function () {
     it(`Reads and parses quest`, () => {
         const data = fs.readFileSync(__dirname + '/../../src/test/test10-deadly-loc.qmm');
         const qm = parse(data);
-        player = new QMPlayer(qm, undefined, 'rus'); // false
+        player = new QMPlayer(qm, undefined, 'rus', false); // 
         player.start();
         player.performJump(JUMP_I_AGREE);
         save = player.getSaving();
@@ -138,7 +138,7 @@ describe('Player on limitedLocation.qmm', function () {
     it(`Reads and parses quest`, () => {
         const data = fs.readFileSync(__dirname + '/../../src/test/limitedLocation.qmm');
         const qm = parse(data);
-        player = new QMPlayer(qm, undefined, 'rus'); // false
+        player = new QMPlayer(qm, undefined, 'rus', false); // 
         player.start();
         player.performJump(JUMP_I_AGREE)
     })
@@ -162,7 +162,7 @@ describe('Player on test4-forqmm.qm', function () {
         it(`Reads and parses quest`, () => {
             const data = fs.readFileSync(__dirname + '/../../src/test/test4-forqmm.qm');
             const qm = parse(data);
-            player = new QMPlayer(qm, undefined, 'rus'); // true
+            player = new QMPlayer(qm, undefined, 'rus', true); // 
             player.start();
             player.performJump(JUMP_I_AGREE)
         })
@@ -183,7 +183,7 @@ describe('Player on test4-forqmm.qm', function () {
         it(`Reads and parses quest`, () => {
             const data = fs.readFileSync(__dirname + '/../../src/test/test4-forqmm.qm');
             const qm = parse(data);
-            player = new QMPlayer(qm, undefined, 'rus'); // false
+            player = new QMPlayer(qm, undefined, 'rus', false); // 
             player.start();
             player.performJump(JUMP_I_AGREE)
         })
@@ -207,7 +207,7 @@ describe('Player on test8-emptyloc.qm', function () {
         beforeEach(`Reads and parses quest`, () => {
             const data = fs.readFileSync(__dirname + '/../../src/test/test8-emptyloc.qm');
             const qm = parse(data);
-            player = new QMPlayer(qm, undefined, 'rus'); // false
+            player = new QMPlayer(qm, undefined, 'rus', false); // 
             player.start();
             player.performJump(JUMP_I_AGREE)
         })
@@ -238,7 +238,7 @@ describe('Player on test9-loop-qm.qm', function () {
     beforeEach(`Reads and parses quest`, () => {
         const data = fs.readFileSync(__dirname + '/../../src/test/test9-loop-qm.qm');
         const qm = parse(data);
-        player = new QMPlayer(qm, undefined, 'rus'); // false
+        player = new QMPlayer(qm, undefined, 'rus', false); // 
         player.start();
         player.performJump(JUMP_I_AGREE)
     })
@@ -265,7 +265,7 @@ describe('Player on test9-loop.qmm', function () {
     beforeEach(`Reads and parses quest`, () => {
         const data = fs.readFileSync(__dirname + '/../../src/test/test9-loop.qmm');
         const qm = parse(data);
-        player = new QMPlayer(qm, undefined, 'rus'); // false
+        player = new QMPlayer(qm, undefined, 'rus', false); // 
         player.start();
         player.performJump(JUMP_I_AGREE)
     })

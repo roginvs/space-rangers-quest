@@ -247,13 +247,12 @@ function calculateLocationShowingTextId(location: DeepImmutable<Location>,
                 0
             );
         }
-    } else {
+    } else {        
         const textNum =
             locationTextsWithText.length > 0
                 ? state.locationVisitCount[location.id] %
                 locationTextsWithText.length
                 : 0;
-
         return (
             (locationTextsWithText[textNum] &&
                 locationTextsWithText[textNum].i) ||
@@ -323,7 +322,7 @@ export function getUIState(quest: Quest, state: GameState, player: Player): Play
             throw new Error(`Internal error: no state loc id=${state.locationId}`);
         }
 
-        const locTextId = calculateLocationShowingTextId(location, state, random);
+        const locTextId = calculateLocationShowingTextId(location, state, random);        
         const textInOptions = location.texts[locTextId] || "";
 
         const lastJump = quest.jumps.find(
@@ -562,7 +561,7 @@ function calculateParamsUpdate(quest: Quest, stateOriginal: GameState, random: R
 
 
 
-export function performJump(jumpId: number, quest: Quest, stateOriginal: GameState, images: PQImages = []): GameState {
+export function performJump(jumpId: number, quest: Quest, stateOriginal: GameState, images: PQImages = [], oldTgeBehaviour: boolean): GameState {
     const alea = new Alea(stateOriginal.aleaState.slice());
     const random = alea.random;
     let state = stateOriginal;
@@ -599,7 +598,7 @@ export function performJump(jumpId: number, quest: Quest, stateOriginal: GameSta
             ...state,
             state: "location",
         }        
-        state = calculateLocation(quest, state, images, random);
+        state = calculateLocation(quest, state, images, random, oldTgeBehaviour);
     } else if (state.state === "jump") {
         const jump = quest.jumps.find(
             x => x.id === state.lastJumpId
@@ -612,7 +611,7 @@ export function performJump(jumpId: number, quest: Quest, stateOriginal: GameSta
             locationId: jump.toLocationId,
             state: "location",
         }                
-        state = calculateLocation(quest, state, images, random);
+        state = calculateLocation(quest, state, images, random, oldTgeBehaviour);
     } else if (state.state === "location") {
         if (!state.possibleJumps.find(x => x.id === jumpId)) {
             throw new Error(
@@ -695,7 +694,7 @@ export function performJump(jumpId: number, quest: Quest, stateOriginal: GameSta
                     locationId: nextLocation.id,
                     state: "location",
                 }                
-                state = calculateLocation(quest, state, images, random);
+                state = calculateLocation(quest, state, images, random, oldTgeBehaviour);
             }
         } else {
             if (critParamsTriggered.length > 0) {
@@ -710,7 +709,7 @@ export function performJump(jumpId: number, quest: Quest, stateOriginal: GameSta
                     locationId: nextLocation.id,
                     state: "location",
                 }
-                state = calculateLocation(quest, state, images, random);
+                state = calculateLocation(quest, state, images, random, oldTgeBehaviour);
             } else {
                 state = {
                     ...state,
@@ -770,14 +769,16 @@ export function performJump(jumpId: number, quest: Quest, stateOriginal: GameSta
 function calculateLocation(quest: Quest, 
     stateOriginal: GameState,
      images: PQImages,
-    random: RandomFunc): GameState {
+    random: RandomFunc,
+    oldTgeBehaviour: boolean): GameState {
         
     let state = stateOriginal;
     state = {
         ...state,
         locationVisitCount: {
             ...state.locationVisitCount,
-            [state.locationId]: (state.locationVisitCount[state.locationId] || 0) + 1
+            [state.locationId]: state.locationVisitCount[state.locationId] !== undefined ? 
+            state.locationVisitCount[state.locationId] + 1 : 0, // TODO : change to 1            
         }
     }
     
@@ -821,9 +822,9 @@ function calculateLocation(quest: Quest,
     state = paramsUpdate.state;
     const critParamsTriggered = paramsUpdate.critParamsTriggered;
 
-
-    const oldTgeBehaviour = quest.header === HEADER_QM_2 || 
-        quest.header === HEADER_QM_3 || quest.header === HEADER_QM_4;
+    // TODO
+    //const oldTgeBehaviour = quest.header === HEADER_QM_2 || 
+    //    quest.header === HEADER_QM_3 || quest.header === HEADER_QM_4;
 
     const allJumps = quest.jumps
         .filter(x => x.fromLocationId === state.locationId)
@@ -1136,7 +1137,8 @@ function calculateLocation(quest: Quest,
                 jump.id,
                 quest,
                 state,
-                images
+                images,
+                oldTgeBehaviour
             );
         }
     }

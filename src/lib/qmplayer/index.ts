@@ -13,6 +13,7 @@ export class QMPlayer {
         private quest: QM,   
         private images: PQImages = [],
         private lang: "rus" | "eng",
+        private oldTgeBehaviour: boolean,
     ) {
         this.state = initGame(this.quest, Math.random().toString(36));
     }
@@ -28,7 +29,7 @@ export class QMPlayer {
         return getUIState(this.quest, this.state, this.player)
     }
     performJump(jumpId: number) {
-        this.state = performJump(jumpId, this.quest, this.state)
+        this.state = performJump(jumpId, this.quest, this.state, this.images, this.oldTgeBehaviour)
     }
 
     getSaving() {        
