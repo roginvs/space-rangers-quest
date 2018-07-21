@@ -1,5 +1,5 @@
 import { PQImages } from "../pqImages";
-import { QM, Location, ParamType } from "../qmreader";
+import { QM, Location, ParamType, ParameterShowingType, ParamCritType, ParameterChange } from "../qmreader";
 import { AleaState, Alea } from "../alea";
 import { parse } from "../formula";
 import { DeepImmutable } from "./deepImmutable";
@@ -9,6 +9,7 @@ import { stat } from "fs";
 import { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP } from "./defs";
 import { assertNever } from "../formula/calculator";
 
+type Quest = DeepImmutable<QM>;
 export interface Player {
     Ranger: string;
     Player: string;
@@ -190,7 +191,7 @@ function replace(
     );
 }
 
-function getParamsState(quest: DeepImmutable<QM>, state: GameState, player: Player, random: RandomFunc ) {
+function getParamsState(quest: Quest, state: GameState, player: Player, random: RandomFunc ) {
     const paramsState: string[] = [];
     for (let i = 0; i < quest.paramsCount; i++) {
         if (state.paramShow[i] && quest.params[i].active) {
@@ -236,9 +237,8 @@ function calculateLocationShowingTextId(state: GameState, location: DeepImmutabl
             }
         } else {
             console.warn(`Location id=${location.id} text by formula is set, but no formula`);
-            const textNum = Math.floor(
-                Math.random() * locationTextsWithText.length
-            );
+            const textNum = random(locationTextsWithText.length);
+            
             return (
                 (locationTextsWithText[textNum] &&
                     locationTextsWithText[textNum].i) ||
@@ -260,7 +260,7 @@ function calculateLocationShowingTextId(state: GameState, location: DeepImmutabl
     }
 }
 
-export function getUIState(quest: DeepImmutable<QM>, state: GameState, player: Player): PlayerState {
+export function getUIState(quest: Quest, state: GameState, player: Player): PlayerState {
     const alea = new Alea(state.aleaState.slice());
     const random = alea.random;
 
@@ -486,5 +486,75 @@ export function getUIState(quest: DeepImmutable<QM>, state: GameState, player: P
     } else {
         return assertNever(state.state);        
     }
+}
+
+
+
+function calculateParamsUpdate(quest: Quest, stateOriginal: GameState, random: RandomFunc,
+    paramsChanges: ParameterChange[]) {
+    let critParamsTriggered: number[] = [];
+    let state = stateOriginal;
+    let oldValues = state.paramValues.slice(0, quest.paramsCount);
+    let newValues = state.paramValues.slice(0, quest.paramsCount);
+
+    for (let i = 0; i < quest.paramsCount; i++) {
+        const change = paramsChanges[i];
+        if (change.showingType === ParameterShowingType.Показать) {
+            const paramShow = state.paramShow.slice();
+            paramShow[i] = true;
+            state = {
+                ...state,
+                paramShow
+            }
+        } else if (change.showingType === ParameterShowingType.Скрыть) {
+            const paramShow = state.paramShow.slice();
+            paramShow[i] = false;
+            state = {
+                ...state,
+                paramShow
+            }
+        }
+
+        if (change.isChangeValue) {
+            newValues[i] = change.change;
+        } else if (change.isChangePercentage) {
+            newValues[i] = Math.round(
+                oldValues[i] * (100 + change.change) / 100
+            );
+        } else if (change.isChangeFormula) {
+            if (change.changingFormula) {
+                newValues[i] = parse(change.changingFormula, oldValues, random);
+            }
+        } else {
+            newValues[i] = oldValues[i] + change.change;
+        }
+
+        const param = quest.params[i];
+        if (newValues[i] > param.max) {
+            newValues[i] = param.max;
+        }
+        if (newValues[i] < param.min) {
+            newValues[i] = param.min;
+        }
+
+        if (
+            newValues[i] !== oldValues[i] &&
+            param.type !== ParamType.Обычный
+        ) {
+            if (
+                (param.critType === ParamCritType.Максимум &&
+                    newValues[i] === param.max) ||
+                (param.critType === ParamCritType.Минимум &&
+                    newValues[i] === param.min)
+            ) {
+                critParamsTriggered.push(i);
+            }
+        }
+    }
+    state = {
+        ...state,
+        paramValues: newValues
+    }    
+    return [state, critParamsTriggered]
 }
 
