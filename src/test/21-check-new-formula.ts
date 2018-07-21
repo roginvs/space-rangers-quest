@@ -9,6 +9,35 @@ import * as formula from "../lib/formula";
 import * as formula2 from "../lib/formula2";
 
 const srcDir = __dirname + `/../../borrowed/qm/`;
+
+function heapGenerate(
+    n: number,
+    arr: number[],
+    permutationCb: (arr: number[]) => void
+) {
+    if (n === -1 || n === 0) {
+        permutationCb([]);
+        return;
+    }
+    if (n === 1) {
+        permutationCb(arr);
+    } else {
+        for (let i = 0; i < n - 1; i++) {
+            heapGenerate(n - 1, arr, permutationCb);
+            if (n % 2 === 0) {
+                const c = arr[i];
+                arr[i] = arr[n - 1];
+                arr[n - 1] = c;
+            } else {
+                const c = arr[0];
+                arr[0] = arr[n - 1];
+                arr[n - 1] = c;
+            }
+        }
+        heapGenerate(n - 1, arr, permutationCb);
+    }
+}
+
 describe(`Checking all quests for formulas and params substitution`, function() {
     this.timeout(60 * 1000);
     for (const origin of fs.readdirSync(srcDir)) {
@@ -44,7 +73,18 @@ describe(`Checking all quests for formulas and params substitution`, function() 
                     }
                 }
                 function checkFormula(str: string, place = "") {
-                    const staticRandomGenerated = [0.8728740903521885, 0.762138604121094, 0.8143235466416332, 0.9826834701104354, 0.09171212371343129];
+                    const staticRandomGenerated = [
+                        0.8728740903521885,
+                        0.762138604121094,
+                        0.8143235466416332,
+                        0.9826834701104354,
+                        0.09171212371343129,
+                        0.4563365189271211,
+                        0.48931175333281907,
+                        0.16177116212690001,
+                        0.5660071652513856,
+                        0.9646507144323373
+                    ];
 
                     try {
                         let i = -1;
@@ -60,55 +100,51 @@ describe(`Checking all quests for formulas and params substitution`, function() 
                             }
                             return staticRandom[i];
                         };
+                        console.info(`====== ${str} ======`);
                         const oldFormulaResult = formula.parse(
                             str,
                             params,
                             random(staticRandomGenerated)
                         );
 
-                        let reversedRandom = staticRandomGenerated
-                            .slice(0, i + 1)
-                            .reverse();
-                        if (str === "(1 to 7)*100+(1 to 7)*10+(1 to 7)") {
-                            reversedRandom = [
-                                reversedRandom[2],
-                                reversedRandom[1],
-                                reversedRandom[0]
-                            ];
-                        }
-                        if (
-                            str ===
-                                "([1..3]+3*[p2]+3*([p3]>0))*([p10]<6)+([1..3]+3*[p2]+3*([p3]>0))*([p10]>5 and [p11]<>2)+10*([p10]>5 and [p11]=2)" ||
-                            str ===
-                                "[p39]+([p14]-40)/[4..6]+[-3..3]+[p4]/5-[p5]" ||
-                                str === '[6..9]*10+[5..10]' ||
-                                str === '[p4]-[20..25]+([p11]-2)*[0..2]' ||
-                                str === '[p5]-[10..15]+([p11]-2)*[0..1]' 
-                        ) {
-                            reversedRandom = [
-                                reversedRandom[1],
-                                reversedRandom[0]
-                            ];
-                        }
-                        i = -1;
-                        const newFormulaResult = formula2.parse(
-                            str,
-                            params,
-                            random([...reversedRandom])
+                        let permsCount = i;
+                        let matchingFound = false;
+                        console.info(`permsCount=${permsCount} oldFormulaResult=${oldFormulaResult}`)
+                        let permId = 0;
+                        heapGenerate(
+                            permsCount + 1,
+                            staticRandomGenerated.slice(),
+                            permRandom => {
+                                i = -1;
+                                const newFormulaResult = formula2.parse(
+                                    str,
+                                    params,
+                                    random(permRandom)
+                                );                                
+                                if (oldFormulaResult === newFormulaResult) {
+                                    matchingFound = true;
+                                }
+                                console.info(`Perm id=${permId} newFormula=${newFormulaResult} matching=${matchingFound}`);
+                                permId++;
+                            }
                         );
-                        if (oldFormulaResult !== newFormulaResult) {
+                        if (!matchingFound) {
                             console.info(
                                 `!!!!!\n\nconst staticRandom=[${staticRandomGenerated.join(
                                     ", "
                                 )}];\n` +
                                     `const params=[${params.join(", ")}];\n` +
                                     `const str="${str}";\n` +
-                                    `oldFormulaResult=${oldFormulaResult} newFormulaResult=${newFormulaResult}\n` +
+                                    `oldFormulaResult=${oldFormulaResult}\n` +
                                     `'${str}'`
                             );
                             throw new Error("New formula fail");
                         }
                     } catch (e) {
+                        fs.appendFileSync(
+                            __dirname + "/tmp.txt",
+                            `|| str === '${str}'\n`
+                        );
                         throw new Error(
                             `String failed '${str}' with ${e} in ${place}`
                         );
@@ -119,7 +155,7 @@ describe(`Checking all quests for formulas and params substitution`, function() 
                     quest = parse(data);
                     // Random values. P25 have some quest with big values, so that's why it is reduced
                     params = quest.params.map(
-                        (p, i) => (i !== 24 ? i * 3 + 1 - 100 : 2)
+                        (p, i) => (i === 24 ? 2 : i === 4 ? 4 : i * 3 + 1 - 100)
                     );
                 });
                 it(`Starting/ending text`, () => {

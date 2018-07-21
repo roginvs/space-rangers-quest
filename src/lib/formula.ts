@@ -50,7 +50,9 @@ function argToNumber(arg: Arg, random: () => number) {
                 const [low, high] = range;
                 return totalItems + high - low + 1;
             }, 0);
-            let rnd = Math.floor(random() * totalValuesAmount);
+            const pickedRandom = random();
+            let rnd = Math.floor(pickedRandom * totalValuesAmount);
+            // console.info(`old ranges=[${ranges.map(x => `${x[0]}..${x[1]}`).join('; ')}] rnd=${rnd} pickedRandom=${pickedRandom} totalValuesAmount=${totalValuesAmount}`);
             for (const range of ranges) {
                 const len = range[1] - range[0] + 1;
                 // console.info(`Range=${range[0]}..${range[1]}, rnd=${rnd}, len=${len}`)

@@ -549,7 +549,7 @@ function parseExpression(tokensInput: Token[]): Expression {
                   }
                 | undefined = undefined;
             let i = 1;
-            
+
             while (i + 1 < exps.length) {
                 const left = exps[i - 1];
                 const middle = exps[i];
@@ -581,7 +581,7 @@ function parseExpression(tokensInput: Token[]): Expression {
             const left = exps.slice(0, lowest.idx);
             const right = exps.slice(lowest.idx + 1);
             const exp: BinaryExpression = {
-                type: ExpressionType.Binary,                                
+                type: ExpressionType.Binary,
                 left: parseFlatExpression(left),
                 right: parseFlatExpression(right),
                 operator: lowest.oper
@@ -601,11 +601,21 @@ interface RangeCalculated {
     to: number;
 }
 
+function floorCeil(val: number) {
+    return val > 0 ? Math.floor(val) : Math.ceil(val);
+}
+
 function pickRandomForRanges(ranges: RangeCalculated[], random: () => number) {
     const totalValuesAmount = ranges.reduce((totalItems, range) => {
         return totalItems + range.to - range.from + 1;
     }, 0);
-    let rnd = Math.floor(random() * totalValuesAmount);
+    const pickedRandom = random();
+    let rnd = Math.floor(pickedRandom * totalValuesAmount);
+    //console.info(
+    //    `new ranges=[${ranges
+    //        .map(x => `${x.from}..${x.to}`)
+    //        .join("; ")}] rnd=${rnd} pickedRandom=${pickedRandom} totalValuesAmount=${totalValuesAmount}`
+    //);
     for (const range of ranges) {
         const len = range.to - range.from + 1;
         // console.info(`Range=${range[0]}..${range[1]}, rnd=${rnd}, len=${len}`)
@@ -654,12 +664,12 @@ function calculateAst(
         const leftRanges =
             left.type === ExpressionType.Range
                 ? calculateRange(left)
-                : valToRanges(calculateAst(left, params, random));
+                : valToRanges(floorCeil(calculateAst(left, params, random)));
 
         const rightRanges =
             right.type === ExpressionType.Range
                 ? calculateRange(right)
-                : valToRanges(calculateAst(right, params, random));
+                : valToRanges(floorCeil(calculateAst(right, params, random)));
 
         const leftRangeMax = Math.max(...leftRanges.map(x => x.to), 0);
         const rightRangeMax = Math.max(...rightRanges.map(x => x.to), 0);
@@ -687,8 +697,8 @@ function calculateAst(
             throw new Error("Wrong usage");
         }
         return node.ranges.map(range => {
-            const from = calculateAst(range.from, params, random);
-            const to = range.to ? calculateAst(range.to, params, random) : from;
+            const from = floorCeil(calculateAst(range.from, params, random));
+            const to = range.to ? floorCeil(calculateAst(range.to, params, random)) : from;
             const reversed = from > to;
             return {
                 from: reversed ? to : from,
@@ -703,15 +713,13 @@ function calculateAst(
         return params[ast.parameterId];
     } else if (ast.type === ExpressionType.Binary) {
         if (ast.operator === SyntaxKind.PlusToken) {
-            return numberMinMax(
-                calculateAst(ast.left, params, random) +
-                    calculateAst(ast.right, params, random)
-            );
+            const a = calculateAst(ast.left, params, random);
+            const b = calculateAst(ast.right, params, random);
+            return numberMinMax(a + b);
         } else if (ast.operator === SyntaxKind.MinusToken) {
-            return numberMinMax(
-                calculateAst(ast.left, params, random) -
-                    calculateAst(ast.right, params, random)
-            );
+            const a = calculateAst(ast.left, params, random);
+            const b = calculateAst(ast.right, params, random);
+            return numberMinMax(a - b);
         } else if (ast.operator === SyntaxKind.SlashToken) {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
@@ -723,7 +731,7 @@ function calculateAst(
             const b = calculateAst(ast.right, params, random);
             if (b !== 0) {
                 const val = a / b;
-                return numberMinMax(val > 0 ? Math.floor(val) : Math.ceil(val));
+                return numberMinMax(floorCeil(val));
             } else {
                 return a > 0 ? MAX_NUMBER : -MAX_NUMBER;
             }
@@ -734,10 +742,9 @@ function calculateAst(
                 b !== 0 ? a % b : a > 0 ? MAX_NUMBER : -MAX_NUMBER
             );
         } else if (ast.operator === SyntaxKind.AsteriskToken) {
-            return numberMinMax(
-                calculateAst(ast.left, params, random) *
-                    calculateAst(ast.right, params, random)
-            );
+            const a = calculateAst(ast.left, params, random);
+            const b = calculateAst(ast.right, params, random);
+            return numberMinMax(a * b);
         } else if (ast.operator === SyntaxKind.ToKeyword) {
             const newRanges = transformToIntoRanges(ast);
             return pickRandomForRanges(newRanges, random);
@@ -770,45 +777,37 @@ function calculateAst(
                 return leftVal === rightVal ? 1 : 0;
             }
         } else if (ast.operator === SyntaxKind.GreaterThanEqualsToken) {
-            return calculateAst(ast.left, params, random) >=
-                calculateAst(ast.right, params, random)
-                ? 1
-                : 0;
+            const a = calculateAst(ast.left, params, random);
+            const b = calculateAst(ast.right, params, random);
+            return a >= b ? 1 : 0;
         } else if (ast.operator === SyntaxKind.GreaterThanToken) {
-            return calculateAst(ast.left, params, random) >
-                calculateAst(ast.right, params, random)
-                ? 1
-                : 0;
+            const a = calculateAst(ast.left, params, random);
+            const b = calculateAst(ast.right, params, random);
+            return a > b ? 1 : 0;
         } else if (ast.operator === SyntaxKind.LessThanEqualsToken) {
-            return calculateAst(ast.left, params, random) <=
-                calculateAst(ast.right, params, random)
-                ? 1
-                : 0;
+            const a = calculateAst(ast.left, params, random);
+            const b = calculateAst(ast.right, params, random);
+            return a <= b ? 1 : 0;
         } else if (ast.operator === SyntaxKind.LessThanToken) {
-            return calculateAst(ast.left, params, random) <
-                calculateAst(ast.right, params, random)
-                ? 1
-                : 0;
+            const a = calculateAst(ast.left, params, random);
+            const b = calculateAst(ast.right, params, random);
+            return a < b ? 1 : 0;
         } else if (ast.operator === SyntaxKind.EqualsToken) {
-            return calculateAst(ast.left, params, random) ===
-                calculateAst(ast.right, params, random)
-                ? 1
-                : 0;
+            const a = calculateAst(ast.left, params, random);
+            const b = calculateAst(ast.right, params, random);
+            return a === b ? 1 : 0;
         } else if (ast.operator === SyntaxKind.NotEqualsToken) {
-            return calculateAst(ast.left, params, random) !==
-                calculateAst(ast.right, params, random)
-                ? 1
-                : 0;
+            const a = calculateAst(ast.left, params, random);
+            const b = calculateAst(ast.right, params, random);
+            return a !== b ? 1 : 0;
         } else if (ast.operator === SyntaxKind.AndKeyword) {
-            return calculateAst(ast.left, params, random) &&
-                calculateAst(ast.right, params, random)
-                ? 1
-                : 0;
+            const a = calculateAst(ast.left, params, random);
+            const b = calculateAst(ast.right, params, random);
+            return a && b ? 1 : 0;
         } else if (ast.operator === SyntaxKind.OrKeyword) {
-            return calculateAst(ast.left, params, random) ||
-                calculateAst(ast.right, params, random)
-                ? 1
-                : 0;
+            const a = calculateAst(ast.left, params, random);
+            const b = calculateAst(ast.right, params, random);
+            return a || b ? 1 : 0;
         } else {
             throw new Error(`Unknown operator '${ast.operator}'`);
         }
@@ -826,7 +825,7 @@ function calculateAst(
 }
 
 export function parse(str: string, params: Params = [], random = Math.random) {
-    // console.info(`Parsing '${str}'`);
+    // console.info(`New parsing '${str}'`);
     const tokensAndWhitespace: Token[] = [];
     const scanner = Scanner(str);
     while (true) {
@@ -871,21 +870,3 @@ export function parse(str: string, params: Params = [], random = Math.random) {
 //console.info(parse("3 + [1;3;6..9] - 3"));
 //console.info(parse("[p11]-[5..30]*0,4"));
 
-const staticRandom=[0.13909467986421675, 0.3896875703739122, 0.9433468264037868, 0.47331477136290645];
-const params=[0, 1, 4, 9, 16, 25, 36, 49, 64, 81, 100, 121, 144, 169, 196, 225, 256, 289, 324, 361, 400, 441, 484, 529, 576, 625, 676, 729, 784, 841, 900, 961, 1024, 1089, 1156, 1225, 1296, 1369, 1444, 1521, 1600, 1681, 1764, 1849, 1936, 2025, 2116, 2209, 2304, 2401, 2500, 2601, 2704, 2809, 2916, 3025, 3136, 3249, 3364, 3481, 3600, 3721, 3844, 3969, 4096, 4225, 4356, 4489, 4624, 4761, 4900, 5041, 5184, 5329, 5476, 5625, 5776, 5929, 6084, 6241, 6400, 6561, 6724, 6889, 7056, 7225, 7396, 7569, 7744, 7921, 8100, 8281, 8464, 8649, 8836, 9025];
-const str="[110..140]-[10..20]*[p46]";
-// expected = -397
-
-function createRandom() {
-    let i = 0;
-    return () => {
-        i++;
-        if (i >= staticRandom.length) {
-            i = 0;
-        }
-        return staticRandom[i];
-    };
-}
-
-console.info(parse(str, params, createRandom()));
-console.info(params[46], 'want ~ -28000');
