@@ -491,7 +491,7 @@ export function getUIState(quest: Quest, state: GameState, player: Player): Play
 
 
 function calculateParamsUpdate(quest: Quest, stateOriginal: GameState, random: RandomFunc,
-    paramsChanges: ParameterChange[]) {
+    paramsChanges: ReadonlyArray<ParameterChange>) {
     let critParamsTriggered: number[] = [];
     let state = stateOriginal;
     let oldValues = state.paramValues.slice(0, quest.paramsCount);
@@ -555,6 +555,211 @@ function calculateParamsUpdate(quest: Quest, stateOriginal: GameState, random: R
         ...state,
         paramValues: newValues
     }    
-    return [state, critParamsTriggered]
+    return {state, critParamsTriggered}
 }
 
+
+
+export function performJump(jumpId: number, quest: Quest, stateOriginal: GameState, images: PQImages = []): GameState {
+    const alea = new Alea(stateOriginal.aleaState.slice());
+    const random = alea.random;
+    let state = stateOriginal;
+
+    if (jumpId === JUMP_GO_BACK_TO_SHIP) {        
+        return {
+            ...state,
+            state: "returnedending",
+            aleaState: alea.exportState(),
+        };
+    }
+
+    const jumpForImg = quest.jumps.find(
+        x => x.id === state.lastJumpId
+    );
+    const image =
+        jumpForImg && jumpForImg.img
+            ? jumpForImg.img.toLowerCase() + ".jpg"
+            : images
+                .filter(
+                x => !!x.jumpIds && x.jumpIds.indexOf(jumpId) > -1
+                )
+                .map(x => x.filename)
+                .shift();
+    if (image) {
+        state = {
+            ...state,
+            imageFilename: image,
+        }        
+    }
+    
+    if (state.state === "starting") {
+        state = {
+            ...state,
+            state: "location",
+        }        
+        state = calculateLocation(state);
+    } else if (state.state === "jump") {
+        const jump = quest.jumps.find(
+            x => x.id === state.lastJumpId
+        );
+        if (!jump) {
+            throw new Error(`Internal error: no jump ${state.lastJumpId}`);
+        }
+        state = {
+            ...state,
+            locationId: jump.toLocationId,
+            state: "location",
+        }                
+        state = calculateLocation(state);
+    } else if (state.state === "location") {
+        if (!state.possibleJumps.find(x => x.id === jumpId)) {
+            throw new Error(
+                `Jump ${jumpId} is not in list in that location`
+            );
+        }
+        const jump = quest.jumps.find(x => x.id === jumpId);
+        if (!jump) {
+            throw new Error(`"Internal Error: no jump id=${jumpId} from possible jump list`);
+        }
+        state = {
+            ...state,
+            lastJumpId: jumpId,
+        }        
+        if (jump.dayPassed) {
+            state = {
+                ...state,
+                daysPassed: state.daysPassed + 1,
+            }               
+        }
+        state = {
+            ...state,
+            jumpedCount: {
+                ...state.jumpedCount,
+                [jumpId]: (state.jumpedCount[jumpId] || 0) + 1,
+            }
+        }
+        
+
+        const paramsUpdate = calculateParamsUpdate(
+            quest,
+            state,
+            random,
+            jump.paramsChanges
+        );
+        state = paramsUpdate.state;
+        const critParamsTriggered = paramsUpdate.critParamsTriggered;
+
+        const nextLocation = quest.locations.find(
+            x => x.id === jump.toLocationId
+        );
+        if (!nextLocation) {
+            throw new Error(`Internal error: no next location ${jump.toLocationId}`);
+        }
+
+        if (!jump.description) {
+            if (critParamsTriggered.length > 0) {
+                const critParamId = critParamsTriggered[0];
+                state = {
+                    ...state,
+                    state: "critonjump",
+                    critParamId,
+                }
+                
+                
+                const qmmImage =
+                    (state.critParamId !== undefined &&
+                        jump.paramsChanges[state.critParamId].img) ||
+                    quest.params[critParamId].img;
+                const image = qmmImage
+                    ? qmmImage.toLowerCase() + ".jpg"
+                    : images
+                        .filter(
+                        x =>
+                            !!x.critParams &&
+                            x.critParams.indexOf(state
+                                .critParamId as number) > -1
+                        )
+                        .map(x => x.filename)
+                        .shift();
+                if (image) {
+                    state = {
+                        ...state,
+                        imageFilename: image,
+                    }
+                }
+            } else {
+                state = {
+                    ...state,
+                    locationId: nextLocation.id,
+                    state: "location",
+                }                
+                state = calculateLocation(state);
+            }
+        } else {
+            if (critParamsTriggered.length > 0) {
+                state = {
+                    ...state,
+                    state: "jumpandnextcrit",
+                    critParamId: critParamsTriggered[0],
+                }
+            } else if (nextLocation.isEmpty) {
+                state = {
+                    ...state,
+                    locationId: nextLocation.id,
+                    state: "location",
+                }
+                state = calculateLocation(state);
+            } else {
+                state = {
+                    ...state,
+                    state: "jump"
+                }                
+            }
+        }
+    } else if (state.state === "jumpandnextcrit") {
+        state = {
+            ...state,
+            state: "critonjump"
+        }
+        const jump = quest.jumps.find(
+            x => x.id === state.lastJumpId
+        );
+        const qmmImg =
+            (state.critParamId !== undefined &&
+                jump &&
+                jump.paramsChanges[state.critParamId].img) ||
+            (state.critParamId !== undefined &&
+                quest.params[state.critParamId].img);
+        const image = qmmImg
+            ? qmmImg.toLowerCase() + ".jpg"
+            : images
+                .filter(
+                x =>
+                    !!x.critParams &&
+                    state.critParamId !== undefined &&
+                    x.critParams.indexOf(state
+                        .critParamId) > -1
+                )
+                .map(x => x.filename)
+                .shift();
+
+        if (image) {
+            state = {
+                ...state,
+                imageFilename: image,
+            }            
+        }
+    } else if (state.state === "critonlocation") {
+        state = {
+            ...state,
+            state:  "critonlocationlastmessage",
+        }        
+    } else {
+        throw new Error(`Unknown state ${state.state} in performJump`);
+    }
+
+    return {
+        ...state,
+        aleaState: alea.exportState(),
+    };
+}
