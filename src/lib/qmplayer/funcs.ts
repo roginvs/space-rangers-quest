@@ -1,5 +1,5 @@
 import { PQImages } from "../pqImages";
-import { QM, Location, ParamType, ParameterShowingType, ParamCritType, ParameterChange, HEADER_QM_2, HEADER_QM_3, HEADER_QM_4, Jump } from "../qmreader";
+import { QM, Location, ParamType, ParameterShowingType, ParamCritType, ParameterChange, HEADER_QM_2, HEADER_QM_3, HEADER_QM_4, Jump, getImagesListFromQmm } from "../qmreader";
 import { AleaState, Alea } from "../alea";
 import { parse } from "../formula";
 import { DeepImmutable } from "./deepImmutable";
@@ -1143,3 +1143,16 @@ function calculateLocation(quest: Quest,
 
     return state
 };
+
+
+export function getAllImagesToPreload(quest: Quest, images: PQImages) {
+    const imagesPQI = images.map(x => x.filename);
+    const imagesQmm = getImagesListFromQmm(quest as QM).map(
+        x => x.toLowerCase() + ".jpg"
+    );
+    let uniq: { [name: string]: boolean } = {};
+    for (const img of [...imagesPQI, ...imagesQmm]) {
+        uniq[img] = true;
+    }
+    return Object.keys(uniq);
+}
