@@ -15,7 +15,7 @@ const data = fs.readFileSync(__dirname + '/../../Boat.qm');
 //const data = fs.readFileSync('../Bank.qm');
 
 const qm = parse(data);
-const player = new QMPlayer(qm, undefined, 'rus', true); // 
+const player = new QMPlayer(qm, undefined, 'rus'); // true
 player.start();
 
 
