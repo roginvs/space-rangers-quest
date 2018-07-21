@@ -2,7 +2,7 @@
 // http://baagoe.com/en/RandomMusings/javascript/
 // https://github.com/dworthen/prng
 
-export type AleaState = [number, number, number, number];
+export type AleaState = ReadonlyArray<number>;
 
 export class Alea {
     private s0 = 0;
@@ -10,7 +10,8 @@ export class Alea {
     private s2 = 0;
     private c = 1;
 
-    constructor(args: string) {
+    constructor(args: string | AleaState) {
+        if (typeof(args) === 'string') {
         var mash = Mash();
         this.s0 = mash(" ");
         this.s1 = mash(" ");
@@ -30,9 +31,12 @@ export class Alea {
                 this.s2 += 1;
             }
         }
+        } else {
+            this.importState(args);
+        }
     }
 
-    random(decimal?: number) {
+    readonly random = (decimal?: number) => {
         const t = 2091639 * this.s0 + this.c * 2.3283064365386963e-10; // 2^-32
         this.s0 = this.s1;
         this.s1 = this.s2;
@@ -58,11 +62,11 @@ export class Alea {
     exportState(): AleaState {
         return [this.s0, this.s1, this.s2, this.c];
     }
-    importState(i: AleaState) {
-        this.s0 = +i[0] || 0;
-        this.s1 = +i[1] || 0;
-        this.s2 = +i[2] || 0;
-        this.c = +i[3] || 0;
+    importState(params: AleaState) {
+        this.s0 = +params[0] || 0;
+        this.s1 = +params[1] || 0;
+        this.s2 = +params[2] || 0;
+        this.c = +params[3] || 0;
     }
 }
 

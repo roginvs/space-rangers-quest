@@ -6,6 +6,7 @@ import { QMPlayer, GameState, Player } from '../lib/qmplayer'
 import { parse, QM } from '../lib/qmreader';
 import { substitute } from '../lib/substitution';
 import * as formula from '../lib/formula';
+import { PlayerSubstitute } from '../lib/qmplayer/funcs';
 
 
 const srcDir = __dirname + `/../../borrowed/qm/`;
@@ -17,7 +18,7 @@ describe(`Checking all quests for formulas and params substitution`, function ()
             describe(`Checking quest ${fullname}`, () => {
                 let quest: QM;
                 let params: number[];
-                let player: Player = {
+                let player: PlayerSubstitute = {
                     Ranger: 'Ranger',
                     Player: 'Player',
                     FromPlanet: 'FromPlanet',
@@ -28,6 +29,7 @@ describe(`Checking all quests for formulas and params substitution`, function ()
                     Day: 'Day',
                     Money: 'Money',
                     CurDate: 'CurDate',
+                    lang: "rus",
                 }
                 function check(str: string, place = '', isDiamond = false) {
                     try {

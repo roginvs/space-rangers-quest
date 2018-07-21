@@ -149,6 +149,7 @@ export class QMPlayer {
                 Day: `${DEFAULT_DAYS_TO_PASS_QUEST - this.state.daysPassed}`,
                 Date: this.SRDateToString(DEFAULT_DAYS_TO_PASS_QUEST),
                 CurDate: this.SRDateToString(this.state.daysPassed),
+                lang: "rus"
             },
             this.state.paramValues,
             n => Math.floor(Math.random() * n),
