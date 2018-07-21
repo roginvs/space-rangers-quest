@@ -362,7 +362,7 @@ describe('Player on test6.qm', function () {
 describe('Player on test6.qm with permitLiveAfterDeath=false', function () {
     let save: GameState;
     it(`Reads and parses quest`, () => {
-        const data = fs.readFileSync(__dirname + '/../../src/test/test6.qm');
+        const data = fs.readFileSync(__dirname + '/../../src/test/test6.qmm');
         const qm = parse(data);
         player = new QMPlayer(qm, undefined, 'rus', false); // 
         player.start();

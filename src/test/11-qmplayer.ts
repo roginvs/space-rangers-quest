@@ -10,8 +10,13 @@ let player: QMPlayer;
 
 function jumpTo(text: string = '') {
     const state = player.getState();
-    const jump = state.choices.filter(x => x.text.indexOf(text) > -1 && x.active).shift()
+    const saving = player.getSaving();
+    //console.info(`jumpto='${text}' state=${saving.state} locId=${saving.locationId} jumps=${saving.possibleJumps
+    //    .map(j =>`id=${j.id}${j.active}`).join(', ')} locs=`,saving.locationVisitCount);
+    const jump = state.choices.filter(x => x.text.indexOf(text) > -1 && x.active).shift();
+    //console.info(`jump=${jump ? jump.jumpId : "!"}`);
     if (!jump) {
+        const saving = player.getSaving();        
         throw new Error(`OLOLO: No jump '${text}' in ` + JSON.stringify(state, null, 4))
     }
     player.performJump(jump.jumpId);
@@ -181,7 +186,7 @@ describe('Player on test4-forqmm.qm', function () {
     })
     describe('New behaviour', () => {
         it(`Reads and parses quest`, () => {
-            const data = fs.readFileSync(__dirname + '/../../src/test/test4-forqmm.qm');
+            const data = fs.readFileSync(__dirname + '/../../src/test/test4-forqmm.qmm');
             const qm = parse(data);
             player = new QMPlayer(qm, undefined, 'rus', false); // 
             player.start();
@@ -194,10 +199,14 @@ describe('Player on test4-forqmm.qm', function () {
             jumpTo('');
             jumpTo('--> L2');
             jumpTo('');
-            jumpTo('');
+            jumpTo('');            
+            // Why? Why is was here?
+            /*
             jumpTo('--> L2');
             jumpTo('');
             assert.equal(player.getState().gameState, 'win', 'TGE 5 allows here to win')
+            */
+            assert.equal(player.getState().choices.length, 0, 'TGE 5.2.9 shows not choices here')
         })
     })
 })
@@ -205,7 +214,7 @@ describe('Player on test4-forqmm.qm', function () {
 describe('Player on test8-emptyloc.qm', function () {
     describe('New behaviour', () => {
         beforeEach(`Reads and parses quest`, () => {
-            const data = fs.readFileSync(__dirname + '/../../src/test/test8-emptyloc.qm');
+            const data = fs.readFileSync(__dirname + '/../../src/test/test8-emptyloc.qmm');
             const qm = parse(data);
             player = new QMPlayer(qm, undefined, 'rus', false); // 
             player.start();

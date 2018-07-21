@@ -29,7 +29,7 @@ export class QMPlayer {
         return getUIState(this.quest, this.state, this.player)
     }
     performJump(jumpId: number) {
-        this.state = performJump(jumpId, this.quest, this.state, this.images, this.oldTgeBehaviour)
+        this.state = performJump(jumpId, this.quest, this.state, this.images); //this.oldTgeBehaviour)
     }
 
     getSaving() {        
