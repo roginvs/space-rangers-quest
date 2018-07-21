@@ -1,5 +1,9 @@
 import { SyntaxKind, ExpressionType, MAX_NUMBER, Expression, Params } from "./formulaTypes";
 
+export function assertNever(x: never): never {
+    throw new Error(`Unexpected object: ${x}`);
+}
+
 function numberMinMax(n: number) {
     return Math.min(Math.max(n, -MAX_NUMBER), MAX_NUMBER);
 }
@@ -55,8 +59,8 @@ export function calculateAst(
 ): number {
     function transformToIntoRanges(node: Expression): RangeCalculated[] {
         if (
-            node.type !== ExpressionType.Binary ||
-            node.operator !== SyntaxKind.ToKeyword
+            node.type !== "binary" ||
+            node.operator !== "to keyword"
         ) {
             throw new Error("Wrong usage");
         }
@@ -70,12 +74,12 @@ export function calculateAst(
         const left = node.left;
         const right = node.right;
         const leftRanges =
-            left.type === ExpressionType.Range
+            left.type === "range"
                 ? calculateRange(left)
                 : valToRanges(floorCeil(calculateAst(left, params, random)));
 
         const rightRanges =
-            right.type === ExpressionType.Range
+            right.type === "range"
                 ? calculateRange(right)
                 : valToRanges(floorCeil(calculateAst(right, params, random)));
 
@@ -101,7 +105,7 @@ export function calculateAst(
         return newRanges;
     }
     function calculateRange(node: Expression): RangeCalculated[] {
-        if (node.type !== ExpressionType.Range) {
+        if (node.type !== "range") {
             throw new Error("Wrong usage");
         }
         return node.ranges.map(range => {
@@ -115,26 +119,26 @@ export function calculateAst(
         });
     }
 
-    if (ast.type === ExpressionType.Number) {
+    if (ast.type === "number") {
         return ast.value;
-    } else if (ast.type === ExpressionType.Parameter) {
+    } else if (ast.type === "parameter") {
         return params[ast.parameterId];
-    } else if (ast.type === ExpressionType.Binary) {
-        if (ast.operator === SyntaxKind.PlusToken) {
+    } else if (ast.type === "binary") {
+        if (ast.operator === "plus token") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             return numberMinMax(a + b);
-        } else if (ast.operator === SyntaxKind.MinusToken) {
+        } else if (ast.operator === "minus token") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             return numberMinMax(a - b);
-        } else if (ast.operator === SyntaxKind.SlashToken) {
+        } else if (ast.operator === "slash token") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             return numberMinMax(
                 b !== 0 ? a / b : a > 0 ? MAX_NUMBER : -MAX_NUMBER
             );
-        } else if (ast.operator === SyntaxKind.DivKeyword) {
+        } else if (ast.operator === "div keyword") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             if (b !== 0) {
@@ -143,32 +147,32 @@ export function calculateAst(
             } else {
                 return a > 0 ? MAX_NUMBER : -MAX_NUMBER;
             }
-        } else if (ast.operator === SyntaxKind.ModKeyword) {
+        } else if (ast.operator === "mod keyword") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             return numberMinMax(
                 b !== 0 ? a % b : a > 0 ? MAX_NUMBER : -MAX_NUMBER
             );
-        } else if (ast.operator === SyntaxKind.AsteriskToken) {
+        } else if (ast.operator === "asterisk token") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             return numberMinMax(a * b);
-        } else if (ast.operator === SyntaxKind.ToKeyword) {
+        } else if (ast.operator === "to keyword") {
             const newRanges = transformToIntoRanges(ast);
             return pickRandomForRanges(newRanges, random);
-        } else if (ast.operator === SyntaxKind.InKeyword) {
+        } else if (ast.operator === "in keyword") {
             const reversed =
-                ast.left.type === ExpressionType.Range &&
-                ast.right.type !== ExpressionType.Range;
+                ast.left.type === "range" &&
+                ast.right.type !== "range"
             const left = reversed ? ast.right : ast.left;
             const right = reversed ? ast.left : ast.right;
 
             const leftVal = numberMinMax(calculateAst(left, params, random));
             const ranges =
-                right.type === ExpressionType.Range
+                right.type === "range"
                     ? calculateRange(right)
-                    : right.type === ExpressionType.Binary &&
-                      right.operator === SyntaxKind.ToKeyword
+                    : right.type === "binary" &&
+                      right.operator === "to keyword"
                         ? transformToIntoRanges(right)
                         : undefined;
             if (ranges) {
@@ -184,51 +188,51 @@ export function calculateAst(
                 );
                 return leftVal === rightVal ? 1 : 0;
             }
-        } else if (ast.operator === SyntaxKind.GreaterThanEqualsToken) {
+        } else if (ast.operator === "greater than eq token") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             return a >= b ? 1 : 0;
-        } else if (ast.operator === SyntaxKind.GreaterThanToken) {
+        } else if (ast.operator === "greater than token") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             return a > b ? 1 : 0;
-        } else if (ast.operator === SyntaxKind.LessThanEqualsToken) {
+        } else if (ast.operator === "less than eq token") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             return a <= b ? 1 : 0;
-        } else if (ast.operator === SyntaxKind.LessThanToken) {
+        } else if (ast.operator === "less than token") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             return a < b ? 1 : 0;
-        } else if (ast.operator === SyntaxKind.EqualsToken) {
+        } else if (ast.operator === "equals token") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             return a === b ? 1 : 0;
-        } else if (ast.operator === SyntaxKind.NotEqualsToken) {
+        } else if (ast.operator === "not equals token") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             return a !== b ? 1 : 0;
-        } else if (ast.operator === SyntaxKind.AndKeyword) {
+        } else if (ast.operator === "and keyword") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             return a && b ? 1 : 0;
-        } else if (ast.operator === SyntaxKind.OrKeyword) {
+        } else if (ast.operator === "or keyword") {
             const a = calculateAst(ast.left, params, random);
             const b = calculateAst(ast.right, params, random);
             return a || b ? 1 : 0;
         } else {
-            throw new Error(`Unknown operator '${ast.operator}'`);
+            return assertNever(ast.operator);            
         }
-    } else if (ast.type === ExpressionType.Unary) {
-        if (ast.operator === SyntaxKind.MinusToken) {
+    } else if (ast.type === "unary") {
+        if (ast.operator === "minus token") {
             return -calculateAst(ast.expression, params, random);
         } else {
-            throw new Error(`Unknown unary operator`);
+            return assertNever(ast);                        
         }
-    } else if (ast.type === ExpressionType.Range) {
+    } else if (ast.type === "range") {
         return pickRandomForRanges(calculateRange(ast), random);
     } else {
-        throw new Error(`Unknown ast type`);
+        return assertNever(ast);                
     }
 }
 

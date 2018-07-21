@@ -1,12 +1,14 @@
-import { SyntaxKind, Token } from "./formulaTypes";
+import { SyntaxKind, Token, SyntaxKindBinary } from "./formulaTypes";
 
-const keywordsToKind = {
-    mod: SyntaxKind.ModKeyword,
-    div: SyntaxKind.DivKeyword,
-    to: SyntaxKind.ToKeyword,
-    in: SyntaxKind.InKeyword,
-    and: SyntaxKind.AndKeyword,
-    or: SyntaxKind.OrKeyword
+const keywordsToKind: {
+    [keyword: string]: SyntaxKindBinary
+} = {
+    mod: "mod keyword",
+    div: "div keyword",
+    to: "to keyword",
+    in: "in keyword",
+    and: "and keyword",
+    or: "or keyword",
 };
 
 export function Scanner(str: string) {
@@ -21,38 +23,39 @@ export function Scanner(str: string) {
         while (pos < end && isWhitespace(str[pos])) {
             pos++;
         }
-        return {
-            kind: SyntaxKind.WhiteSpaceTrivia,
+        const token: Token = {
+            kind: "white space token",
             start,
             end: pos,
             text: str.slice(start, pos)
         };
+        return token
     }
     function isDigit(char: string) {
         return char.length === 1 && "0123456789".indexOf(char) > -1;
     }
 
-    function oneCharTokenToKind(char: string) {
+    function oneCharTokenToKind(char: string): SyntaxKind | undefined {
         return char === "("
-            ? SyntaxKind.OpenBraceToken
+            ? "open brace token"
             : char === ")"
-                ? SyntaxKind.CloseBraceToken
+                ? "close brace token"
                 : char === "["
-                    ? SyntaxKind.OpenParenToken
+                    ? "open paren token"
                     : char === "]"
-                        ? SyntaxKind.CloseParenToken
+                        ? "close paren token"
                         : char === "/"
-                            ? SyntaxKind.SlashToken
+                            ? "slash token"
                             : char === "*"
-                                ? SyntaxKind.AsteriskToken
+                                ? "asterisk token"
                                 : char === "+"
-                                    ? SyntaxKind.PlusToken
+                                    ? "plus token"
                                     : char === "-"
-                                        ? SyntaxKind.MinusToken
+                                        ? "minus token"
                                         : char === "="
-                                            ? SyntaxKind.EqualsToken
+                                            ? "equals token"
                                             : char === ";"
-                                                ? SyntaxKind.SemicolonToken
+                                                ? "semicolon token"
                                                 : undefined;
     }
     function lookAhead(charCount: number = 1) {
@@ -79,9 +82,9 @@ export function Scanner(str: string) {
             }
         }
         
-        const kind =
+        const kind: SyntaxKind =
             keywordKind !== undefined ? keywordKind :
-            SyntaxKind.Identifier;
+            "identifier";
         return {
             kind,
             start,
@@ -116,8 +119,8 @@ export function Scanner(str: string) {
 
             pos++;
         }
-        const token = {
-            kind: SyntaxKind.NumericLiteral,
+        const token: Token= {
+            kind: "numeric literal",
             start,
             end: pos,
             text: str.slice(start, pos)
@@ -136,8 +139,8 @@ export function Scanner(str: string) {
 
         const lookAheadChar = lookAhead();
         if (char === "." && lookAheadChar === ".") {
-            const token = {
-                kind: SyntaxKind.DotDotToken,
+            const token: Token = {
+                kind: "dotdot token",
                 start: pos,
                 end: pos + 2,
                 text: char + lookAheadChar
@@ -147,8 +150,8 @@ export function Scanner(str: string) {
         }
 
         if (char === "<" && lookAheadChar === ">") {
-            const token = {
-                kind: SyntaxKind.NotEqualsToken,
+            const token: Token = {
+                kind: "not equals token",
                 start: pos,
                 end: pos + 2,
                 text: char + lookAheadChar
@@ -157,8 +160,8 @@ export function Scanner(str: string) {
             return token;
         }
         if (char === ">" && lookAheadChar === "=") {
-            const token = {
-                kind: SyntaxKind.GreaterThanEqualsToken,
+            const token: Token = {
+                kind: "greater than eq token",
                 start: pos,
                 end: pos + 2,
                 text: char + lookAheadChar
@@ -167,8 +170,8 @@ export function Scanner(str: string) {
             return token;
         }
         if (char === "<" && lookAheadChar === "=") {
-            const token = {
-                kind: SyntaxKind.LessThanEqualsToken,
+            const token: Token = {
+                kind: "less than eq token",
                 start: pos,
                 end: pos + 2,
                 text: char + lookAheadChar
@@ -178,8 +181,8 @@ export function Scanner(str: string) {
         }
 
         if (char === ">" && lookAheadChar !== "=") {
-            const token = {
-                kind: SyntaxKind.GreaterThanToken,
+            const token: Token = {
+                kind: "greater than token",
                 start: pos,
                 end: pos + 1,
                 text: char
@@ -189,8 +192,8 @@ export function Scanner(str: string) {
         }
 
         if (char === "<" && lookAheadChar !== "=") {
-            const token = {
-                kind: SyntaxKind.LessThanToken,
+            const token: Token = {
+                kind: "less than token",
                 start: pos,
                 end: pos + 1,
                 text: char
@@ -207,8 +210,8 @@ export function Scanner(str: string) {
         }
         const oneCharKind = oneCharTokenToKind(char);
         if (oneCharKind !== undefined) {
-            const token = {
-                kind: oneCharKind as SyntaxKind, // why it not able to understand this
+            const token: Token = {
+                kind: oneCharKind,
                 start: pos,
                 end: pos + 1,
                 text: char

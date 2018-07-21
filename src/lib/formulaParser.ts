@@ -1,47 +1,50 @@
-import { Token, RangePart, Expression, SyntaxKind, ParameterExpression, ExpressionType, BinaryExpression, UnaryExpression, RangeExpression, NumberExpression } from "./formulaTypes";
+import { Token, RangePart, Expression, SyntaxKind, ParameterExpression, ExpressionType, BinaryExpression, UnaryExpression, RangeExpression, NumberExpression, SyntaxKindBinary } from "./formulaTypes";
 
 
 type TokenOrExpression = Token | Expression;
+
 function getBinaryTokenPrecedence(token: SyntaxKind) {
     switch (token) {
-        case SyntaxKind.OrKeyword:
+        case "or keyword":
             return 1;
-        case SyntaxKind.AndKeyword:
+        case "and keyword":
             return 2;
-        case SyntaxKind.GreaterThanEqualsToken:
-        case SyntaxKind.LessThanEqualsToken:
-        case SyntaxKind.GreaterThanToken:
-        case SyntaxKind.LessThanToken:
-        case SyntaxKind.EqualsToken:
-        case SyntaxKind.NotEqualsToken:
+        case "greater than eq token":
+        case "less than eq token":
+        case "greater than token":
+        case "less than token":
+        case "equals token":
+        case "not equals token":
             return 3;
-        case SyntaxKind.InKeyword:
+        case "in keyword":
             return 3;
-        case SyntaxKind.ToKeyword:
+        case "to keyword":
             return 4;
 
-        case SyntaxKind.PlusToken:
+        case "plus token":
             return 5;
-        case SyntaxKind.MinusToken:
+        case "minus token":
             return 6;
 
-        case SyntaxKind.AsteriskToken:
+        case "asterisk token":
             return 7;
 
-        case SyntaxKind.SlashToken:
-        case SyntaxKind.DivKeyword:
-        case SyntaxKind.ModKeyword:
+        case "slash token":
+        case "div keyword":
+        case "mod keyword":
             return 8;
     }
     return 0;
 }
-
+function isTokenBinary(token: SyntaxKind): token is SyntaxKindBinary {
+    return getBinaryTokenPrecedence(token) !== 0
+}
 function parseParenExpression(tokens: Token[]) {
     const firstToken = tokens[0];
-    if (firstToken.kind === SyntaxKind.Identifier) {
+    if (firstToken.kind === "identifier") {
         if (tokens.length > 1) {
             throw new Error(
-                `Unknown token ${tokens[1].text} at ${tokens[1].start}`
+                `Unknown token ${tokens[1].text} at ${tokens[1].start} for paren`
             );
         }
         const pConst = firstToken.text.slice(0, 1);
@@ -53,7 +56,7 @@ function parseParenExpression(tokens: Token[]) {
             );
         }
         const exp: ParameterExpression = {
-            type: ExpressionType.Parameter,
+            type: "parameter",
             parameterId: pId
         };
         return exp;
@@ -64,7 +67,7 @@ function parseParenExpression(tokens: Token[]) {
         while (i < tokens.length) {
             if (
                 i < tokens.length &&
-                tokens[i].kind === SyntaxKind.SemicolonToken
+                tokens[i].kind === "semicolon token"
             ) {
                 i++;
             }
@@ -75,7 +78,7 @@ function parseParenExpression(tokens: Token[]) {
             const rangePartStart = i;
             while (
                 i < tokens.length &&
-                tokens[i].kind !== SyntaxKind.SemicolonToken
+                tokens[i].kind !== "semicolon token"
             ) {
                 i++;
             }
@@ -85,7 +88,7 @@ function parseParenExpression(tokens: Token[]) {
             const rangeLeftStart = rangeLeftI;
             while (
                 rangeLeftI < rangePartEnd &&
-                tokens[rangeLeftI].kind !== SyntaxKind.DotDotToken
+                tokens[rangeLeftI].kind !== "dotdot token"
             ) {
                 rangeLeftI++;
             }
@@ -97,7 +100,7 @@ function parseParenExpression(tokens: Token[]) {
                     )
                 });
             } else {
-                if (tokens[rangeLeftEnd].kind !== SyntaxKind.DotDotToken) {
+                if (tokens[rangeLeftEnd].kind !== "dotdot token") {
                     throw new Error(
                         `Expected .. at ${tokens[rangeLeftEnd].start}`
                     );
@@ -120,7 +123,7 @@ function parseParenExpression(tokens: Token[]) {
             }
         }
         const exp: RangeExpression = {
-            type: ExpressionType.Range,
+            type: "range",
             ranges
         };
         return exp;
@@ -132,7 +135,7 @@ function makeFlatExpression(tokens: Token[]) {
     let i = 0;
     if (tokens.length === 0) {
         const exp: NumberExpression = {
-            type: ExpressionType.Number,
+            type: "number",
             value: 0
         };
         return [exp];
@@ -141,22 +144,22 @@ function makeFlatExpression(tokens: Token[]) {
         const token = tokens[i];
         if (getBinaryTokenPrecedence(token.kind)) {
             flatExpression.push(token);
-        } else if (token.kind === SyntaxKind.NumericLiteral) {
+        } else if (token.kind === "numeric literal") {
             const exp: NumberExpression = {
-                type: ExpressionType.Number,
+                type: "number",
                 value: parseFloat(token.text.replace(",", "."))
             };
             flatExpression.push(exp);
-        } else if (token.kind === SyntaxKind.OpenBraceToken) {
+        } else if (token.kind === "open brace token") {
             let braceCount = 1;
             const braceStartPos = i;
             while (braceCount > 0 && i < tokens.length) {
                 i++;
                 const movedToken = tokens[i];
                 braceCount +=
-                    movedToken.kind === SyntaxKind.OpenBraceToken
+                    movedToken.kind === "open brace token"
                         ? 1
-                        : movedToken.kind === SyntaxKind.CloseBraceToken
+                        : movedToken.kind === "close brace token"
                             ? -1
                             : 0;
             }
@@ -170,14 +173,14 @@ function makeFlatExpression(tokens: Token[]) {
                 tokens.slice(braceStartPos + 1, braceEndPos)
             );
             flatExpression.push(exp);
-        } else if (token.kind === SyntaxKind.OpenParenToken) {
+        } else if (token.kind === "open paren token") {
             let parenCount = 1;
             const parenStartPos = i;
             while (parenCount > 0 && i < tokens.length) {
                 i++;
                 const movedToken = tokens[i];
                 parenCount +=
-                    movedToken.kind === SyntaxKind.CloseParenToken ? -1 : 0;
+                    movedToken.kind === "close paren token" ? -1 : 0;
             }
             if (parenCount !== 0) {
                 throw new Error(
@@ -192,7 +195,7 @@ function makeFlatExpression(tokens: Token[]) {
             const exp = parseParenExpression(insideParens);
             flatExpression.push(exp);
         } else {
-            throw new Error(`Unknown token ${token.text} at ${token.start}`);
+            throw new Error(`Unknown token ${token.text} at ${token.start} kind='${token.kind}'`);
         }
 
         i++;
@@ -210,20 +213,20 @@ export function parseExpression(tokensInput: Token[]): Expression {
             if ("type" in exp) {
                 return exp;
             } else {
-                throw new Error(`Unknown token '${exp.text}' at ${exp.start} `);
+                throw new Error(`Unknown token '${exp.text}' at ${exp.start} for flat exp`);
             }
         } else if (exps.length === 2) {
             const exp1 = exps[0];
             const exp2 = exps[1];
             if (
                 "kind" in exp1 &&
-                exp1.kind === SyntaxKind.MinusToken &&
+                exp1.kind === "minus token" &&
                 "type" in exp2
             ) {
                 const rexp: UnaryExpression = {
-                    type: ExpressionType.Unary,
+                    type: "unary",
                     expression: exp2,
-                    operator: SyntaxKind.MinusToken
+                    operator: "minus token"
                 };
                 return rexp;
             } else {
@@ -235,7 +238,7 @@ export function parseExpression(tokensInput: Token[]): Expression {
                 | {
                       idx: number;
                       prio: number;
-                      oper: SyntaxKind;
+                      oper: SyntaxKindBinary;
                   }
                 | undefined = undefined;
             let i = 1;
@@ -246,19 +249,20 @@ export function parseExpression(tokensInput: Token[]): Expression {
                 const right = exps[i + 1];
                 // console.info(left, middle, right);
                 if ("type" in left && "type" in right && "kind" in middle) {
-                    const prio = getBinaryTokenPrecedence(middle.kind);
-                    if (!prio) {
+                    const middleKind = middle.kind;                    
+                    if (! isTokenBinary(middleKind)) {
                         throw new Error(
                             `Now a binary operator '${middle.text}' at ${
                                 middle.start
                             }`
                         );
                     }
+                    const prio = getBinaryTokenPrecedence(middleKind);
                     if (!lowest || lowest.prio >= prio) {
                         lowest = {
                             idx: i,
                             prio,
-                            oper: middle.kind
+                            oper: middleKind
                         };
                     }
                 }
@@ -271,7 +275,7 @@ export function parseExpression(tokensInput: Token[]): Expression {
             const left = exps.slice(0, lowest.idx);
             const right = exps.slice(lowest.idx + 1);
             const exp: BinaryExpression = {
-                type: ExpressionType.Binary,
+                type: "binary",
                 left: parseFlatExpression(left),
                 right: parseFlatExpression(right),
                 operator: lowest.oper

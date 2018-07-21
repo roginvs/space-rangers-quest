@@ -14,7 +14,7 @@ export function parse(str: string, params: Params = [], random = Math.random) {
         const token = scanner();
         if (token) {
             tokensAndWhitespace.push(token);
-            if (token.kind !== SyntaxKind.WhiteSpaceTrivia) {
+            if (token.kind !== "white space token") {
                 // console.info(token);
             }
         } else {
@@ -34,7 +34,7 @@ export function parse(str: string, params: Params = [], random = Math.random) {
 
     assert.strictEqual(strNoWhitespaces, tokensAndWhitespace.map(x => x.text).join(""));
     const tokens = tokensAndWhitespace.filter(
-        x => x.kind !== SyntaxKind.WhiteSpaceTrivia
+        x => x.kind !== "white space token"
     );
 
     const ast = parseExpression(tokens);

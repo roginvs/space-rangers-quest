@@ -1,34 +1,32 @@
 export const MAX_NUMBER = 2000000000;
 export type Params = number[];
 
-export const enum SyntaxKind {
-    WhiteSpaceTrivia = "white space",
-    NumericLiteral = "numeric",
-    OpenBraceToken = "open brace",
-    CloseBraceToken = "close brace",
-    OpenParenToken = "open paren",
-    CloseParenToken = "close paren",
-    DotDotToken = "dotdot",
-    SemicolonToken = "semicolon",
-    LessThanToken = "less than",
-    GreaterThanToken = "greater than",
-    LessThanEqualsToken = "less than eq",
-    GreaterThanEqualsToken = "greater than eq",
-    PlusToken = "plus",
-    MinusToken = "minus",
-    SlashToken = "slash",
-    AsteriskToken = "asterisk",
-    EqualsToken = "equals",
-    NotEqualsToken = "not equals",
-    Identifier = "identifier",
-    ModKeyword = "mod",
-    DivKeyword = "div",
-    ToKeyword = "to",
-    InKeyword = "in",
-    AndKeyword = "and",
-    OrKeyword = "or"
-}
-
+const MINUS_TOKEN = "minus token";
+type SyntaxKindUnaryToken = typeof MINUS_TOKEN;
+type SyntaxKindBinaryToken =
+    | "less than token"
+    | "greater than token"
+    | "less than eq token"
+    | "greater than eq token"
+    | "plus token"
+    | typeof MINUS_TOKEN
+    | "slash token"
+    | "asterisk token"
+    | "equals token"
+    | "not equals token";
+type SyntaxKindBinaryKeyword = "mod keyword" | "div keyword" | "to keyword" | "in keyword" | "and keyword" | "or keyword";
+export type SyntaxKindBinary = SyntaxKindBinaryToken | SyntaxKindBinaryKeyword;
+export type SyntaxKind =
+    | "white space token"
+    | "numeric literal"
+    | "open brace token"
+    | "close brace token"
+    | "open paren token"
+    | "close paren token"
+    | "dotdot token"
+    | "semicolon token"
+    | SyntaxKindBinary
+    | "identifier";
 
 export interface Token {
     kind: SyntaxKind;
@@ -37,49 +35,46 @@ export interface Token {
     text: string;
 }
 
+export type ExpressionType =
+    | "number"
+    |"range"
+    |"parameter"
+    | "binary"
+    |"unary";
 
-
-
-
-
-
-export const enum ExpressionType {
-    Number = "number",
-    Range = "range",
-    Parameter = "parameter",
-    Binary = "binary",
-    Unary = "unary"
-}
 export type Expression =
     | NumberExpression
     | RangeExpression
     | ParameterExpression
     | BinaryExpression
     | UnaryExpression;
-export interface NumberExpression {
-    type: ExpressionType.Number;
+interface ExpressionCommon {
+    type: ExpressionType
+}
+export interface NumberExpression extends ExpressionCommon {
+    type: 'number';
     value: number;
 }
 export interface RangePart {
     from: Expression;
     to?: Expression;
 }
-export interface RangeExpression {
-    type: ExpressionType.Range;
+export interface RangeExpression extends ExpressionCommon {
+    type: "range";
     ranges: RangePart[];
 }
-export interface ParameterExpression {
-    type: ExpressionType.Parameter;
+export interface ParameterExpression extends ExpressionCommon{
+    type: "parameter";
     parameterId: number;
 }
-export interface BinaryExpression {
-    type: ExpressionType.Binary;
+export interface BinaryExpression extends ExpressionCommon{
+    type: "binary"
     left: Expression;
     right: Expression;
-    operator: SyntaxKind;
+    operator: SyntaxKindBinary;
 }
-export interface UnaryExpression {
-    type: ExpressionType.Unary;
+export interface UnaryExpression extends ExpressionCommon {
+    type: "unary";
     expression: Expression;
-    operator: SyntaxKind;
+    operator: SyntaxKindUnaryToken;
 }
