@@ -1,6 +1,6 @@
 import "mocha";
 import * as assert from "assert";
-import { parse, MAX_NUMBER } from '../lib/formula2';
+import { parse, MAX_NUMBER } from '../lib/formula';
 
 
 describe('Formula parser test', function () {
