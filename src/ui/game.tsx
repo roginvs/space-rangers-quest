@@ -2,7 +2,8 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { QM } from "../lib/qmreader";
-import { QMPlayer, GameState, QMImages } from "../lib/qmplayer";
+import { QMPlayer, GameState } from "../lib/qmplayer";
+import { PQImages } from '../lib/pqImages';
 import { GAME_NAME } from "./gamelist";
 
 import "./game.css";

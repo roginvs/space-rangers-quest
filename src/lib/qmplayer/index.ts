@@ -11,18 +11,11 @@ import {
 } from "../qmreader";
 import { parse } from "../formula";
 import { substitute } from "../substitution";
+import { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP} from "./defs";
+import { PQImages } from "../pqImages";
 
-export const JUMP_I_AGREE = -1;
-export const JUMP_NEXT = -2;
-export const JUMP_GO_BACK_TO_SHIP = -3;
+export { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP } from './defs';
 
-interface QMImage {
-    filename: string;
-    locationIds?: number[]; // 0 === начальная
-    jumpIds?: number[];
-    critParams?: number[];
-}
-export type QMImages = QMImage[];
 
 export interface Player {
     Ranger: string;
@@ -66,7 +59,7 @@ export interface GameState {
 
     randomSeed: number;
 }
-interface Choice {
+interface PlayerChoice {
     text: string;
     jumpId: number;
     active: boolean;
@@ -76,7 +69,7 @@ interface PlayerState {
     text: string;
     imageFileName?: string;
     paramsState: string[];
-    choices: Choice[];
+    choices: PlayerChoice[];
     gameState: "running" | "fail" | "win" | "dead";
 }
 const DEFAULT_DAYS_TO_PASS_QUEST = 35;
@@ -87,8 +80,8 @@ export class QMPlayer {
 //    private locationsIds = this.quest.locations.map(x => x.id);
 //    private jumpsIds = this.quest.jumps.map(x => x.id);
     constructor(
-        private quest: QM,
-        private images: QMImages = [],
+        private quest: QM,   
+        private images: PQImages = [],
         private lang: "rus" | "eng",
         private oldTgeBehaviour: boolean
     ) {

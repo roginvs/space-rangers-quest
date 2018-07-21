@@ -3,10 +3,11 @@ import { parse, QM, ParamType, ParamCritType, getImagesListFromQmm } from './lib
 import * as pako from 'pako';
 import * as fs from 'fs';
 
-import { QMPlayer, QMImages } from './lib/qmplayer'
+import { QMPlayer } from './lib/qmplayer'
+import { PQImages } from './lib/pqImages';
 
 const pqiSR1Parsed = JSON.parse(fs.readFileSync(__dirname + '/../src/sr1-pqi.json').toString()) as {
-    [questName: string]: QMImages
+    [questName: string]: PQImages
 };
 
 export type Origin = string;
@@ -18,7 +19,7 @@ export interface Game {
     description?: string,
     smallDescription?: string,
     gameName: string,
-    images: QMImages,
+    images: PQImages,
     questOrigin: Origin,
     oldTgeBehaviour: boolean,
     hardness: number,
@@ -52,7 +53,7 @@ const resultJsonFile = dataDstPath + '/index.json';
 
 function readPqi(filename: string) {
     let result: {
-        [name: string]: QMImages
+        [name: string]: PQImages
     } = {};
 
     if (!fs.existsSync(filename)) {

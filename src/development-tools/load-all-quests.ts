@@ -1,7 +1,7 @@
 import { parse, QM, ParamType, ParamCritType, getImagesListFromQmm } from '../lib/qmreader';
 import * as fs from 'fs';
 
-import { QMPlayer, QMImages } from '../lib/qmplayer'
+import { QMPlayer } from '../lib/qmplayer'
 
 
 const dataSrcPath = __dirname + '/../../borrowed'

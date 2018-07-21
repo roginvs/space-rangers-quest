@@ -1,4 +1,4 @@
-import { QMImages } from '../lib/qmplayer'
+import { PQImages } from '../lib/pqImages';
 import * as fs from 'fs';
 
 const questRawNames = `
@@ -427,7 +427,7 @@ questRawNames.split('\n').filter(x => x).map(line => {
 })
 
 const imagesPerQuest: {
-    [questId: string]: QMImages
+    [questId: string]: PQImages
 } = {};
 questRawPQI.split('\n').filter(x => x).map(line => {
     // 16,L,16,17,18,19,20,21,22,23,24=Bm.PQI.Hachball_03

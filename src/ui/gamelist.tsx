@@ -2,7 +2,7 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 
 import { QM, parse } from '../lib/qmreader';
-import { QMPlayer, QMImages } from '../lib/qmplayer';
+import { QMPlayer } from '../lib/qmplayer';
 
 import { GamePlay } from './game';
 
