@@ -1,5 +1,5 @@
 import { PQImages } from "../pqImages";
-import { QM, Location, ParamType, ParameterShowingType, ParamCritType, ParameterChange } from "../qmreader";
+import { QM, Location, ParamType, ParameterShowingType, ParamCritType, ParameterChange, HEADER_QM_2, HEADER_QM_3, HEADER_QM_4, Jump } from "../qmreader";
 import { AleaState, Alea } from "../alea";
 import { parse } from "../formula";
 import { DeepImmutable } from "./deepImmutable";
@@ -217,7 +217,9 @@ function getParamsState(quest: Quest, state: GameState, player: Player, random: 
     return paramsState;
 }
 
-function calculateLocationShowingTextId(state: GameState, location: DeepImmutable<Location>, random: RandomFunc) {
+function calculateLocationShowingTextId(location: DeepImmutable<Location>,
+    state: GameState, 
+     random: RandomFunc) {
     const locationTextsWithText = location.texts
         .map((text, i) => {
             return { text, i };
@@ -321,7 +323,7 @@ export function getUIState(quest: Quest, state: GameState, player: Player): Play
             throw new Error(`Internal error: no state loc id=${state.locationId}`);
         }
 
-        const locTextId = calculateLocationShowingTextId(state, location, random);
+        const locTextId = calculateLocationShowingTextId(location, state, random);
         const textInOptions = location.texts[locTextId] || "";
 
         const lastJump = quest.jumps.find(
@@ -597,7 +599,7 @@ export function performJump(jumpId: number, quest: Quest, stateOriginal: GameSta
             ...state,
             state: "location",
         }        
-        state = calculateLocation(state);
+        state = calculateLocation(quest, state, images, random);
     } else if (state.state === "jump") {
         const jump = quest.jumps.find(
             x => x.id === state.lastJumpId
@@ -610,7 +612,7 @@ export function performJump(jumpId: number, quest: Quest, stateOriginal: GameSta
             locationId: jump.toLocationId,
             state: "location",
         }                
-        state = calculateLocation(state);
+        state = calculateLocation(quest, state, images, random);
     } else if (state.state === "location") {
         if (!state.possibleJumps.find(x => x.id === jumpId)) {
             throw new Error(
@@ -693,7 +695,7 @@ export function performJump(jumpId: number, quest: Quest, stateOriginal: GameSta
                     locationId: nextLocation.id,
                     state: "location",
                 }                
-                state = calculateLocation(state);
+                state = calculateLocation(quest, state, images, random);
             }
         } else {
             if (critParamsTriggered.length > 0) {
@@ -708,7 +710,7 @@ export function performJump(jumpId: number, quest: Quest, stateOriginal: GameSta
                     locationId: nextLocation.id,
                     state: "location",
                 }
-                state = calculateLocation(state);
+                state = calculateLocation(quest, state, images, random);
             } else {
                 state = {
                     ...state,
@@ -763,3 +765,381 @@ export function performJump(jumpId: number, quest: Quest, stateOriginal: GameSta
         aleaState: alea.exportState(),
     };
 }
+
+
+function calculateLocation(quest: Quest, 
+    stateOriginal: GameState,
+     images: PQImages,
+    random: RandomFunc): GameState {
+        
+    let state = stateOriginal;
+    state = {
+        ...state,
+        locationVisitCount: {
+            ...state.locationVisitCount,
+            [state.locationId]: (state.locationVisitCount[state.locationId] || 0) + 1
+        }
+    }
+    
+    const location = quest.locations.find(
+        x => x.id === state.locationId
+    );
+    if (!location) {
+        throw new Error(`Internal error: no state location ${state.locationId}`);
+    }
+
+    const locImgId = calculateLocationShowingTextId(location,state, random);
+    const imageFromQmm =
+        location.media[locImgId] && location.media[locImgId].img;
+    const imageFromPQI = images.find(
+        x =>
+            !!x.locationIds &&
+            x.locationIds.indexOf(state.locationId) > -1
+    );
+    const image = imageFromQmm
+        ? imageFromQmm.toLowerCase() + ".jpg"
+        : imageFromPQI && imageFromPQI.filename;
+    if (image) {
+        state = {
+            ...state,
+            imageFilename: image,
+        }        
+    }
+    if (location.dayPassed) {
+        state = {
+            ...state,
+            daysPassed: state.daysPassed + 1,
+        }        
+    }
+
+    const paramsUpdate = calculateParamsUpdate(
+        quest,
+        state,
+        random,
+        location.paramsChanges
+    );
+    state = paramsUpdate.state;
+    const critParamsTriggered = paramsUpdate.critParamsTriggered;
+
+
+    const oldTgeBehaviour = quest.header === HEADER_QM_2 || 
+        quest.header === HEADER_QM_3 || quest.header === HEADER_QM_4;
+
+    const allJumps = quest.jumps
+        .filter(x => x.fromLocationId === state.locationId)
+        .filter(jump => {
+            // Сразу выкинуть переходы в локации с превышенным лимитом
+            const toLocation = quest.locations.find(
+                x => x.id === jump.toLocationId
+            );
+            if (toLocation) {
+                if (
+                    toLocation.maxVisits &&
+                    state.locationVisitCount[jump.toLocationId] + 1 >=
+                    toLocation.maxVisits
+                ) {
+                    return false;
+                }
+            }
+
+
+            if (oldTgeBehaviour) {
+                // Это какая-то особенность TGE - не учитывать переходы, которые ведут в локацию
+                // где были переходы, а проходимость закончилась.
+                // Это вообще дикость какая-то, потому как там вполне может быть
+                // критичный параметр завершить квест
+                const jumpsFromDestination = quest.jumps.filter(
+                    x => x.fromLocationId === jump.toLocationId
+                );
+                if (jumpsFromDestination.length === 0) {
+                    // Но если там вообще переходов не было, то всё ок
+                    return true;
+                }
+                if (
+                    jumpsFromDestination.filter(
+                        x =>
+                            x.jumpingCountLimit &&
+                            state.jumpedCount[x.id] >=
+                            x.jumpingCountLimit
+                    ).length === jumpsFromDestination.length
+                ) {
+                    return false;
+                } else {
+                    return true;
+                }
+            } else {
+                return true;
+            }
+        });
+
+    // Если есть такие же тексты - то спорный по весам
+    // Если текст один - то по вероятности
+    const possibleJumps = allJumps
+        .sort((a, b) => {
+            return a.showingOrder !== b.showingOrder
+                ? a.showingOrder - b.showingOrder
+                : Math.floor(Math.random() * 2) * 2 - 1;
+        })
+        .map(jump => {
+            return {
+                jump,
+                active: (jump => {
+                    for (let i = 0; i < quest.paramsCount; i++) {
+                        if (quest.params[i].active) {
+                            if (
+                                state.paramValues[i] >
+                                jump.paramsConditions[i].mustTo ||
+                                state.paramValues[i] <
+                                jump.paramsConditions[i].mustFrom
+                            ) {
+                                return false;
+                            }
+                            if (
+                                jump.paramsConditions[i].mustEqualValues
+                                    .length > 0
+                            ) {
+                                const isEqual = jump.paramsConditions[
+                                    i
+                                ].mustEqualValues.filter(
+                                    x => x === state.paramValues[i]
+                                    );
+                                if (
+                                    jump.paramsConditions[i]
+                                        .mustEqualValuesEqual &&
+                                    isEqual.length === 0
+                                ) {
+                                    return false;
+                                }
+                                if (
+                                    !jump.paramsConditions[i]
+                                        .mustEqualValuesEqual &&
+                                    isEqual.length !== 0
+                                ) {
+                                    return false;
+                                }
+                            }
+                            if (
+                                jump.paramsConditions[i].mustModValues
+                                    .length > 0
+                            ) {
+                                const isMod = jump.paramsConditions[
+                                    i
+                                ].mustModValues.filter(
+                                    x => state.paramValues[i] % x === 0
+                                    );
+                                if (
+                                    jump.paramsConditions[i]
+                                        .mustModValuesMod &&
+                                    isMod.length === 0
+                                ) {
+                                    return false;
+                                }
+                                if (
+                                    !jump.paramsConditions[i]
+                                        .mustModValuesMod &&
+                                    isMod.length !== 0
+                                ) {
+                                    return false;
+                                }
+                            }
+                        }
+                    }
+                    if (jump.formulaToPass) {
+                        if (
+                            parse(
+                                jump.formulaToPass,
+                                state.paramValues,
+                                random
+                            ) === 0
+                        ) {
+                            return false;
+                        }
+                    }
+                    if (
+                        jump.jumpingCountLimit &&
+                        state.jumpedCount[jump.id] >=
+                        jump.jumpingCountLimit
+                    ) {
+                        return false;
+                    }
+                    return true;
+                })(jump)
+            };
+        });
+
+    let newJumps: {
+        jump: DeepImmutable<Jump>;
+        active: boolean;
+    }[] = [];
+
+    let seenTexts: {
+        [text: string]: boolean;
+    } = {};
+    for (const j of possibleJumps) {
+        if (!seenTexts[j.jump.text]) {
+            seenTexts[j.jump.text] = true;
+            const jumpsWithSameText = possibleJumps.filter(
+                x => x.jump.text === j.jump.text
+            );
+            if (jumpsWithSameText.length === 1) {
+                if (j.jump.prio < 1 && j.active) {
+                    j.active = Math.random() < j.jump.prio;
+                    // console.info(`Jump ${j.jump.text} is now ${j.active} by random`)
+                }
+                if (j.active || j.jump.alwaysShow) {
+                    newJumps.push(j);
+                }
+            } else {
+                const jumpsActiveWithSameText = jumpsWithSameText.filter(
+                    x => x.active
+                );
+                if (jumpsActiveWithSameText.length > 0) {
+                    const maxPrio = jumpsActiveWithSameText.reduce(
+                        (max, jump) =>
+                            jump.jump.prio > max ? jump.jump.prio : max,
+                        0
+                    );
+                    const jumpsWithNotSoLowPrio = jumpsActiveWithSameText.filter(
+                        x => x.jump.prio * 100 >= maxPrio
+                    );
+                    const prioSum = jumpsWithNotSoLowPrio
+                        .map(x => x.jump.prio)
+                        .reduce((sum, i) => i + sum, 0);
+                    let rnd = Math.random() * prioSum;
+                    for (const jj of jumpsWithNotSoLowPrio) {
+                        if (jj.jump.prio >= rnd) {
+                            newJumps.push(jj);
+                            break;
+                        } else {
+                            rnd = rnd - jj.jump.prio;
+                        }
+                    }
+                } else {
+                    const alLeastOneWithAlwaysShow = jumpsWithSameText
+                        .filter(x => x.jump.alwaysShow)
+                        .shift();
+                    if (alLeastOneWithAlwaysShow) {
+                        newJumps.push(alLeastOneWithAlwaysShow);
+                    }
+                }
+            }
+        }
+    }
+    /*
+    const newActiveJumpsWithoutEmpty = newJumps.filter(x => x.active && x.jump.text);
+    const newActiveJumpsOnlyEmpty = newJumps.filter(x => x.active && !x.jump.text);
+    const newActiveJumpsOnlyOneEmpty = newActiveJumpsOnlyEmpty.length > 0 ? [newActiveJumpsOnlyEmpty[0]] : [];
+    
+    this.state.possibleJumps = (newActiveJumpsWithoutEmpty.length > 0 ?
+        newJumps.filter(x => x.jump.text) :
+        newActiveJumpsOnlyOneEmpty)
+        .map(x => {
+            return {
+                active: x.active,
+                id: x.jump.id
+            }
+        })
+        */
+    const newJumpsWithoutEmpty = newJumps.filter(x => x.jump.text);
+    const newActiveJumpsOnlyEmpty = newJumps.filter(
+        x => x.active && !x.jump.text
+    );
+    const newActiveJumpsOnlyOneEmpty =
+        newActiveJumpsOnlyEmpty.length > 0
+            ? [newActiveJumpsOnlyEmpty[0]]
+            : [];
+
+    
+    const statePossibleJumps = (newJumpsWithoutEmpty.length > 0
+        ? newJumpsWithoutEmpty
+        : newActiveJumpsOnlyOneEmpty
+    ).map(x => {
+        return {
+            active: x.active,
+            id: x.jump.id
+        };
+    });
+    state = {
+        ...state,
+        possibleJumps: statePossibleJumps
+    }
+
+    for (const critParam of critParamsTriggered) {
+        const gotCritWithChoices =
+            (quest.params[critParam].type === ParamType.Провальный ||
+                quest.params[critParam].type ===
+                ParamType.Смертельный) &&
+            state.possibleJumps.filter(x => x.active).length > 0;
+        if (!oldTgeBehaviour || !gotCritWithChoices) {
+            const lastjump = quest.jumps.find(
+                x => x.id === state.lastJumpId
+            );
+            state = {
+                ...state,
+                state: location.isEmpty
+                ? state.lastJumpId && lastjump && lastjump.description
+                    ? "critonlocation"
+                    : "critonlocationlastmessage"
+                : "critonlocation",
+                critParamId: critParam,
+            }
+            
+            
+
+            const qmmImg =
+                location.paramsChanges[critParam].img ||
+                quest.params[critParam].img;
+            const image = qmmImg
+                ? qmmImg.toLowerCase() + ".jpg"
+                : images
+                    .filter(
+                    x =>
+                        !!x.critParams &&
+                        x.critParams.indexOf(critParam) > -1
+                    )
+                    .map(x => x.filename)
+                    .shift();
+            if (image) {
+                state = {
+                    ...state,
+                    imageFilename: image,
+                }                
+            }
+        }
+    }
+
+    /* А это дикий костыль для пустых локаций и переходов */
+    const stateUI = getUIState(quest, state, DEFAULT_RUS_PLAYER);
+    if (stateUI.choices.length === 1) {
+        const jump = quest.jumps.find(
+            x => x.id === stateUI.choices[0].jumpId
+        );
+        const lastjump = quest.jumps.find(
+            x => x.id === state.lastJumpId
+        );
+        const location = quest.locations.find(
+            x => x.id === state.locationId
+        );
+        if (
+            jump &&
+            !jump.text &&
+            location &&
+            ((location.isEmpty && (lastjump && !lastjump.description)) ||
+                !stateUI.text) &&
+            stateUI.choices[0].active
+        ) {
+            console.info(
+                `Performinig autojump from loc=${state
+                    .locationId} via jump=${jump.id}`
+            );
+            state = performJump(
+                jump.id,
+                quest,
+                state,
+                images
+            );
+        }
+    }
+
+    return state
+};
