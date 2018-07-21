@@ -1,9 +1,10 @@
 import { parse } from './formula';
 import { Player } from './qmplayer';
+import { RandomFunc } from './randomFunc';
 export const clr = '<clr>';
 export const clrEnd = '<clrEnd>';
 
-export function substitute(str: string, player: Player, params: number[], diamondIndex?: number) {
+export function substitute(str: string, player: Player, params: number[], random: RandomFunc, diamondIndex?: number) {
     if (diamondIndex !== undefined) {
         str = str.replace(/<>/g,
             `[p${diamondIndex + 1}]`);
@@ -15,7 +16,7 @@ export function substitute(str: string, player: Player, params: number[], diamon
         }
         const formulaWithBrackets = m[0];
         const result = parse(formulaWithBrackets.slice(1, formulaWithBrackets.length - 1),
-            params);
+            params, random);
         str = str.replace(formulaWithBrackets, `${clr}${result}${clrEnd}`);
     }
     for (const k of Object.keys(player) as (keyof Player)[]) {

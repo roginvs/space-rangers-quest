@@ -3,10 +3,11 @@ import { Params, Token, SyntaxKind } from "./types";
 import { Scanner } from "./scanner";
 import { parseExpression } from "./parser";
 import { calculateAst } from "./calculator";
+import { RandomFunc } from "../randomFunc";
 
 export { MAX_NUMBER } from './consts';
 
-export function parse(str: string, params: Params = [], random = Math.random) {
+export function parse(str: string, params: Params = [], random: RandomFunc) {
     // console.info(`New parsing '${str}'`);
     const tokensAndWhitespace: Token[] = [];
     const strNoWhitespaces = str.replace(/\r|\n/g,'').replace(/ /g, ''); // Some quests have "10 000" as number

@@ -1,5 +1,6 @@
 import { SyntaxKind, ExpressionType, Expression, Params } from "./types";
 import { MAX_NUMBER } from './consts';
+import { RandomFunc } from "../randomFunc";
 
 export function assertNever(x: never): never {
     throw new Error(`Unexpected object: ${x}`);
@@ -18,12 +19,12 @@ function floorCeil(val: number) {
     return val > 0 ? Math.floor(val) : Math.ceil(val);
 }
 
-function pickRandomForRanges(ranges: RangeCalculated[], random: () => number) {
+function pickRandomForRanges(ranges: RangeCalculated[], random: RandomFunc) {
     const totalValuesAmount = ranges.reduce((totalItems, range) => {
         return totalItems + range.to - range.from + 1;
     }, 0);
-    const pickedRandom = random();
-    let rnd = Math.floor(pickedRandom * totalValuesAmount);
+    
+    let rnd = random(totalValuesAmount);
     //console.info(
     //    `new ranges=[${ranges
     //        .map(x => `${x.from}..${x.to}`)
@@ -56,7 +57,7 @@ function pickRandomForRanges(ranges: RangeCalculated[], random: () => number) {
 export function calculateAst(
     ast: Expression,
     params: Params = [],
-    random: () => number
+    random: RandomFunc
 ): number {
     function transformToIntoRanges(node: Expression): RangeCalculated[] {
         if (

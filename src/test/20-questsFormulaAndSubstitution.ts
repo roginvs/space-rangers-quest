@@ -31,7 +31,7 @@ describe(`Checking all quests for formulas and params substitution`, function ()
                 }
                 function check(str: string, place = '', isDiamond = false) {
                     try {
-                        substitute(str, player, params, isDiamond ? 1 : undefined);
+                        substitute(str, player, params, n => Math.floor(Math.random() * n), isDiamond ? 1 : undefined);
                     } catch (e) {
                         throw new Error(`String failed '${str}' with ${e} in ${place}`);
                     }

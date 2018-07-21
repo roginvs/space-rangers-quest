@@ -2,7 +2,9 @@
 // http://baagoe.com/en/RandomMusings/javascript/
 // https://github.com/dworthen/prng
 
-class Alea {
+export type AleaState = [number, number, number, number];
+
+export class Alea {
     private s0 = 0;
     private s1 = 0;
     private s2 = 0;
@@ -53,10 +55,10 @@ class Alea {
     }
     */
 
-    exportState() {
+    exportState(): AleaState {
         return [this.s0, this.s1, this.s2, this.c];
     }
-    importState(i: number[]) {
+    importState(i: AleaState) {
         this.s0 = +i[0] || 0;
         this.s1 = +i[1] || 0;
         this.s2 = +i[2] || 0;

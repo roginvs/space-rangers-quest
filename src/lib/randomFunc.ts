@@ -1,0 +1,1 @@
+export type RandomFunc = (decimalLimit: number) => number;
