@@ -225,7 +225,7 @@ function calculateLocationShowingTextId(location: DeepImmutable<Location>,
         })
         .filter(x => x.text);
 
-    if (location.textSelectFurmula) {
+    if (location.isTextByFormula) {
         if (location.textSelectFurmula) {            
             const id =
                 parse(location.textSelectFurmula, state.paramValues, random) -
@@ -322,7 +322,7 @@ export function getUIState(quest: Quest, state: GameState, player: Player): Play
         }
 
         const locTextId = calculateLocationShowingTextId(location, state, random);        
-        const textInOptions = location.texts[locTextId] || "";
+        const locationOwnText = location.texts[locTextId] || "";
 
         const lastJump = quest.jumps.find(
             x => x.id === state.lastJumpId
@@ -331,7 +331,7 @@ export function getUIState(quest: Quest, state: GameState, player: Player): Play
         const text =
             location.isEmpty && lastJump && lastJump.description
                 ? lastJump.description
-                : textInOptions;
+                : locationOwnText;
 
         return {
             text: replace(text, state, player, undefined, alea.random),
@@ -1116,31 +1116,56 @@ function calculateLocation(quest: Quest,
 
 
     /* А это дикий костыль для пустых локаций и переходов */
-    const stateUI = getUIState(quest, state, DEFAULT_RUS_PLAYER);
-    if (stateUI.choices.length === 1) {
-        const jump = quest.jumps.find(
-            x => x.id === stateUI.choices[0].jumpId
+    //const stateUI = getUIState(quest, state, DEFAULT_RUS_PLAYER);
+    if (state.possibleJumps.length === 1) {
+        const lonenyCurrentJumpInPossible = state.possibleJumps[0];
+        const lonenyCurrentJump = quest.jumps.find(
+            x => x.id === lonenyCurrentJumpInPossible.id
         );
-        const lastjump = quest.jumps.find(
+        if (! lonenyCurrentJump) {
+            throw new Error(`Unable to find jump id=${lonenyCurrentJumpInPossible.id}`)
+        }
+        const lastJump = quest.jumps.find(
             x => x.id === state.lastJumpId
         );
-        const location = quest.locations.find(
-            x => x.id === state.locationId
-        );
-        if (
-            jump &&
-            !jump.text &&
-            location &&
-            ((location.isEmpty && (lastjump && !lastjump.description)) ||
-                !stateUI.text) &&
-            stateUI.choices[0].active
-        ) {
+
+        /*
+
+        const text =
+            location.isEmpty && lastJump && lastJump.description
+                ? lastJump.description
+                : locationOwnText; // location calculated text
+
+
+        const needAutojump = 
+            (location.isEmpty && lastJump && !lastJump.description ) ||
+          !( location.isEmpty && lastJump && lastJump.description
+            ? lastJump.description
+            : locationOwnText )
+            
+        if (            
+            !lonenyCurrentJump.text &&            
+            lonenyCurrentJumpInPossible.active &&
+            (location.isEmpty && lastJump && !lastJump.description ) ||
+                ! text
+            
+            ) 
+         {
+             */
+        
+        const locTextId = calculateLocationShowingTextId(location, state, random);        
+        const locationOwnText = location.texts[locTextId] || "";
+    
+        const needAutoJump = !lonenyCurrentJump.text && ( 
+            location.isEmpty ? 
+            lastJump ? ! lastJump.description : true : ! locationOwnText);
+        if (needAutoJump) {
             console.info(
                 `Performinig autojump from loc=${state
-                    .locationId} via jump=${jump.id}`
+                    .locationId} via jump=${lonenyCurrentJump.id}`
             );
             state = performJumpInternal(
-                jump.id,
+                lonenyCurrentJump.id,
                 quest,
                 state,
                 images,
