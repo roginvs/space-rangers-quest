@@ -718,7 +718,8 @@ function performJumpInternal(
     if (state.state === "starting") {
         state = {
             ...state,
-            state: "location"
+            state: "location",
+            text: "",
         };
         state = calculateLocationStateAndChangeStateIfNeeded(
             quest,
@@ -1527,10 +1528,13 @@ function calculateLocationStateAndChangeStateIfNeeded(
                             : true
                         : !locationOwnText
                     : location.isEmpty
-                        ? lastJump
+                        ?                             
+                            lastJump
                             ? !lastJump.description && !locationOwnText
                             : ! locationOwnText
-                        : !locationOwnText);
+                        : !locationOwnText); // ! locationOwnText
+
+                        //!state.text && locationOwnText
             console.info(
                 `\noldTgeBehaviour=${state.oldTgeBehaviour} textOnLonelyJump='${
                     lonenyCurrentJump.text
