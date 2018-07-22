@@ -598,7 +598,7 @@ describe('Player on test5-emptyloctext-emptyloc-noautojump.qm doing 1-8', functi
      */
 });
 
-describe('Player on test5-emptyloctext-emptyloc-autojump.qm doing 1-8', function () {
+describe('Player on test5-emptyloctext-emptyloc-autojump.qm doing 9-16', function () {
     beforeEach(() => {
         const data = fs.readFileSync(__dirname + '/../../src/test/test5-emptyloctext-emptyloc-autojump.qm');
         const qm = parse(data);
@@ -651,6 +651,87 @@ describe('Player on test5-emptyloctext-emptyloc-autojump.qm doing 1-8', function
         assert.equal(player.getState().text, 'L13');
         jumpTo('');
         assert.equal(player.getState().text, 'L6');
+    })    
+});
+
+describe('Player on test5-emptyloctext-emptyloc-noautojump.qmm', function () {
+    it('Loads quest', () => {
+        const data = fs.readFileSync(__dirname + '/../../src/test/test5-emptyloctext-emptyloc-noautojump.qmm');
+        const qm = parse(data);
+        player = new QMPlayer(qm, undefined, 'rus'); // true
+        player.start();
+        player.performJump(JUMP_I_AGREE);
+
+    })
+    it('Location is empty, but have text, so it is shown', () => {
+        assert.equal(player.getState().text, 'Empry loc with text');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L2');
+    })
+})
+
+describe('Player on test5-emptyloctext-emptyloc-noautojump.qmm doing 1-8', function () {
+    beforeEach(() => {
+        const data = fs.readFileSync(__dirname + '/../../src/test/test5-emptyloctext-emptyloc-noautojump.qmm');
+        const qm = parse(data);
+        player = new QMPlayer(qm, undefined, 'rus'); // true
+        player.start();
+        player.performJump(JUMP_I_AGREE);
+        jumpTo('');
+    })
+
+    it(`1_nojumptext_emptyloc_noloctext_jumptext`, () => {
+        jumpTo('1_nojumptext_emptyloc_noloctext_jumptext');
+        assert.equal(player.getState().text, ''); // L2 here in TGE 5.2.9
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    });
+    it(`2_jumptext_emptyloc_noloctext_jumptext`, () => {
+        jumpTo('2_jumptext_emptyloc_noloctext_jumptext');
+        assert.equal(player.getState().text, 'jumptext');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    });
+    it(`3_nojumptext_noemptyloc_noloctext_jumptext`, () => {
+        jumpTo('3_nojumptext_noemptyloc_noloctext_jumptext');
+        assert.equal(player.getState().text, ''); // L2 here in TGE 5.2.9
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    })
+    it(`4_jumptext_noemptyloc_noloctext_jumptext`, () => {
+        jumpTo('4_jumptext_noemptyloc_noloctext_jumptext');
+        assert.equal(player.getState().text, 'jumptext');
+        jumpTo('');
+        assert.equal(player.getState().text, ''); // jumptext here in TGE 5.2.9
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    })
+
+    it(`5_nojumptext_emptyloc_loctext_jumptext`, () => {
+        jumpTo('5_nojumptext_emptyloc_loctext_jumptext');
+        assert.equal(player.getState().text, 'L10');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    });
+    it(`6_jumptext_emptyloc_loctext_jumptext`, () => {
+        jumpTo('6_jumptext_emptyloc_loctext_jumptext');
+        assert.equal(player.getState().text, 'jumptext');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    });       
+    it(`7_nojumptext_noemptyloc_loctext_jumptext`, () => {
+        jumpTo('7_nojumptext_noemptyloc_loctext_jumptext');
+        assert.equal(player.getState().text, 'L11');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    })
+    it(`8_jumptext_noemptyloc_loctext_jumptext`, () => {
+        jumpTo('8_jumptext_noemptyloc_loctext_jumptext');
+        assert.equal(player.getState().text, 'jumptext');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L13');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
     })
 
     /*
@@ -666,6 +747,64 @@ describe('Player on test5-emptyloctext-emptyloc-autojump.qm doing 1-8', function
      8_jumptext_noemptyloc_loctext_jumptext
 
      */
+});
+
+describe('Player on test5-emptyloctext-emptyloc-autojump.qmm doing 9-16', function () {
+    beforeEach(() => {
+        const data = fs.readFileSync(__dirname + '/../../src/test/test5-emptyloctext-emptyloc-autojump.qmm');
+        const qm = parse(data);
+        player = new QMPlayer(qm, undefined, 'rus'); // true
+        player.start();
+        player.performJump(JUMP_I_AGREE);
+        jumpTo();
+    })
+
+    it(`9_nojumptext_emptyloc_noloctext_nojumptext`, () => {
+        jumpTo('9_nojumptext_emptyloc_noloctext_nojumptext');
+        assert.equal(player.getState().text, 'L6');
+    });
+    it(`10_jumptext_emptyloc_noloctext_nojumptext`, () => {
+        jumpTo('10_jumptext_emptyloc_noloctext_nojumptext');
+        assert.equal(player.getState().text, 'jumptext');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    });
+    it(`11_nojumptext_noemptyloc_noloctext_nojumptext`, () => {
+        jumpTo('11_nojumptext_noemptyloc_noloctext_nojumptext');
+        assert.equal(player.getState().text, 'L6');
+    })
+    it(`12_jumptext_noemptyloc_noloctext_nojumptext`, () => {
+        jumpTo('12_jumptext_noemptyloc_noloctext_nojumptext');
+        assert.equal(player.getState().text, 'jumptext');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    })
+
+    it(`13_nojumptext_emptyloc_loctext_nojumptext`, () => {
+        jumpTo('13_nojumptext_emptyloc_loctext_nojumptext');
+        assert.equal(player.getState().text, 'L10'); // Here is difference between tge4 and tge5
+        assert.equal(player.getState().text, 'L6');
+    });
+    it(`14_jumptext_emptyloc_loctext_nojumptext`, () => {
+        jumpTo('14_jumptext_emptyloc_loctext_nojumptext');
+        assert.equal(player.getState().text, 'jumptext');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    });       
+    it(`15_nojumptext_noemptyloc_loctext_nojumptext`, () => {
+        jumpTo('15_nojumptext_noemptyloc_loctext_nojumptext');
+        assert.equal(player.getState().text, 'L11');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    })
+    it(`16_jumptext_noemptyloc_loctext_nojumptext`, () => {
+        jumpTo('16_jumptext_noemptyloc_loctext_nojumptext');
+        assert.equal(player.getState().text, 'jumptext');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L13');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    })    
 });
 
 describe('Player on test4.qm', function () {
