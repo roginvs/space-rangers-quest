@@ -65,10 +65,14 @@ export interface PlayerSubstitute extends Player {
 
 export type Lang = "rus" | "eng";
 
-interface GameLog {
+interface GameLogStep {
     date: Date;
     jumpId: number;
 }
+type GameLog = DeepImmutable<{
+    aleaSeed: string;
+    performedJumps: GameLogStep[];
+}>
 export type GameState = DeepImmutable<{
     state:
         | "starting"
@@ -98,10 +102,7 @@ export type GameState = DeepImmutable<{
     imageFilename?: string;
 
     aleaState: AleaState;
-
-    aleaSeed: string;
-    performedJumps: GameLog[];
-}>;
+}> & GameLog;
 
 interface PlayerChoice {
     text: string;
@@ -1259,8 +1260,7 @@ export function getAllImagesToPreload(quest: Quest, images: PQImages) {
 export function validateState(
     quest: Quest,
     stateOriginal: GameState,
-    images: PQImages = []
-    // zxczxc
+    images: PQImages = []    
 ) {
     try {
         let state = initGame(quest, stateOriginal.aleaSeed);
@@ -1276,6 +1276,40 @@ export function validateState(
         assert.deepEqual(stateOriginal, state);
         return true
     } catch (e) {
-        return e as Error;
+        console.info(e);
+        return false;
     }
 }
+
+export function getLog(state: GameState): GameLog {
+    return {
+        aleaSeed: state.aleaSeed,
+        performedJumps: state.performedJumps,
+    }
+}
+
+export function validateWinningLog(
+    quest: Quest,
+    gameLog: GameLog,    
+) {
+    try {
+        let state = initGame(quest, gameLog.aleaSeed);
+        for (const performedJump of state.performedJumps) {
+            state = performJump(
+                performedJump.jumpId,
+                quest,
+                state,
+                [],
+                performedJump.date            
+            )
+        };
+        if (state.state !== "returnedending") {
+            throw new Error('Not a winning state')
+        }
+        return true
+    } catch (e) {
+        console.info(e);
+        return false;
+    }
+}
+
