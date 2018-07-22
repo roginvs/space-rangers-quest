@@ -598,6 +598,76 @@ describe('Player on test5-emptyloctext-emptyloc-noautojump.qm doing 1-8', functi
      */
 });
 
+describe('Player on test5-emptyloctext-emptyloc-autojump.qm doing 1-8', function () {
+    beforeEach(() => {
+        const data = fs.readFileSync(__dirname + '/../../src/test/test5-emptyloctext-emptyloc-autojump.qm');
+        const qm = parse(data);
+        player = new QMPlayer(qm, undefined, 'rus'); // true
+        player.start();
+        player.performJump(JUMP_I_AGREE);
+    })
+
+    it(`9_nojumptext_emptyloc_noloctext_nojumptext`, () => {
+        jumpTo('9_nojumptext_emptyloc_noloctext_nojumptext');
+        assert.equal(player.getState().text, 'L6');
+    });
+    it(`10_jumptext_emptyloc_noloctext_nojumptext`, () => {
+        jumpTo('10_jumptext_emptyloc_noloctext_nojumptext');
+        assert.equal(player.getState().text, 'jumptext');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    });
+    it(`11_nojumptext_noemptyloc_noloctext_nojumptext`, () => {
+        jumpTo('11_nojumptext_noemptyloc_noloctext_nojumptext');
+        assert.equal(player.getState().text, 'L6');
+    })
+    it(`12_jumptext_noemptyloc_noloctext_nojumptext`, () => {
+        jumpTo('12_jumptext_noemptyloc_noloctext_nojumptext');
+        assert.equal(player.getState().text, 'jumptext');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    })
+
+    it(`13_nojumptext_emptyloc_loctext_nojumptext`, () => {
+        jumpTo('13_nojumptext_emptyloc_loctext_nojumptext');
+        assert.equal(player.getState().text, 'L6');
+    });
+    it(`14_jumptext_emptyloc_loctext_nojumptext`, () => {
+        jumpTo('14_jumptext_emptyloc_loctext_nojumptext');
+        assert.equal(player.getState().text, 'jumptext');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    });       
+    it(`15_nojumptext_noemptyloc_loctext_nojumptext`, () => {
+        jumpTo('15_nojumptext_noemptyloc_loctext_nojumptext');
+        assert.equal(player.getState().text, 'L11');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    })
+    it(`16_jumptext_noemptyloc_loctext_nojumptext`, () => {
+        jumpTo('16_jumptext_noemptyloc_loctext_nojumptext');
+        assert.equal(player.getState().text, 'jumptext');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L13');
+        jumpTo('');
+        assert.equal(player.getState().text, 'L6');
+    })
+
+    /*
+      test5-emptyloctext-emptyloc-noautojump
+     1_nojumptext_emptyloc_noloctext_jumptext -> "" -> L6
+     2_jumptext_emptyloc_noloctext_jumptext -> jumptext -> "" -> L6
+     3_nojumptext_noemptyloc_noloctext_jumptext -> "" -> L6
+     4_jumptext_noemptyloc_noloctext_jumptext -> jumptext -> "" -> L6
+     
+     5_nojumptext_emptyloc_loctext_jumptext -> L6
+     6_jumptext_emptyloc_loctext_jumptext
+     7_nojumptext_noemptyloc_loctext_jumptext
+     8_jumptext_noemptyloc_loctext_jumptext
+
+     */
+});
+
 describe('Player on test4.qm', function () {
     this.timeout(20 * 1000);
 
