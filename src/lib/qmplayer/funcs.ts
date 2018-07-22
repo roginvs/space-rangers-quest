@@ -64,6 +64,8 @@ export interface PlayerSubstitute extends Player {
 
 export type Lang = "rus" | "eng";
 
+type BehaviourType = 'tge4' | 'tge5';
+
 export type GameState = DeepImmutable<{
     state:
         | "starting"
@@ -103,7 +105,7 @@ export type GameState = DeepImmutable<{
 
     player: Player;
 
-    oldTgeBehaviour: boolean;
+    behaviour: BehaviourType;
 }>;
 
 interface PlayerChoice {
@@ -172,7 +174,7 @@ export function initGame(quest: QM, player: Player, seed: string): GameState {
         player: {
             ...player
         },
-        oldTgeBehaviour,
+        behaviour: oldTgeBehaviour ? "tge4" : "tge5",
         aleaState: alea.exportState()
     };
     const text = replace(quest.taskText, state, undefined, alea.random);
@@ -291,7 +293,7 @@ function calculateLocationShowingTextId(
                     } formula result textid=${id}, but no text`
                 );
                 // Tge 4 and 5 shows different here. We will show location text 0
-                if (state.oldTgeBehaviour) {
+                if (state.behaviour === "tge4") {
                     return 0;
                 } else {
                     return id;
@@ -682,11 +684,11 @@ function performJumpInternal(
     images: PQImages = [],
     random: RandomFunc
 ): GameState {
-    console.info(
-        `JUMPINTERNAL state=${stateOriginal.state} loc=${
-            stateOriginal.locationId
-        } will jump at ${jumpId}`
-    );
+    //console.info(
+    //    `JUMPINTERNAL state=${stateOriginal.state} loc=${
+    //        stateOriginal.locationId
+    //    } will jump at ${jumpId}`
+    //);
     let state = stateOriginal;
 
     if (jumpId === JUMP_GO_BACK_TO_SHIP) {
@@ -1094,7 +1096,7 @@ function calculateLocationStateAndChangeStateIfNeeded(
                 }
             }
 
-            if (state.oldTgeBehaviour) {
+            if (state.behaviour === "tge4") {
                 // Это какая-то особенность TGE - не учитывать переходы, которые ведут в локацию
                 // где были переходы, а проходимость закончилась.
                 // Это вообще дикость какая-то, потому как там вполне может быть
@@ -1345,7 +1347,7 @@ function calculateLocationStateAndChangeStateIfNeeded(
             : location.isFaily
                 ? "fail"
                 : "running",
-        text: state.oldTgeBehaviour ? showingText : showingText || state.text,
+        text: state.behaviour === "tge4" ? showingText : showingText || state.text,
         paramsTextState: getParamsState(quest, state, random),
     };
 
@@ -1354,7 +1356,7 @@ function calculateLocationStateAndChangeStateIfNeeded(
             (quest.params[critParamId].type === ParamType.Провальный ||
                 quest.params[critParamId].type === ParamType.Смертельный) &&
             state.possibleJumps.filter(x => x.active).length > 0;
-        if (!state.oldTgeBehaviour || !gotCritWithChoices) {
+        if (state.behaviour !== "tge4" || !gotCritWithChoices) {
             const lastjump = quest.jumps.find(x => x.id === state.lastJumpId);
 
             const newState = location.isEmpty
@@ -1384,9 +1386,7 @@ function calculateLocationStateAndChangeStateIfNeeded(
 
                 state = {
                     ...state,
-                    text: state.oldTgeBehaviour
-                        ? showingText
-                        : showingText || state.text,
+                    text: state.behaviour === "tge4" ? showingText : showingText || state.text,
                     possibleJumps: [
                         {
                             jumpId: JUMP_NEXT,
@@ -1425,9 +1425,7 @@ function calculateLocationStateAndChangeStateIfNeeded(
                             : "dead";
                 state = {
                     ...state,
-                    text: state.oldTgeBehaviour
-                        ? showingText
-                        : showingText || state.text,
+                    text: state.behaviour === "tge4" ? showingText : showingText || state.text,
                     paramsTextState,
                     possibleJumps,
                     gameState
@@ -1521,7 +1519,7 @@ function calculateLocationStateAndChangeStateIfNeeded(
                 : !locationOwnText); */
             const needAutoJump =
                 !lonenyCurrentJump.text &&
-                (state.oldTgeBehaviour
+                (state.behaviour === "tge4"
                     ? location.isEmpty
                         ? lastJump
                             ? !lastJump.description
@@ -1535,8 +1533,9 @@ function calculateLocationStateAndChangeStateIfNeeded(
                         : !locationOwnText); // ! locationOwnText
 
                         //!state.text && locationOwnText
+                        /*
             console.info(
-                `\noldTgeBehaviour=${state.oldTgeBehaviour} textOnLonelyJump='${
+                `\nbehaviour=${state.behaviour} textOnLonelyJump='${
                     lonenyCurrentJump.text
                 }' ` +
                     `locationId=${location.id} isEmpty=${location.isEmpty}   ` +
@@ -1554,13 +1553,14 @@ function calculateLocationStateAndChangeStateIfNeeded(
                     `locationOwnText='${locationOwnText}'\nwillDoAutojump=${needAutoJump} \n` +
                     `text=${state.text}`
             );
+            */
             
             if (needAutoJump) {
-                console.info(
-                    `Performinig autojump from loc=${
-                        state.locationId
-                    } via jump=${lonenyCurrentJump.id}`
-                );
+                //console.info(
+                //    `Performinig autojump from loc=${
+                //        state.locationId
+                //    } via jump=${lonenyCurrentJump.id}`
+                //);
                 state = performJumpInternal(
                     lonenyCurrentJump.id,
                     quest,
