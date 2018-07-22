@@ -10,9 +10,12 @@ let player: QMPlayer;
 
 function jumpTo(text: string = '') {
     const state = player.getState();
+    const saving = player.getSaving();
     const jump = state.choices.filter(x => x.text.indexOf(text) > -1 && x.active).shift()
     if (!jump) {
-        throw new Error(`OLOLO: No jump ${text} in ` + JSON.stringify(state, null, 4))
+        throw new Error(`OLOLO: No jump ${text} in ` + JSON.stringify(state, null, 4) + `\n` +
+    `state=${saving.state} critParamId=${saving.critParamId}`
+    )
     }
     player.performJump(jump.jumpId);
     // console.info(player.getState());
@@ -682,7 +685,7 @@ describe('Player on test5-emptyloctext-emptyloc-noautojump.qmm doing 1-8', funct
 
     it(`1_nojumptext_emptyloc_noloctext_jumptext`, () => {
         jumpTo('1_nojumptext_emptyloc_noloctext_jumptext');
-        assert.equal(player.getState().text, ''); // L2 here in TGE 5.2.9
+        assert.equal(player.getState().text, 'L2');
         jumpTo('');
         assert.equal(player.getState().text, 'L6');
     });
@@ -694,7 +697,7 @@ describe('Player on test5-emptyloctext-emptyloc-noautojump.qmm doing 1-8', funct
     });
     it(`3_nojumptext_noemptyloc_noloctext_jumptext`, () => {
         jumpTo('3_nojumptext_noemptyloc_noloctext_jumptext');
-        assert.equal(player.getState().text, ''); // L2 here in TGE 5.2.9
+        assert.equal(player.getState().text, 'L2'); 
         jumpTo('');
         assert.equal(player.getState().text, 'L6');
     })
@@ -702,7 +705,7 @@ describe('Player on test5-emptyloctext-emptyloc-noautojump.qmm doing 1-8', funct
         jumpTo('4_jumptext_noemptyloc_noloctext_jumptext');
         assert.equal(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, ''); // jumptext here in TGE 5.2.9
+        assert.equal(player.getState().text, 'jumptext');
         jumpTo('');
         assert.equal(player.getState().text, 'L6');
     })
@@ -1185,7 +1188,7 @@ describe('Player on test.qm', function () {
         //console.info(JSON.stringify(state3, null, 4));
 
         // На описании P10
-        player.performJump(state3.choices.shift()!.jumpId);
+        player.performJump(state3.choices.slice().shift()!.jumpId);
     })
     it(`Next jumps, hideme param show/hide`, () => {
         const state4 = player.getState();
@@ -1193,7 +1196,7 @@ describe('Player on test.qm', function () {
         //console.info(JSON.stringify(state4, null, 4));
         assert.equal(state4.text, 'Текст на переходе')
 
-        player.performJump(state4.choices.shift()!.jumpId);
+        player.performJump(state4.choices.slice().shift()!.jumpId);
         const state5 = player.getState();
         //console.info(JSON.stringify(state5, null, 4));
         assert.ok(state5.paramsState[5].indexOf('hideme') > -1);

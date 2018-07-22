@@ -14,18 +14,18 @@ export class QMPlayer {
         private images: PQImages = [],
         private lang: "rus" | "eng",        
     ) {
-        this.state = initGame(this.quest, Math.random().toString(36));
+        this.state = initGame(this.quest, this.player, Math.random().toString(36));
     }
 
     public start() {
-        this.state = initGame(this.quest, Math.random().toString(36));
+        this.state = initGame(this.quest, this.player, Math.random().toString(36));
     }
 
     public getAllImagesToPreload() {
         return getAllImagesToPreload(this.quest, this.images);
     }
-    public getState(): PlayerState {
-        return getUIState(this.quest, this.state, this.player)
+    public getState() {
+        return getUIState(this.state)
     }
     performJump(jumpId: number) {
         this.state = performJump(jumpId, this.quest, this.state, this.images);

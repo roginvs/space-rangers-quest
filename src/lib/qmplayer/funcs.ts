@@ -78,9 +78,16 @@ export type GameState = DeepImmutable<{
     locationId: number;
     lastJumpId: number | undefined;
     possibleJumps: {
-        id: number;
+        jumpId: number;
+        text: string;
         active: boolean;
     }[];
+
+    text: string;
+    imageFileName?: string;
+    paramsTextState: string[];
+    gameState: "running" | "fail" | "win" | "dead";
+
     paramValues: number[];
     paramShow: boolean[];
     jumpedCount: {
@@ -93,6 +100,10 @@ export type GameState = DeepImmutable<{
     imageFilename?: string;
 
     aleaState: AleaState;
+
+    player: Player;
+
+    oldTgeBehaviour: boolean;
 }>;
 
 interface PlayerChoice {
@@ -110,7 +121,7 @@ export interface PlayerState {
 }
 const DEFAULT_DAYS_TO_PASS_QUEST = 35;
 
-export function initGame(quest: QM, seed: string): GameState {
+export function initGame(quest: QM, player: Player, seed: string): GameState {
     const alea = new Alea(seed);
     for (let i = 0; i < quest.paramsCount; i++) {
         if (quest.params[i].isMoney) {
@@ -132,17 +143,42 @@ export function initGame(quest: QM, seed: string): GameState {
     });
     const startingShowing = quest.params.map(() => true);
 
-    const state: GameState = {
+    const oldTgeBehaviour =
+        quest.header === HEADER_QM_2 ||
+        quest.header === HEADER_QM_3 ||
+        quest.header === HEADER_QM_4;
+
+    let state: GameState = {
         state: "starting",
         locationId: startLocation.id,
         lastJumpId: undefined,
-        possibleJumps: [],
+        possibleJumps: [
+            {
+                jumpId: JUMP_I_AGREE,
+                text: jumpsTexts(player.lang).iAgree,
+                active: true
+            }
+        ],
         paramValues: startingParams,
         paramShow: startingShowing,
         jumpedCount: {},
         locationVisitCount: {},
         daysPassed: 0,
         imageFilename: undefined,
+        text: "",
+        gameState: "running",
+
+        paramsTextState: [],
+        player: {
+            ...player
+        },
+        oldTgeBehaviour,
+        aleaState: alea.exportState()
+    };
+    const text = replace(quest.taskText, state, undefined, alea.random);
+    state = {
+        ...state,
+        text,
         aleaState: alea.exportState()
     };
 
@@ -191,11 +227,10 @@ function SRDateToString(
 function replace(
     str: string,
     state: GameState,
-    player: Player,
     diamondIndex: number | undefined,
     random: RandomFunc // Should not be called
 ) {
-    const lang: Lang = player.lang;
+    const lang: Lang = state.player.lang;
     return substitute(
         str,
         {
@@ -203,7 +238,7 @@ function replace(
             Date: SRDateToString(DEFAULT_DAYS_TO_PASS_QUEST, lang),
             CurDate: SRDateToString(state.daysPassed, lang),
             lang: lang,
-            ...player
+            ...state.player
         },
         state.paramValues,
         random,
@@ -211,12 +246,7 @@ function replace(
     );
 }
 
-function getParamsState(
-    quest: Quest,
-    state: GameState,
-    player: Player,
-    random: RandomFunc
-) {
+function getParamsState(quest: Quest, state: GameState, random: RandomFunc) {
     const paramsState: string[] = [];
     for (let i = 0; i < quest.paramsCount; i++) {
         if (state.paramShow[i] && quest.params[i].active) {
@@ -225,7 +255,7 @@ function getParamsState(
             if (val !== 0 || param.showWhenZero) {
                 for (const range of param.showingInfo) {
                     if (val >= range.from && val <= range.to) {
-                        let str = replace(range.str, state, player, i, random);
+                        let str = replace(range.str, state, i, random);
                         paramsState.push(str);
                         break;
                     }
@@ -260,7 +290,12 @@ function calculateLocationShowingTextId(
                         location.id
                     } formula result textid=${id}, but no text`
                 );
-                return 0; // Tge 4 and 5 shows different here. We will show location text 0
+                // Tge 4 and 5 shows different here. We will show location text 0
+                if (state.oldTgeBehaviour) {
+                    return 0;
+                } else {
+                    return id;
+                }
             }
         } else {
             console.warn(
@@ -290,40 +325,34 @@ function calculateLocationShowingTextId(
     }
 }
 
-export function getUIState(
-    quest: Quest,
-    state: GameState,
-    player: Player
-): PlayerState {
+function jumpsTexts(lang: Lang) {
+    return lang === "rus"
+        ? {
+              iAgree: "Я берусь за это задание",
+              next: "Далее",
+              goBackToShip: "Вернуться на корабль"
+          }
+        : {
+              iAgree: "I agree",
+              next: "Next",
+              goBackToShip: "Go back to ship"
+          };
+}
+export function getUIState(state: GameState): DeepImmutable<PlayerState> {
     const alea = new Alea(state.aleaState.slice());
     const random = alea.random;
 
-    const texts =
-        player.lang === "rus"
-            ? {
-                  iAgree: "Я берусь за это задание",
-                  next: "Далее",
-                  goBackToShip: "Вернуться на корабль"
-              }
-            : {
-                  iAgree: "I agree",
-                  next: "Next",
-                  goBackToShip: "Go back to ship"
-              };
+    return {
+        text: state.text,
+        imageFileName: state.imageFilename,
+        paramsState: state.paramsTextState,
+        choices: state.possibleJumps,
+        gameState: state.gameState
+    };
 
+    /*
     if (state.state === "starting") {
-        return {
-            text: replace(quest.taskText, state, player, undefined, random),
-            paramsState: [],
-            choices: [
-                {
-                    jumpId: JUMP_I_AGREE,
-                    text: texts.iAgree,
-                    active: true
-                }
-            ],
-            gameState: "running"
-        };
+        //
     } else if (state.state === "jump") {
         const jump = quest.jumps.find(x => x.id === state.lastJumpId);
         if (!jump) {
@@ -343,7 +372,7 @@ export function getUIState(
             choices: [
                 {
                     jumpId: JUMP_NEXT,
-                    text: texts.next,
+                    text: jumpsTexts.next,
                     active: true
                 }
             ],
@@ -383,7 +412,7 @@ export function getUIState(
                             ? [
                                   {
                                       jumpId: JUMP_GO_BACK_TO_SHIP,
-                                      text: texts.goBackToShip,
+                                      text: jumpsTexts.goBackToShip,
                                       active: true
                                   }
                               ]
@@ -406,7 +435,7 @@ export function getUIState(
                                               player,
                                               undefined,
                                               alea.random
-                                          ) || texts.next,
+                                          ) || jumpsTexts.next,
                                       jumpId: x.id,
                                       active: x.active
                                   };
@@ -415,7 +444,7 @@ export function getUIState(
                           {
                               // critonlocation
                               jumpId: JUMP_NEXT,
-                              text: texts.next,
+                              text: jumpsTexts.next,
                               active: true
                           }
                       ],
@@ -452,7 +481,7 @@ export function getUIState(
                     ? [
                           {
                               jumpId: JUMP_GO_BACK_TO_SHIP,
-                              text: texts.goBackToShip,
+                              text: jumpsTexts.goBackToShip,
                               active: true
                           }
                       ]
@@ -487,7 +516,7 @@ export function getUIState(
             choices: [
                 {
                     jumpId: JUMP_NEXT,
-                    text: texts.next,
+                    text: jumpsTexts.next,
                     active: true
                 }
             ],
@@ -523,7 +552,7 @@ export function getUIState(
                     ? [
                           {
                               jumpId: JUMP_GO_BACK_TO_SHIP,
-                              text: texts.goBackToShip,
+                              text: jumpsTexts.goBackToShip,
                               active: true
                           }
                       ]
@@ -552,6 +581,7 @@ export function getUIState(
     } else {
         return assertNever(state.state);
     }
+    */
 }
 
 function calculateParamsUpdate(
@@ -650,14 +680,20 @@ function performJumpInternal(
     images: PQImages = [],
     random: RandomFunc
 ): GameState {
+    console.info(`JUMPINTERNAL state=${stateOriginal.state} loc=${stateOriginal.locationId} will jump at ${jumpId}`);
+    let state = stateOriginal;
+
     if (jumpId === JUMP_GO_BACK_TO_SHIP) {
         return {
-            ...stateOriginal,
-            state: "returnedending"
+            ...state,
+            state: "returnedending",
+            text: replace(quest.successText, state, undefined, random),
+            paramsTextState: [],
+            possibleJumps: [],
+            gameState: "win"
         };
     }
 
-    let state = stateOriginal;
     const jumpForImg = quest.jumps.find(x => x.id === state.lastJumpId);
     const image =
         jumpForImg && jumpForImg.img
@@ -678,8 +714,13 @@ function performJumpInternal(
             ...state,
             state: "location"
         };
-        state = calculateLocation(quest, state, images, random);
-    } else if (state.state === "jump") {
+        state = calculateLocationStateAndChangeStateIfNeeded(
+            quest,
+            state,
+            images,
+            random
+        );
+    } else if (state.state === "jump") {        
         const jump = quest.jumps.find(x => x.id === state.lastJumpId);
         if (!jump) {
             throw new Error(`Internal error: no jump ${state.lastJumpId}`);
@@ -689,9 +730,14 @@ function performJumpInternal(
             locationId: jump.toLocationId,
             state: "location"
         };
-        state = calculateLocation(quest, state, images, random);
+        state = calculateLocationStateAndChangeStateIfNeeded(
+            quest,
+            state,
+            images,
+            random
+        );
     } else if (state.state === "location") {
-        if (!state.possibleJumps.find(x => x.id === jumpId)) {
+        if (!state.possibleJumps.find(x => x.jumpId === jumpId)) {
             throw new Error(`Jump ${jumpId} is not in list in that location`);
         }
         const jump = quest.jumps.find(x => x.id === jumpId);
@@ -739,10 +785,36 @@ function performJumpInternal(
         if (!jump.description) {
             if (critParamsTriggered.length > 0) {
                 const critParamId = critParamsTriggered[0];
+                const param = quest.params[critParamId];
                 state = {
                     ...state,
                     state: "critonjump",
-                    critParamId
+                    critParamId,
+                    text: replace(
+                        jump.paramsChanges[critParamId].critText ||
+                            quest.params[critParamId].critValueString,
+                        state,
+                        undefined,
+                        random
+                    ),
+                    paramsTextState: getParamsState(quest, state, random),
+                    possibleJumps:
+                        param.type === ParamType.Успешный
+                            ? [
+                                  {
+                                      jumpId: JUMP_GO_BACK_TO_SHIP,
+                                      text: jumpsTexts(state.player.lang)
+                                          .goBackToShip,
+                                      active: true
+                                  }
+                              ]
+                            : [],
+                    gameState:
+                        param.type === ParamType.Успешный
+                            ? "running"
+                            : param.type === ParamType.Провальный
+                                ? "fail"
+                                : "dead"
                 };
 
                 const qmmImage =
@@ -773,14 +845,30 @@ function performJumpInternal(
                     locationId: nextLocation.id,
                     state: "location"
                 };
-                state = calculateLocation(quest, state, images, random);
+                state = calculateLocationStateAndChangeStateIfNeeded(
+                    quest,
+                    state,
+                    images,
+                    random
+                );
             }
         } else {
             if (critParamsTriggered.length > 0) {
                 state = {
                     ...state,
                     state: "jumpandnextcrit",
-                    critParamId: critParamsTriggered[0]
+                    critParamId: critParamsTriggered[0],
+
+                    text: replace(jump.description, state, undefined, random),
+                    paramsTextState: getParamsState(quest, state, random),
+                    possibleJumps: [
+                        {
+                            jumpId: JUMP_NEXT,
+                            text: jumpsTexts(state.player.lang).next,
+                            active: true
+                        }
+                    ],
+                    gameState: "running"
                 };
             } else if (nextLocation.isEmpty) {
                 state = {
@@ -788,20 +876,67 @@ function performJumpInternal(
                     locationId: nextLocation.id,
                     state: "location"
                 };
-                state = calculateLocation(quest, state, images, random);
+                state = calculateLocationStateAndChangeStateIfNeeded(
+                    quest,
+                    state,
+                    images,
+                    random
+                );
             } else {
                 state = {
                     ...state,
-                    state: "jump"
+                    state: "jump",
+                    text: replace(jump.description, state, undefined, random),
+                    paramsTextState: getParamsState(quest, state, random),
+                    possibleJumps: [
+                        {
+                            jumpId: JUMP_NEXT,
+                            text: jumpsTexts(state.player.lang).next,
+                            active: true
+                        }
+                    ],
+                    gameState: "running"
                 };
             }
         }
     } else if (state.state === "jumpandnextcrit") {
+        const critId = state.critParamId;
+        const jump = quest.jumps.find(x => x.id === state.lastJumpId);
+        if (critId === undefined || !jump) {
+            throw new Error(
+                `Internal error: crit=${critId} lastjump=${state.lastJumpId}`
+            );
+        }
+        const param = quest.params[critId];
         state = {
             ...state,
-            state: "critonjump"
+            state: "critonjump",
+            text: replace(
+                jump.paramsChanges[critId].critText ||
+                    quest.params[critId].critValueString,
+                state,
+                undefined,
+                random
+            ),
+            paramsTextState: getParamsState(quest, state, random),
+            possibleJumps:
+                param.type === ParamType.Успешный
+                    ? [
+                          {
+                              jumpId: JUMP_GO_BACK_TO_SHIP,
+                              text: jumpsTexts(state.player.lang).goBackToShip,
+                              active: true
+                          }
+                      ]
+                    : [],
+            gameState:
+                param.type === ParamType.Успешный
+                    ? "running"
+                    : param.type === ParamType.Провальный
+                        ? "fail"
+                        : "dead"
         };
-        const jump = quest.jumps.find(x => x.id === state.lastJumpId);
+
         const qmmImg =
             (state.critParamId !== undefined &&
                 jump &&
@@ -826,10 +961,50 @@ function performJumpInternal(
                 imageFilename: image
             };
         }
-    } else if (state.state === "critonlocation") {
+    } else if (state.state === "critonlocation") {        
         state = {
             ...state,
             state: "critonlocationlastmessage"
+        };
+        const critId = state.critParamId;
+        const location = quest.locations.find(x => x.id === state.locationId);
+
+        if (critId === undefined) {
+            throw new Error(`Internal error: no critId`);
+        }
+        if (!location) {
+            throw new Error(
+                `Internal error: no crit state location ${state.locationId}`
+            );
+        }
+        const param = quest.params[critId];
+
+        state = {
+            ...state,
+            text: replace(
+                location.paramsChanges[critId].critText ||
+                    quest.params[critId].critValueString,
+                state,
+                undefined,
+                random
+            ),
+            paramsTextState: getParamsState(quest, state, random),
+            possibleJumps:
+                param.type === ParamType.Успешный
+                    ? [
+                          {
+                              jumpId: JUMP_GO_BACK_TO_SHIP,
+                              text: jumpsTexts(state.player.lang).goBackToShip,
+                              active: true
+                          }
+                      ]
+                    : [],
+            gameState:
+                param.type === ParamType.Успешный
+                    ? "running"
+                    : param.type === ParamType.Провальный
+                        ? "fail"
+                        : "dead"
         };
     } else {
         throw new Error(`Unknown state ${state.state} in performJump`);
@@ -838,7 +1013,7 @@ function performJumpInternal(
     return state;
 }
 
-function calculateLocation(
+function calculateLocationStateAndChangeStateIfNeeded(
     quest: Quest,
     stateOriginal: GameState,
     images: PQImages,
@@ -894,11 +1069,6 @@ function calculateLocation(
     state = paramsUpdate.state;
     const critParamsTriggered = paramsUpdate.critParamsTriggered;
 
-    const oldTgeBehaviour =
-        quest.header === HEADER_QM_2 ||
-        quest.header === HEADER_QM_3 ||
-        quest.header === HEADER_QM_4;
-
     const allJumps = quest.jumps
         .filter(x => x.fromLocationId === state.locationId)
         .filter(jump => {
@@ -916,7 +1086,7 @@ function calculateLocation(
                 }
             }
 
-            if (oldTgeBehaviour) {
+            if (state.oldTgeBehaviour) {
                 // Это какая-то особенность TGE - не учитывать переходы, которые ведут в локацию
                 // где были переходы, а проходимость закончилась.
                 // Это вообще дикость какая-то, потому как там вполне может быть
@@ -1122,47 +1292,151 @@ function calculateLocation(
     const newActiveJumpsOnlyOneEmpty =
         newActiveJumpsOnlyEmpty.length > 0 ? [newActiveJumpsOnlyEmpty[0]] : [];
 
-    const statePossibleJumps = (newJumpsWithoutEmpty.length > 0
-        ? newJumpsWithoutEmpty
-        : newActiveJumpsOnlyOneEmpty
-    ).map(x => {
-        return {
-            active: x.active,
-            id: x.jump.id
-        };
-    });
+    const statePossibleJumps =
+        location.isFaily || location.isFailyDeadly
+            ? []
+            : location.isSuccess
+                ? [
+                      {
+                          jumpId: JUMP_GO_BACK_TO_SHIP,
+                          text: jumpsTexts(state.player.lang).goBackToShip,
+                          active: true
+                      }
+                  ]
+                : (newJumpsWithoutEmpty.length > 0
+                      ? newJumpsWithoutEmpty
+                      : newActiveJumpsOnlyOneEmpty
+                  ).map(x => {
+                      const jump = x.jump;
+
+                      return {
+                          active: x.active,
+                          jumpId: jump.id,
+                          text:
+                              replace(jump.text, state, undefined, random) ||
+                              jumpsTexts(state.player.lang).next
+                      };
+                  });
+
+                  const locTextId = calculateLocationShowingTextId(
+                    location,
+                    state,
+                    random
+                );
+                const locationOwnText = location.texts[locTextId] || "";
+        
+                const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
+        
+                const text =
+                    location.isEmpty && lastJump && lastJump.description
+                        ? lastJump.description
+                        : locationOwnText;
+        
+                const textReplaced = replace(text, state, undefined, random);
     state = {
         ...state,
-        possibleJumps: statePossibleJumps
+        possibleJumps: statePossibleJumps,
+        gameState: location.isFailyDeadly
+            ? "dead"
+            : location.isFaily
+                ? "fail"
+                : "running",
+        text: textReplaced || state.text,
     };
 
-    for (const critParam of critParamsTriggered) {
+    for (const critParamId of critParamsTriggered) {
         const gotCritWithChoices =
-            (quest.params[critParam].type === ParamType.Провальный ||
-                quest.params[critParam].type === ParamType.Смертельный) &&
+            (quest.params[critParamId].type === ParamType.Провальный ||
+                quest.params[critParamId].type === ParamType.Смертельный) &&
             state.possibleJumps.filter(x => x.active).length > 0;
-        if (!oldTgeBehaviour || !gotCritWithChoices) {
+        if (!state.oldTgeBehaviour || !gotCritWithChoices) {
             const lastjump = quest.jumps.find(x => x.id === state.lastJumpId);
+            
+            const newState = location.isEmpty
+                ? state.lastJumpId && lastjump && lastjump.description
+                    ? "critonlocation"
+                    : "critonlocationlastmessage"
+                : "critonlocation";
+            
             state = {
                 ...state,
-                state: location.isEmpty
-                    ? state.lastJumpId && lastjump && lastjump.description
-                        ? "critonlocation"
-                        : "critonlocationlastmessage"
-                    : "critonlocation",
-                critParamId: critParam
+                state: newState,
+                critParamId: critParamId
             };
 
+            if (newState === "critonlocation") {
+                const locTextId = calculateLocationShowingTextId(
+                    location,
+                    state,
+                    random
+                );
+                const locationOwnText = location.texts[locTextId];
+                const text =
+                    location.isEmpty && lastjump && lastjump.description
+                        ? lastjump.description
+                        : locationOwnText;
+                const showingText = replace(text, state, undefined, random);
+
+                state = {
+                    ...state,
+                    text: showingText || state.text,
+                    possibleJumps: [
+                        {
+                            jumpId: JUMP_NEXT,
+                            text: jumpsTexts(state.player.lang).next,
+                            active: true
+                        }
+                    ],
+                    paramsTextState: getParamsState(quest, state, random)
+                };
+            } else if (newState === "critonlocationlastmessage") {
+                const text = replace(
+                    location.paramsChanges[critParamId].critText ||
+                        quest.params[critParamId].critValueString,
+                    state,
+                    undefined,
+                    random
+                );
+                const paramsTextState = getParamsState(quest, state, random);
+                const critParam = quest.params[critParamId];
+                const possibleJumps =
+                    critParam.type === ParamType.Успешный
+                        ? [
+                              {
+                                  jumpId: JUMP_GO_BACK_TO_SHIP,
+                                  text: jumpsTexts(state.player.lang)
+                                      .goBackToShip,
+                                  active: true
+                              }
+                          ]
+                        : [];
+                const gameState =
+                    critParam.type === ParamType.Успешный
+                        ? "running"
+                        : critParam.type === ParamType.Провальный
+                            ? "fail"
+                            : "dead";
+                state = {
+                    ...state,
+                    text: text || state.text,
+                    paramsTextState,
+                    possibleJumps,
+                    gameState
+                };
+            } else {
+                assertNever(newState);
+            }
+
             const qmmImg =
-                location.paramsChanges[critParam].img ||
-                quest.params[critParam].img;
+                location.paramsChanges[critParamId].img ||
+                quest.params[critParamId].img;
             const image = qmmImg
                 ? qmmImg.toLowerCase() + ".jpg"
                 : images
                       .filter(
                           x =>
                               !!x.critParams &&
-                              x.critParams.indexOf(critParam) > -1
+                              x.critParams.indexOf(critParamId) > -1
                       )
                       .map(x => x.filename)
                       .shift();
@@ -1172,6 +1446,7 @@ function calculateLocation(
                     imageFilename: image
                 };
             }
+            break; // No more crit params check
         }
     }
 
@@ -1182,16 +1457,14 @@ function calculateLocation(
     if (state.possibleJumps.length === 1) {
         const lonenyCurrentJumpInPossible = state.possibleJumps[0];
         const lonenyCurrentJump = quest.jumps.find(
-            x => x.id === lonenyCurrentJumpInPossible.id
+            x => x.id === lonenyCurrentJumpInPossible.jumpId
         );
-        if (!lonenyCurrentJump) {
-            throw new Error(
-                `Unable to find jump id=${lonenyCurrentJumpInPossible.id}`
-            );
-        }
-        const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
+        if (lonenyCurrentJump) {
+            // if jump is real from quest, not fake "next"
 
-        /*
+            const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
+
+            /*
 
         const text =
             location.isEmpty && lastJump && lastJump.description
@@ -1215,39 +1488,73 @@ function calculateLocation(
          {
              */
 
-        const locTextId = calculateLocationShowingTextId(
-            location,
-            state,
-            random
-        );
-        const locationOwnText = location.texts[locTextId] || "";
+            const locTextId = calculateLocationShowingTextId(
+                location,
+                state,
+                random
+            );
+            const locationOwnText = location.texts[locTextId] || "";
+            const locationFromLastJump = lastJump
+                ? quest.locations.find(x => x.id === lastJump.fromLocationId)
+                : undefined;
 
-        //console.info(
-        //    `\noldTgeBehaviour=${oldTgeBehaviour} locationOwnText=${locationOwnText} isEmpty=${location.isEmpty} id=${location.id} `+
-        //    `lastJump=${!!lastJump} lastJumpDesc=${lastJump ? lastJump.description : "<nojump>"}`
-        //);
+            /*
         const needAutoJump =
             !lonenyCurrentJump.text &&
             (location.isEmpty
                 ? lastJump
                     ? !lastJump.description && (
-                        oldTgeBehaviour ? true : ! locationOwnText
+                        oldTgeBehaviour ? true : ! locationOwnText ||
+                        true
+                        // (! lastJump.text && locationFromLastJump ? ! locationFromLastJump.isEmpty : true)
                     )
                     : true
-                : !locationOwnText);
-        if (needAutoJump) {
+                : !locationOwnText); */
+            const needAutoJump =
+                !lonenyCurrentJump.text &&
+                (state.oldTgeBehaviour
+                    ? location.isEmpty
+                        ? lastJump
+                            ? !lastJump.description
+                            : true
+                        : !locationOwnText
+                    : location.isEmpty
+                        ? lastJump
+                            ? !lastJump.description
+                            : true
+                        : false);
             console.info(
-                `Performinig autojump from loc=${state.locationId} via jump=${
-                    lonenyCurrentJump.id
-                }`
+                `\noldTgeBehaviour=${state.oldTgeBehaviour} textOnLonelyJump='${
+                    lonenyCurrentJump.text
+                }' ` +
+                    `locationId=${location.id} isEmpty=${location.isEmpty}   ` +
+                    `lastJump=${!!lastJump} lastJumpDesc='${
+                        lastJump ? lastJump.description : "<nojump>"
+                    }' ` +
+                    `lastJumpText='${lastJump ? lastJump.text : "<nojump>"}' ` +
+                    `locationFromLastJump=${
+                        locationFromLastJump
+                            ? `(id=${locationFromLastJump.id} isEmpty=${
+                                  locationFromLastJump.isEmpty
+                              })`
+                            : "<noloc>"
+                    } ` +
+                    `locationOwnText='${locationOwnText}' willDoAutojump=${needAutoJump}`
             );
-            state = performJumpInternal(
-                lonenyCurrentJump.id,
-                quest,
-                state,
-                images,
-                random
-            );
+            if (needAutoJump) {
+                console.info(
+                    `Performinig autojump from loc=${
+                        state.locationId
+                    } via jump=${lonenyCurrentJump.id}`
+                );
+                state = performJumpInternal(
+                    lonenyCurrentJump.id,
+                    quest,
+                    state,
+                    images,
+                    random
+                );
+            }
         }
     }
 
