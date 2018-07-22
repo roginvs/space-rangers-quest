@@ -1178,7 +1178,6 @@ function calculateLocation(
     // calculateLocation is always called when state.state === "location"
 
     /* А это дикий костыль для пустых локаций и переходов */
-    //const stateUI = getUIState(quest, state, DEFAULT_RUS_PLAYER);
     if (state.possibleJumps.length === 1) {
         const lonenyCurrentJumpInPossible = state.possibleJumps[0];
         const lonenyCurrentJump = quest.jumps.find(
@@ -1190,30 +1189,6 @@ function calculateLocation(
             );
         }
         const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
-
-        /*
-
-        const text =
-            location.isEmpty && lastJump && lastJump.description
-                ? lastJump.description
-                : locationOwnText; // location calculated text
-
-
-        const needAutojump = 
-            (location.isEmpty && lastJump && !lastJump.description ) ||
-          !( location.isEmpty && lastJump && lastJump.description
-            ? lastJump.description
-            : locationOwnText )
-            
-        if (            
-            !lonenyCurrentJump.text &&            
-            lonenyCurrentJumpInPossible.active &&
-            (location.isEmpty && lastJump && !lastJump.description ) ||
-                ! text
-            
-            ) 
-         {
-             */
 
         const locTextId = calculateLocationShowingTextId(
             location,
@@ -1227,6 +1202,7 @@ function calculateLocation(
         //    `lastJump=${!!lastJump} lastJumpDesc=${lastJump ? lastJump.description : "<nojump>"}`
         //);
         const needAutoJump =
+            lonenyCurrentJumpInPossible.active &&
             !lonenyCurrentJump.text &&
             (location.isEmpty
                 ? lastJump
