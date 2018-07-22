@@ -1231,7 +1231,7 @@ function calculateLocation(
             (location.isEmpty
                 ? lastJump
                     ? !lastJump.description && (
-                        oldTgeBehaviour ? true : ! locationOwnText
+                        true // oldTgeBehaviour ? true : ! locationOwnText
                     )
                     : true
                 : !locationOwnText);
