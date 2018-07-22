@@ -80,8 +80,12 @@ describe(`Checking all quests for formulas and params substitution`, function ()
                 }
                 it(`Loads quest and substitute variables`, () => {
                     const data = fs.readFileSync(fullname);
-                    quest = parse(data);
+                    quest = parse(data);                    
                     params = quest.params.map((p, i) => i * i);
+                });
+                it(`Creates player and starts (to check init values)`, () => {
+                    const player = new QMPlayer(quest, [], "rus");
+                    player.start();
                 })
                 it(`Starting/ending text`, () => {
                     check(quest.taskText, 'start');
