@@ -211,7 +211,7 @@ describe('Player on test4-forqmm.qm', function () {
     })
 })
 
-describe('Player on test8-emptyloc.qm', function () {
+describe('Player on test8-emptyloc.qmm', function () {
     describe('New behaviour', () => {
         beforeEach(`Reads and parses quest`, () => {
             const data = fs.readFileSync(__dirname + '/../../src/test/test8-emptyloc.qmm');
