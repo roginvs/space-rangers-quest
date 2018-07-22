@@ -1192,14 +1192,14 @@ describe('Player on test.qm', function () {
     })
     it(`Next jumps, hideme param show/hide`, () => {
         const state4 = player.getState();
-        assert.ok(state4.paramsState[5].indexOf('hideme') < 0);
+        assert.ok(state4.paramsState[5].indexOf('hideme') < 0, "hideme hidden");
         //console.info(JSON.stringify(state4, null, 4));
         assert.equal(state4.text, 'Текст на переходе')
 
         player.performJump(state4.choices.slice().shift()!.jumpId);
         const state5 = player.getState();
         //console.info(JSON.stringify(state5, null, 4));
-        assert.ok(state5.paramsState[5].indexOf('hideme') > -1);
+        assert.ok(state5.paramsState[5].indexOf('hideme') > -1, "hideme shown");
     })
     it(`Пустая1`, () => assert.equal(jumpTo('Пустая1').text, 'Пустая1'))
 
