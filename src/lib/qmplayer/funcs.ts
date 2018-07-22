@@ -1206,9 +1206,7 @@ function calculateLocation(
             !lonenyCurrentJump.text &&
             (location.isEmpty
                 ? lastJump
-                    ? !lastJump.description && (
-                        true // oldTgeBehaviour ? true : ! locationOwnText
-                    )
+                    ? !lastJump.description
                     : true
                 : !locationOwnText);
         if (needAutoJump) {
