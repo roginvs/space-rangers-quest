@@ -19,6 +19,7 @@ import { RandomFunc } from "../randomFunc";
 import { substitute } from "../substitution";
 import { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP } from "./defs";
 import { assertNever } from "../formula/calculator";
+import * as assert from 'assert';
 
 type Quest = DeepImmutable<QM>;
 export interface Player {
@@ -64,6 +65,10 @@ export interface PlayerSubstitute extends Player {
 
 export type Lang = "rus" | "eng";
 
+interface GameLog {
+    date: Date;
+    jumpId: number;
+}
 export type GameState = DeepImmutable<{
     state:
         | "starting"
@@ -93,6 +98,9 @@ export type GameState = DeepImmutable<{
     imageFilename?: string;
 
     aleaState: AleaState;
+
+    aleaSeed: string;
+    performedJumps: GameLog[];
 }>;
 
 interface PlayerChoice {
@@ -110,25 +118,24 @@ export interface PlayerState {
 }
 const DEFAULT_DAYS_TO_PASS_QUEST = 35;
 
-export function initGame(quest: QM, seed: string): GameState {
+export function initGame(quest: Quest, seed: string): GameState {
     const alea = new Alea(seed);
-    for (let i = 0; i < quest.paramsCount; i++) {
-        if (quest.params[i].isMoney) {
-            const giveMoney = 2000;
-            const money =
-                quest.params[i].max > giveMoney
-                    ? giveMoney
-                    : quest.params[i].max;
-            quest.params[i].starting = `[${money}]`;
-        }
-    }
 
     const startLocation = quest.locations.find(x => x.isStarting);
     if (!startLocation) {
         throw new Error("No start location!");
     }
     const startingParams = quest.params.map((param, index) => {
-        return param.active ? parse(param.starting, [], alea.random) : 0;
+        if (!param.active) {
+            return 0;
+        }
+        if (param.isMoney) {
+            const giveMoney = 2000;
+            const money = param.max > giveMoney ? giveMoney : param.max;
+            const starting = `[${money}]`;
+            return parse(starting, [], alea.random);
+        }
+        return parse(param.starting, [], alea.random);
     });
     const startingShowing = quest.params.map(() => true);
 
@@ -143,7 +150,9 @@ export function initGame(quest: QM, seed: string): GameState {
         locationVisitCount: {},
         daysPassed: 0,
         imageFilename: undefined,
-        aleaState: alea.exportState()
+        aleaState: alea.exportState(),
+        aleaSeed: seed,
+        performedJumps: []
     };
 
     return state;
@@ -627,17 +636,24 @@ export function performJump(
     jumpId: number,
     quest: Quest,
     stateOriginal: GameState,
-    images: PQImages = []
+    images: PQImages = [],
+    date: DeepImmutable<Date> = new Date()
 ): GameState {
     const alea = new Alea(stateOriginal.aleaState.slice());
     const random = alea.random;
-    const state = performJumpInternal(
-        jumpId,
-        quest,
-        stateOriginal,
-        images,
-        random
-    );
+    const performedJumps: typeof stateOriginal.performedJumps = [
+        ...stateOriginal.performedJumps,
+        {
+            date,
+            jumpId
+        }
+    ];
+    let state = {
+        ...stateOriginal,
+        performedJumps
+    };
+
+    state = performJumpInternal(jumpId, quest, state, images, random);
     return {
         ...state,
         aleaState: alea.exportState()
@@ -1238,4 +1254,28 @@ export function getAllImagesToPreload(quest: Quest, images: PQImages) {
         uniq[img] = true;
     }
     return Object.keys(uniq);
+}
+
+export function validateState(
+    quest: Quest,
+    stateOriginal: GameState,
+    images: PQImages = []
+    // zxczxc
+) {
+    try {
+        let state = initGame(quest, stateOriginal.aleaSeed);
+        for (const performedJump of state.performedJumps) {
+            state = performJump(
+                performedJump.jumpId,
+                quest,
+                state,
+                images,
+                performedJump.date            
+            )
+        };
+        assert.deepEqual(stateOriginal, state);
+        return true
+    } catch (e) {
+        return e as Error;
+    }
 }
