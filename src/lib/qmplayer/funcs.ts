@@ -1539,7 +1539,8 @@ function calculateLocationStateAndChangeStateIfNeeded(
                               })`
                             : "<noloc>"
                     } ` +
-                    `locationOwnText='${locationOwnText}' willDoAutojump=${needAutoJump}`
+                    `locationOwnText='${locationOwnText}' willDoAutojump=${needAutoJump} \n`+
+                    `text=${state.text}`
             );
             if (needAutoJump) {
                 console.info(
