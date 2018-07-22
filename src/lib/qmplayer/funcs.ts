@@ -133,11 +133,11 @@ export function initGame(quest: Quest, seed: string): GameState {
         if (param.isMoney) {
             const giveMoney = 2000;
             const money = param.max > giveMoney ? giveMoney : param.max;
-            const starting = `[${money}]`;
+            const starting = `[${money}]`;         
             return parse(starting, [], alea.random);
-        }
-        return parse(param.starting, [], alea.random);
-    });
+        }        
+        return parse(param.starting.replace('h','..'), [], alea.random);
+    });    
     const startingShowing = quest.params.map(() => true);
 
     const state: GameState = {
@@ -1264,7 +1264,7 @@ export function validateState(
 ) {
     try {
         let state = initGame(quest, stateOriginal.aleaSeed);
-        for (const performedJump of state.performedJumps) {
+        for (const performedJump of stateOriginal.performedJumps) {
             state = performJump(
                 performedJump.jumpId,
                 quest,
@@ -1281,7 +1281,7 @@ export function validateState(
     }
 }
 
-export function getLog(state: GameState): GameLog {
+export function getGameLog(state: GameState): GameLog {
     return {
         aleaSeed: state.aleaSeed,
         performedJumps: state.performedJumps,
@@ -1294,7 +1294,7 @@ export function validateWinningLog(
 ) {
     try {
         let state = initGame(quest, gameLog.aleaSeed);
-        for (const performedJump of state.performedJumps) {
+        for (const performedJump of gameLog.performedJumps) {
             state = performJump(
                 performedJump.jumpId,
                 quest,

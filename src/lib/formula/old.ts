@@ -439,4 +439,5 @@ function parse(str: string, params: Params = [], random = Math.random) {
 */
 
 
-console.info(parse('10 000'))
+console.info(parse('10 000'));
+console.info(parse('[2h5]'));

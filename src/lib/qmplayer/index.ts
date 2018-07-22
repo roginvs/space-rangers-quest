@@ -2,7 +2,10 @@ import { QM } from '../qmreader';
 import { PQImages } from '../pqImages';
 
 export { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP } from './defs';
-export { Player, GameState} from './funcs';
+export { Player, GameState, initGame,performJump, validateState,validateWinningLog, getGameLog} from './funcs';
+
+
+
 import { PlayerState, GameState, DEFAULT_RUS_PLAYER, DEFAULT_ENG_PLAYER, initGame, getAllImagesToPreload, getUIState, performJump} from './funcs';
 
 
@@ -12,7 +15,7 @@ export class QMPlayer {
     constructor(
         private quest: QM,   
         private images: PQImages = [],
-        private lang: "rus" | "eng",        
+        private lang: "rus" | "eng",
     ) {
         this.state = initGame(this.quest, Math.random().toString(36));
     }

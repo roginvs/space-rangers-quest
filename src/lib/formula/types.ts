@@ -22,7 +22,7 @@ export type SyntaxKind =
     | "close brace token"
     | "open paren token"
     | "close paren token"
-    | "dotdot token"
+    | "dotdot token"    
     | "semicolon token"
     | SyntaxKindBinary
     | "identifier";
