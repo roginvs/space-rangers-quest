@@ -1466,7 +1466,7 @@ function calculateLocationStateAndChangeStateIfNeeded(
         const lonenyCurrentJump = quest.jumps.find(
             x => x.id === lonenyCurrentJumpInPossible.jumpId
         );
-        if (lonenyCurrentJump) {
+        if (lonenyCurrentJumpInPossible.active && lonenyCurrentJump) {
             // if jump is real from quest, not fake "next"
 
             const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
@@ -1518,19 +1518,13 @@ function calculateLocationStateAndChangeStateIfNeeded(
                     : true
                 : !locationOwnText); */
             const needAutoJump =
-                !lonenyCurrentJump.text &&
-                (state.behaviour === "tge4"
-                    ? location.isEmpty
+                !lonenyCurrentJump.text &&                
+                    location.isEmpty
                         ? lastJump
                             ? !lastJump.description
                             : true
-                        : !locationOwnText
-                    : location.isEmpty
-                        ?                             
-                            lastJump
-                            ? !lastJump.description && !locationOwnText
-                            : ! locationOwnText
-                        : !locationOwnText); // ! locationOwnText
+                        : ! state.text;
+                    
 
                         //!state.text && locationOwnText
                         /*
