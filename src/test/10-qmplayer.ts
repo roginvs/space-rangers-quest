@@ -783,6 +783,7 @@ describe('Player on test5-emptyloctext-emptyloc-autojump.qmm doing 9-16', functi
     it(`13_nojumptext_emptyloc_loctext_nojumptext`, () => {
         jumpTo('13_nojumptext_emptyloc_loctext_nojumptext');
         assert.equal(player.getState().text, 'L10'); // Here is difference between tge4 and tge5
+        jumpTo('');
         assert.equal(player.getState().text, 'L6');
     });
     it(`14_jumptext_emptyloc_loctext_nojumptext`, () => {

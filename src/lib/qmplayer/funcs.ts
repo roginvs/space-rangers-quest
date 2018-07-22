@@ -1,5 +1,17 @@
 import { PQImages } from "../pqImages";
-import { QM, Location, ParamType, ParameterShowingType, ParamCritType, ParameterChange, HEADER_QM_2, HEADER_QM_3, HEADER_QM_4, Jump, getImagesListFromQmm } from "../qmreader";
+import {
+    QM,
+    Location,
+    ParamType,
+    ParameterShowingType,
+    ParamCritType,
+    ParameterChange,
+    HEADER_QM_2,
+    HEADER_QM_3,
+    HEADER_QM_4,
+    Jump,
+    getImagesListFromQmm
+} from "../qmreader";
 import { AleaState, Alea } from "../alea";
 import { parse } from "../formula";
 import { DeepImmutable } from "./deepImmutable";
@@ -17,49 +29,51 @@ export interface Player {
     FromStar: string;
     ToPlanet: string;
     ToStar: string;
-    lang: Lang,
+    lang: Lang;
 }
-export const DEFAULT_RUS_PLAYER: Player = { // TODO: move from this file
+export const DEFAULT_RUS_PLAYER: Player = {
+    // TODO: move from this file
     Ranger: "Греф",
-    Player:  "Греф",
-    FromPlanet:  "Земля",
-    FromStar:  "Солнечная",
+    Player: "Греф",
+    FromPlanet: "Земля",
+    FromStar: "Солнечная",
     ToPlanet: "Боннасис",
     ToStar: "Процион",
     Money: "65535",
     lang: "rus"
-}
-export const DEFAULT_ENG_PLAYER: Player = { // TODO: move from this file
+};
+export const DEFAULT_ENG_PLAYER: Player = {
+    // TODO: move from this file
     Ranger: "Ranger",
-    Player:   "Player",
-    FromPlanet:   "FromPlanet",
-    FromStar:   "FromStar",
-    ToPlanet:  "ToPlanet",
-    ToStar:  "ToStar",
+    Player: "Player",
+    FromPlanet: "FromPlanet",
+    FromStar: "FromStar",
+    ToPlanet: "ToPlanet",
+    ToStar: "ToStar",
     Money: "65535",
 
     lang: "eng"
-}
+};
 
-export interface PlayerSubstitute extends Player { // TODO: move from this file
+export interface PlayerSubstitute extends Player {
+    // TODO: move from this file
     Date: string; // Дата дедлайна
     Day: string; // Кол-во дней
     CurDate: string; // Текущая дата
 }
 
-
-export type Lang = 'rus' | 'eng';
+export type Lang = "rus" | "eng";
 
 export type GameState = DeepImmutable<{
     state:
-    | "starting"
-    | "location"
-    | "jump" // Если переход с описанием и следующая локация не пустая
-    | "jumpandnextcrit" // Если переход с описанием и следующая локация не пустая, и параметры достигли критичного
-    | "critonlocation" // Параметр стал критичным на локации, доступен только один переход далее
-    | "critonlocationlastmessage" // Параметр стал критичным на локации, показывается сообщение последнее
-    | "critonjump" // Параметр стал критичным на переходе без описания
-    | "returnedending";
+        | "starting"
+        | "location"
+        | "jump" // Если переход с описанием и следующая локация не пустая
+        | "jumpandnextcrit" // Если переход с описанием и следующая локация не пустая, и параметры достигли критичного
+        | "critonlocation" // Параметр стал критичным на локации, доступен только один переход далее
+        | "critonlocationlastmessage" // Параметр стал критичным на локации, показывается сообщение последнее
+        | "critonjump" // Параметр стал критичным на переходе без описания
+        | "returnedending";
     critParamId?: number;
     locationId: number;
     lastJumpId: number | undefined;
@@ -113,7 +127,7 @@ export function initGame(quest: QM, seed: string): GameState {
     if (!startLocation) {
         throw new Error("No start location!");
     }
-    const startingParams =quest.params.map((param, index) => {
+    const startingParams = quest.params.map((param, index) => {
         return param.active ? parse(param.starting, [], alea.random) : 0;
     });
     const startingShowing = quest.params.map(() => true);
@@ -131,44 +145,51 @@ export function initGame(quest: QM, seed: string): GameState {
         imageFilename: undefined,
         aleaState: alea.exportState()
     };
-        
-    return state
+
+    return state;
 }
 
-function SRDateToString(daysToAdd: number, lang: Lang, initialDate: Date = new Date()) {
+function SRDateToString(
+    daysToAdd: number,
+    lang: Lang,
+    initialDate: Date = new Date()
+) {
     const d = new Date(initialDate.getTime() + 1000 * 60 * 60 * 24 * daysToAdd);
-    const months = lang === 'eng' ?
-        ["January",
-            "February",
-            "March",
-            "April",
-            "May",
-            "June",
-            "July",
-            "August",
-            "September",
-            "October",
-            "November",
-            "December"
-        ] : [
-            "Января",
-            "Февраля",
-            "Марта",
-            "Апреля",
-            "Мая",
-            "Июня",
-            "Июля",
-            "Августа",
-            "Сентября",
-            "Октября",
-            "Ноября",
-            "Декабря"
-        ]
-    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 1000}`
+    const months =
+        lang === "eng"
+            ? [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                  "July",
+                  "August",
+                  "September",
+                  "October",
+                  "November",
+                  "December"
+              ]
+            : [
+                  "Января",
+                  "Февраля",
+                  "Марта",
+                  "Апреля",
+                  "Мая",
+                  "Июня",
+                  "Июля",
+                  "Августа",
+                  "Сентября",
+                  "Октября",
+                  "Ноября",
+                  "Декабря"
+              ];
+    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 1000}`;
 }
 
-function replace(        
-    str: string,     
+function replace(
+    str: string,
     state: GameState,
     player: Player,
     diamondIndex: number | undefined,
@@ -177,7 +198,7 @@ function replace(
     const lang: Lang = player.lang;
     return substitute(
         str,
-        {                                        
+        {
             Day: `${DEFAULT_DAYS_TO_PASS_QUEST - state.daysPassed}`,
             Date: SRDateToString(DEFAULT_DAYS_TO_PASS_QUEST, lang),
             CurDate: SRDateToString(state.daysPassed, lang),
@@ -190,7 +211,12 @@ function replace(
     );
 }
 
-function getParamsState(quest: Quest, state: GameState, player: Player, random: RandomFunc ) {
+function getParamsState(
+    quest: Quest,
+    state: GameState,
+    player: Player,
+    random: RandomFunc
+) {
     const paramsState: string[] = [];
     for (let i = 0; i < quest.paramsCount; i++) {
         if (state.paramShow[i] && quest.params[i].active) {
@@ -199,14 +225,8 @@ function getParamsState(quest: Quest, state: GameState, player: Player, random: 
             if (val !== 0 || param.showWhenZero) {
                 for (const range of param.showingInfo) {
                     if (val >= range.from && val <= range.to) {
-                        let str = replace(                            
-                            range.str, 
-                            state,
-                            player,
-                            i,
-                            random
-                        );
-                        paramsState.push(str);                            
+                        let str = replace(range.str, state, player, i, random);
+                        paramsState.push(str);
                         break;
                     }
                 }
@@ -216,9 +236,11 @@ function getParamsState(quest: Quest, state: GameState, player: Player, random: 
     return paramsState;
 }
 
-function calculateLocationShowingTextId(location: DeepImmutable<Location>,
-    state: GameState, 
-     random: RandomFunc) {
+function calculateLocationShowingTextId(
+    location: DeepImmutable<Location>,
+    state: GameState,
+    random: RandomFunc
+) {
     const locationTextsWithText = location.texts
         .map((text, i) => {
             return { text, i };
@@ -226,31 +248,39 @@ function calculateLocationShowingTextId(location: DeepImmutable<Location>,
         .filter(x => x.text);
 
     if (location.isTextByFormula) {
-        if (location.textSelectFurmula) {            
+        if (location.textSelectFurmula) {
             const id =
                 parse(location.textSelectFurmula, state.paramValues, random) -
                 1;
             if (location.texts[id]) {
                 return id;
             } else {
-                console.warn(`Location id=${location.id} formula result textid=${id}, but no text`)
+                console.warn(
+                    `Location id=${
+                        location.id
+                    } formula result textid=${id}, but no text`
+                );
                 return 0; // Tge 4 and 5 shows different here. We will show location text 0
             }
         } else {
-            console.warn(`Location id=${location.id} text by formula is set, but no formula`);
+            console.warn(
+                `Location id=${
+                    location.id
+                } text by formula is set, but no formula`
+            );
             const textNum = random(locationTextsWithText.length);
-            
+
             return (
                 (locationTextsWithText[textNum] &&
                     locationTextsWithText[textNum].i) ||
                 0
             );
         }
-    } else {        
+    } else {
         const textNum =
             locationTextsWithText.length > 0
                 ? state.locationVisitCount[location.id] %
-                locationTextsWithText.length
+                  locationTextsWithText.length
                 : 0;
         return (
             (locationTextsWithText[textNum] &&
@@ -260,22 +290,26 @@ function calculateLocationShowingTextId(location: DeepImmutable<Location>,
     }
 }
 
-export function getUIState(quest: Quest, state: GameState, player: Player): PlayerState {
+export function getUIState(
+    quest: Quest,
+    state: GameState,
+    player: Player
+): PlayerState {
     const alea = new Alea(state.aleaState.slice());
     const random = alea.random;
 
-    const texts = player.lang === "rus"
-    ? {
-        iAgree: "Я берусь за это задание",
-        next: "Далее",
-        goBackToShip: "Вернуться на корабль"
-    }
-    : {
-        iAgree: "I agree",
-        next: "Next",
-        goBackToShip: "Go back to ship"
-    };
-
+    const texts =
+        player.lang === "rus"
+            ? {
+                  iAgree: "Я берусь за это задание",
+                  next: "Далее",
+                  goBackToShip: "Вернуться на корабль"
+              }
+            : {
+                  iAgree: "I agree",
+                  next: "Next",
+                  goBackToShip: "Go back to ship"
+              };
 
     if (state.state === "starting") {
         return {
@@ -291,14 +325,20 @@ export function getUIState(quest: Quest, state: GameState, player: Player): Play
             gameState: "running"
         };
     } else if (state.state === "jump") {
-        const jump = quest.jumps.find(
-            x => x.id === state.lastJumpId
-        );
+        const jump = quest.jumps.find(x => x.id === state.lastJumpId);
         if (!jump) {
-            throw new Error(`Internal error: no last jump id=${state.lastJumpId}`);
+            throw new Error(
+                `Internal error: no last jump id=${state.lastJumpId}`
+            );
         }
         return {
-            text: replace(jump.description, state, player, undefined, alea.random),
+            text: replace(
+                jump.description,
+                state,
+                player,
+                undefined,
+                alea.random
+            ),
             paramsState: getParamsState(quest, state, player, random),
             choices: [
                 {
@@ -310,23 +350,22 @@ export function getUIState(quest: Quest, state: GameState, player: Player): Play
             gameState: "running",
             imageFileName: state.imageFilename
         };
-    } else if (
-        state.state === "location" ||
-        state.state === "critonlocation"
-    ) {
-        const location = quest.locations.find(
-            x => x.id === state.locationId
-        );
+    } else if (state.state === "location" || state.state === "critonlocation") {
+        const location = quest.locations.find(x => x.id === state.locationId);
         if (!location) {
-            throw new Error(`Internal error: no state loc id=${state.locationId}`);
+            throw new Error(
+                `Internal error: no state loc id=${state.locationId}`
+            );
         }
 
-        const locTextId = calculateLocationShowingTextId(location, state, random);        
+        const locTextId = calculateLocationShowingTextId(
+            location,
+            state,
+            random
+        );
         const locationOwnText = location.texts[locTextId] || "";
 
-        const lastJump = quest.jumps.find(
-            x => x.id === state.lastJumpId
-        );
+        const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
 
         const text =
             location.isEmpty && lastJump && lastJump.description
@@ -342,92 +381,108 @@ export function getUIState(quest: Quest, state: GameState, player: Player): Play
                         ? []
                         : location.isSuccess
                             ? [
-                                {
-                                    jumpId: JUMP_GO_BACK_TO_SHIP,
-                                    text: texts.goBackToShip,
-                                    active: true
-                                }
-                            ]
+                                  {
+                                      jumpId: JUMP_GO_BACK_TO_SHIP,
+                                      text: texts.goBackToShip,
+                                      active: true
+                                  }
+                              ]
                             : state.possibleJumps.map(x => {
-                                const jump = quest.jumps.find(
-                                    y => y.id === x.id
-                                );
-                                if (!jump) {
-                                    throw new Error(`Internal error: no jump ${x.id} in possible jumps`);
-                                }
-                                return {
-                                    text:
-                                        replace(jump.text, state, player, undefined, alea.random) ||
-                                        texts.next,
-                                    jumpId: x.id,
-                                    active: x.active
-                                };
-                            })
+                                  const jump = quest.jumps.find(
+                                      y => y.id === x.id
+                                  );
+                                  if (!jump) {
+                                      throw new Error(
+                                          `Internal error: no jump ${
+                                              x.id
+                                          } in possible jumps`
+                                      );
+                                  }
+                                  return {
+                                      text:
+                                          replace(
+                                              jump.text,
+                                              state,
+                                              player,
+                                              undefined,
+                                              alea.random
+                                          ) || texts.next,
+                                      jumpId: x.id,
+                                      active: x.active
+                                  };
+                              })
                     : [
-                        {
-                            // critonlocation
-                            jumpId: JUMP_NEXT,
-                            text: texts.next,
-                            active: true
-                        }
-                    ],
+                          {
+                              // critonlocation
+                              jumpId: JUMP_NEXT,
+                              text: texts.next,
+                              active: true
+                          }
+                      ],
 
             gameState: location.isFailyDeadly
                 ? "dead"
-                : location.isFaily ? "fail" : "running",
+                : location.isFaily
+                    ? "fail"
+                    : "running",
             imageFileName: state.imageFilename
         };
     } else if (state.state === "critonjump") {
         const critId = state.critParamId;
-        const jump = quest.jumps.find(
-            x => x.id === state.lastJumpId
-        );
+        const jump = quest.jumps.find(x => x.id === state.lastJumpId);
 
         if (critId === undefined || !jump) {
             throw new Error(
-                `Internal error: crit=${critId} lastjump=${state
-                    .lastJumpId}`
+                `Internal error: crit=${critId} lastjump=${state.lastJumpId}`
             );
         }
         const param = quest.params[critId];
         return {
             text: replace(
                 jump.paramsChanges[critId].critText ||
-                quest.params[critId].critValueString,
-                state, player, undefined, alea.random
+                    quest.params[critId].critValueString,
+                state,
+                player,
+                undefined,
+                alea.random
             ),
             paramsState: getParamsState(quest, state, player, random),
             choices:
                 param.type === ParamType.Успешный
                     ? [
-                        {
-                            jumpId: JUMP_GO_BACK_TO_SHIP,
-                            text: texts.goBackToShip,
-                            active: true
-                        }
-                    ]
+                          {
+                              jumpId: JUMP_GO_BACK_TO_SHIP,
+                              text: texts.goBackToShip,
+                              active: true
+                          }
+                      ]
                     : [],
             gameState:
                 param.type === ParamType.Успешный
                     ? "running"
-                    : param.type === ParamType.Провальный ? "fail" : "dead",
+                    : param.type === ParamType.Провальный
+                        ? "fail"
+                        : "dead",
             imageFileName: state.imageFilename
         };
     } else if (state.state === "jumpandnextcrit") {
         const critId = state.critParamId;
-        const jump = quest.jumps.find(
-            x => x.id === state.lastJumpId
-        );
+        const jump = quest.jumps.find(x => x.id === state.lastJumpId);
         if (critId === undefined || !jump) {
             throw new Error(
-                `Internal error: crit=${critId} lastjump=${state
-                    .lastJumpId}`
+                `Internal error: crit=${critId} lastjump=${state.lastJumpId}`
             );
         }
 
         const param = quest.params[critId];
         return {
-            text: replace(jump.description, state, player, undefined, alea.random),
+            text: replace(
+                jump.description,
+                state,
+                player,
+                undefined,
+                alea.random
+            ),
             paramsState: getParamsState(quest, state, player, random),
             choices: [
                 {
@@ -441,57 +496,70 @@ export function getUIState(quest: Quest, state: GameState, player: Player): Play
         };
     } else if (state.state === "critonlocationlastmessage") {
         const critId = state.critParamId;
-        const location = quest.locations.find(
-            x => x.id === state.locationId
-        );
+        const location = quest.locations.find(x => x.id === state.locationId);
 
         if (critId === undefined) {
             throw new Error(`Internal error: no critId`);
         }
         if (!location) {
-            throw new Error(`Internal error: no crit state location ${state.locationId}`);
+            throw new Error(
+                `Internal error: no crit state location ${state.locationId}`
+            );
         }
         const param = quest.params[critId];
 
         return {
             text: replace(
                 location.paramsChanges[critId].critText ||
-                quest.params[critId].critValueString,
-                state, player, undefined, alea.random
+                    quest.params[critId].critValueString,
+                state,
+                player,
+                undefined,
+                alea.random
             ),
             paramsState: getParamsState(quest, state, player, random),
             choices:
                 param.type === ParamType.Успешный
                     ? [
-                        {
-                            jumpId: JUMP_GO_BACK_TO_SHIP,
-                            text: texts.goBackToShip,
-                            active: true
-                        }
-                    ]
+                          {
+                              jumpId: JUMP_GO_BACK_TO_SHIP,
+                              text: texts.goBackToShip,
+                              active: true
+                          }
+                      ]
                     : [],
             gameState:
                 param.type === ParamType.Успешный
                     ? "running"
-                    : param.type === ParamType.Провальный ? "fail" : "dead",
+                    : param.type === ParamType.Провальный
+                        ? "fail"
+                        : "dead",
             imageFileName: state.imageFilename
         };
     } else if (state.state === "returnedending") {
         return {
-            text: replace(quest.successText,  state, player, undefined, alea.random),
+            text: replace(
+                quest.successText,
+                state,
+                player,
+                undefined,
+                alea.random
+            ),
             paramsState: [],
             choices: [],
             gameState: "win"
         };
     } else {
-        return assertNever(state.state);        
+        return assertNever(state.state);
     }
 }
 
-
-
-function calculateParamsUpdate(quest: Quest, stateOriginal: GameState, random: RandomFunc,
-    paramsChanges: ReadonlyArray<ParameterChange>) {
+function calculateParamsUpdate(
+    quest: Quest,
+    stateOriginal: GameState,
+    random: RandomFunc,
+    paramsChanges: ReadonlyArray<ParameterChange>
+) {
     let critParamsTriggered: number[] = [];
     let state = stateOriginal;
     let oldValues = state.paramValues.slice(0, quest.paramsCount);
@@ -505,21 +573,21 @@ function calculateParamsUpdate(quest: Quest, stateOriginal: GameState, random: R
             state = {
                 ...state,
                 paramShow
-            }
+            };
         } else if (change.showingType === ParameterShowingType.Скрыть) {
             const paramShow = state.paramShow.slice();
             paramShow[i] = false;
             state = {
                 ...state,
                 paramShow
-            }
+            };
         }
 
         if (change.isChangeValue) {
             newValues[i] = change.change;
         } else if (change.isChangePercentage) {
             newValues[i] = Math.round(
-                oldValues[i] * (100 + change.change) / 100
+                (oldValues[i] * (100 + change.change)) / 100
             );
         } else if (change.isChangeFormula) {
             if (change.changingFormula) {
@@ -537,10 +605,7 @@ function calculateParamsUpdate(quest: Quest, stateOriginal: GameState, random: R
             newValues[i] = param.min;
         }
 
-        if (
-            newValues[i] !== oldValues[i] &&
-            param.type !== ParamType.Обычный
-        ) {
+        if (newValues[i] !== oldValues[i] && param.type !== ParamType.Обычный) {
             if (
                 (param.critType === ParamCritType.Максимум &&
                     newValues[i] === param.max) ||
@@ -554,96 +619,104 @@ function calculateParamsUpdate(quest: Quest, stateOriginal: GameState, random: R
     state = {
         ...state,
         paramValues: newValues
-    }    
-    return {state, critParamsTriggered}
+    };
+    return { state, critParamsTriggered };
 }
 
-
-
-export function performJump(jumpId: number, quest: Quest, stateOriginal: GameState, images: PQImages = []): GameState {
+export function performJump(
+    jumpId: number,
+    quest: Quest,
+    stateOriginal: GameState,
+    images: PQImages = []
+): GameState {
     const alea = new Alea(stateOriginal.aleaState.slice());
     const random = alea.random;
-    const state = performJumpInternal(jumpId, quest, stateOriginal, images, random);
+    const state = performJumpInternal(
+        jumpId,
+        quest,
+        stateOriginal,
+        images,
+        random
+    );
     return {
         ...state,
-        aleaState: alea.exportState(),
-    }
+        aleaState: alea.exportState()
+    };
 }
-function performJumpInternal(jumpId: number, quest: Quest, stateOriginal: GameState, images: PQImages = [], random: RandomFunc): GameState {
-    if (jumpId === JUMP_GO_BACK_TO_SHIP) {        
+function performJumpInternal(
+    jumpId: number,
+    quest: Quest,
+    stateOriginal: GameState,
+    images: PQImages = [],
+    random: RandomFunc
+): GameState {
+    if (jumpId === JUMP_GO_BACK_TO_SHIP) {
         return {
             ...stateOriginal,
-            state: "returnedending",    
+            state: "returnedending"
         };
     }
 
-    let state = stateOriginal;    
-    const jumpForImg = quest.jumps.find(
-        x => x.id === state.lastJumpId
-    );
+    let state = stateOriginal;
+    const jumpForImg = quest.jumps.find(x => x.id === state.lastJumpId);
     const image =
         jumpForImg && jumpForImg.img
             ? jumpForImg.img.toLowerCase() + ".jpg"
             : images
-                .filter(
-                x => !!x.jumpIds && x.jumpIds.indexOf(jumpId) > -1
-                )
-                .map(x => x.filename)
-                .shift();
+                  .filter(x => !!x.jumpIds && x.jumpIds.indexOf(jumpId) > -1)
+                  .map(x => x.filename)
+                  .shift();
     if (image) {
         state = {
             ...state,
-            imageFilename: image,
-        }        
+            imageFilename: image
+        };
     }
-    
+
     if (state.state === "starting") {
         state = {
             ...state,
-            state: "location",
-        }        
+            state: "location"
+        };
         state = calculateLocation(quest, state, images, random);
     } else if (state.state === "jump") {
-        const jump = quest.jumps.find(
-            x => x.id === state.lastJumpId
-        );
+        const jump = quest.jumps.find(x => x.id === state.lastJumpId);
         if (!jump) {
             throw new Error(`Internal error: no jump ${state.lastJumpId}`);
         }
         state = {
             ...state,
             locationId: jump.toLocationId,
-            state: "location",
-        }                
+            state: "location"
+        };
         state = calculateLocation(quest, state, images, random);
     } else if (state.state === "location") {
         if (!state.possibleJumps.find(x => x.id === jumpId)) {
-            throw new Error(
-                `Jump ${jumpId} is not in list in that location`
-            );
+            throw new Error(`Jump ${jumpId} is not in list in that location`);
         }
         const jump = quest.jumps.find(x => x.id === jumpId);
         if (!jump) {
-            throw new Error(`"Internal Error: no jump id=${jumpId} from possible jump list`);
+            throw new Error(
+                `"Internal Error: no jump id=${jumpId} from possible jump list`
+            );
         }
         state = {
             ...state,
-            lastJumpId: jumpId,
-        }        
+            lastJumpId: jumpId
+        };
         if (jump.dayPassed) {
             state = {
                 ...state,
-                daysPassed: state.daysPassed + 1,
-            }               
+                daysPassed: state.daysPassed + 1
+            };
         }
         state = {
             ...state,
             jumpedCount: {
                 ...state.jumpedCount,
-                [jumpId]: (state.jumpedCount[jumpId] || 0) + 1,
+                [jumpId]: (state.jumpedCount[jumpId] || 0) + 1
             }
-        }
-        
+        };
 
         const paramsUpdate = calculateParamsUpdate(
             quest,
@@ -658,7 +731,9 @@ function performJumpInternal(jumpId: number, quest: Quest, stateOriginal: GameSt
             x => x.id === jump.toLocationId
         );
         if (!nextLocation) {
-            throw new Error(`Internal error: no next location ${jump.toLocationId}`);
+            throw new Error(
+                `Internal error: no next location ${jump.toLocationId}`
+            );
         }
 
         if (!jump.description) {
@@ -667,10 +742,9 @@ function performJumpInternal(jumpId: number, quest: Quest, stateOriginal: GameSt
                 state = {
                     ...state,
                     state: "critonjump",
-                    critParamId,
-                }
-                
-                
+                    critParamId
+                };
+
                 const qmmImage =
                     (state.critParamId !== undefined &&
                         jump.paramsChanges[state.critParamId].img) ||
@@ -678,26 +752,27 @@ function performJumpInternal(jumpId: number, quest: Quest, stateOriginal: GameSt
                 const image = qmmImage
                     ? qmmImage.toLowerCase() + ".jpg"
                     : images
-                        .filter(
-                        x =>
-                            !!x.critParams &&
-                            x.critParams.indexOf(state
-                                .critParamId as number) > -1
-                        )
-                        .map(x => x.filename)
-                        .shift();
+                          .filter(
+                              x =>
+                                  !!x.critParams &&
+                                  x.critParams.indexOf(
+                                      state.critParamId as number
+                                  ) > -1
+                          )
+                          .map(x => x.filename)
+                          .shift();
                 if (image) {
                     state = {
                         ...state,
-                        imageFilename: image,
-                    }
+                        imageFilename: image
+                    };
                 }
             } else {
                 state = {
                     ...state,
                     locationId: nextLocation.id,
-                    state: "location",
-                }                
+                    state: "location"
+                };
                 state = calculateLocation(quest, state, images, random);
             }
         } else {
@@ -705,30 +780,28 @@ function performJumpInternal(jumpId: number, quest: Quest, stateOriginal: GameSt
                 state = {
                     ...state,
                     state: "jumpandnextcrit",
-                    critParamId: critParamsTriggered[0],
-                }
+                    critParamId: critParamsTriggered[0]
+                };
             } else if (nextLocation.isEmpty) {
                 state = {
                     ...state,
                     locationId: nextLocation.id,
-                    state: "location",
-                }
+                    state: "location"
+                };
                 state = calculateLocation(quest, state, images, random);
             } else {
                 state = {
                     ...state,
                     state: "jump"
-                }                
+                };
             }
         }
     } else if (state.state === "jumpandnextcrit") {
         state = {
             ...state,
             state: "critonjump"
-        }
-        const jump = quest.jumps.find(
-            x => x.id === state.lastJumpId
-        );
+        };
+        const jump = quest.jumps.find(x => x.id === state.lastJumpId);
         const qmmImg =
             (state.critParamId !== undefined &&
                 jump &&
@@ -738,27 +811,26 @@ function performJumpInternal(jumpId: number, quest: Quest, stateOriginal: GameSt
         const image = qmmImg
             ? qmmImg.toLowerCase() + ".jpg"
             : images
-                .filter(
-                x =>
-                    !!x.critParams &&
-                    state.critParamId !== undefined &&
-                    x.critParams.indexOf(state
-                        .critParamId) > -1
-                )
-                .map(x => x.filename)
-                .shift();
+                  .filter(
+                      x =>
+                          !!x.critParams &&
+                          state.critParamId !== undefined &&
+                          x.critParams.indexOf(state.critParamId) > -1
+                  )
+                  .map(x => x.filename)
+                  .shift();
 
         if (image) {
             state = {
                 ...state,
-                imageFilename: image,
-            }            
+                imageFilename: image
+            };
         }
     } else if (state.state === "critonlocation") {
         state = {
             ...state,
-            state:  "critonlocationlastmessage",
-        }        
+            state: "critonlocationlastmessage"
+        };
     } else {
         throw new Error(`Unknown state ${state.state} in performJump`);
     }
@@ -766,36 +838,36 @@ function performJumpInternal(jumpId: number, quest: Quest, stateOriginal: GameSt
     return state;
 }
 
-
-function calculateLocation(quest: Quest, 
+function calculateLocation(
+    quest: Quest,
     stateOriginal: GameState,
-     images: PQImages,
-    random: RandomFunc): GameState {
-        
+    images: PQImages,
+    random: RandomFunc
+): GameState {
     let state = stateOriginal;
     state = {
         ...state,
         locationVisitCount: {
             ...state.locationVisitCount,
-            [state.locationId]: state.locationVisitCount[state.locationId] !== undefined ? 
-            state.locationVisitCount[state.locationId] + 1 : 0, // TODO : change to 1            
+            [state.locationId]:
+                state.locationVisitCount[state.locationId] !== undefined
+                    ? state.locationVisitCount[state.locationId] + 1
+                    : 0 // TODO : change to 1
         }
-    }
-    
-    const location = quest.locations.find(
-        x => x.id === state.locationId
-    );
+    };
+
+    const location = quest.locations.find(x => x.id === state.locationId);
     if (!location) {
-        throw new Error(`Internal error: no state location ${state.locationId}`);
+        throw new Error(
+            `Internal error: no state location ${state.locationId}`
+        );
     }
 
-    const locImgId = calculateLocationShowingTextId(location,state, random);
+    const locImgId = calculateLocationShowingTextId(location, state, random);
     const imageFromQmm =
         location.media[locImgId] && location.media[locImgId].img;
     const imageFromPQI = images.find(
-        x =>
-            !!x.locationIds &&
-            x.locationIds.indexOf(state.locationId) > -1
+        x => !!x.locationIds && x.locationIds.indexOf(state.locationId) > -1
     );
     const image = imageFromQmm
         ? imageFromQmm.toLowerCase() + ".jpg"
@@ -803,14 +875,14 @@ function calculateLocation(quest: Quest,
     if (image) {
         state = {
             ...state,
-            imageFilename: image,
-        }        
+            imageFilename: image
+        };
     }
     if (location.dayPassed) {
         state = {
             ...state,
-            daysPassed: state.daysPassed + 1,
-        }        
+            daysPassed: state.daysPassed + 1
+        };
     }
 
     const paramsUpdate = calculateParamsUpdate(
@@ -822,9 +894,10 @@ function calculateLocation(quest: Quest,
     state = paramsUpdate.state;
     const critParamsTriggered = paramsUpdate.critParamsTriggered;
 
-    
-    const oldTgeBehaviour = quest.header === HEADER_QM_2 || 
-        quest.header === HEADER_QM_3 || quest.header === HEADER_QM_4;
+    const oldTgeBehaviour =
+        quest.header === HEADER_QM_2 ||
+        quest.header === HEADER_QM_3 ||
+        quest.header === HEADER_QM_4;
 
     const allJumps = quest.jumps
         .filter(x => x.fromLocationId === state.locationId)
@@ -837,13 +910,12 @@ function calculateLocation(quest: Quest,
                 if (
                     toLocation.maxVisits &&
                     state.locationVisitCount[jump.toLocationId] + 1 >=
-                    toLocation.maxVisits
+                        toLocation.maxVisits
                 ) {
                     return false;
                 }
             }
 
-            
             if (oldTgeBehaviour) {
                 // Это какая-то особенность TGE - не учитывать переходы, которые ведут в локацию
                 // где были переходы, а проходимость закончилась.
@@ -860,8 +932,7 @@ function calculateLocation(quest: Quest,
                     jumpsFromDestination.filter(
                         x =>
                             x.jumpingCountLimit &&
-                            state.jumpedCount[x.id] >=
-                            x.jumpingCountLimit
+                            state.jumpedCount[x.id] >= x.jumpingCountLimit
                     ).length === jumpsFromDestination.length
                 ) {
                     return false;
@@ -889,9 +960,9 @@ function calculateLocation(quest: Quest,
                         if (quest.params[i].active) {
                             if (
                                 state.paramValues[i] >
-                                jump.paramsConditions[i].mustTo ||
+                                    jump.paramsConditions[i].mustTo ||
                                 state.paramValues[i] <
-                                jump.paramsConditions[i].mustFrom
+                                    jump.paramsConditions[i].mustFrom
                             ) {
                                 return false;
                             }
@@ -903,7 +974,7 @@ function calculateLocation(quest: Quest,
                                     i
                                 ].mustEqualValues.filter(
                                     x => x === state.paramValues[i]
-                                    );
+                                );
                                 if (
                                     jump.paramsConditions[i]
                                         .mustEqualValuesEqual &&
@@ -920,17 +991,16 @@ function calculateLocation(quest: Quest,
                                 }
                             }
                             if (
-                                jump.paramsConditions[i].mustModValues
-                                    .length > 0
+                                jump.paramsConditions[i].mustModValues.length >
+                                0
                             ) {
                                 const isMod = jump.paramsConditions[
                                     i
                                 ].mustModValues.filter(
                                     x => state.paramValues[i] % x === 0
-                                    );
+                                );
                                 if (
-                                    jump.paramsConditions[i]
-                                        .mustModValuesMod &&
+                                    jump.paramsConditions[i].mustModValuesMod &&
                                     isMod.length === 0
                                 ) {
                                     return false;
@@ -958,8 +1028,7 @@ function calculateLocation(quest: Quest,
                     }
                     if (
                         jump.jumpingCountLimit &&
-                        state.jumpedCount[jump.id] >=
-                        jump.jumpingCountLimit
+                        state.jumpedCount[jump.id] >= jump.jumpingCountLimit
                     ) {
                         return false;
                     }
@@ -995,7 +1064,7 @@ function calculateLocation(quest: Quest,
                 const jumpsActiveWithSameText = jumpsWithSameText.filter(
                     x => x.active
                 );
-                if (jumpsActiveWithSameText.length > 0) {                    
+                if (jumpsActiveWithSameText.length > 0) {
                     const maxPrio = jumpsActiveWithSameText.reduce(
                         (max, jump) =>
                             jump.jump.prio > max ? jump.jump.prio : max,
@@ -1008,15 +1077,18 @@ function calculateLocation(quest: Quest,
                         .map(x => x.jump.prio)
                         .reduce((sum, i) => i + sum, 0);
                     const ACCURACY = 1000000;
-                    let rnd = random(ACCURACY)/ACCURACY * prioSum;
+                    let rnd = (random(ACCURACY) / ACCURACY) * prioSum;
                     for (const jj of jumpsWithNotSoLowPrio) {
-                        if (jj.jump.prio >= rnd || jj === jumpsWithNotSoLowPrio.slice(-1).pop()) {
+                        if (
+                            jj.jump.prio >= rnd ||
+                            jj === jumpsWithNotSoLowPrio.slice(-1).pop()
+                        ) {
                             newJumps.push(jj);
                             break;
                         } else {
                             rnd = rnd - jj.jump.prio;
                         }
-                    }                
+                    }
                 } else {
                     const alLeastOneWithAlwaysShow = jumpsWithSameText
                         .filter(x => x.jump.alwaysShow)
@@ -1048,11 +1120,8 @@ function calculateLocation(quest: Quest,
         x => x.active && !x.jump.text
     );
     const newActiveJumpsOnlyOneEmpty =
-        newActiveJumpsOnlyEmpty.length > 0
-            ? [newActiveJumpsOnlyEmpty[0]]
-            : [];
+        newActiveJumpsOnlyEmpty.length > 0 ? [newActiveJumpsOnlyEmpty[0]] : [];
 
-    
     const statePossibleJumps = (newJumpsWithoutEmpty.length > 0
         ? newJumpsWithoutEmpty
         : newActiveJumpsOnlyOneEmpty
@@ -1065,29 +1134,24 @@ function calculateLocation(quest: Quest,
     state = {
         ...state,
         possibleJumps: statePossibleJumps
-    }
+    };
 
     for (const critParam of critParamsTriggered) {
         const gotCritWithChoices =
             (quest.params[critParam].type === ParamType.Провальный ||
-                quest.params[critParam].type ===
-                ParamType.Смертельный) &&
+                quest.params[critParam].type === ParamType.Смертельный) &&
             state.possibleJumps.filter(x => x.active).length > 0;
         if (!oldTgeBehaviour || !gotCritWithChoices) {
-            const lastjump = quest.jumps.find(
-                x => x.id === state.lastJumpId
-            );
+            const lastjump = quest.jumps.find(x => x.id === state.lastJumpId);
             state = {
                 ...state,
                 state: location.isEmpty
-                ? state.lastJumpId && lastjump && lastjump.description
-                    ? "critonlocation"
-                    : "critonlocationlastmessage"
-                : "critonlocation",
-                critParamId: critParam,
-            }
-            
-            
+                    ? state.lastJumpId && lastjump && lastjump.description
+                        ? "critonlocation"
+                        : "critonlocationlastmessage"
+                    : "critonlocation",
+                critParamId: critParam
+            };
 
             const qmmImg =
                 location.paramsChanges[critParam].img ||
@@ -1095,25 +1159,23 @@ function calculateLocation(quest: Quest,
             const image = qmmImg
                 ? qmmImg.toLowerCase() + ".jpg"
                 : images
-                    .filter(
-                    x =>
-                        !!x.critParams &&
-                        x.critParams.indexOf(critParam) > -1
-                    )
-                    .map(x => x.filename)
-                    .shift();
+                      .filter(
+                          x =>
+                              !!x.critParams &&
+                              x.critParams.indexOf(critParam) > -1
+                      )
+                      .map(x => x.filename)
+                      .shift();
             if (image) {
                 state = {
                     ...state,
-                    imageFilename: image,
-                }                
+                    imageFilename: image
+                };
             }
         }
     }
 
-    
     // calculateLocation is always called when state.state === "location"
-
 
     /* А это дикий костыль для пустых локаций и переходов */
     //const stateUI = getUIState(quest, state, DEFAULT_RUS_PLAYER);
@@ -1122,12 +1184,12 @@ function calculateLocation(quest: Quest,
         const lonenyCurrentJump = quest.jumps.find(
             x => x.id === lonenyCurrentJumpInPossible.id
         );
-        if (! lonenyCurrentJump) {
-            throw new Error(`Unable to find jump id=${lonenyCurrentJumpInPossible.id}`)
+        if (!lonenyCurrentJump) {
+            throw new Error(
+                `Unable to find jump id=${lonenyCurrentJumpInPossible.id}`
+            );
         }
-        const lastJump = quest.jumps.find(
-            x => x.id === state.lastJumpId
-        );
+        const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
 
         /*
 
@@ -1152,17 +1214,32 @@ function calculateLocation(quest: Quest,
             ) 
          {
              */
-        
-        const locTextId = calculateLocationShowingTextId(location, state, random);        
+
+        const locTextId = calculateLocationShowingTextId(
+            location,
+            state,
+            random
+        );
         const locationOwnText = location.texts[locTextId] || "";
-    
-        const needAutoJump = !lonenyCurrentJump.text && ( 
-            location.isEmpty ? 
-            lastJump ? ! lastJump.description : true : ! locationOwnText);
+
+        //console.info(
+        //    `\noldTgeBehaviour=${oldTgeBehaviour} locationOwnText=${locationOwnText} isEmpty=${location.isEmpty} id=${location.id} `+
+        //    `lastJump=${!!lastJump} lastJumpDesc=${lastJump ? lastJump.description : "<nojump>"}`
+        //);
+        const needAutoJump =
+            !lonenyCurrentJump.text &&
+            (location.isEmpty
+                ? lastJump
+                    ? !lastJump.description && (
+                        oldTgeBehaviour ? true : ! locationOwnText
+                    )
+                    : true
+                : !locationOwnText);
         if (needAutoJump) {
             console.info(
-                `Performinig autojump from loc=${state
-                    .locationId} via jump=${lonenyCurrentJump.id}`
+                `Performinig autojump from loc=${state.locationId} via jump=${
+                    lonenyCurrentJump.id
+                }`
             );
             state = performJumpInternal(
                 lonenyCurrentJump.id,
@@ -1174,9 +1251,8 @@ function calculateLocation(quest: Quest,
         }
     }
 
-    return state
-};
-
+    return state;
+}
 
 export function getAllImagesToPreload(quest: Quest, images: PQImages) {
     const imagesPQI = images.map(x => x.filename);
