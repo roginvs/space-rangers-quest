@@ -114,6 +114,7 @@ function State(options) {
   this.lineWidth    = options['lineWidth'] || 80;
   this.noRefs       = options['noRefs'] || false;
   this.noCompatMode = options['noCompatMode'] || false;
+  this.condenseFlow = options['condenseFlow'] || false;
 
   this.implicitTypes = this.schema.compiledImplicit;
   this.explicitTypes = this.schema.compiledExplicit;
@@ -233,6 +234,12 @@ function isPlainSafeFirst(c) {
     && c !== CHAR_GRAVE_ACCENT;
 }
 
+// Determines whether block indentation indicator is required.
+function needIndentIndicator(string) {
+  var leadingSpaceRe = /^\n* /;
+  return leadingSpaceRe.test(string);
+}
+
 var STYLE_PLAIN   = 1,
     STYLE_SINGLE  = 2,
     STYLE_LITERAL = 3,
@@ -300,7 +307,7 @@ function chooseScalarStyle(string, singleLineOnly, indentPerLevel, lineWidth, te
       ? STYLE_PLAIN : STYLE_SINGLE;
   }
   // Edge case: block indentation indicator can only have one digit.
-  if (string[0] === ' ' && indentPerLevel > 9) {
+  if (indentPerLevel > 9 && needIndentIndicator(string)) {
     return STYLE_DOUBLE;
   }
   // At this point we know block styles are valid.
@@ -364,7 +371,7 @@ function writeScalar(state, string, level, iskey) {
 
 // Pre-conditions: string is valid for a block scalar, 1 <= indentPerLevel <= 9.
 function blockHeader(string, indentPerLevel) {
-  var indentIndicator = (string[0] === ' ') ? String(indentPerLevel) : '';
+  var indentIndicator = needIndentIndicator(string) ? String(indentPerLevel) : '';
 
   // note the special case: the string '\n' counts as a "trailing" empty line.
   var clip =          string[string.length - 1] === '\n';
@@ -460,11 +467,21 @@ function foldLine(line, width) {
 // Escapes a double-quoted string.
 function escapeString(string) {
   var result = '';
-  var char;
+  var char, nextChar;
   var escapeSeq;
 
   for (var i = 0; i < string.length; i++) {
     char = string.charCodeAt(i);
+    // Check for surrogate pairs (reference Unicode 3.0 section "3.7 Surrogates").
+    if (char >= 0xD800 && char <= 0xDBFF/* high surrogate */) {
+      nextChar = string.charCodeAt(i + 1);
+      if (nextChar >= 0xDC00 && nextChar <= 0xDFFF/* low surrogate */) {
+        // Combine the surrogate pair and store it escaped.
+        result += encodeHex((char - 0xD800) * 0x400 + nextChar - 0xDC00 + 0x10000);
+        // Advance index one extra since we already used that char here.
+        i++; continue;
+      }
+    }
     escapeSeq = ESCAPE_SEQUENCES[char];
     result += !escapeSeq && isPrintable(char)
       ? string[i]
@@ -483,7 +500,7 @@ function writeFlowSequence(state, level, object) {
   for (index = 0, length = object.length; index < length; index += 1) {
     // Write only valid elements.
     if (writeNode(state, level, object[index], false, false)) {
-      if (index !== 0) _result += ', ';
+      if (index !== 0) _result += ',' + (!state.condenseFlow ? ' ' : '');
       _result += state.dump;
     }
   }
@@ -504,7 +521,14 @@ function writeBlockSequence(state, level, object, compact) {
       if (!compact || index !== 0) {
         _result += generateNextLine(state, level);
       }
-      _result += '- ' + state.dump;
+
+      if (state.dump && CHAR_LINE_FEED === state.dump.charCodeAt(0)) {
+        _result += '-';
+      } else {
+        _result += '- ';
+      }
+
+      _result += state.dump;
     }
   }
 
@@ -523,7 +547,7 @@ function writeFlowMapping(state, level, object) {
       pairBuffer;
 
   for (index = 0, length = objectKeyList.length; index < length; index += 1) {
-    pairBuffer = '';
+    pairBuffer = state.condenseFlow ? '"' : '';
 
     if (index !== 0) pairBuffer += ', ';
 
@@ -536,7 +560,7 @@ function writeFlowMapping(state, level, object) {
 
     if (state.dump.length > 1024) pairBuffer += '? ';
 
-    pairBuffer += state.dump + ': ';
+    pairBuffer += state.dump + (state.condenseFlow ? '"' : '') + ':' + (state.condenseFlow ? '' : ' ');
 
     if (!writeNode(state, level, objectValue, false, false)) {
       continue; // Skip this pair because of invalid value.

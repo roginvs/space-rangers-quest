@@ -46,7 +46,7 @@ export interface Index {
 let warns: string[] = [];
 
 const dataSrcPath = __dirname + '/../borrowed'
-const dataDstPath = __dirname + '/../build-web/data'
+const dataDstPath = __dirname + '/../built-web/data'
 
 const resultJsonFile = dataDstPath + '/index.json';
 
