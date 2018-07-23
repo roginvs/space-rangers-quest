@@ -5,6 +5,7 @@ import * as fs from 'fs';
 
 import { QMPlayer } from './lib/qmplayer'
 import { PQImages } from './lib/pqImages';
+import { Lang } from './lib/qmplayer/funcs';
 
 const pqiSR1Parsed = JSON.parse(fs.readFileSync(__dirname + '/../src/sr1-pqi.json').toString()) as {
     [questName: string]: PQImages
@@ -12,7 +13,6 @@ const pqiSR1Parsed = JSON.parse(fs.readFileSync(__dirname + '/../src/sr1-pqi.jso
 
 export type Origin = string;
 
-export type Lang = 'rus' | 'eng';
 
 export interface Game {
     filename: string,
@@ -21,7 +21,7 @@ export interface Game {
     gameName: string,
     images: PQImages,
     questOrigin: Origin,
-    oldTgeBehaviour: boolean,
+    // oldTgeBehaviour: boolean,
     hardness: number,
     lang: Lang
 }
@@ -308,7 +308,7 @@ for (const origin of fs.readdirSync(dataSrcPath + '/qm')) {
             images,
             hardness: quest.hardness,
             questOrigin: origin,
-            oldTgeBehaviour: oldTge,
+            // oldTgeBehaviour: oldTge,
             lang
         }
 

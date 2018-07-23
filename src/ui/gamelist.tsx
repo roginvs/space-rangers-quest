@@ -56,7 +56,7 @@ async function loadGame(game: Game) {
     const data = await getBinary(DATA_DIR + game.filename, true)
     const qm = parse(new Buffer(data));
     const player = new QMPlayer(qm, game.images,
-        game.filename.toLowerCase().endsWith('_eng.qm') ? 'eng' : 'rus',
+        game.lang,
         // game.oldTgeBehaviour
     )
     return player
