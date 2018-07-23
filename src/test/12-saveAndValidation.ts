@@ -15,7 +15,8 @@ import {
     JUMP_GO_BACK_TO_SHIP
 } from "../lib/qmplayer";
 import { PQImages } from "../lib/pqImages";
-import { getUIState, DEFAULT_RUS_PLAYER } from "../lib/qmplayer/funcs";
+import { getUIState } from "../lib/qmplayer/funcs";
+import { DEFAULT_RUS_PLAYER } from "../lib/qmplayer/player";
 
 let state: GameState;
 

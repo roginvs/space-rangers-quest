@@ -5,7 +5,7 @@ import * as fs from 'fs';
 
 import { QMPlayer } from './lib/qmplayer'
 import { PQImages } from './lib/pqImages';
-import { Lang } from './lib/qmplayer/funcs';
+import { Lang } from './lib/qmplayer/player';
 
 const pqiSR1Parsed = JSON.parse(fs.readFileSync(__dirname + '/../src/sr1-pqi.json').toString()) as {
     [questName: string]: PQImages

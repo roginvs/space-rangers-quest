@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as assert from 'assert';
 import "mocha";
 
-import { QMPlayer, GameState, Player } from '../lib/qmplayer'
+import { QMPlayer, GameState } from '../lib/qmplayer'
 import { parse, QM } from '../lib/qmreader';
 import { substitute } from '../lib/substitution';
 import * as formula from '../lib/formula';

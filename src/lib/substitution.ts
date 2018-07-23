@@ -1,5 +1,5 @@
 import { parse } from './formula';
-import { Player } from './qmplayer';
+// import { Lang } from './qmplayer/player';
 import { RandomFunc } from './randomFunc';
 import { PlayerSubstitute } from './qmplayer/funcs';
 export const clr = '<clr>';
