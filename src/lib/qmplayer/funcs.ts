@@ -20,41 +20,10 @@ import { substitute } from "../substitution";
 import { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP } from "./defs";
 import { assertNever } from "../formula/calculator";
 import * as assert from 'assert';
+import { Player, Lang } from "./player";
 
 type Quest = DeepImmutable<QM>;
-export interface Player {
-    Ranger: string;
-    Player: string;
-    Money: string;
-    FromPlanet: string;
-    FromStar: string;
-    ToPlanet: string;
-    ToStar: string;
-    lang: Lang;
-}
-export const DEFAULT_RUS_PLAYER: Player = {
-    // TODO: move from this file
-    Ranger: "Греф",
-    Player: "Греф",
-    FromPlanet: "Земля",
-    FromStar: "Солнечная",
-    ToPlanet: "Боннасис",
-    ToStar: "Процион",
-    Money: "65535",
-    lang: "rus"
-};
-export const DEFAULT_ENG_PLAYER: Player = {
-    // TODO: move from this file
-    Ranger: "Ranger",
-    Player: "Player",
-    FromPlanet: "FromPlanet",
-    FromStar: "FromStar",
-    ToPlanet: "ToPlanet",
-    ToStar: "ToStar",
-    Money: "65535",
 
-    lang: "eng"
-};
 
 export interface PlayerSubstitute extends Player {
     // TODO: move from this file
@@ -63,13 +32,11 @@ export interface PlayerSubstitute extends Player {
     CurDate: string; // Текущая дата
 }
 
-export type Lang = "rus" | "eng";
-
-interface GameLogStep {
+export interface GameLogStep {
     date: Date;
     jumpId: number;
 }
-type GameLog = DeepImmutable<{
+export type GameLog = DeepImmutable<{
     aleaSeed: string;
     performedJumps: GameLogStep[];
 }>

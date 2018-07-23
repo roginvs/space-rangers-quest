@@ -2,11 +2,11 @@ import { QM } from '../qmreader';
 import { PQImages } from '../pqImages';
 
 export { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP } from './defs';
-export { Player, GameState, initGame,performJump, validateState,validateWinningLog, getGameLog} from './funcs';
+export { GameState, initGame,performJump, validateState,validateWinningLog, getGameLog} from './funcs';
 
 
-
-import { PlayerState, GameState, DEFAULT_RUS_PLAYER, DEFAULT_ENG_PLAYER, initGame, getAllImagesToPreload, getUIState, performJump} from './funcs';
+import { PlayerState, GameState,  initGame, getAllImagesToPreload, getUIState, performJump} from './funcs';
+import { DEFAULT_RUS_PLAYER, DEFAULT_ENG_PLAYER } from './player';
 
 
 export class QMPlayer {
