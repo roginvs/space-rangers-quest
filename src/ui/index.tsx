@@ -37,6 +37,8 @@ import {
 import { INDEX_JSON } from "./consts";
 import { getLang, guessBrowserLang, LangTexts } from "./lang";
 import { assertNever } from "../lib/formula/calculator";
+import { LoginTabs } from "./login";
+import { OfflineMode } from "./offlineMode";
 
 console.info("starting");
 
@@ -51,81 +53,6 @@ const config = {
 
 const app = firebase.initializeApp(config);
 const authProvider = new firebase.auth.GoogleAuthProvider();
-
-class LoginTab extends React.Component<
-    {
-        l: LangTexts;
-    },
-    {}
-> {
-    render() {
-        return (
-            <DivFadeinCss key="login"  className="text-center">
-                <div className="mb-3">
-                    <button
-                        className="btn btn-light px-3"
-                        onClick={() => {
-                            const authProvider = new firebase.auth.GoogleAuthProvider();
-                            app.auth()
-                                .signInWithPopup(authProvider)
-                                .catch(e => undefined);
-                        }}
-                    >
-                        <i className="fa fa-google" />{" "}
-                        {this.props.l.loginWithGoogle}
-                    </button>
-                </div>
-            </DivFadeinCss>
-        );
-    }
-}
-class LogoutTab extends React.Component<
-    {
-        l: LangTexts;
-        user: firebase.User,
-    },
-    {}
-> {
-    render() {
-        return (
-            <DivFadeinCss key="logout" className="text-center">
-            <div className="mb-3">
-            <h5>{this.props.user.displayName}</h5>
-            </div>
-            <div className="mb-3">
-                <button
-                    className="btn btn-light px-3"
-                    onClick={() => {
-                        app.auth()
-                            .signOut()
-                            .catch(e => undefined);
-                    }}
-                >
-                    <i className="fa fa-sign-out" /> {this.props.l.reallyLogout}
-                </button>
-                </div>
-            </DivFadeinCss>
-        );
-    }
-}
-
-class LoginTabs extends React.Component<
-    {
-        l: LangTexts;
-        firebaseLoggedIn?: firebase.User | null;
-    },
-    {}
-> {
-    render() {
-        if (this.props.firebaseLoggedIn === undefined) {
-            return <Loader text={this.props.l.waitForFirebase} />;
-        } else if (this.props.firebaseLoggedIn) {
-            return <LogoutTab l={this.props.l} user={this.props.firebaseLoggedIn} />;
-        } else {
-            return <LoginTab l={this.props.l} />;
-        }
-    }
-}
 
 interface MainLoaderState {
     player?: Player;
@@ -345,8 +272,11 @@ class MainLoader extends React.Component<
                                                     this.state.firebaseLoggedIn
                                                 }
                                                 l={l}
+                                                app={app}
                                             />
-                                        ) : (
+                                        ) : tab === "offlinemode" ? 
+                                        <OfflineMode l={l}/> :
+                                        (
                                             "TODO"
                                         )}
                                     </Container>
