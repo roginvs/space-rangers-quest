@@ -16,7 +16,7 @@ import { initGame } from "../lib/qmplayer";
 import { parse } from "../lib/qmreader";
 import * as pako from "pako";
 import { getUIState, performJump } from "../lib/qmplayer/funcs";
-import { Loader } from "./common";
+import { Loader, DivFadeinCss } from "./common";
 import {
     HashRouter,
     Switch,
@@ -31,10 +31,11 @@ import {
     Collapse,
     Nav,
     NavItem,
-    NavLink
+    NavLink,
+    Container
 } from "reactstrap";
 import { INDEX_JSON } from "./consts";
-import { getLang, guessBrowserLang } from "./lang";
+import { getLang, guessBrowserLang, LangTexts } from "./lang";
 import { assertNever } from "../lib/formula/calculator";
 
 console.info("starting");
@@ -51,12 +52,88 @@ const config = {
 const app = firebase.initializeApp(config);
 const authProvider = new firebase.auth.GoogleAuthProvider();
 
+class LoginTab extends React.Component<
+    {
+        l: LangTexts;
+    },
+    {}
+> {
+    render() {
+        return (
+            <DivFadeinCss key="login"  className="text-center">
+                <div className="mb-3">
+                    <button
+                        className="btn btn-light px-3"
+                        onClick={() => {
+                            const authProvider = new firebase.auth.GoogleAuthProvider();
+                            app.auth()
+                                .signInWithPopup(authProvider)
+                                .catch(e => undefined);
+                        }}
+                    >
+                        <i className="fa fa-google" />{" "}
+                        {this.props.l.loginWithGoogle}
+                    </button>
+                </div>
+            </DivFadeinCss>
+        );
+    }
+}
+class LogoutTab extends React.Component<
+    {
+        l: LangTexts;
+        user: firebase.User,
+    },
+    {}
+> {
+    render() {
+        return (
+            <DivFadeinCss key="logout" className="text-center">
+            <div className="mb-3">
+            <h5>{this.props.user.displayName}</h5>
+            </div>
+            <div className="mb-3">
+                <button
+                    className="btn btn-light px-3"
+                    onClick={() => {
+                        app.auth()
+                            .signOut()
+                            .catch(e => undefined);
+                    }}
+                >
+                    <i className="fa fa-sign-out" /> {this.props.l.reallyLogout}
+                </button>
+                </div>
+            </DivFadeinCss>
+        );
+    }
+}
+
+class LoginTabs extends React.Component<
+    {
+        l: LangTexts;
+        firebaseLoggedIn?: firebase.User | null;
+    },
+    {}
+> {
+    render() {
+        if (this.props.firebaseLoggedIn === undefined) {
+            return <Loader text={this.props.l.waitForFirebase} />;
+        } else if (this.props.firebaseLoggedIn) {
+            return <LogoutTab l={this.props.l} user={this.props.firebaseLoggedIn} />;
+        } else {
+            return <LoginTab l={this.props.l} />;
+        }
+    }
+}
+
 interface MainLoaderState {
     player?: Player;
     db?: typeof getDb extends (app: any) => Promise<infer T> ? T : never;
     index?: Index;
     error?: string;
     navbarIsOpen: boolean;
+    firebaseLoggedIn?: firebase.User | null;
 }
 class MainLoader extends React.Component<
     RouteComponentProps<{}>,
@@ -65,7 +142,19 @@ class MainLoader extends React.Component<
     state: MainLoaderState = {
         navbarIsOpen: false
     };
+    private unsubscribe: (() => void)[] = [];
+    componentWillUnmount() {
+        this.unsubscribe.forEach(f => f());
+    }
     componentDidMount() {
+        this.unsubscribe.push(
+            app.auth().onAuthStateChanged(user => {
+                this.setState({
+                    firebaseLoggedIn: user ? user : null
+                });
+            })
+        );
+
         getDb(app)
             .then(db => {
                 this.setState(
@@ -154,7 +243,7 @@ class MainLoader extends React.Component<
                         render={prop => {
                             const tab = prop.match.params.tab;
                             if (!tab) {
-                                return <Redirect to="/quests"/>
+                                return <Redirect to="/quests" />;
                             }
                             const subTab = prop.match.params.subTab;
                             return (
@@ -189,6 +278,17 @@ class MainLoader extends React.Component<
                                                 </NavItem>
                                                 <NavItem>
                                                     <NavLink
+                                                        active={
+                                                            tab === "topplayers"
+                                                        }
+                                                        href="#/topplayers"
+                                                    >
+                                                        <i className="fa fa-users" />{" "}
+                                                        {l.topplayers}
+                                                    </NavLink>
+                                                </NavItem>
+                                                <NavItem>
+                                                    <NavLink
                                                         href="#/options"
                                                         active={
                                                             tab === "options"
@@ -211,20 +311,45 @@ class MainLoader extends React.Component<
                                                     </NavLink>
                                                 </NavItem>
 
-                                                <NavItem>
-                                                    <NavLink
-                                                        href="#/signin"
-                                                        active={
-                                                            tab === "signin"
-                                                        }
-                                                    >
-                                                        <i className="fa fa-sign-in" />{" "}
-                                                        {l.login}
-                                                    </NavLink>
-                                                </NavItem>
+                                                {this.state.firebaseLoggedIn !==
+                                                undefined ? (
+                                                    <NavItem>
+                                                        <NavLink
+                                                            href="#/sign"
+                                                            active={
+                                                                tab === "sign"
+                                                            }
+                                                        >
+                                                            {this.state
+                                                                .firebaseLoggedIn ? (
+                                                                <>
+                                                                    <i className="fa fa-sign-out" />{" "}
+                                                                    {l.logout}
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    <i className="fa fa-sign-in" />{" "}
+                                                                    {l.login}
+                                                                </>
+                                                            )}
+                                                        </NavLink>
+                                                    </NavItem>
+                                                ) : null}
                                             </Nav>
                                         </Collapse>
                                     </Navbar>
+                                    <Container className="mt-3">
+                                        {tab === "sign" ? (
+                                            <LoginTabs
+                                                firebaseLoggedIn={
+                                                    this.state.firebaseLoggedIn
+                                                }
+                                                l={l}
+                                            />
+                                        ) : (
+                                            "TODO"
+                                        )}
+                                    </Container>
                                 </div>
                             );
                         }}

@@ -7,14 +7,21 @@ const RUS = {
     options: "Опции",
     offlinemode: "Оффлайн режим",
     login: "Войти",
+    loginWithGoogle: "Войти через Google",
     logout: "Выйти",
-
+    topplayers: "Чемпионы",
+    reallyLogout: "Действительно выйти",
+    waitForFirebase: "Ждем ответа от firebase",
 }
 
-const ENG: typeof RUS = {
+export type LangTexts = typeof RUS;
+
+const ENG: LangTexts = {
     ...RUS,
     hi: 'Hi,'
 }
+
+
 
 export function getLang(lang: Lang) {
     if (lang === 'rus') {
