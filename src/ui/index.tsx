@@ -153,12 +153,15 @@ class MainLoader extends React.Component<
                         path={"/:tab?/:subTab?"}
                         render={prop => {
                             const tab = prop.match.params.tab;
+                            if (!tab) {
+                                return <Redirect to="/quests"/>
+                            }
                             const subTab = prop.match.params.subTab;
                             return (
                                 <div>
                                     <Navbar color="light" light expand="md">
-                                        <NavbarBrand href="/">
-                                            tab={tab}
+                                        <NavbarBrand href="#/">
+                                            {l.hi} {player.Player}
                                         </NavbarBrand>
                                         <NavbarToggler
                                             onClick={() => {
@@ -171,4 +174,75 @@ class MainLoader extends React.Component<
                                         <Collapse
                                             isOpen={this.state.navbarIsOpen}
                                             navbar
-          
+                                        >
+                                            <Nav className="ml-auto" navbar>
+                                                <NavItem>
+                                                    <NavLink
+                                                        active={
+                                                            tab === "quests"
+                                                        }
+                                                        href="#/quests"
+                                                    >
+                                                        <i className="fa fa-list" />{" "}
+                                                        {l.quests}
+                                                    </NavLink>
+                                                </NavItem>
+                                                <NavItem>
+                                                    <NavLink
+                                                        href="#/options"
+                                                        active={
+                                                            tab === "options"
+                                                        }
+                                                    >
+                                                        <i className="fa fa-cogs" />{" "}
+                                                        {l.options}
+                                                    </NavLink>
+                                                </NavItem>
+                                                <NavItem>
+                                                    <NavLink
+                                                        href="#/offlinemode"
+                                                        active={
+                                                            tab ===
+                                                            "offlinemode"
+                                                        }
+                                                    >
+                                                        <i className="fa fa-cloud-download" />{" "}
+                                                        {l.offlinemode}
+                                                    </NavLink>
+                                                </NavItem>
+
+                                                <NavItem>
+                                                    <NavLink
+                                                        href="#/signin"
+                                                        active={
+                                                            tab === "signin"
+                                                        }
+                                                    >
+                                                        <i className="fa fa-sign-in" />{" "}
+                                                        {l.login}
+                                                    </NavLink>
+                                                </NavItem>
+                                            </Nav>
+                                        </Collapse>
+                                    </Navbar>
+                                </div>
+                            );
+                        }}
+                    />
+                </Switch>
+            );
+        }
+    }
+}
+
+const root = document.getElementById("root");
+if (!root) {
+    throw new Error("No root element!");
+}
+
+ReactDOM.render(
+    <HashRouter>
+        <Route path={"/"} render={prop => <MainLoader {...prop} />} />
+    </HashRouter>,
+    root
+);

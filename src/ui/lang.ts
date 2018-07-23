@@ -2,16 +2,18 @@ import { Lang } from "../lib/qmplayer/player";
 import { assertNever } from "../lib/formula/calculator";
 
 const RUS = {
-    hi: 'Привет, рейнджер',
+    hi: 'Привет,',
     quests: "Квесты",
     options: "Опции",
+    offlinemode: "Оффлайн режим",
     login: "Войти",
+    logout: "Выйти",
 
 }
 
 const ENG: typeof RUS = {
     ...RUS,
-    hi: 'Hi, ranger'
+    hi: 'Hi,'
 }
 
 export function getLang(lang: Lang) {
