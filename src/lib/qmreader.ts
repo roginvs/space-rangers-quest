@@ -960,7 +960,7 @@ export function parse(data: Buffer): QM {
 }
 
 export function getImagesListFromQmm(qmmQuest: QM) {
-    let images: {
+    const images: {
         [imageName: string]: string[];
     } = {};
     let tracks: (string | undefined)[] = [];
@@ -985,8 +985,8 @@ export function getImagesListFromQmm(qmmQuest: QM) {
 
     for (const l of qmmQuest.locations) {
         l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id}`));
-        tracks = tracks.concat(...l.media.map(x => x.track));
-        sounds = sounds.concat(...l.media.map(x => x.sound));
+        l.media.map(x => x.track).forEach(x => x ? tracks.push(x) : undefined);
+        l.media.map(x => x.sound).forEach(x => x ? sounds.push(x) : undefined);        
 
         l.paramsChanges.forEach((p, pid) => {
             l.media
