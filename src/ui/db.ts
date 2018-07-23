@@ -6,7 +6,7 @@ import { resolve } from "path";
 
 interface Config {
     player: Player;
-    lastPlayedGame: string;
+    lastPlayedGame: string;    
 }
 
 console.info(`TODO: SET TIMEOUTS ON FIREBASE`);
@@ -215,7 +215,7 @@ export async function getDb(app: firebase.app.App) {
         );
     }
 
-    async function getPrivate(key: keyof Config): Promise<Config[typeof key]> {
+    async function getPrivate<T extends keyof Config>(key: T): Promise<Config[T]> {
         return getLocalAndFirebase(INDEXEDDB_CONFIG_STORE_NAME, key);
     }
 
