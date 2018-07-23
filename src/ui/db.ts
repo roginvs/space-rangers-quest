@@ -174,7 +174,7 @@ export async function getDb(app: firebase.app.App) {
             await setLocal(storeName, key, firebaseResult);
             return firebaseResult;
         }
-        console.info(`getLocal store=${storeName} key=${key} no firebase result`);
+        console.info(`getLocal store=${storeName} key=${key} no_firebase_result`);
         return localResult;
     }
 
