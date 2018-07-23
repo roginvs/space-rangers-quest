@@ -40,6 +40,7 @@ import { assertNever } from "../lib/formula/calculator";
 import { LoginTabs } from "./login";
 import { OfflineMode } from "./offlineMode";
 import { Options } from "./options";
+import { QuestList } from "./questList";
 
 console.info("starting");
 
@@ -296,6 +297,14 @@ class MainLoader extends React.Component<
                                         onNewPlayer={player => this.setState({player})}
                                         db={db}
                                         /> :
+                                        tab === "quests" ? 
+                                        <QuestList
+                                        l={l}
+                                        player={player}
+                                        index={index}
+                                        onQuestSelect={gameName =>{
+
+                                        }}/> :
                                         (
                                             "TODO"
                                         )}

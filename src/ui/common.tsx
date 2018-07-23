@@ -63,3 +63,81 @@ export class Loader extends React.Component<{
         );
     }
 }
+
+
+
+export class Tabs extends React.Component<
+    {
+        tabs: JSX.Element[];
+    },
+    {
+        activeTabId: number;
+        prevActiveTabId: number;
+    }
+> {
+    state = {
+        activeTabId: 0,
+        prevActiveTabId: -1
+    };
+    render() {
+        return (
+            <div className="mb-3">
+                {this.props.tabs.length > 1 ? 
+                <ul className="nav nav-pills mb-3">
+                    {this.props.tabs.map((tab, id) => (
+                        <li className="nav-item" key={id}>
+                            <a
+                                className={`nav-link ${
+                                    id === this.state.activeTabId
+                                        ? "active"
+                                        : ""
+                                }`}
+                                href="#"
+                                onClick={e => {
+                                    e.preventDefault();
+                                    this.setState(
+                                        {
+                                            prevActiveTabId: this.state
+                                                .activeTabId,
+                                            activeTabId: id
+                                        },
+                                        () => {
+                                            setTimeout(() => {
+                                                this.setState({
+                                                    prevActiveTabId: -1
+                                                });
+                                            }, 300);
+                                        }
+                                    );
+                                }}
+                            >
+                                {tab}
+                            </a>
+                        </li>
+                    ))}
+                </ul> : null}
+                <div className="tab-content">
+                    {React.Children.map(this.props.children, (child, i) => {
+                        return (
+                            <div
+                                key={i}
+                                className={
+                                    `tab-pane fade ` +
+                                    (this.state.prevActiveTabId > -1
+                                        ? i === this.state.prevActiveTabId
+                                            ? "active"
+                                            : ""
+                                        : i === this.state.activeTabId
+                                            ? "active show"
+                                            : "")
+                                }
+                            >
+                                {child}
+                            </div>
+                        );
+                    })}
+                </div>
+            </div>
+        );
+    }
+}

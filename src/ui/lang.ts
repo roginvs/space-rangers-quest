@@ -28,6 +28,10 @@ const RUS = {
 
     rus: "Русский",
     eng: "Английский",
+
+    welcomeHeader: "Добро пожаловать в онлайн плеер квестов!",
+    all: "Все",
+    own: "Загруженные",
 }
 
 export type LangTexts = typeof RUS;
