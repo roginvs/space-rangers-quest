@@ -215,7 +215,7 @@ export async function getDb(app: firebase.app.App) {
         );
     }
 
-    async function getPrivate<T extends keyof Config>(key: T): Promise<Config[T]> {
+    async function getPrivate<T extends keyof Config>(key: T): Promise<Config[T] | null> {
         return getLocalAndFirebase(INDEXEDDB_CONFIG_STORE_NAME, key);
     }
 
