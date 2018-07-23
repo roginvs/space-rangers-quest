@@ -17,7 +17,7 @@ import { parse } from "../formula";
 import { DeepImmutable } from "./deepImmutable";
 import { RandomFunc } from "../randomFunc";
 import { substitute } from "../substitution";
-import { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP } from "./defs";
+import { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP, DEFAULT_DAYS_TO_PASS_QUEST } from "./defs";
 import { assertNever } from "../formula/calculator";
 import * as assert from 'assert';
 import { Player, Lang } from "./player";
@@ -84,7 +84,7 @@ export interface PlayerState {
     choices: PlayerChoice[];
     gameState: "running" | "fail" | "win" | "dead";
 }
-const DEFAULT_DAYS_TO_PASS_QUEST = 35;
+
 
 export function initGame(quest: Quest, seed: string): GameState {
     const alea = new Alea(seed);

@@ -16,7 +16,7 @@ export type Origin = string;
 
 export interface Game {
     filename: string,
-    description?: string,
+    taskText: string,
     smallDescription?: string,
     gameName: string,
     images: PQImages,
@@ -131,32 +131,32 @@ function areThereAnyQmmImages(qmmQuest: QM) {
         }
     }
 
-    qmmQuest.params.map((p, pid) => {
+    qmmQuest.params.forEach((p, pid) => {
         addImg(p.img, `Param p${pid}`);
         tracks.push(p.track)
         sounds.push(p.sound)
     })
 
     for (const l of qmmQuest.locations) {
-        l.media.map(x => x.img).map(x => addImg(x, `Loc ${l.id}`))
-        tracks.concat(...l.media.map(x => x.track));
-        sounds.concat(...l.media.map(x => x.sound));
+        l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id}`))
+        tracks = tracks.concat(...l.media.map(x => x.track));
+        sounds = sounds.concat(...l.media.map(x => x.sound));
 
-        l.paramsChanges.map((p, pid) => {
-            l.media.map(x => x.img).map(x => addImg(x, `Loc ${l.id} p${pid + 1}`))
+        l.paramsChanges.forEach((p, pid) => {
+            l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id} p${pid + 1}`))
             tracks.push(p.track)
             sounds.push(p.sound)
         })
     }
 
-    qmmQuest.jumps.map((j, jid) => {
+    qmmQuest.jumps.forEach((j, jid) => {
         addImg(j.img, `Jump ${jid}`)
 
         tracks.push(j.track)
         sounds.push(j.sound)
 
 
-        j.paramsChanges.map((p, pid) => {
+        j.paramsChanges.forEach((p, pid) => {
             addImg(p.img, `Jump ${jid} p${pid}`)
             tracks.push(p.track)
             sounds.push(p.sound)
@@ -301,7 +301,7 @@ for (const origin of fs.readdirSync(dataSrcPath + '/qm')) {
         const gameFilePath = 'qm/' + qmShortName + '.gz';
         const game: Game = {
             filename: gameFilePath,
-            description: player.getState().text.replace(/<clr>|<clrEnd>/g, ''),
+            taskText: quest.taskText,
             smallDescription: lang === 'rus' ? `Сложность: ${quest.hardness}, из ${origin}` :
                 `Hardness: ${quest.hardness}, from ${origin}`,
             gameName,
