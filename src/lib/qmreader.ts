@@ -133,6 +133,9 @@ interface QMBase {
 
     screenSizeX: number;
     screenSizeY: number;
+    reputationChange: number;
+    widthSize: number;
+    heigthSize: number;
 }
 
 function parseBase(r: Reader, header: HeaderMagic): QMBase {
@@ -171,7 +174,10 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
             majorVersion,
             minorVersion,
             screenSizeX,
-            screenSizeY
+            screenSizeY,
+            reputationChange,
+            widthSize,
+            heigthSize,
         };
     } else {
         const paramsCount =
@@ -210,9 +216,13 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
             hardness,
             paramsCount,
 
+            reputationChange,
+
             // TODO
             screenSizeX: 200,
-             screenSizeY: 200
+            screenSizeY: 200,            
+            heigthSize: 100,
+            widthSize: 100,
         };
     }
 }
@@ -363,12 +373,6 @@ interface QMBase3 {
     header: HeaderMagic,    
 }
 
-export interface QM extends QMBase, QMBase2, QMBase3 {
-    params: QMParam[];
-    locations: Location[];
-    jumps: Jump[];
-}
-
 interface QMBase2 {
     strings: {
         ToStar: string;
@@ -386,6 +390,14 @@ interface QMBase2 {
     successText: string;
     taskText: string;
 }
+
+export interface QM extends QMBase, QMBase2, QMBase3 {
+    params: QMParam[];
+    locations: Location[];
+    jumps: Jump[];
+}
+
+
 function parseBase2(r: Reader, isQmm: boolean): QMBase2 {
     const ToStar = r.readString();
 
@@ -406,6 +418,7 @@ function parseBase2(r: Reader, isQmm: boolean): QMBase2 {
 
     const taskText = r.readString();
 
+    // tslint:disable-next-line:no-dead-store
     const unknownText = isQmm ? undefined : r.readString();
 
     return {
@@ -964,33 +977,33 @@ export function getImagesListFromQmm(qmmQuest: QM) {
         }
     };
 
-    qmmQuest.params.map((p, pid) => {
+    qmmQuest.params.forEach((p, pid) => {
         addImg(p.img, `Param p${pid}`);
         tracks.push(p.track);
         sounds.push(p.sound);
     });
 
     for (const l of qmmQuest.locations) {
-        l.media.map(x => x.img).map(x => addImg(x, `Loc ${l.id}`));
-        tracks.concat(...l.media.map(x => x.track));
-        sounds.concat(...l.media.map(x => x.sound));
+        l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id}`));
+        tracks = tracks.concat(...l.media.map(x => x.track));
+        sounds = sounds.concat(...l.media.map(x => x.sound));
 
-        l.paramsChanges.map((p, pid) => {
+        l.paramsChanges.forEach((p, pid) => {
             l.media
                 .map(x => x.img)
-                .map(x => addImg(x, `Loc ${l.id} p${pid + 1}`));
+                .forEach(x => addImg(x, `Loc ${l.id} p${pid + 1}`));
             tracks.push(p.track);
             sounds.push(p.sound);
         });
     }
 
-    qmmQuest.jumps.map((j, jid) => {
+    qmmQuest.jumps.forEach((j, jid) => {
         addImg(j.img, `Jump ${jid}`);
 
         tracks.push(j.track);
         sounds.push(j.sound);
 
-        j.paramsChanges.map((p, pid) => {
+        j.paramsChanges.forEach((p, pid) => {
             addImg(p.img, `Jump ${jid} p${pid}`);
             tracks.push(p.track);
             sounds.push(p.sound);
