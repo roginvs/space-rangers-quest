@@ -334,7 +334,7 @@ class QMPlayer {
                 );
             }
 
-            const param = this.quest.params[critId];
+            // const param = this.quest.params[critId];
             return {
                 text: this.replace(jump.description),
                 paramsState: this.getParamsState(),

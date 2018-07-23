@@ -484,7 +484,7 @@ export function getUIState(
             );
         }
 
-        const param = quest.params[critId];
+        // const param = quest.params[critId];
         return {
             text: replace(
                 jump.description,

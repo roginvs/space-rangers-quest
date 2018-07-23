@@ -11,7 +11,7 @@ const devServer /*: webpackDevServer.Configuration */ = {
 const config /*: webpack.Configuration */ = {
     entry: {
 	    index: './src/ui/index.tsx',
-	    serviceWorker: './src/ui/serviceWorker.ts'
+//	    serviceWorker: './src/ui/serviceWorker.ts'
     },
 
     output: {
