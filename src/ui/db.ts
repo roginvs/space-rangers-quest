@@ -2,12 +2,12 @@ import firebase from "firebase";
 
 import { Player } from "../lib/qmplayer/player";
 import { GameLog, GameState } from "../lib/qmplayer/funcs";
+import { resolve } from "path";
 
 interface Config {
     player: Player;
     lastPlayedGame: string;
 }
-
 
 console.info(`TODO: SET TIMEOUTS ON FIREBASE`);
 
@@ -39,6 +39,15 @@ const INDEXEDDB_WON_STORE_NAME = "savedgames";
 
 const FIREBASE_USERS_PRIVATE = `usersPrivate`;
 const FIREBASE_USERS_PUBLIC = `usersPublic`;
+
+interface WonProof {
+    [gameId: string]: GameLog;
+}
+interface FirebasePublic {
+    name: string;
+    gamesWonCount: number;
+    wonProofs: WonProof;
+}
 
 export async function getDb(app: firebase.app.App) {
     console.info("Starting to get db");
@@ -110,7 +119,8 @@ export async function getDb(app: firebase.app.App) {
         });
     }
 
-    async function setFirebasePrivate(
+    async function setFirebase(
+        store: "usersPrivate" | "usersPublic",
         storeName: string,
         key: string,
         value: any
@@ -122,30 +132,44 @@ export async function getDb(app: firebase.app.App) {
                         value
                     )} saving to firebase`
                 );
-                await app
-                    .database()
-                    .ref(`usersPrivate/${firebaseUser.uid}/${storeName}/${key}`)
-                    .set(value);
+                await Promise.race([
+                    app
+                        .database()
+                        .ref(`${store}/${firebaseUser.uid}/${storeName}/${key}`)
+                        .set(value),
+                    new Promise<void>(r => setTimeout(r, 10000))
+                ]);
             }
         } catch (e) {
             console.error(`Error with firebase: `, e);
         }
     }
-    async function getFirebasePrivate(storeName: string, key: string) {        
+    async function getFirebase(
+        store: "usersPrivate" | "usersPublic",
+        storeName: string,
+        key: string
+    ) {
         try {
-            const firebaseResult = await new Promise<any | null>(
-                resolve =>                     
-                    firebaseUser
-                        ? app
-                              .database()
-                              .ref(`usersPrivate/${firebaseUser.uid}/${storeName}/${key}`)
-                              .once("value", snapshot =>
-                                  resolve(snapshot ? snapshot.val() : null)
-                              )
-                        : resolve(null)
-            );
-            
-            return firebaseResult
+            const firebaseResult = await Promise.race([
+                new Promise<any | null>(
+                    resolve =>
+                        firebaseUser
+                            ? app
+                                  .database()
+                                  .ref(
+                                      `${store}/${
+                                          firebaseUser.uid
+                                      }/${storeName}/${key}`
+                                  )
+                                  .once("value", snapshot =>
+                                      resolve(snapshot ? snapshot.val() : null)
+                                  )
+                            : resolve(null)
+                ),
+                new Promise<null>(r => setTimeout(() => r(null), 10000))
+            ]);
+
+            return firebaseResult;
         } catch (e) {
             console.error(`Error with firebase: `, e);
             return null;
@@ -153,14 +177,14 @@ export async function getDb(app: firebase.app.App) {
     }
 
     async function getLocalAndFirebase(storeName: string, key: string) {
-        const localResult = await getLocal(
-            storeName,
-            key
-        );
+        const localResult = await getLocal(storeName, key);
         console.info(
-            `getLocal store=${storeName} key=${key} localResult=${JSON.stringify(localResult)}`
+            `getLocal store=${storeName} key=${key} localResult=${JSON.stringify(
+                localResult
+            )}`
         );
-        const firebaseResult = await getFirebasePrivate(
+        const firebaseResult = await getFirebase(
+            "usersPrivate",
             storeName,
             key
         );
@@ -174,57 +198,149 @@ export async function getDb(app: firebase.app.App) {
             await setLocal(storeName, key, firebaseResult);
             return firebaseResult;
         }
-        console.info(`getLocal store=${storeName} key=${key} no_firebase_result`);
+        console.info(
+            `getLocal store=${storeName} key=${key} no_firebase_result`
+        );
         return localResult;
     }
 
     async function setPrivate(key: keyof Config, value: Config[typeof key]) {
         console.info(`setConfig key=${key} value=${JSON.stringify(value)}`);
         await setLocal(INDEXEDDB_CONFIG_STORE_NAME, key, value);
-        await setFirebasePrivate(INDEXEDDB_CONFIG_STORE_NAME, key, value);
+        await setFirebase(
+            "usersPrivate",
+            INDEXEDDB_CONFIG_STORE_NAME,
+            key,
+            value
+        );
     }
 
-
     async function getPrivate(key: keyof Config): Promise<Config[typeof key]> {
-        return getLocalAndFirebase(INDEXEDDB_CONFIG_STORE_NAME, key);        
+        return getLocalAndFirebase(INDEXEDDB_CONFIG_STORE_NAME, key);
     }
 
     async function setSavedGame(gameName: string, state: GameState) {
         console.info(`setConfig key=${gameName} value=${state}`);
         await setLocal(INDEXEDDB_SAVED_STORE_NAME, gameName, state);
-        await setFirebasePrivate(INDEXEDDB_SAVED_STORE_NAME, gameName, state);
+        await setFirebase(
+            "usersPrivate",
+            INDEXEDDB_SAVED_STORE_NAME,
+            gameName,
+            state
+        );
     }
 
     async function getSavedGame(gameName: string) {
         return getLocalAndFirebase(INDEXEDDB_SAVED_STORE_NAME, gameName);
     }
 
-    function setWonGame(gameName: string, proof: GameLog) {
-        // todo
+    async function setWonGame(gameName: string, proof: GameLog) {
+        await setLocal(INDEXEDDB_WON_STORE_NAME, gameName, proof);
+        if (firebaseUser) {
+            const mePublicRef = app
+                .database()
+                .ref(`usersPublic/${firebaseUser.uid}`);
+            mePublicRef
+                .transaction((me: FirebasePublic) => {
+                    me.wonProofs = {
+                        ...me.wonProofs,
+                        [gameName]: proof
+                    };
+                    me.gamesWonCount = Object.keys(me.wonProofs).length;
+                    return me;
+                })
+                .catch(e => {
+                    console.error("firebase update error", e);
+                });
+        }
     }
-    function removeWonGame(gameName: string) {
-        // todo
+    async function removeWonGame(gameName: string) {
+        await setLocal(INDEXEDDB_WON_STORE_NAME, gameName, null);
+        if (firebaseUser) {
+            const mePublicRef = app
+                .database()
+                .ref(`usersPublic/${firebaseUser.uid}`);
+            mePublicRef
+                .transaction((me: FirebasePublic) => {
+                    me.wonProofs = {
+                        ...me.wonProofs
+                    };
+                    delete me.wonProofs[gameName];
+                    me.gamesWonCount = Object.keys(me.wonProofs).length;
+                    return me;
+                })
+                .catch(e => {
+                    console.error("firebase update error", e);
+                });
+        }
     }
     function getOwnWonGames() {
-        // todo
+        // TODO a sync with firebase
+        const objectStore = db
+            .transaction([INDEXEDDB_WON_STORE_NAME])
+            .objectStore(INDEXEDDB_WON_STORE_NAME);
+        return new Promise<WonProof>((resolve, reject) => {
+            const wonGames: WonProof = {};
+            const openCursor = objectStore.openCursor();
+            openCursor.onsuccess = function(event: any) {
+                var cursor = event.target.result;
+                if (cursor) {
+                    wonGames[cursor.key] = cursor.value.name;
+                    cursor.continue();
+                } else {
+                    // alert("No more entries!");
+                    resolve(wonGames);
+                }
+            };
+            openCursor.onerror = e => {
+                reject(new Error(openCursor.error.toString()));
+            };
+        });
     }
 
-    function setOwnHighscoresName(name: string) {
-        // todo
+    async function setOwnHighscoresName(name: string) {
+        await setLocal(INDEXEDDB_CONFIG_STORE_NAME, "name", name);
+        await setFirebase("usersPublic", "info", "name", name);
     }
 
-    function getOwnHighscoresName() {
-        // todo
+    async function getOwnHighscoresName() {
+        const localResult = await getLocal(
+            INDEXEDDB_CONFIG_STORE_NAME,
+            "publicName"
+        );
+        const firebaseResult = await getFirebase("usersPublic", "info", "name");
+
+        if (firebaseResult) {
+            await setLocal(INDEXEDDB_CONFIG_STORE_NAME, "name", firebaseResult);
+            return firebaseResult;
+        }
+        return localResult;
     }
 
     function getHighscores() {
         // Only from firebase!
+        return new Promise<{
+            [userId: string]: FirebasePublic;
+        }>((resolve, reject) => {
+            const allUsersRef = app.database().ref(`usersPublic`);
+            allUsersRef
+                .orderByChild("gamesWonCount")
+                .limitToFirst(1000)
+                .once("value", snapshot =>
+                    resolve(snapshot ? snapshot.val() : null)
+                )
+                .catch(e => reject(e));
+        });
     }
 
     return {
         getPrivate,
         setPrivate,
         getSavedGame,
-        setSavedGame
+        setSavedGame,
+
+        setWonGame,
+        removeWonGame,
+        getOwnWonGames
     };
 }
