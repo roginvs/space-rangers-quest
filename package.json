@@ -11,6 +11,7 @@
     "@types/react-dom": "^16.0.6",
     "babel-polyfill": "^6.26.0",
     "bootstrap": "^4.1.2",
+    "firebase": "^5.3.0",
     "font-awesome": "^4.7.0",
     "mocha": "^5.2.0",
     "pako": "^1.0.6",
