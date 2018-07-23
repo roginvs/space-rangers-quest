@@ -52,6 +52,9 @@ export class QuestList extends React.Component<
                     <h5>{l.welcomeHeader}</h5>
                 </div>
                 <ButtonDropdown
+                    style={{
+                        display: "block"
+                    }}                    
                     isOpen={this.state.dropdownOpen}
                     toggle={() =>
                         this.setState({
@@ -59,7 +62,7 @@ export class QuestList extends React.Component<
                         })
                     }
                 >
-                    <DropdownToggle color="info" caret>
+                    <DropdownToggle color="info" caret block>
                         {this.state.tab === ALL ? l.all : 
                         this.state.tab === OWN ? l.own : this.state.tab}
                     </DropdownToggle>
