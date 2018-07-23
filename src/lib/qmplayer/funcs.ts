@@ -162,7 +162,7 @@ export function initGame(quest: Quest, seed: string): GameState {
 function SRDateToString(
     daysToAdd: number,
     lang: Lang,
-    initialDate: Date = new Date()
+    initialDate: Date = new Date() // TODO: use it
 ) {
     const d = new Date(initialDate.getTime() + 1000 * 60 * 60 * 24 * daysToAdd);
     const months =
