@@ -7,6 +7,7 @@ import { resolve } from "path";
 interface Config {
     player: Player;
     lastPlayedGame: string;    
+    noMusic: boolean;
 }
 
 console.info(`TODO: SET TIMEOUTS ON FIREBASE`);
@@ -341,6 +342,13 @@ export async function getDb(app: firebase.app.App) {
 
         setWonGame,
         removeWonGame,
-        getOwnWonGames
+        getOwnWonGames,
+
+        getOwnHighscoresName,
+        setOwnHighscoresName,
+        getHighscores,
     };
 }
+
+
+export type DB = typeof getDb extends (app: any) => Promise<infer T> ? T : never;

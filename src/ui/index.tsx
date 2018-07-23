@@ -6,7 +6,7 @@ import "font-awesome/css/font-awesome.css";
 
 import { Index, Game } from "../packGameData";
 import firebase from "firebase";
-import { getDb } from "./db";
+import { getDb, DB } from "./db";
 import {
     DEFAULT_RUS_PLAYER,
     Player,
@@ -39,6 +39,7 @@ import { getLang, guessBrowserLang, LangTexts } from "./lang";
 import { assertNever } from "../lib/formula/calculator";
 import { LoginTabs } from "./login";
 import { OfflineMode } from "./offlineMode";
+import { Options } from "./options";
 
 console.info("starting");
 
@@ -56,7 +57,7 @@ const authProvider = new firebase.auth.GoogleAuthProvider();
 
 interface MainLoaderState {
     player?: Player;
-    db?: typeof getDb extends (app: any) => Promise<infer T> ? T : never;
+    db?: DB;
     index?: Index;
     error?: string;
     navbarIsOpen: boolean;
@@ -227,6 +228,18 @@ class MainLoader extends React.Component<
                                                 </NavItem>
                                                 <NavItem>
                                                     <NavLink
+                                                        href="#/useown"
+                                                        active={
+                                                            tab ===
+                                                            "useown"
+                                                        }
+                                                    >
+                                                        <i className="fa fa-upload" />{" "}
+                                                        {l.useown}
+                                                    </NavLink>
+                                                </NavItem>
+                                                <NavItem>
+                                                    <NavLink
                                                         href="#/offlinemode"
                                                         active={
                                                             tab ===
@@ -265,7 +278,7 @@ class MainLoader extends React.Component<
                                             </Nav>
                                         </Collapse>
                                     </Navbar>
-                                    <Container className="mt-3">
+                                    <Container className="mt-3 mb-3">
                                         {tab === "sign" ? (
                                             <LoginTabs
                                                 firebaseLoggedIn={
@@ -276,6 +289,13 @@ class MainLoader extends React.Component<
                                             />
                                         ) : tab === "offlinemode" ? 
                                         <OfflineMode l={l}/> :
+                                        tab === "options" ? 
+                                        <Options
+                                        l={l}
+                                        player={player}
+                                        onNewPlayer={player => this.setState({player})}
+                                        db={db}
+                                        /> :
                                         (
                                             "TODO"
                                         )}
