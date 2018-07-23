@@ -83,16 +83,15 @@ export class Tabs extends React.Component<
         return (
             <div className="mb-3">
                 {this.props.tabs.length > 1 ? 
-                <ul className="nav nav-pills mb-3">
+                <div className="mb-3">
                     {this.props.tabs.map((tab, id) => (
-                        <li className="nav-item" key={id}>
-                            <a
-                                className={`nav-link ${
+                        <button
+                                className={`btn mx-2 ${
                                     id === this.state.activeTabId
-                                        ? "active"
-                                        : ""
+                                        ? "btn-primary"
+                                        : "btn-light"
                                 }`}
-                                href="#"
+                          
                                 onClick={e => {
                                     e.preventDefault();
                                     this.setState(
@@ -112,10 +111,9 @@ export class Tabs extends React.Component<
                                 }}
                             >
                                 {tab}
-                            </a>
-                        </li>
+                        </button>
                     ))}
-                </ul> : null}
+                </div> : null}
                 <div className="tab-content">
                     {React.Children.map(this.props.children, (child, i) => {
                         return (
