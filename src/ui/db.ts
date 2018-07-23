@@ -1,6 +1,7 @@
 import firebase from "firebase";
 
 import { Player } from "../lib/qmplayer/player";
+import { GameLog } from "../lib/qmplayer/funcs";
 
 interface Config {
     player: Player;
@@ -136,6 +137,29 @@ export async function getDb(app: firebase.app.App) {
         }
         console.info(`getConfig key=${key} no firebase result`);
         return localResult;
+    }
+
+    function setWonGame(gameName: string, proof: GameLog) {
+        // todo
+    }
+    function removeWonGame(gameName: string) {
+        // todo
+    }
+
+    function setOwnHighscoresName(name: string) {
+        // todo
+    }
+
+    function getOwnHighscoresName() {
+        // todo
+    }
+
+    function getOwnWonGames() {
+
+    }
+
+    function getHighscores() { // Only from firebase!
+
     }
 
     return {
