@@ -227,6 +227,7 @@ export class QuestListRouter extends React.Component<
                                                                         .gameName
                                                                 ];
                                                             const lastStep = passed
+                                                             && passed.performedJumps
                                                                 ? passed.performedJumps
                                                                       .slice(-1)
                                                                       .shift()

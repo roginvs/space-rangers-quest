@@ -86,6 +86,7 @@ interface QuestPlayState {
     error?: string | Error;
     noMusic?: boolean;
     playingMobileView: boolean;
+    startButtonsAreBusy?: boolean;
 }
 class QuestPlay extends React.Component<
     {
@@ -102,7 +103,7 @@ class QuestPlay extends React.Component<
     QuestPlayState
 > {
     state: QuestPlayState = {
-        playingMobileView: this.isScreenWidthMobile(),
+        playingMobileView: this.isScreenWidthMobile()
     };
 
     loadComments = () => {
@@ -115,19 +116,17 @@ class QuestPlay extends React.Component<
             .then(arrayBuf => {
                 const quest = parse(
                     new Buffer(pako.ungzip(new Buffer(arrayBuf)))
-                ) as Quest;
+                ) as Quest;                
                 this.setState({
                     quest
                 })
-                return quest                
+                return quest;
             });
     }
     componentDidMount() {
-        window.addEventListener("resize", this.onResize);        
+        window.addEventListener("resize", this.onResize);
 
-        if (this.props.isPlaying) {
-            this.loadQuest();            
-        } else {
+        if (!this.props.isPlaying) {            
             this.loadComments();
         }
 
@@ -138,14 +137,22 @@ class QuestPlay extends React.Component<
         this.props.db
             .getSavedGame(this.props.gameName)
             .catch(e => undefined)
-            .then(gameState =>
+            .then(gameState => {
                 this.setState({ gameState, gameStateLoaded: true })
+                if (this.props.isPlaying) {
+                    if (gameState) {}
+                        this.loadQuest();
+                    } else {
+                        this.props.onPlayChange(false);
+                    }
+
+                }
             );
         this.props.db.getPrivate("noMusic").then(noMusic => {
             this.setState({
-                noMusic: !! noMusic
-            })
-        })
+                noMusic: !!noMusic
+            });
+        });
     }
     componentWillUnmount() {
         window.removeEventListener("resize", this.onResize);
@@ -215,11 +222,13 @@ class QuestPlay extends React.Component<
                                         }
                                         const passed =
                                             passedQuests[game.gameName];
-                                        const lastStep = passed
-                                            ? passed.performedJumps
-                                                  .slice(-1)
-                                                  .shift()
-                                            : undefined;
+
+                                        const lastStep =
+                                            passed && passed.performedJumps
+                                                ? passed.performedJumps
+                                                      .slice(-1)
+                                                      .shift()
+                                                : undefined;
                                         if (!lastStep) {
                                             return null;
                                         }
@@ -258,72 +267,128 @@ class QuestPlay extends React.Component<
                             )}
                         </div>
                         <div className="row">
-                            <div className="col-md-6">
-                                <button
-                                    className={classnames("btn btn-block", {
-                                        "btn-primary":
-                                            this.state.gameStateLoaded &&
-                                            !this.state.gameState
-                                    })}
-                                    onClick={async () => {                                             
-                                        const quest = await this.loadQuest();
-                                        let state = initGame(quest, Math.random().toString(36));                                        
-                                        this.setState({
-                                            gameState: state
-                                        });
-                                        await db.setSavedGame(game.gameName, state);
-                                        this.props.onPlayChange(true);
-                                    }}
-                                >
-                                    <i className="fa fa-rocket" />{" "}
-                                    {l.startFromTheStart}
-                                </button>
-                            </div>
-                            <div className="col-md-6">
-                                <button
-                                    className={classnames("btn btn-block", {
-                                        "btn-primary":
-                                            this.state.gameStateLoaded &&
-                                            this.state.gameState,
-                                        disabled: !this.state.gameState
-                                    })}
-                                    onClick={() => {
-                                        this.loadQuest();
-                                        this.props.onPlayChange(true);
-                                    }}
-                                >
-                                    {!this.state.gameStateLoaded ? (
-                                        <Loader />
-                                    ) : this.state.gameState ? (
-                                        <>
-                                            <i className="fa fa-save" />{" "}
-                                            {l.startFromLastSave}
-                                        </>
-                                    ) : (
-                                        <>
-                                            {" "}
-                                            <i className="fa fa-circle-o" />{" "}
-                                            {l.noLastSave}
-                                        </>
-                                    )}
-                                </button>
-                            </div>
+                            {!this.state.startButtonsAreBusy ? (
+                                <>
+                                    <div className="col-md-6">
+                                        <button
+                                            className={classnames(
+                                                "btn btn-block mb-2",
+                                                {
+                                                    "btn-primary":
+                                                        this.state
+                                                            .gameStateLoaded &&
+                                                        !this.state.gameState
+                                                }
+                                            )}
+                                            onClick={async () => {
+                                                this.setState({
+                                                    startButtonsAreBusy: true
+                                                });
+                                                this.play(true);
+                                                try {
+                                                    const quest = await this.loadQuest();
+                                                    let state = initGame(
+                                                        quest,
+                                                        Math.random().toString(
+                                                            36
+                                                        )
+                                                    );
+                                                    this.setState({
+                                                        gameState: state
+                                                    });
+                                                    await db.setSavedGame(
+                                                        game.gameName,
+                                                        state
+                                                    );
+                                                    this.props.onPlayChange(
+                                                        true
+                                                    );
+                                                } catch (e) {
+                                                    this.setState({
+                                                        error: e,
+                                                        startButtonsAreBusy: false
+                                                    });
+                                                }
+                                            }}
+                                        >
+                                            <i className="fa fa-rocket" />{" "}
+                                            {l.startFromTheStart}
+                                        </button>
+                                    </div>
+                                    <div className="col-md-6">
+                                        <button
+                                            className={classnames(
+                                                "btn btn-block mb-2",
+                                                {
+                                                    "btn-primary":
+                                                        this.state
+                                                            .gameStateLoaded &&
+                                                        this.state.gameState,
+                                                    disabled: !this.state
+                                                        .gameState
+                                                }
+                                            )}
+                                            onClick={async () => {
+                                                this.setState({
+                                                    startButtonsAreBusy: true
+                                                });
+                                                this.play(true);
+                                                try {
+                                                    await this.loadQuest();
+                                                    this.props.onPlayChange(
+                                                        true
+                                                    );
+                                                } catch (e) {
+                                                    this.setState({
+                                                        error: e,
+                                                        startButtonsAreBusy: false
+                                                    });
+                                                }
+                                            }}
+                                        >
+                                            {!this.state.gameStateLoaded ? (
+                                                <Loader />
+                                            ) : this.state.gameState ? (
+                                                <>
+                                                    <i className="fa fa-save" />{" "}
+                                                    {l.startFromLastSave}
+                                                </>
+                                            ) : (
+                                                <>
+                                                    {" "}
+                                                    <i className="fa fa-circle-o" />{" "}
+                                                    {l.noLastSave}
+                                                </>
+                                            )}
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="text-center"><Loader text={l.loadingQuest} /></div>
+                            )}
                         </div>
                     </DivFadeinCss>
                 </>
             );
         }
         const quest = this.state.quest;
+        const gameState = this.state.gameState;
         if (!quest) {
-            return <>
-            {audioTag}
-            <Loader text={l.loadingQuest}/>
-        </>
+            return (
+                <>
+                    {audioTag}
+                    <Loader text={l.loadingQuest} />
+                </>
+            );
         }
         return (
             <>
                 {audioTag}
-                <div>TODO</div>
+                <div>TODO
+
+
+
+                </div>
             </>
         );
     }
@@ -348,11 +413,10 @@ class QuestPlay extends React.Component<
 
     onResize = () => {
         const isScreenWidthMobile = this.isScreenWidthMobile();
-        if (this.state.playingMobileView !==
-            isScreenWidthMobile ) {
-                this.setState({
-                    playingMobileView: isScreenWidthMobile
-                })
-            }        
-    }
+        if (this.state.playingMobileView !== isScreenWidthMobile) {
+            this.setState({
+                playingMobileView: isScreenWidthMobile
+            });
+        }
+    };
 }
