@@ -32,6 +32,9 @@ const RUS = {
     welcomeHeader: "Добро пожаловать в онлайн плеер квестов!",
     all: "Все",
     own: "Загруженные",
+    search: "Поиск",
+    nothingFound: "Ничего не найдено",
+    passed: "Пройден"
 }
 
 export type LangTexts = typeof RUS;

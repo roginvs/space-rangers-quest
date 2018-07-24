@@ -41,13 +41,13 @@ const INDEXEDDB_WON_STORE_NAME = "savedgames";
 const FIREBASE_USERS_PRIVATE = `usersPrivate`;
 const FIREBASE_USERS_PUBLIC = `usersPublic`;
 
-interface WonProof {
+export interface WonProofs {
     [gameId: string]: GameLog;
 }
 interface FirebasePublic {
     name: string;
     gamesWonCount: number;
-    wonProofs: WonProof;
+    wonProofs: WonProofs;
 }
 
 export async function getDb(app: firebase.app.App) {
@@ -280,8 +280,8 @@ export async function getDb(app: firebase.app.App) {
         const objectStore = db
             .transaction([INDEXEDDB_WON_STORE_NAME])
             .objectStore(INDEXEDDB_WON_STORE_NAME);
-        return new Promise<WonProof>((resolve, reject) => {
-            const wonGames: WonProof = {};
+        return new Promise<WonProofs>((resolve, reject) => {
+            const wonGames: WonProofs = {};
             const openCursor = objectStore.openCursor();
             openCursor.onsuccess = function(event: any) {
                 var cursor = event.target.result;

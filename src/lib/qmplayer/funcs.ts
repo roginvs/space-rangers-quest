@@ -126,7 +126,7 @@ export function initGame(quest: Quest, seed: string): GameState {
     return state;
 }
 
-function SRDateToString(
+export function SRDateToString(
     daysToAdd: number,
     lang: Lang,
     initialDate: Date = new Date() // TODO: use it
