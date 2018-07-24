@@ -34,7 +34,11 @@ const RUS = {
     own: "Загруженные",
     search: "Поиск",
     nothingFound: "Ничего не найдено",
-    passed: "Пройден"
+    passed: "Пройден",
+    startFromTheStart: "Начать сначала",
+    startFromLastSave: "Загрузить сохранение",
+    noLastSave: "Нет сохранения",
+    loading: "Загрузка",
 }
 
 export type LangTexts = typeof RUS;

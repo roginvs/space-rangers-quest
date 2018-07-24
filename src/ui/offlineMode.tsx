@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Loader, DivFadeinCss } from "./common";
 import { LangTexts } from "./lang";
-import { Container } from "../../node_modules/@types/reactstrap";
+import { Container } from "reactstrap";
 
 export class OfflineModeTabContainer extends React.Component<
     {

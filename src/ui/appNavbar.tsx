@@ -36,7 +36,7 @@ export class AppNavbar extends React.Component<{
         return <Route
                         path={"/:tab?"}
                         render={prop => {
-                            const tab = prop.match.params.tab; // REMOVE ME                            
+                            const tab = prop.match.params.tab;
                             return (
                                 
                                     <Navbar color="light" light expand="md" className="mb-3">

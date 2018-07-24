@@ -43,6 +43,8 @@ import { OptionsTabContainer } from "./options";
 import { QuestListRouter } from "./questList";
 import { AppNavbar } from "./appNavbar";
 import { AuthTabContainer } from "./auth";
+import { QuestPlayRouter } from './questPlay';
+
 console.info("starting");
 
 const config = {
@@ -231,6 +233,13 @@ class MainLoader extends React.Component<
                                             firebaseLoggedIn={firebaseLoggedIn}                                        
                     />
 
+                    <QuestPlayRouter
+                        l={l}
+                        player={player}
+                        index={index}
+                        db={db}    
+                        firebaseLoggedIn={firebaseLoggedIn}     
+                    />
 
                     <Route
                         path="/"

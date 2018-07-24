@@ -231,7 +231,7 @@ export async function getDb(app: firebase.app.App) {
         );
     }
 
-    async function getSavedGame(gameName: string) {
+    async function getSavedGame(gameName: string): Promise<GameState | null> {
         return getLocalAndFirebase(INDEXEDDB_SAVED_STORE_NAME, gameName);
     }
 

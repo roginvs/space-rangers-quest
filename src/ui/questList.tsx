@@ -22,7 +22,7 @@ import { substitute } from "../lib/substitution";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
 import { SRDateToString } from "../lib/qmplayer/funcs";
 import moment from "moment";
-import { replaceTags } from './questPlay';
+import { replaceTags } from './questReplaceTags';
 
 interface QuestListState {
     tab: string;
