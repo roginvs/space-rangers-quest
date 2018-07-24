@@ -31,7 +31,6 @@ import { DATA_DIR } from "./consts";
 import { parse } from "../lib/qmreader";
 import * as pako from "pako";
 
-
 export class QuestPlayRouter extends React.Component<
     {
         l: LangTexts;
@@ -65,10 +64,12 @@ export class QuestPlayRouter extends React.Component<
                             gameName={gameName}
                             game={game}
                             isPlaying={isPlaying}
-                            onPlayChange={newPlaying => prop.history.push(
-                                `/quests/${gameName}` + (
-                                    newPlaying ? '/play' : '')                                
-                            )}
+                            onPlayChange={newPlaying =>
+                                prop.history.push(
+                                    `/quests/${gameName}` +
+                                        (newPlaying ? "/play" : "")
+                                )
+                            }
                         />
                     );
                 }}
@@ -81,8 +82,10 @@ interface QuestPlayState {
     passedQuests?: WonProofs;
     gameState?: GameState | null;
     gameStateLoaded?: boolean;
-    quest?: Quest; 
+    quest?: Quest;
     error?: string | Error;
+    noMusic?: boolean;
+    playingMobileView: boolean;
 }
 class QuestPlay extends React.Component<
     {
@@ -94,30 +97,39 @@ class QuestPlay extends React.Component<
         gameName: string;
         game: Game;
         isPlaying: boolean;
-        onPlayChange: (newPlaying: boolean) => void
+        onPlayChange: (newPlaying: boolean) => void;
     },
     QuestPlayState
 > {
-    state: QuestPlayState = {};
+    state: QuestPlayState = {
+        playingMobileView: this.isScreenWidthMobile(),
+    };
 
     loadComments = () => {
         // TODO
     };
 
-    loadQuest() {        
-        fetch(DATA_DIR + this.props.game.filename).then(
-            res => res.arrayBuffer()
-        ).then(arrayBuf => {
-            const quest = parse(new Buffer(pako.ungzip(new Buffer(arrayBuf))));
-            console.info(quest);
-        })
+    loadQuest() {
+        return fetch(DATA_DIR + this.props.game.filename)
+            .then(res => res.arrayBuffer())
+            .then(arrayBuf => {
+                const quest = parse(
+                    new Buffer(pako.ungzip(new Buffer(arrayBuf)))
+                ) as Quest;
+                this.setState({
+                    quest
+                })
+                return quest                
+            });
     }
     componentDidMount() {
-        if ( this.props.isPlaying ) {
-            this.loadQuest();
+        window.addEventListener("resize", this.onResize);        
+
+        if (this.props.isPlaying) {
+            this.loadQuest();            
         } else {
             this.loadComments();
-        } 
+        }
 
         this.props.db
             .getOwnWonGames()
@@ -129,6 +141,14 @@ class QuestPlay extends React.Component<
             .then(gameState =>
                 this.setState({ gameState, gameStateLoaded: true })
             );
+        this.props.db.getPrivate("noMusic").then(noMusic => {
+            this.setState({
+                noMusic: !! noMusic
+            })
+        })
+    }
+    componentWillUnmount() {
+        window.removeEventListener("resize", this.onResize);
     }
     render() {
         const {
@@ -136,28 +156,43 @@ class QuestPlay extends React.Component<
             index,
             player,
             db,
-            firebaseLoggedIn,            
+            firebaseLoggedIn,
             isPlaying,
             game
         } = this.props;
-        
+
         const passedQuests = this.state.passedQuests;
         if (this.state.error) {
-            return <>
+            return (
+                <>
                     <AppNavbar
                         l={l}
                         player={player}
                         firebaseLoggedIn={firebaseLoggedIn}
                     />
                     <div className="text-center text-danger">
-                    {this.state.error.toString()}
+                        {this.state.error.toString()}
                     </div>
-                    </>
+                </>
+            );
         }
-        
+
+        const audioTag = (
+            <audio
+                autoPlay={false}
+                controls={false}
+                onEnded={e => this.play(true)}
+                ref={e => {
+                    this.audio = e;
+                    this.play(false);
+                }}
+            />
+        );
+
         if (!isPlaying) {
             return (
                 <>
+                    {audioTag}
                     <AppNavbar
                         l={l}
                         player={player}
@@ -230,10 +265,14 @@ class QuestPlay extends React.Component<
                                             this.state.gameStateLoaded &&
                                             !this.state.gameState
                                     })}
-                                    onClick={async () => {
-                                        await db.setSavedGame(game.gameName, null);
-                                        this.loadQuest();
-                                        this.props.onPlayChange(true);                                        
+                                    onClick={async () => {                                             
+                                        const quest = await this.loadQuest();
+                                        let state = initGame(quest, Math.random().toString(36));                                        
+                                        this.setState({
+                                            gameState: state
+                                        });
+                                        await db.setSavedGame(game.gameName, state);
+                                        this.props.onPlayChange(true);
                                     }}
                                 >
                                     <i className="fa fa-rocket" />{" "}
@@ -250,7 +289,7 @@ class QuestPlay extends React.Component<
                                     })}
                                     onClick={() => {
                                         this.loadQuest();
-                                        this.props.onPlayChange(true)
+                                        this.props.onPlayChange(true);
                                     }}
                                 >
                                     {!this.state.gameStateLoaded ? (
@@ -274,6 +313,46 @@ class QuestPlay extends React.Component<
                 </>
             );
         }
-        return <div>TODO</div>;
+        const quest = this.state.quest;
+        if (!quest) {
+            return <>
+            {audioTag}
+            <Loader text={l.loadingQuest}/>
+        </>
+        }
+        return (
+            <>
+                {audioTag}
+                <div>TODO</div>
+            </>
+        );
+    }
+
+    private audio: HTMLAudioElement | null = null;
+
+    private play(restart: boolean) {
+        if (this.audio) {
+            if (!this.audio.src || restart) {
+                const musicList = this.props.index.dir.music.files.map(
+                    x => x.path
+                );
+                const i = Math.floor(Math.random() * musicList.length);
+                this.audio.src = DATA_DIR + musicList[i];
+            }
+        }
+    }
+
+    isScreenWidthMobile() {
+        return window.innerWidth < 400;
+    }
+
+    onResize = () => {
+        const isScreenWidthMobile = this.isScreenWidthMobile();
+        if (this.state.playingMobileView !==
+            isScreenWidthMobile ) {
+                this.setState({
+                    playingMobileView: isScreenWidthMobile
+                })
+            }        
     }
 }

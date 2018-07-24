@@ -39,6 +39,7 @@ const RUS = {
     startFromLastSave: "Загрузить сохранение",
     noLastSave: "Нет сохранения",
     loading: "Загрузка",
+    loadingQuest: "Загрузка квеста",
 }
 
 export type LangTexts = typeof RUS;

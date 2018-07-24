@@ -50,9 +50,9 @@ export type GameState = DeepImmutable<{
         | "critonlocationlastmessage" // Параметр стал критичным на локации, показывается сообщение последнее
         | "critonjump" // Параметр стал критичным на переходе без описания
         | "returnedending";
-    critParamId?: number;
+    critParamId: number | null;
     locationId: number;
-    lastJumpId: number | undefined;
+    lastJumpId: number | null;
     possibleJumps: {
         id: number;
         active: boolean;
@@ -66,7 +66,7 @@ export type GameState = DeepImmutable<{
         [locationId: number]: number;
     };
     daysPassed: number;
-    imageFilename?: string;
+    imageFilename: string | null;
 
     aleaState: AleaState;
 }> & GameLog;
@@ -79,7 +79,7 @@ interface PlayerChoice {
 
 export interface PlayerState {
     text: string;
-    imageFileName?: string;
+    imageFileName: string | null;
     paramsState: string[];
     choices: PlayerChoice[];
     gameState: "running" | "fail" | "win" | "dead";
@@ -110,14 +110,15 @@ export function initGame(quest: Quest, seed: string): GameState {
     const state: GameState = {
         state: "starting",
         locationId: startLocation.id,
-        lastJumpId: undefined,
+        lastJumpId: null,
+        critParamId: null,
         possibleJumps: [],
         paramValues: startingParams,
         paramShow: startingShowing,
         jumpedCount: {},
         locationVisitCount: {},
         daysPassed: 0,
-        imageFilename: undefined,
+        imageFilename: null,
         aleaState: alea.exportState(),
         aleaSeed: seed,
         performedJumps: []
@@ -299,7 +300,8 @@ export function getUIState(
                     active: true
                 }
             ],
-            gameState: "running"
+            gameState: "running",
+            imageFileName: null,
         };
     } else if (state.state === "jump") {
         const jump = quest.jumps.find(x => x.id === state.lastJumpId);
@@ -408,7 +410,7 @@ export function getUIState(
         const critId = state.critParamId;
         const jump = quest.jumps.find(x => x.id === state.lastJumpId);
 
-        if (critId === undefined || !jump) {
+        if (critId === null || !jump) {
             throw new Error(
                 `Internal error: crit=${critId} lastjump=${state.lastJumpId}`
             );
@@ -445,7 +447,7 @@ export function getUIState(
     } else if (state.state === "jumpandnextcrit") {
         const critId = state.critParamId;
         const jump = quest.jumps.find(x => x.id === state.lastJumpId);
-        if (critId === undefined || !jump) {
+        if (critId === null || !jump) {
             throw new Error(
                 `Internal error: crit=${critId} lastjump=${state.lastJumpId}`
             );
@@ -475,7 +477,7 @@ export function getUIState(
         const critId = state.critParamId;
         const location = quest.locations.find(x => x.id === state.locationId);
 
-        if (critId === undefined) {
+        if (critId === null) {
             throw new Error(`Internal error: no critId`);
         }
         if (!location) {
@@ -524,7 +526,8 @@ export function getUIState(
             ),
             paramsState: [],
             choices: [],
-            gameState: "win"
+            gameState: "win",
+            imageFileName: null,
         };
     } else {
         return assertNever(state.state);
@@ -730,7 +733,7 @@ function performJumpInternal(
                 };
 
                 const qmmImage =
-                    (state.critParamId !== undefined &&
+                    (state.critParamId !== null &&
                         jump.paramsChanges[state.critParamId].img) ||
                     quest.params[critParamId].img;
                 const image = qmmImage
@@ -787,10 +790,10 @@ function performJumpInternal(
         };
         const jump = quest.jumps.find(x => x.id === state.lastJumpId);
         const qmmImg =
-            (state.critParamId !== undefined &&
+            (state.critParamId !== null &&
                 jump &&
                 jump.paramsChanges[state.critParamId].img) ||
-            (state.critParamId !== undefined &&
+            (state.critParamId !== null &&
                 quest.params[state.critParamId].img);
         const image = qmmImg
             ? qmmImg.toLowerCase() + ".jpg"
@@ -798,7 +801,7 @@ function performJumpInternal(
                   .filter(
                       x =>
                           !!x.critParams &&
-                          state.critParamId !== undefined &&
+                          state.critParamId !== null &&
                           x.critParams.indexOf(state.critParamId) > -1
                   )
                   .map(x => x.filename)
