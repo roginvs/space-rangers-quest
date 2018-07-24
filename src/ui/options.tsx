@@ -15,7 +15,7 @@ interface OptionsState {
     busy: boolean;
 }
 
-export class Options extends React.Component<
+export class OptionsTabContainer extends React.Component<
     {
         l: LangTexts;
         db: DB;
@@ -34,7 +34,7 @@ export class Options extends React.Component<
             return <Loader text={l.saving}/>
         }
         return (
-            <DivFadeinCss key="options" className="text-center">
+            <DivFadeinCss key="options" className="text-center my-3 container">
             <form>
                 <div className="row">
 

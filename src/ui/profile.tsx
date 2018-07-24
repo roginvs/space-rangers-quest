@@ -33,7 +33,7 @@ import { getLang, guessBrowserLang, LangTexts } from "./lang";
 import { assertNever } from "../lib/formula/calculator";
 
 
-export class ProfileTab extends React.Component<
+export class ProfileTabContainer extends React.Component<
     {
         l: LangTexts;
         user: firebase.User;
@@ -42,8 +42,8 @@ export class ProfileTab extends React.Component<
     {}
 > {
     render() {
-        return (
-            <DivFadeinCss key="logout" className="text-center">
+        return (            
+            <DivFadeinCss key="logout" className="text-center container">                
                 <div className="mb-3">
                     <h5>{this.props.user.displayName}</h5>
                 </div>                
@@ -61,7 +61,7 @@ export class ProfileTab extends React.Component<
                         <i className="fa fa-sign-out" />{" "}
                         {this.props.l.logout}
                     </button>
-                </div>
+                </div>                
             </DivFadeinCss>
         );
     }

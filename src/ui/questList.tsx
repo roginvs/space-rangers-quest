@@ -17,6 +17,7 @@ import {
     Redirect,
     RouteComponentProps
 } from "react-router-dom";
+import { AppNavbar } from "./appNavbar";
 
 interface QuestListState {
     tab: string;
@@ -27,12 +28,14 @@ interface QuestListState {
 const ALL = "all";
 const OWN = "own";
 
-export class QuestList extends React.Component<
+export class QuestListRouter extends React.Component<
     {
         l: LangTexts;
         index: Index;
         player: Player;
-    } & RouteComponentProps<{}>,
+        db: DB,
+        firebaseLoggedIn: firebase.User | null | undefined,
+    },
     QuestListState
 > {
     state = {
@@ -41,9 +44,8 @@ export class QuestList extends React.Component<
         dropdownOpen: false
     };
     render() {
-        const l = this.props.l;
+        const {l, firebaseLoggedIn, player, index} = this.props;            
 
-        const index = this.props.index;
         const origins = index.quests
             .filter(x => x.lang === this.props.player.lang)
             .map(x => x.questOrigin)
@@ -51,19 +53,20 @@ export class QuestList extends React.Component<
                 (acc, d) => (acc.indexOf(d) > -1 ? acc : acc.concat(d)),
                 [] as string[]
             );
-
-        const loc = this.props.match.url === '/' ? '' : this.props.match.url;
-        console.info(loc + "/:questName?/:playing?");
+        
+        
         return (
             <Route
                 exact
-                path={loc + "/"}
+                path={"/quests/"}
                 render={prop => {
-                    const questName = prop.match.params.questName;
-                    const isPlaying = prop.match.params.playing === "play";
-
-                    return ( ! questName ?
-                        <DivFadeinCss key="quest list" className="">
+                    return <>
+    <AppNavbar
+                                    l={l}
+                                    player={player}
+                                    firebaseLoggedIn={firebaseLoggedIn}
+                                />
+                     <DivFadeinCss key="quest list" className="container">
                             <div className="text-center mb-3">
                                 <h5>{l.welcomeHeader}</h5>
                             </div>
@@ -115,13 +118,9 @@ export class QuestList extends React.Component<
                                         {l.own}
                                     </DropdownItem>
                                 </DropdownMenu>
-                            </ButtonDropdown>
-                        </DivFadeinCss>
-                     : <div> TODO questName={questName} 
-                    <button onClick={() => {
-                        //prop.history.push('..')
-                    }}>back</button>
-                    </div>);
+                            </ButtonDropdown>      
+                            </DivFadeinCss>
+                            </>
                 }}
             />
         );

@@ -32,7 +32,7 @@ import { INDEX_JSON } from "./consts";
 import { getLang, guessBrowserLang, LangTexts } from "./lang";
 import { assertNever } from "../lib/formula/calculator";
 
-export class LoginTab extends React.Component<
+export class LoginTabContainer extends React.Component<
     {
         l: LangTexts;
         app: firebase.app.App;

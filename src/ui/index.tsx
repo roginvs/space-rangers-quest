@@ -37,12 +37,12 @@ import {
 import { INDEX_JSON } from "./consts";
 import { getLang, guessBrowserLang, LangTexts } from "./lang";
 import { assertNever } from "../lib/formula/calculator";
-import { LoginTab } from "./login";
-import { ProfileTab } from "./profile";
-import { OfflineMode } from "./offlineMode";
-import { Options } from "./options";
-import { QuestList } from "./questList";
 
+import { OfflineModeTabContainer } from "./offlineMode";
+import { OptionsTabContainer } from "./options";
+import { QuestListRouter } from "./questList";
+import { AppNavbar } from "./appNavbar";
+import { AuthTabContainer } from "./auth";
 console.info("starting");
 
 const config = {
@@ -62,16 +62,14 @@ interface MainLoaderState {
     db?: DB;
     index?: Index;
     error?: string;
-    navbarIsOpen: boolean;
+
     firebaseLoggedIn?: firebase.User | null;
 }
 class MainLoader extends React.Component<
     RouteComponentProps<{}>,
     MainLoaderState
 > {
-    state: MainLoaderState = {
-        navbarIsOpen: false
-    };
+    state: MainLoaderState = {};
     private unsubscribe: (() => void)[] = [];
     componentWillUnmount() {
         this.unsubscribe.forEach(f => f());
@@ -168,158 +166,80 @@ class MainLoader extends React.Component<
         } else {
             const l = getLang(player.lang);
             return (
-                <Switch>
+                <>
                     <Route
-                        path={"/:tab?"}
-                        render={prop => {
-                            const tab = prop.match.params.tab;
-                            if (!tab) {
-                                return <Redirect to="/quests" />;
-                            }                            
-                            return (
-                                <div>
-                                    <Navbar color="light" light expand="md">
-                                        <NavbarBrand href="#/">
-                                            {l.hi} {player.Player}
-                                        </NavbarBrand>
-                                        <NavbarToggler
-                                            onClick={() => {
-                                                this.setState({
-                                                    navbarIsOpen: !this.state
-                                                        .navbarIsOpen
-                                                });
-                                            }}
-                                        />
-                                        <Collapse
-                                            isOpen={this.state.navbarIsOpen}
-                                            navbar
-                                        >
-                                            <Nav className="ml-auto" navbar>
-                                                <NavItem>
-                                                    <NavLink
-                                                        active={
-                                                            tab === "quests"
-                                                        }
-                                                        href="#/quests"
-                                                    >
-                                                        <i className="fa fa-list" />{" "}
-                                                        {l.quests}
-                                                    </NavLink>
-                                                </NavItem>
-                                                <NavItem>
-                                                    <NavLink
-                                                        active={
-                                                            tab === "topplayers"
-                                                        }
-                                                        href="#/topplayers"
-                                                    >
-                                                        <i className="fa fa-users" />{" "}
-                                                        {l.topplayers}
-                                                    </NavLink>
-                                                </NavItem>
-                                                <NavItem>
-                                                    <NavLink
-                                                        href="#/options"
-                                                        active={
-                                                            tab === "options"
-                                                        }
-                                                    >
-                                                        <i className="fa fa-cogs" />{" "}
-                                                        {l.options}
-                                                    </NavLink>
-                                                </NavItem>
-                                                <NavItem>
-                                                    <NavLink
-                                                        href="#/useown"
-                                                        active={
-                                                            tab === "useown"
-                                                        }
-                                                    >
-                                                        <i className="fa fa-upload" />{" "}
-                                                        {l.useown}
-                                                    </NavLink>
-                                                </NavItem>
-                                                <NavItem>
-                                                    <NavLink
-                                                        href="#/offlinemode"
-                                                        active={
-                                                            tab ===
-                                                            "offlinemode"
-                                                        }
-                                                    >
-                                                        <i className="fa fa-cloud-download" />{" "}
-                                                        {l.offlinemode}
-                                                    </NavLink>
-                                                </NavItem>
-
-                                                {firebaseLoggedIn !==
-                                                undefined ? (
-                                                    <NavItem>
-                                                        <NavLink
-                                                            href="#/sign"
-                                                            active={
-                                                                tab === "sign"
-                                                            }
-                                                        >
-                                                            {firebaseLoggedIn ? (
-                                                                <>
-                                                                    <i className="fa fa-vcard" />{" "}
-                                                                    {l.profile}
-                                                                </>
-                                                            ) : (
-                                                                <>
-                                                                    <i className="fa fa-sign-in" />{" "}
-                                                                    {l.login}
-                                                                </>
-                                                            )}
-                                                        </NavLink>
-                                                    </NavItem>
-                                                ) : null}
-                                            </Nav>
-                                        </Collapse>
-                                    </Navbar>
-                                    <Container className="mt-3 mb-3">
-                                        {tab === "sign" ? (
-                                            firebaseLoggedIn === undefined ? (
-                                                <Loader
-                                                    text={l.waitForFirebase}
-                                                />
-                                            ) : firebaseLoggedIn ? (
-                                                <ProfileTab
-                                                    l={l}
-                                                    user={firebaseLoggedIn}
-                                                    app={app}
-                                                />
-                                            ) : (
-                                                <LoginTab l={l} app={app} />
-                                            )
-                                        ) : tab === "offlinemode" ? (
-                                            <OfflineMode l={l} />
-                                        ) : tab === "options" ? (
-                                            <Options
-                                                l={l}
-                                                player={player}
-                                                onNewPlayer={player =>
-                                                    this.setState({ player })
-                                                }
-                                                db={db}
-                                            />
-                                        ) : tab === "quests" ? (
-                                            <QuestList
-                                                l={l}
-                                                player={player}
-                                                index={index}
-                                                {...prop}
-                                            />
-                                        ) : (
-                                            "TODO"
-                                        )}
-                                    </Container>
-                                </div>
-                            );
-                        }}
+                        path={"/auth"}
+                        render={prop => (
+                            <>
+                                <AppNavbar
+                                    l={l}
+                                    player={player}
+                                    firebaseLoggedIn={firebaseLoggedIn}
+                                />
+                                <AuthTabContainer
+                                    l={l}
+                                    player={player}
+                                    firebaseLoggedIn={firebaseLoggedIn}
+                                    app={app}
+                                />
+                            </>
+                        )}
                     />
-                </Switch>
+
+                    <Route
+                        path={"/offlinemode"}
+                        render={prop => (
+                            <>
+                                <AppNavbar
+                                    l={l}
+                                    player={player}
+                                    firebaseLoggedIn={firebaseLoggedIn}
+                                />
+
+                                <OfflineModeTabContainer l={l} />
+                            </>
+                        )}
+                    />
+
+                    <Route
+                        path={"/options"}
+                        render={prop => (
+                            <>
+                                <AppNavbar
+                                    l={l}
+                                    player={player}
+                                    firebaseLoggedIn={firebaseLoggedIn}
+                                />
+
+                                 <OptionsTabContainer
+                                            l={l}
+                                            player={player}
+                                            onNewPlayer={player =>
+                                                this.setState({ player })
+                                            }
+                                            db={db}
+                                    />
+                            </>
+                        )}
+                    />
+
+                    <QuestListRouter
+                                            l={l}
+                                            player={player}
+                                            index={index}
+                                            db={db}    
+                                            firebaseLoggedIn={firebaseLoggedIn}                                        
+                    />
+
+
+                    <Route
+                        path="/"
+                        exact
+                        render={() => <Redirect to="quests"/>}
+                    />
+
+                   
+                </>
             );
         }
     }
