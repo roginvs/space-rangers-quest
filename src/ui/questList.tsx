@@ -21,7 +21,8 @@ import { AppNavbar } from "./appNavbar";
 import { substitute } from "../lib/substitution";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
 import { SRDateToString } from "../lib/qmplayer/funcs";
-import moment from 'moment';
+import moment from "moment";
+import { replaceTags } from './questPlay';
 
 interface QuestListState {
     tab: string;
@@ -97,8 +98,12 @@ export class QuestListRouter extends React.Component<
             .filter(
                 quest =>
                     this.state.search
-                        ? quest.gameName.toLowerCase().indexOf(this.state.search.toLowerCase()) > -1 ||
-                          quest.taskText.toLowerCase().indexOf(this.state.search.toLowerCase()) > -1
+                        ? quest.gameName
+                              .toLowerCase()
+                              .indexOf(this.state.search.toLowerCase()) > -1 ||
+                          quest.taskText
+                              .toLowerCase()
+                              .indexOf(this.state.search.toLowerCase()) > -1
                         : true
             );
 
@@ -195,39 +200,71 @@ export class QuestListRouter extends React.Component<
                                         />
                                     </div>
                                 </div>
-                                {
-                                    questsToShow.length > 0 ?
+                                {questsToShow.length > 0 ? (
                                     <div className="list-group">
-                                    {questsToShow.map(quest => 
-  <a href={`#/quests/${quest.gameName}`} 
-  key={quest.gameName}
-  className="list-group-item list-group-item-action flex-column align-items-start">
-    <div className="d-flex w-100 justify-content-between">
-      <h5 className="mb-1">{quest.gameName}</h5>
-      <small>{(() => {
-          if (!passedQuests) {
-              return <i className="text-muted fa fa-spin circle-o-notch"/>
-          }
-          const passed = passedQuests[quest.gameName];
-          const lastStep = passed ? passed.performedJumps.slice(-1).shift() : undefined;
-          if (!lastStep) {
-              return null
-          }
+                                        {questsToShow.map(quest => (
+                                            <a
+                                                href={`#/quests/${
+                                                    quest.gameName
+                                                }`}
+                                                key={quest.gameName}
+                                                className="list-group-item list-group-item-action flex-column align-items-start"
+                                            >
+                                                <div className="d-flex w-100 justify-content-between">
+                                                    <h5 className="mb-1">
+                                                        {quest.gameName}
+                                                    </h5>
+                                                    <small>
+                                                        {(() => {
+                                                            if (!passedQuests) {
+                                                                return (
+                                                                    <i className="text-muted fa fa-spin circle-o-notch" />
+                                                                );
+                                                            }
+                                                            const passed =
+                                                                passedQuests[
+                                                                    quest
+                                                                        .gameName
+                                                                ];
+                                                            const lastStep = passed
+                                                                ? passed.performedJumps
+                                                                      .slice(-1)
+                                                                      .shift()
+                                                                : undefined;
+                                                            if (!lastStep) {
+                                                                return null;
+                                                            }
 
-          return <span>{l.passed}{" "}
-          {moment(lastStep.date.toISOString()).format('lll')}
-              </span>
-
-      })()}</small>
-    </div>
-    <p className="mb-1">{quest.taskText}</p>
-    <small>{quest.smallDescription}</small>
-  </a>
-                                    )}
-                                    </div> : <div className="text-center">
-                                    <i className="fa fa-circle-o"/>{" "}
-                                    {l.nothingFound}</div>
-                                }
+                                                            return (
+                                                                <span>
+                                                                    {l.passed}{" "}
+                                                                    {moment(
+                                                                        lastStep.date.toISOString()
+                                                                    ).format(
+                                                                        "lll"
+                                                                    )}
+                                                                </span>
+                                                            );
+                                                        })()}
+                                                    </small>
+                                                </div>
+                                                <p className="mb-1">
+                                                    {replaceTags(
+                                                        quest.taskText
+                                                    )}
+                                                </p>
+                                                <small>
+                                                    {quest.smallDescription}
+                                                </small>
+                                            </a>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <div className="text-center">
+                                        <i className="fa fa-circle-o" />{" "}
+                                        {l.nothingFound}
+                                    </div>
+                                )}
                             </DivFadeinCss>
                         </>
                     );
