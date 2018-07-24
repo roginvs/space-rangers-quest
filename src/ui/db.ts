@@ -80,7 +80,7 @@ export async function getDb(app: firebase.app.App) {
     });
 
     let firebaseUser: firebase.User | null;
-    try {
+    try {        
         app.auth().onAuthStateChanged(function(user) {
             firebaseUser = user;
             console.info(
@@ -88,7 +88,7 @@ export async function getDb(app: firebase.app.App) {
                     firebaseUser ? firebaseUser.uid : "nouser"
                 }`
             );
-        });
+        });        
         await new Promise<void>(resolve => {
             const unsubscribe = app.auth().onAuthStateChanged(() => {
                 unsubscribe();

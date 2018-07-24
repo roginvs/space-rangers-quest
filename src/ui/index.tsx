@@ -55,7 +55,8 @@ const config = {
 };
 
 const app = firebase.initializeApp(config);
-const authProvider = new firebase.auth.GoogleAuthProvider();
+//const app = firebase.initializeApp({} as typeof config);
+
 
 interface MainLoaderState {
     player?: Player;
@@ -75,6 +76,7 @@ class MainLoader extends React.Component<
         this.unsubscribe.forEach(f => f());
     }
     componentDidMount() {
+        try {
         this.unsubscribe.push(
             app.auth().onAuthStateChanged(user => {
                 this.setState({
@@ -82,6 +84,9 @@ class MainLoader extends React.Component<
                 });
             })
         );
+    } catch (e) {
+        console.warn(`Firebase subscribe error`, e)
+    }
 
         getDb(app)
             .then(db => {
