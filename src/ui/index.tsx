@@ -13,8 +13,6 @@ import {
     DEFAULT_ENG_PLAYER
 } from "../lib/qmplayer/player";
 import { initGame } from "../lib/qmplayer";
-import { parse } from "../lib/qmreader";
-import * as pako from "pako";
 import { getUIState, performJump } from "../lib/qmplayer/funcs";
 import { Loader, DivFadeinCss } from "./common";
 import {

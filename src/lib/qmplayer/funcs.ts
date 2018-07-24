@@ -22,7 +22,7 @@ import { assertNever } from "../formula/calculator";
 import * as assert from 'assert';
 import { Player, Lang } from "./player";
 
-type Quest = DeepImmutable<QM>;
+export type Quest = DeepImmutable<QM>;
 
 
 export interface PlayerSubstitute extends Player {

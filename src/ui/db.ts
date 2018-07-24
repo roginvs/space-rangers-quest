@@ -52,7 +52,7 @@ interface FirebasePublic {
 
 export async function getDb(app: firebase.app.App) {
     console.info("Starting to get db");
-    const idb = indexedDB.open(INDEXEDDB_NAME, 3);
+    const idb = indexedDB.open(INDEXEDDB_NAME, 4);
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
         idb.onerror = e => reject(new Error(idb.error.toString()));
         idb.onsuccess = (e: any) => resolve(e.target.result);
@@ -220,7 +220,7 @@ export async function getDb(app: firebase.app.App) {
         return getLocalAndFirebase(INDEXEDDB_CONFIG_STORE_NAME, key);
     }
 
-    async function setSavedGame(gameName: string, state: GameState) {
+    async function setSavedGame(gameName: string, state: GameState | null) {
         console.info(`setConfig key=${gameName} value=${state}`);
         await setLocal(INDEXEDDB_SAVED_STORE_NAME, gameName, state);
         await setFirebase(
@@ -286,7 +286,9 @@ export async function getDb(app: firebase.app.App) {
             openCursor.onsuccess = function(event: any) {
                 var cursor = event.target.result;
                 if (cursor) {
-                    wonGames[cursor.key] = cursor.value.name;
+                    if (cursor.value) {
+                        wonGames[cursor.key] = cursor.value;
+                    }
                     cursor.continue();
                 } else {
                     // alert("No more entries!");

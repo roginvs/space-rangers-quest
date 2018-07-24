@@ -3,7 +3,8 @@ import { Loader, DivFadeinCss, Tabs } from "./common";
 import { LangTexts } from "./lang";
 import { DB, WonProofs } from "./db";
 import { Player, Lang } from "../lib/qmplayer/player";
-import { GameState } from "../lib/qmplayer/funcs";
+import { GameState, initGame, performJump, Quest } from "../lib/qmplayer/funcs";
+import { JUMP_I_AGREE } from "../lib/qmplayer/defs";
 import { Index, Game } from "../packGameData";
 import { AppNavbar } from "./appNavbar";
 import {
@@ -24,7 +25,12 @@ import { replaceTags } from "./questReplaceTags";
 import { substitute } from "../lib/substitution";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
 import { SRDateToString } from "../lib/qmplayer/funcs";
-import classnames from 'classnames';
+import classnames from "classnames";
+
+import { DATA_DIR } from "./consts";
+import { parse } from "../lib/qmreader";
+import * as pako from "pako";
+
 
 export class QuestPlayRouter extends React.Component<
     {
@@ -46,12 +52,23 @@ export class QuestPlayRouter extends React.Component<
                     const gameName = prop.match.params.gameName;
                     const isPlaying = prop.match.params.playing === "play";
 
+                    const game = index.quests.find(
+                        x => x.gameName === gameName
+                    );
+                    if (!game) {
+                        return <Redirect to="#/" />;
+                    }
                     return (
                         <QuestPlay
                             key={gameName}
                             {...this.props}
                             gameName={gameName}
+                            game={game}
                             isPlaying={isPlaying}
+                            onPlayChange={newPlaying => prop.history.push(
+                                `/quests/${gameName}` + (
+                                    newPlaying ? '/play' : '')                                
+                            )}
                         />
                     );
                 }}
@@ -64,6 +81,8 @@ interface QuestPlayState {
     passedQuests?: WonProofs;
     gameState?: GameState | null;
     gameStateLoaded?: boolean;
+    quest?: Quest; 
+    error?: string | Error;
 }
 class QuestPlay extends React.Component<
     {
@@ -73,17 +92,32 @@ class QuestPlay extends React.Component<
         db: DB;
         firebaseLoggedIn: firebase.User | null | undefined;
         gameName: string;
+        game: Game;
         isPlaying: boolean;
+        onPlayChange: (newPlaying: boolean) => void
     },
     QuestPlayState
 > {
     state: QuestPlayState = {};
 
     loadComments = () => {
-        // todo
+        // TODO
     };
+
+    loadQuest() {        
+        fetch(DATA_DIR + this.props.game.filename).then(
+            res => res.arrayBuffer()
+        ).then(arrayBuf => {
+            const quest = parse(new Buffer(pako.ungzip(new Buffer(arrayBuf))));
+            console.info(quest);
+        })
+    }
     componentDidMount() {
-        this.loadComments();
+        if ( this.props.isPlaying ) {
+            this.loadQuest();
+        } else {
+            this.loadComments();
+        } 
 
         this.props.db
             .getOwnWonGames()
@@ -92,7 +126,9 @@ class QuestPlay extends React.Component<
         this.props.db
             .getSavedGame(this.props.gameName)
             .catch(e => undefined)
-            .then(gameState => this.setState({ gameState, gameStateLoaded: true }));
+            .then(gameState =>
+                this.setState({ gameState, gameStateLoaded: true })
+            );
     }
     render() {
         const {
@@ -100,18 +136,25 @@ class QuestPlay extends React.Component<
             index,
             player,
             db,
-            firebaseLoggedIn,
-            gameName,
-            isPlaying
+            firebaseLoggedIn,            
+            isPlaying,
+            game
         } = this.props;
-
-        const quest = index.quests.find(
-            x => x.gameName === this.props.gameName
-        );
-        if (!quest) {
-            return <Redirect to="#/" />;
-        }
+        
         const passedQuests = this.state.passedQuests;
+        if (this.state.error) {
+            return <>
+                    <AppNavbar
+                        l={l}
+                        player={player}
+                        firebaseLoggedIn={firebaseLoggedIn}
+                    />
+                    <div className="text-center text-danger">
+                    {this.state.error.toString()}
+                    </div>
+                    </>
+        }
+        
         if (!isPlaying) {
             return (
                 <>
@@ -122,9 +165,9 @@ class QuestPlay extends React.Component<
                     />
                     <DivFadeinCss className="container">
                         <div className="text-center mb-3">
-                            <h4>{quest.gameName}</h4>
+                            <h4>{game.gameName}</h4>
                             <div>
-                                <small>{quest.smallDescription}</small>
+                                <small>{game.smallDescription}</small>
                             </div>
                             <div>
                                 <small>
@@ -136,7 +179,7 @@ class QuestPlay extends React.Component<
                                             );
                                         }
                                         const passed =
-                                            passedQuests[quest.gameName];
+                                            passedQuests[game.gameName];
                                         const lastStep = passed
                                             ? passed.performedJumps
                                                   .slice(-1)
@@ -159,42 +202,73 @@ class QuestPlay extends React.Component<
                             </div>
                         </div>
                         <div className="mb-3">
-                            {replaceTags(substitute(
-                    quest.taskText,
-                    {
-                        ...player,
-                        Day: `${DEFAULT_DAYS_TO_PASS_QUEST}`,
-                        Date: SRDateToString(
-                            DEFAULT_DAYS_TO_PASS_QUEST,
-                            player.lang
-                        ),
-                        CurDate: SRDateToString(0, player.lang)
-                    },
-                    [],
-                    n =>
-                        n !== undefined
-                            ? Math.floor(Math.random() * n)
-                            : Math.random()
-                ))}
+                            {replaceTags(
+                                substitute(
+                                    game.taskText,
+                                    {
+                                        ...player,
+                                        Day: `${DEFAULT_DAYS_TO_PASS_QUEST}`,
+                                        Date: SRDateToString(
+                                            DEFAULT_DAYS_TO_PASS_QUEST,
+                                            player.lang
+                                        ),
+                                        CurDate: SRDateToString(0, player.lang)
+                                    },
+                                    [],
+                                    n =>
+                                        n !== undefined
+                                            ? Math.floor(Math.random() * n)
+                                            : Math.random()
+                                )
+                            )}
                         </div>
                         <div className="row">
-    <div className="col-md-6">
-    <button className={classnames("btn btn-block", {
-        "btn-primary": this.state.gameStateLoaded && ! this.state.gameState,        
-    })}>
-    <i className="fa fa-rocket"/>{" "}{l.startFromTheStart}
-    </button>
-    </div>
-    <div className="col-md-6">
-    <button className={classnames("btn btn-block", {
-        "btn-primary": this.state.gameStateLoaded && this.state.gameState,
-        "disabled": ! this.state.gameState,
-    })}>
-    {!this.state.gameStateLoaded ? <Loader/> :
-    this.state.gameState ? <><i className="fa fa-save"/>{" "}{l.startFromLastSave}</>:
-    <> <i className="fa fa-circle-o"/>{" "}{l.noLastSave}</>}    
-    </button>
-    </div>
+                            <div className="col-md-6">
+                                <button
+                                    className={classnames("btn btn-block", {
+                                        "btn-primary":
+                                            this.state.gameStateLoaded &&
+                                            !this.state.gameState
+                                    })}
+                                    onClick={async () => {
+                                        await db.setSavedGame(game.gameName, null);
+                                        this.loadQuest();
+                                        this.props.onPlayChange(true);                                        
+                                    }}
+                                >
+                                    <i className="fa fa-rocket" />{" "}
+                                    {l.startFromTheStart}
+                                </button>
+                            </div>
+                            <div className="col-md-6">
+                                <button
+                                    className={classnames("btn btn-block", {
+                                        "btn-primary":
+                                            this.state.gameStateLoaded &&
+                                            this.state.gameState,
+                                        disabled: !this.state.gameState
+                                    })}
+                                    onClick={() => {
+                                        this.loadQuest();
+                                        this.props.onPlayChange(true)
+                                    }}
+                                >
+                                    {!this.state.gameStateLoaded ? (
+                                        <Loader />
+                                    ) : this.state.gameState ? (
+                                        <>
+                                            <i className="fa fa-save" />{" "}
+                                            {l.startFromLastSave}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {" "}
+                                            <i className="fa fa-circle-o" />{" "}
+                                            {l.noLastSave}
+                                        </>
+                                    )}
+                                </button>
+                            </div>
                         </div>
                     </DivFadeinCss>
                 </>
