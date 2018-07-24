@@ -170,13 +170,12 @@ class MainLoader extends React.Component<
             return (
                 <Switch>
                     <Route
-                        path={"/:tab?/:subTab?"}
+                        path={"/:tab?"}
                         render={prop => {
                             const tab = prop.match.params.tab;
                             if (!tab) {
                                 return <Redirect to="/quests" />;
-                            }
-                            const subTab = prop.match.params.subTab;
+                            }                            
                             return (
                                 <div>
                                     <Navbar color="light" light expand="md">
@@ -310,7 +309,7 @@ class MainLoader extends React.Component<
                                                 l={l}
                                                 player={player}
                                                 index={index}
-                                                onQuestSelect={gameName => {}}
+                                                {...prop}
                                             />
                                         ) : (
                                             "TODO"
