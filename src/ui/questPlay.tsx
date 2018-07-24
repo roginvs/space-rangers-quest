@@ -3,7 +3,7 @@ import { Loader, DivFadeinCss, Tabs } from "./common";
 import { LangTexts } from "./lang";
 import { DB, WonProofs } from "./db";
 import { Player, Lang } from "../lib/qmplayer/player";
-import { GameState, initGame, performJump, Quest } from "../lib/qmplayer/funcs";
+import { GameState, initGame, performJump, Quest, getUIState, getAllImagesToPreload } from "../lib/qmplayer/funcs";
 import { JUMP_I_AGREE } from "../lib/qmplayer/defs";
 import { Index, Game } from "../packGameData";
 import { AppNavbar } from "./appNavbar";
@@ -328,6 +328,10 @@ class QuestPlay extends React.Component<
                                                 }
                                             )}
                                             onClick={async () => {
+                                                if (!this.state
+                                                    .gameState) {
+                                                        return
+                                                    }
                                                 this.setState({
                                                     startButtonsAreBusy: true
                                                 });
@@ -346,7 +350,7 @@ class QuestPlay extends React.Component<
                                             }}
                                         >
                                             {!this.state.gameStateLoaded ? (
-                                                <Loader />
+                                                    <i className="fa fa-spin fa-spinner" />
                                             ) : this.state.gameState ? (
                                                 <>
                                                     <i className="fa fa-save" />{" "}
@@ -372,8 +376,7 @@ class QuestPlay extends React.Component<
                 </>
             );
         }
-        const quest = this.state.quest;
-        const gameState = this.state.gameState;
+        const quest = this.state.quest;        
         if (!quest) {
             return (
                 <>
@@ -382,10 +385,140 @@ class QuestPlay extends React.Component<
                 </>
             );
         }
+        const gameState = this.state.gameState;
+        if (!gameState) {
+            // unknown state
+            return <>
+                {audioTag}
+                <Redirect to={`..`}/>
+            </>
+        }        
+
+        const st = getUIState(quest, gameState, player);
+        const image = st.imageFileName ? (
+            <DivFadeinCss key={st.imageFileName}>
+            <img
+                className="game-img"
+                src={DATA_DIR + "img/" + st.imageFileName}
+            />
+            </DivFadeinCss>
+        ) : null;
+        const choices = st.choices.map(choice => {
+            return (
+                <li key={choice.jumpId} className="mb-4">
+                    <a
+                        href={`#/quests/${game.gameName}/play/gameStep${choice.jumpId}`}
+                        onClick={e => {
+                            e.preventDefault();
+
+                            this.playAudioIfEnabled(false);
+                            
+
+                            const newState = performJump(choice.jumpId,
+                            quest, gameState, game.images
+                            );
+                            db.setSavedGame(game.gameName, newState);
+                            
+                            this.setState({
+                                gameState: newState                                                      
+                            })
+                            // todo: scroll
+                        }}
+                        className={
+                            "game " + (choice.active ? "" : "disabled")
+                        }
+                        >{replaceTags(
+                            choice.text
+                        )}</a>                    
+                </li>
+            );
+        });
+
+        const imagesPreloaded = getAllImagesToPreload(quest, game.images)
+        .map(x => {
+            return (
+                <img
+                    key={x}
+                    src={DATA_DIR + "img/" + x}
+                    style={{ display: "none" }}
+                />
+            );
+        });
+
+
         return (
             <>
                 {audioTag}
-                <div>TODO</div>
+
+                        <div className="container">
+                            <div className="row mb-1">
+                                <div className="col-12 col-sm-8 mb-3">
+                                    
+                                        <DivFadeinCss
+                                            key={
+                                                st.text +
+                                                "#" +
+                                                gameState.performedJumps.length
+                                            }>
+
+                                            {replaceTags(
+                                                st.text
+                                            )}
+                                       </DivFadeinCss>
+                                </div>
+                                <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
+                                    {imagesPreloaded}                                    
+                                        {image}                                    
+                                </div>
+                            </div>
+                            <div className="row">
+                                <div className="col-12 col-sm-8 mb-3">
+                                            <DivFadeinCss key={
+                                                choices.join("#") +
+                                                "#" +
+                                                gameState.performedJumps.length
+                                            }>
+                                        <ul
+                                            
+                                        >
+                                            {choices}
+                                        </ul>
+                                            </DivFadeinCss>
+                                </div>
+                                <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
+                                    
+                                        {([] as string[])
+                                            .concat(
+                                                ...st.paramsState.map(x =>
+                                                    x.split("<br>")
+                                                )
+                                            )
+                                            .map((paramText, index) => {
+                                                return (
+                                                    <DivFadeinCss
+                                                        key={
+                                                            paramText +
+                                                            "###" +
+                                                            index
+                                                        }>
+                                                        <div
+                                                        style={{
+                                                            whiteSpace: "pre-wrap",
+                                                            textAlign: "center",
+                                                            minHeight: '1em'
+                                                        }}
+                                                        >
+                                                        {replaceTags(
+                                                            paramText
+                                                        )}</div>
+                                                        </DivFadeinCss>                                                    
+                                                );
+                                            })}
+                                    
+                                </div>
+                            </div>
+                    </div>
+
             </>
         );
     }

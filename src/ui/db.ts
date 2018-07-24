@@ -104,7 +104,13 @@ export async function getDb(app: firebase.app.App) {
         const os = trx.objectStore(storeName);
         const getReq = os.get(key);
         const localResult = await new Promise<any>((resolve, reject) => {
-            getReq.onsuccess = e => resolve(getReq.result);
+            getReq.onsuccess = e => {
+                try {
+                    resolve(JSON.parse(getReq.result))
+                } catch {
+                    resolve(null)
+                }
+            }
             getReq.onerror = e => reject(new Error(getReq.error.toString()));
         });
         return localResult;
@@ -113,7 +119,7 @@ export async function getDb(app: firebase.app.App) {
     async function setLocal(storeName: string, key: string, value: any) {
         const trx = db.transaction([storeName], "readwrite");
         const os = trx.objectStore(storeName);
-        const getReq = os.put(value, key);
+        const getReq = os.put(JSON.stringify(value), key);
         await new Promise<void>((resolve, reject) => {
             getReq.onsuccess = e => resolve(getReq.result);
             getReq.onerror = e => reject(new Error(getReq.error.toString()));
@@ -137,7 +143,7 @@ export async function getDb(app: firebase.app.App) {
                     app
                         .database()
                         .ref(`${store}/${firebaseUser.uid}/${storeName}/${key}`)
-                        .set(value),
+                        .set(JSON.stringify(value)),
                     new Promise<void>(r => setTimeout(r, 10000))
                 ]);
             }
@@ -162,9 +168,13 @@ export async function getDb(app: firebase.app.App) {
                                           firebaseUser.uid
                                       }/${storeName}/${key}`
                                   )
-                                  .once("value", snapshot =>
-                                      resolve(snapshot ? snapshot.val() : null)
-                                  )
+                                  .once("value", snapshot => {
+                                      try {
+                                        resolve(JSON.parse(snapshot ? snapshot.val() : null))
+                                      } catch {
+                                        resolve(null)
+                                      }
+                                  })
                             : resolve(null)
                 ),
                 new Promise<null>(r => setTimeout(() => r(null), 10000))
