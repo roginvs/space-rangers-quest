@@ -32,29 +32,34 @@ import { INDEX_JSON } from "./consts";
 import { getLang, guessBrowserLang, LangTexts } from "./lang";
 import { assertNever } from "../lib/formula/calculator";
 
-export class LoginTab extends React.Component<
+
+export class ProfileTab extends React.Component<
     {
         l: LangTexts;
+        user: firebase.User;
         app: firebase.app.App;
     },
     {}
 > {
     render() {
         return (
-            <DivFadeinCss key="login" className="text-center">
+            <DivFadeinCss key="logout" className="text-center">
+                <div className="mb-3">
+                    <h5>{this.props.user.displayName}</h5>
+                </div>                
+                
                 <div className="mb-3">
                     <button
                         className="btn btn-light px-3"
                         onClick={() => {
-                            const authProvider = new firebase.auth.GoogleAuthProvider();
                             this.props.app
                                 .auth()
-                                .signInWithPopup(authProvider)
+                                .signOut()
                                 .catch(e => undefined);
                         }}
                     >
-                        <i className="fa fa-google" />{" "}
-                        {this.props.l.loginWithGoogle}
+                        <i className="fa fa-sign-out" />{" "}
+                        {this.props.l.logout}
                     </button>
                 </div>
             </DivFadeinCss>

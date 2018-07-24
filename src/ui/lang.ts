@@ -9,9 +9,9 @@ const RUS = {
     login: "Войти",
     useown: "Загрузить .qm/.qmm",
     loginWithGoogle: "Войти через Google",
-    logout: "Выйти",
+    profile: "Профиль",
     topplayers: "Чемпионы",
-    reallyLogout: "Действительно выйти",
+    logout: "Действительно выйти",
     waitForFirebase: "Ждем ответа от firebase",
 
     // showingName: "Имя пользователя",

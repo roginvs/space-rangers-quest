@@ -37,7 +37,8 @@ import {
 import { INDEX_JSON } from "./consts";
 import { getLang, guessBrowserLang, LangTexts } from "./lang";
 import { assertNever } from "../lib/formula/calculator";
-import { LoginTabs } from "./login";
+import { LoginTab } from "./login";
+import { ProfileTab } from "./profile";
 import { OfflineMode } from "./offlineMode";
 import { Options } from "./options";
 import { QuestList } from "./questList";
@@ -161,6 +162,7 @@ class MainLoader extends React.Component<
                 </div>
             );
         }
+        const firebaseLoggedIn = this.state.firebaseLoggedIn;
         if (!player || !db || !index) {
             return <Loader text="Loading" />;
         } else {
@@ -231,8 +233,7 @@ class MainLoader extends React.Component<
                                                     <NavLink
                                                         href="#/useown"
                                                         active={
-                                                            tab ===
-                                                            "useown"
+                                                            tab === "useown"
                                                         }
                                                     >
                                                         <i className="fa fa-upload" />{" "}
@@ -252,7 +253,7 @@ class MainLoader extends React.Component<
                                                     </NavLink>
                                                 </NavItem>
 
-                                                {this.state.firebaseLoggedIn !==
+                                                {firebaseLoggedIn !==
                                                 undefined ? (
                                                     <NavItem>
                                                         <NavLink
@@ -261,11 +262,10 @@ class MainLoader extends React.Component<
                                                                 tab === "sign"
                                                             }
                                                         >
-                                                            {this.state
-                                                                .firebaseLoggedIn ? (
+                                                            {firebaseLoggedIn ? (
                                                                 <>
-                                                                    <i className="fa fa-sign-out" />{" "}
-                                                                    {l.logout}
+                                                                    <i className="fa fa-vcard" />{" "}
+                                                                    {l.profile}
                                                                 </>
                                                             ) : (
                                                                 <>
@@ -281,31 +281,38 @@ class MainLoader extends React.Component<
                                     </Navbar>
                                     <Container className="mt-3 mb-3">
                                         {tab === "sign" ? (
-                                            <LoginTabs
-                                                firebaseLoggedIn={
-                                                    this.state.firebaseLoggedIn
-                                                }
+                                            firebaseLoggedIn === undefined ? (
+                                                <Loader
+                                                    text={l.waitForFirebase}
+                                                />
+                                            ) : firebaseLoggedIn ? (
+                                                <ProfileTab
+                                                    l={l}
+                                                    user={firebaseLoggedIn}
+                                                    app={app}
+                                                />
+                                            ) : (
+                                                <LoginTab l={l} app={app} />
+                                            )
+                                        ) : tab === "offlinemode" ? (
+                                            <OfflineMode l={l} />
+                                        ) : tab === "options" ? (
+                                            <Options
                                                 l={l}
-                                                app={app}
+                                                player={player}
+                                                onNewPlayer={player =>
+                                                    this.setState({ player })
+                                                }
+                                                db={db}
                                             />
-                                        ) : tab === "offlinemode" ? 
-                                        <OfflineMode l={l}/> :
-                                        tab === "options" ? 
-                                        <Options
-                                        l={l}
-                                        player={player}
-                                        onNewPlayer={player => this.setState({player})}
-                                        db={db}
-                                        /> :
-                                        tab === "quests" ? 
-                                        <QuestList
-                                        l={l}
-                                        player={player}
-                                        index={index}
-                                        onQuestSelect={gameName =>{
-
-                                        }}/> :
-                                        (
+                                        ) : tab === "quests" ? (
+                                            <QuestList
+                                                l={l}
+                                                player={player}
+                                                index={index}
+                                                onQuestSelect={gameName => {}}
+                                            />
+                                        ) : (
                                             "TODO"
                                         )}
                                     </Container>
