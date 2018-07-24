@@ -116,17 +116,17 @@ class QuestPlay extends React.Component<
             .then(arrayBuf => {
                 const quest = parse(
                     new Buffer(pako.ungzip(new Buffer(arrayBuf)))
-                ) as Quest;                
+                ) as Quest;
                 this.setState({
                     quest
-                })
+                });
                 return quest;
             });
     }
     componentDidMount() {
         window.addEventListener("resize", this.onResize);
 
-        if (!this.props.isPlaying) {            
+        if (!this.props.isPlaying) {
             this.loadComments();
         }
 
@@ -138,16 +138,15 @@ class QuestPlay extends React.Component<
             .getSavedGame(this.props.gameName)
             .catch(e => undefined)
             .then(gameState => {
-                this.setState({ gameState, gameStateLoaded: true })
+                this.setState({ gameState, gameStateLoaded: true });
                 if (this.props.isPlaying) {
-                    if (gameState) {}
-                        this.loadQuest();
-                    } else {
-                        this.props.onPlayChange(false);
+                    if (gameState) {
                     }
-
+                    this.loadQuest();
+                } else {
+                    this.props.onPlayChange(false);
                 }
-            );
+            });
         this.props.db.getPrivate("noMusic").then(noMusic => {
             this.setState({
                 noMusic: !!noMusic
@@ -188,10 +187,10 @@ class QuestPlay extends React.Component<
             <audio
                 autoPlay={false}
                 controls={false}
-                onEnded={e => this.play(true)}
+                onEnded={e => this.playAudioIfEnabled(true)}
                 ref={e => {
                     this.audio = e;
-                    this.play(false);
+                    this.playAudioIfEnabled(false);
                 }}
             />
         );
@@ -284,7 +283,7 @@ class QuestPlay extends React.Component<
                                                 this.setState({
                                                     startButtonsAreBusy: true
                                                 });
-                                                this.play(true);
+                                                this.playAudioIfEnabled(true);
                                                 try {
                                                     const quest = await this.loadQuest();
                                                     let state = initGame(
@@ -332,7 +331,7 @@ class QuestPlay extends React.Component<
                                                 this.setState({
                                                     startButtonsAreBusy: true
                                                 });
-                                                this.play(true);
+                                                this.playAudioIfEnabled(true);
                                                 try {
                                                     await this.loadQuest();
                                                     this.props.onPlayChange(
@@ -364,7 +363,9 @@ class QuestPlay extends React.Component<
                                     </div>
                                 </>
                             ) : (
-                                <div className="text-center"><Loader text={l.loadingQuest} /></div>
+                                <div className="text-center">
+                                    <Loader text={l.loadingQuest} />
+                                </div>
                             )}
                         </div>
                     </DivFadeinCss>
@@ -384,25 +385,27 @@ class QuestPlay extends React.Component<
         return (
             <>
                 {audioTag}
-                <div>TODO
-
-
-
-                </div>
+                <div>TODO</div>
             </>
         );
     }
 
     private audio: HTMLAudioElement | null = null;
 
-    private play(restart: boolean) {
+    private playAudioIfEnabled(restart: boolean) {
         if (this.audio) {
-            if (!this.audio.src || restart) {
-                const musicList = this.props.index.dir.music.files.map(
-                    x => x.path
-                );
-                const i = Math.floor(Math.random() * musicList.length);
-                this.audio.src = DATA_DIR + musicList[i];
+            if (!this.state.noMusic) {
+                if (!this.audio.src || restart) {
+                    const musicList = this.props.index.dir.music.files.map(
+                        x => x.path
+                    );
+                    const i = Math.floor(Math.random() * musicList.length);
+                    this.audio.src = DATA_DIR + musicList[i];
+                }
+                this.audio.play();
+            } else {
+                this.audio.pause();
+                this.audio.src = "";
             }
         }
     }
