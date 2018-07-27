@@ -33,7 +33,7 @@ export interface PlayerSubstitute extends Player {
 }
 
 export interface GameLogStep {
-    date: Date;
+    dateUnix: number;
     jumpId: number;
 }
 export type GameLog = DeepImmutable<{
@@ -608,14 +608,14 @@ export function performJump(
     quest: Quest,
     stateOriginal: GameState,
     images: PQImages = [],
-    date: DeepImmutable<Date> = new Date()
+    dateUnix = new Date().getTime()
 ): GameState {
     const alea = new Alea(stateOriginal.aleaState.slice());
     const random = alea.random;
     const performedJumps: typeof stateOriginal.performedJumps = [
         ...stateOriginal.performedJumps,
         {
-            date,
+            dateUnix,
             jumpId
         }
     ];
@@ -1240,7 +1240,7 @@ export function validateState(
                 quest,
                 state,
                 images,
-                performedJump.date            
+                performedJump.dateUnix
             )
         };
         assert.deepEqual(stateOriginal, state);
@@ -1270,7 +1270,7 @@ export function validateWinningLog(
                 quest,
                 state,
                 [],
-                performedJump.date            
+                performedJump.dateUnix
             )
         };
         if (state.state !== "returnedending") {

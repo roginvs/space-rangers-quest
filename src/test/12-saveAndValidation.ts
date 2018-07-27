@@ -23,10 +23,10 @@ let state: GameState;
 const MY_SEED1 = "someseed";
 const MY_SEED2 = "someseed3";
 
-const date1 = new Date("2018-07-22T22:20:36.761Z");
-const date2 = new Date("2018-07-22T22:21:36.761Z");
-const date3 = new Date("2018-07-22T22:22:36.761Z");
-const date4 = new Date("2018-07-22T22:30:36.761Z");
+const date1 = new Date("2018-07-22T22:20:36.761Z").getTime();
+const date2 = new Date("2018-07-22T22:21:36.761Z").getTime();
+const date3 = new Date("2018-07-22T22:22:36.761Z").getTime();
+const date4 = new Date("2018-07-22T22:30:36.761Z").getTime();
 
 describe(`Using saveAndValidaton.qm, seed 1`, function() {
     const images: PQImages = [];

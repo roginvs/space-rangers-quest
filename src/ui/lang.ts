@@ -18,6 +18,8 @@ const RUS = {
     // showingName: "Имя пользователя",
     // showingNameDesc: "Это имя будет в общем списке",
 
+    minutesShort: "мин.",
+
     ranger: "Рейнджер",
     fromPlanet: "С планеты",
     fromStar: "С системы",

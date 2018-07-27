@@ -92,9 +92,9 @@ export class QuestInfoRouter extends React.Component<
 interface QuestInfoState {
     passedQuest?: GameWonProofs | null;
     lastSavedGameState?: GameState | null;
-    gameInfoLoaded?: boolean;    
+    gameInfoLoaded?: boolean;
     error?: string | Error;
-    noMusic?: boolean;    
+    noMusic?: boolean;
 }
 class QuestInfo extends React.Component<
     {
@@ -128,7 +128,6 @@ class QuestInfo extends React.Component<
     }
 
     componentDidMount() {
-        
         if (this.props.isPlaying) {
             // this.props.onPlayChange(false);
         } else {
@@ -138,15 +137,20 @@ class QuestInfo extends React.Component<
         this.loadWinningState();
 
         (async () => {
-            const lastSavedGameState = await this.props.db.getLocalSaving(this.props.gameName)
+            const lastSavedGameState = await this.props.db
+                .getLocalSaving(this.props.gameName)
                 .catch(e => undefined);
-            const noMusic = (await this.props.db.getConfigLocal("noMusic").catch(e => undefined)) || undefined;
-            this.setState({ lastSavedGameState, gameInfoLoaded: true, noMusic });
-        })().catch(e => this.setState({error: e}))
-       
-        
+            const noMusic =
+                (await this.props.db
+                    .getConfigLocal("noMusic")
+                    .catch(e => undefined)) || undefined;
+            this.setState({
+                lastSavedGameState,
+                gameInfoLoaded: true,
+                noMusic
+            });
+        })().catch(e => this.setState({ error: e }));
     }
-    
 
     render() {
         const {
@@ -174,175 +178,202 @@ class QuestInfo extends React.Component<
                 </AppNavbar>
             );
         }
-        
+
         if (!isPlaying) {
             return (
-                    <AppNavbar
-                        l={l}
-                        player={player}
-                        firebaseLoggedIn={firebaseLoggedIn}
-                        firebaseSyncing={this.props.firebaseSyncing}
-                    >
-                        <DivFadeinCss className="container">
-                            <div className="text-center mb-3">
-                                <h4>{game.gameName}</h4>
-                                <div>
-                                    <small>{game.smallDescription}</small>
-                                </div>
-                                <div>
-                                    <small>
-                                        {(() => {
-                                            // copy-paste from questList
-                                            if (passedQuest === undefined) {
-                                                return (
-                                                    <i className="text-muted fa fa-spin circle-o-notch" />
-                                                );
-                                            }
+                <AppNavbar
+                    l={l}
+                    player={player}
+                    firebaseLoggedIn={firebaseLoggedIn}
+                    firebaseSyncing={this.props.firebaseSyncing}
+                >
+                    <DivFadeinCss className="container">
+                        <div className="text-center mb-3">
+                            <h4>{game.gameName}</h4>
+                            <div>
+                                <small>{game.smallDescription}</small>
+                            </div>
+                            <div>
+                                <small>
+                                    {(() => {
+                                        // copy-paste from questList
+                                        if (passedQuest === undefined) {
+                                            return (
+                                                <i className="text-muted fa fa-spin circle-o-notch" />
+                                            );
+                                        }
 
-                                            if (
-                                                passedQuest === null ||
-                                                typeof passedQuest !==
-                                                    "object" ||
-                                                Object.keys(passedQuest)
-                                                    .length < 1
-                                            ) {
-                                                return;
+                                        if (
+                                            passedQuest === null ||
+                                            typeof passedQuest !== "object" ||
+                                            Object.keys(passedQuest).length < 1
+                                        ) {
+                                            return;
+                                        }
+                                        return Object.keys(passedQuest).map(k => {
+                                            const log = passedQuest[k];
+                                            const firstStep = log.performedJumps
+                                                .slice(0)
+                                                .shift();
+                                            const lastStep = log.performedJumps
+                                                .slice(-1)
+                                                .shift();
+                                            if (!firstStep || !lastStep) {
+                                                return null;
                                             }
-                                            // TODO: show when and how long
-                                            return <span>{l.passed}</span>;
-                                        })()}
-                                    </small>
-                                </div>
+                                            const durationsMins = Math.ceil(
+                                                ((new Date(
+                                                    lastStep.dateUnix
+                                                ).getTime() -
+                                                    new Date(
+                                                        firstStep.dateUnix
+                                                    ).getTime()) /
+                                                    (1000 * 60 * 60)                                                    
+                                            ));
+                                            return {
+                                                started: firstStep.dateUnix,
+                                                end: lastStep.dateUnix,
+                                                durationsMins,
+                                                k
+                                            }                                                                                        
+                                        })
+                                        .filter(x => x)
+                                        .sort((a,b) => {
+                                            if (a === null || b === null) {
+                                                return 0
+                                            } else {
+                                                return a.started - b.started
+                                            }
+                                        }).map(x => x ? <div key={x.k}>
+                                            {l.passed}{" "}
+                                            {moment(
+                                                x.end
+                                            ).format("lll")}{" "}
+                                            ({x.durationsMins}{" "}
+                                            {l.minutesShort})
+                                        </div> : null);
+                                                                    })()}
+                                </small>
                             </div>
-                            <div className="mb-3">
-                                {replaceTags(
-                                    substitute(
-                                        game.taskText,
+                        </div>
+                        <div className="mb-3">
+                            {replaceTags(
+                                substitute(
+                                    game.taskText,
+                                    {
+                                        ...player,
+                                        Day: `${DEFAULT_DAYS_TO_PASS_QUEST}`,
+                                        Date: SRDateToString(
+                                            DEFAULT_DAYS_TO_PASS_QUEST,
+                                            player.lang
+                                        ),
+                                        CurDate: SRDateToString(0, player.lang)
+                                    },
+                                    [],
+                                    n =>
+                                        n !== undefined
+                                            ? Math.floor(Math.random() * n)
+                                            : Math.random()
+                                )
+                            )}
+                        </div>
+                        <div className="row">
+                            <div className="col-md-6">
+                                <button
+                                    className={classnames(
+                                        "btn btn-block mb-2",
                                         {
-                                            ...player,
-                                            Day: `${DEFAULT_DAYS_TO_PASS_QUEST}`,
-                                            Date: SRDateToString(
-                                                DEFAULT_DAYS_TO_PASS_QUEST,
-                                                player.lang
-                                            ),
-                                            CurDate: SRDateToString(
-                                                0,
-                                                player.lang
-                                            )
-                                        },
-                                        [],
-                                        n =>
-                                            n !== undefined
-                                                ? Math.floor(Math.random() * n)
-                                                : Math.random()
-                                    )
-                                )}
+                                            "btn-primary":
+                                                this.state.gameInfoLoaded &&
+                                                !this.state.lastSavedGameState
+                                        }
+                                    )}
+                                    onClick={async () => {
+                                        this.props.db.saveGame(
+                                            this.props.gameName,
+                                            null
+                                        );
+                                        this.props.onPlayChange(true);
+                                    }}
+                                >
+                                    <i className="fa fa-rocket" />{" "}
+                                    {l.startFromTheStart}
+                                </button>
                             </div>
-                            <div className="row">                                                            
-                                        <div className="col-md-6">
-                                            <button
-                                                className={classnames(
-                                                    "btn btn-block mb-2",
-                                                    {
-                                                        "btn-primary":
-                                                            this.state
-                                                                .gameInfoLoaded &&
-                                                            !this.state
-                                                                .lastSavedGameState
-                                                    }
-                                                )}
-                                                onClick={async () => {
-                                                    this.props.db.saveGame(this.props.gameName, null);
-                                                    this.props.onPlayChange(
-                                                        true
-                                                    );
-                                                }}
-                                            >
-                                                <i className="fa fa-rocket" />{" "}
-                                                {l.startFromTheStart}
-                                            </button>
-                                        </div>
-                                        <div className="col-md-6">
-                                            <button
-                                                className={classnames(
-                                                    "btn btn-block mb-2",
-                                                    {
-                                                        "btn-primary":
-                                                            this.state
-                                                                .gameInfoLoaded &&
-                                                            this.state
-                                                                .lastSavedGameState,
-                                                        disabled: !this.state
-                                                            .lastSavedGameState
-                                                    }
-                                                )}
-                                                onClick={async () => {
-                                                    this.props.onPlayChange(
-                                                        true
-                                                    );                                                      
-                                                }}
-                                            >
-                                                {!this.state.gameInfoLoaded ? (
-                                                    <i className="fa fa-spin fa-spinner" />
-                                                ) : this.state.lastSavedGameState ? (
-                                                    <>
-                                                        <i className="fa fa-save" />{" "}
-                                                        {l.startFromLastSave}
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        {" "}
-                                                        <i className="fa fa-circle-o" />{" "}
-                                                        {l.noLastSave}
-                                                    </>
-                                                )}
-                                            </button>
-                                        </div>                                    
+                            <div className="col-md-6">
+                                <button
+                                    className={classnames(
+                                        "btn btn-block mb-2",
+                                        {
+                                            "btn-primary":
+                                                this.state.gameInfoLoaded &&
+                                                this.state.lastSavedGameState,
+                                            disabled: !this.state
+                                                .lastSavedGameState
+                                        }
+                                    )}
+                                    onClick={async () => {
+                                        this.props.onPlayChange(true);
+                                    }}
+                                >
+                                    {!this.state.gameInfoLoaded ? (
+                                        <i className="fa fa-spin fa-spinner" />
+                                    ) : this.state.lastSavedGameState ? (
+                                        <>
+                                            <i className="fa fa-save" />{" "}
+                                            {l.startFromLastSave}
+                                        </>
+                                    ) : (
+                                        <>
+                                            {" "}
+                                            <i className="fa fa-circle-o" />{" "}
+                                            {l.noLastSave}
+                                        </>
+                                    )}
+                                </button>
                             </div>
-                        </DivFadeinCss>
-                    </AppNavbar>
-            )
+                        </div>
+                    </DivFadeinCss>
+                </AppNavbar>
+            );
         }
 
-        return <QuestPlay
-        l={this.props.l}
-        index={this.props.index}
-        player={this.props.player}
-        game={this.props.game}
-    
-        loadInitialState={async () => {
-            const saving = await this.props.db.getLocalSaving(this.props.gameName)
-                .catch(e => undefined);
-            return saving || undefined
-        }}
-    
-        onStateChange={newGameState =>{ 
-            this.props.db.saveGame(this.props.gameName, newGameState);
-            this.setState({
-                lastSavedGameState: newGameState
-            })
-        }}
-
-        
-        onReturn={() => {            
-            this.props.onPlayChange(false)
-        }}
-        onWin={winningProof => {
-            this.props.db.setGamePassing(this.props.gameName, winningProof)
-        }}
-    
-        noMusic={this.state.noMusic || false}
-
-        onNoMusicChange={newNoMusic=> {
-            this.setState({
-                noMusic: newNoMusic,
-            });
-            this.props.db.setConfigBoth("noMusic", newNoMusic)
-        }}
-    
-        />
+        return (
+            <QuestPlay
+                l={this.props.l}
+                index={this.props.index}
+                player={this.props.player}
+                game={this.props.game}
+                loadInitialState={async () => {
+                    const saving = await this.props.db
+                        .getLocalSaving(this.props.gameName)
+                        .catch(e => undefined);
+                    return saving || undefined;
+                }}
+                onStateChange={newGameState => {
+                    this.props.db.saveGame(this.props.gameName, newGameState);
+                    this.setState({
+                        lastSavedGameState: newGameState
+                    });
+                }}
+                onReturn={() => {
+                    this.props.onPlayChange(false);
+                }}
+                onWin={winningProof => {
+                    this.props.db.setGamePassing(
+                        this.props.gameName,
+                        winningProof
+                    );
+                    this.loadWinningState();
+                }}
+                noMusic={this.state.noMusic || false}
+                onNoMusicChange={newNoMusic => {
+                    this.setState({
+                        noMusic: newNoMusic
+                    });
+                    this.props.db.setConfigBoth("noMusic", newNoMusic);
+                }}
+            />
+        );
     }
-    
 }
-
-
