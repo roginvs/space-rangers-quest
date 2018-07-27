@@ -41,7 +41,7 @@ import { OptionsTabContainer } from "./options";
 import { QuestListRouter } from "./questList";
 import { AppNavbar } from "./appNavbar";
 import { AuthTabContainer } from "./auth";
-import { QuestPlayRouter } from "./questPlay";
+import { QuestInfoRouter } from "./questInfo";
 
 console.info("starting");
 
@@ -266,7 +266,7 @@ class MainLoader extends React.Component<
                         firebaseSyncing={this.state.firebaseSyncing}
                     />
 
-                    <QuestPlayRouter
+                    <QuestInfoRouter
                         l={l}
                         player={player}
                         index={index}

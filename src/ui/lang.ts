@@ -5,7 +5,7 @@ const RUS = {
     hi: 'Привет, ',
     quests: "Квесты",
     options: "Опции",
-    offlinemode: "Оффлайн режим",
+    installMode: "Установить",
     login: "Войти",
     useown: "Загрузить .qm/.qmm",
     loginWithGoogle: "Войти через Google",

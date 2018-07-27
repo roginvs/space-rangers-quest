@@ -110,7 +110,7 @@ export class AppNavbar extends React.Component<{
                                                         }
                                                     >
                                                         <i className="fa fa-cloud-download" />{" "}
-                                                        {l.offlinemode}
+                                                        {l.installMode}
                                                     </NavLink>
                                                 </NavItem>
 
