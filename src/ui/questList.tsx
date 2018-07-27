@@ -242,7 +242,7 @@ export class QuestListRouter extends React.Component<
                                                             if (typeof(passed) !== 'object' || Object.keys(passed).length < 1) {
                                                                 return
                                                             }
-                                                            console.info(quest.gameName, passed);
+                                                            // console.info(quest.gameName, passed);
                                                             return (
                                                                 <span>
                                                                     {l.passed}                                                            

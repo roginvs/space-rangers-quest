@@ -336,13 +336,14 @@ export async function getDb(app: firebase.app.App) {
                 newProofs[gameName] = proofs;
                 newCount++;
             }
-            console.info(`Updating public highscores`);
+            console.info(`Updating public highscores newCount=${newCount}`);
             await setFirebase(FIREBASE_USERS_PUBLIC, `gamesWonCount`, newCount);
             await setFirebase(
                 FIREBASE_USERS_PUBLIC,
                 `gamesWonProofs`,
                 newProofs
             );
+            console.info(`Updating public highscores done`);
         } catch (e) {
             console.warn(`public wining state sync error`, e, e.stack);
         }

@@ -248,8 +248,8 @@ for (const origin of fs.readdirSync(dataSrcPath + '/qm')) {
         const srcQmName = qmDir + qmShortName;
         const lang = origin.endsWith('eng') ? 'eng' : 'rus';
         const oldTge = qmShortName.endsWith('.qm') && lang !== 'eng'; //origin.startsWith('Tge');
-        const gameName = qmShortName.replace(/(\.qm|\.qmm)$/, '')
-            .replace(/_eng$/, '');
+        const gameName = qmShortName.replace(/(\.qm|\.qmm)$/, '');
+            // .replace(/_eng$/, '');
         console.info(`Reading ${srcQmName} (${lang}, oldTge=${oldTge}) gameName=${gameName}`);
 
         const data = fs.readFileSync(srcQmName);
