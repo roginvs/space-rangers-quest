@@ -45,6 +45,7 @@ export class QuestPlayRouter extends React.Component<
         player: Player;
         db: DB;
         firebaseLoggedIn: firebase.User | null | undefined;
+        firebaseSyncing: boolean | undefined;
     },
     {}
 > {
@@ -102,6 +103,7 @@ class QuestPlay extends React.Component<
         player: Player;
         db: DB;
         firebaseLoggedIn: firebase.User | null | undefined;
+        firebaseSyncing: boolean | undefined;
         gameName: string;
         game: Game;
         isPlaying: boolean;
@@ -189,16 +191,17 @@ class QuestPlay extends React.Component<
         const passedQuests = this.state.passedQuests;
         if (this.state.error) {
             return (
-                <>
+                
                     <AppNavbar
                         l={l}
                         player={player}
                         firebaseLoggedIn={firebaseLoggedIn}
-                    />
+                        firebaseSyncing={this.props.firebaseSyncing}
+                    >
                     <div className="text-center text-danger">
                         {this.state.error.toString()}
                     </div>
-                </>
+                </AppNavbar>
             );
         }
 
@@ -222,7 +225,8 @@ class QuestPlay extends React.Component<
                         l={l}
                         player={player}
                         firebaseLoggedIn={firebaseLoggedIn}
-                    />
+                        firebaseSyncing={this.props.firebaseSyncing}
+                    >
                     <DivFadeinCss className="container">
                         <div className="text-center mb-3">
                             <h4>{game.gameName}</h4>
@@ -382,6 +386,7 @@ class QuestPlay extends React.Component<
                             )}
                         </div>
                     </DivFadeinCss>
+                    </AppNavbar>
                 </>
             );
         }

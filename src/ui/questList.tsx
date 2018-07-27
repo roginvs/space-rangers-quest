@@ -41,6 +41,7 @@ export class QuestListRouter extends React.Component<
         player: Player;
         db: DB;
         firebaseLoggedIn: firebase.User | null | undefined;
+        firebaseSyncing: boolean | undefined;
     },
     QuestListState
 > {
@@ -124,12 +125,13 @@ export class QuestListRouter extends React.Component<
                 path={"/quests/"}
                 render={prop => {
                     return (
-                        <>
+             
                             <AppNavbar
                                 l={l}
                                 player={player}
                                 firebaseLoggedIn={firebaseLoggedIn}
-                            />
+                                firebaseSyncing={this.props.firebaseSyncing}
+                            >
                             <DivFadeinCss
                                 key="quest list"
                                 className="container"
@@ -267,7 +269,7 @@ export class QuestListRouter extends React.Component<
                                     </div>
                                 )}
                             </DivFadeinCss>
-                        </>
+                            </AppNavbar>
                     );
                 }}
             />

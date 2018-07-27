@@ -14,6 +14,7 @@ const RUS = {
     logout: "Действительно выйти",
     waitForFirebase: "Ждем ответа от firebase",
 
+    firebaseSyncing: "Синхронизация с firebase",
     // showingName: "Имя пользователя",
     // showingNameDesc: "Это имя будет в общем списке",
 

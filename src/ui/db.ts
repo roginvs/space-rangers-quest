@@ -38,12 +38,12 @@ const INDEXEDDB_CONFIG_STORE_NAME = "config";
 const INDEXEDDB_SAVED_STORE_NAME = "savedgames";
 const INDEXEDDB_WON_STORE_NAME = "savedgames";
 
-const FIREBASE_USERS_PRIVATE = `usersPrivate2`;
-const FIREBASE_USERS_PUBLIC = `usersPublic2`;
+const FIREBASE_USERS_PRIVATE = `usersPrivate`;
+const FIREBASE_USERS_PUBLIC = `usersPublic`;
 
 export interface GameWonProofs {
-        [seed: string]: GameLog;    
-};
+    [seed: string]: GameLog;
+}
 export interface WonProofs {
     [gameId: string]: GameWonProofs;
 }
@@ -89,7 +89,7 @@ export async function getDb(app: firebase.app.App) {
         const getReq = objectStore.get(key);
         const localResult = await new Promise<any>((resolve, reject) => {
             getReq.onsuccess = e => {
-                resolve(getReq.result);                
+                resolve(getReq.result);
             };
             getReq.onerror = e => reject(new Error(getReq.error.toString()));
         });
@@ -333,9 +333,35 @@ export async function getDb(app: firebase.app.App) {
                 `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`
             );
             if (firebaseResult) {
-                await setLocal(INDEXEDDB_CONFIG_STORE_NAME, key, firebaseResult);
+                console.info(`Taking config ${key} from firebase`);
+                await setLocal(
+                    INDEXEDDB_CONFIG_STORE_NAME,
+                    key,
+                    firebaseResult
+                );
+            } else if (firebaseResult === null) {
+                const localResult = await getLocal(
+                    INDEXEDDB_CONFIG_STORE_NAME,
+                    key
+                );
+                if (localResult) {
+                    console.info(
+                        `Saving firebase config ${key} because there is nothing`
+                    );
+                    await setFirebase(
+                        FIREBASE_USERS_PRIVATE,
+                        `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`,
+                        localResult
+                    );
+                } else {
+                    console.info(
+                        `Config key ${key} no in local, neither in firebase`
+                    );
+                }
             }
         }
+
+        console.info(`Sync syncWithFirebase step1 done`);
 
         // Local saving always overwrite remote
         const localSavings = await getAllLocal(INDEXEDDB_SAVED_STORE_NAME);
@@ -347,6 +373,8 @@ export async function getDb(app: firebase.app.App) {
                 savingRaw
             );
         }
+
+        console.info(`Sync syncWithFirebase step2 done`);
 
         try {
             const allLocalWons = await getAllLocal(INDEXEDDB_WON_STORE_NAME);
@@ -407,32 +435,38 @@ export async function getDb(app: firebase.app.App) {
                     }
                 }
             }
-        } catch (e) {            
+        } catch (e) {
             console.warn(`wining state sync error`, e, e.stack);
         }
 
+        console.info(`Sync syncWithFirebase step3 done`);
+
         console.info(`TODO: update highscores table!`);
-        try {            
+        try {
             const allRemoteWons =
                 (await getFirebase(
                     FIREBASE_USERS_PRIVATE,
                     `${INDEXEDDB_WON_STORE_NAME}`
                 )) || {};
             let newCount = 0;
-            const newProofs:WonProofs = {};
+            const newProofs: WonProofs = {};
             for (const gameName of Object.keys(allRemoteWons)) {
                 const proofs = allRemoteWons[gameName];
-                if (!proofs || Object.keys(proofs).length < 1){
+                if (!proofs || Object.keys(proofs).length < 1) {
                     continue;
                 }
                 newProofs[gameName] = proofs;
                 newCount++;
             }
-            console.info(`Updating public highscores`)
-            await setFirebase(FIREBASE_USERS_PUBLIC,`gamesWonCount`, newCount);
-            await setFirebase(FIREBASE_USERS_PUBLIC,`gamesWonProofs`, newProofs);            
+            console.info(`Updating public highscores`);
+            await setFirebase(FIREBASE_USERS_PUBLIC, `gamesWonCount`, newCount);
+            await setFirebase(
+                FIREBASE_USERS_PUBLIC,
+                `gamesWonProofs`,
+                newProofs
+            );
         } catch (e) {
-            console.warn(`public wining state sync error`, e, e.stack);            
+            console.warn(`public wining state sync error`, e, e.stack);
         }
 
         console.info(`Sync with firebase finished`);
@@ -502,7 +536,7 @@ export async function getDb(app: firebase.app.App) {
         }
     }
 
-    console.info(`Returning db instance`)
+    console.info(`Returning db instance`);
     return {
         setConfigBoth,
         getConfigLocal,
@@ -518,7 +552,7 @@ export async function getDb(app: firebase.app.App) {
 
         syncWithFirebase,
 
-        setOwnHighscoresName,        
+        setOwnHighscoresName
     };
 }
 

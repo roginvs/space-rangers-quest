@@ -29,6 +29,7 @@ export class AppNavbar extends React.Component<{
     l: LangTexts,    
     player: Player;
     firebaseLoggedIn: firebase.User | null | undefined,
+    firebaseSyncing: boolean | undefined;
 },AppNavbarState> {
     state: AppNavbarState = { navbarIsOpen: false}; // For mobile view    
     render() {
@@ -38,7 +39,7 @@ export class AppNavbar extends React.Component<{
                         render={prop => {
                             const tab = prop.match.params.tab;
                             return (
-                                
+                        <>            
                                     <Navbar color="light" light expand="md" className="mb-3">
                                         <NavbarBrand href="#/">
                                             {l.hi} {player.Player}
@@ -124,7 +125,9 @@ export class AppNavbar extends React.Component<{
                                                         >
                                                             {firebaseLoggedIn ? (
                                                                 <>
-                                                                    <i className="fa fa-vcard" />{" "}
+                                                                {this.props.firebaseSyncing?
+                                                                <i className="fa fa-spinner fa-spin"/> :
+                                                                <i className="fa fa-vcard" />}{" "}
                                                                     {l.profile}
                                                                 </>
                                                             ) : (
@@ -139,6 +142,10 @@ export class AppNavbar extends React.Component<{
                                             </Nav>
                                         </Collapse>
                                     </Navbar>
+                                    <Container>
+                                        {this.props.children}
+                                        </Container>
+                                    </>
                             )}}/>
                     }
                                             }

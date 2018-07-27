@@ -38,6 +38,7 @@ export class ProfileTabContainer extends React.Component<
         l: LangTexts;
         user: firebase.User;
         app: firebase.app.App;
+        firebaseSyncing: boolean | undefined;
     },
     {}
 > {
@@ -47,6 +48,10 @@ export class ProfileTabContainer extends React.Component<
                 <div className="mb-3">
                     <h5>{this.props.user.displayName}</h5>
                 </div>                
+                {this.props.firebaseSyncing ? 
+                <div className="mb-3">
+                    <i className="fa fa-spin fa-spinner"/>{" "}{this.props.l.firebaseSyncing}
+                </div>: null}
                 
                 <div className="mb-3">
                     <button

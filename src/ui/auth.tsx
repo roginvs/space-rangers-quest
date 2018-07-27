@@ -31,6 +31,7 @@ export class AuthTabContainer extends React.Component<{
     l: LangTexts,    
     player: Player;
     firebaseLoggedIn: firebase.User | null | undefined,
+    firebaseSyncing: boolean | undefined;
     app: firebase.app.App;
 },{}> {
     
@@ -44,6 +45,7 @@ export class AuthTabContainer extends React.Component<{
                                                 <ProfileTabContainer
                                                     l={l}
                                                     user={firebaseLoggedIn}
+                                                    firebaseSyncing={this.props.firebaseSyncing}
                                                     app={app}
                                                 />
                                             ) : (

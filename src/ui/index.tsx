@@ -41,7 +41,7 @@ import { OptionsTabContainer } from "./options";
 import { QuestListRouter } from "./questList";
 import { AppNavbar } from "./appNavbar";
 import { AuthTabContainer } from "./auth";
-import { QuestPlayRouter } from './questPlay';
+import { QuestPlayRouter } from "./questPlay";
 
 console.info("starting");
 
@@ -57,7 +57,6 @@ const config = {
 const app = firebase.initializeApp(config);
 //const app = firebase.initializeApp({} as typeof config);
 
-
 interface MainLoaderState {
     player?: Player;
     db?: DB;
@@ -65,6 +64,8 @@ interface MainLoaderState {
     error?: string;
 
     firebaseLoggedIn?: firebase.User | null;
+
+    firebaseSyncing?: boolean;
 }
 class MainLoader extends React.Component<
     RouteComponentProps<{}>,
@@ -75,21 +76,36 @@ class MainLoader extends React.Component<
     componentWillUnmount() {
         this.unsubscribe.forEach(f => f());
     }
+    syncWithFirebase = async () => {
+        const db = this.state.db;
+        if (!db) {
+            return;
+        }
+        this.setState({
+            firebaseSyncing: true
+        });
+        await db.syncWithFirebase().catch(e => console.warn(e));
+        this.setState({
+            firebaseSyncing: false
+        });
+        await this.loadPlayer();
+    };
+
     componentDidMount() {
         try {
-        this.unsubscribe.push(
-            app.auth().onAuthStateChanged(user => {
-                this.setState({
-                    firebaseLoggedIn: user ? user : null
-                });
-                if (this.state.db) {
-                    this.state.db.syncWithFirebase().then(() => this.loadPlayer())
-                }
-            })
-        );
-    } catch (e) {
-        console.warn(`Firebase subscribe error`, e)
-    }
+            this.unsubscribe.push(
+                app.auth().onAuthStateChanged(user => {
+                    this.setState({
+                        firebaseLoggedIn: user ? user : null
+                    });
+                    if (user) {
+                        this.syncWithFirebase();
+                    }
+                })
+            );
+        } catch (e) {
+            console.warn(`Firebase subscribe error`, e);
+        }
 
         getDb(app)
             .then(db => {
@@ -97,9 +113,9 @@ class MainLoader extends React.Component<
                     {
                         db
                     },
-                    () => {
-                        db.syncWithFirebase().then(() => this.loadPlayer())
-                        .catch(e => this.setState({error:e}))
+                    async () => {
+                        this.loadPlayer();
+                        this.syncWithFirebase();
                     }
                 );
 
@@ -144,18 +160,18 @@ class MainLoader extends React.Component<
                 } else {
                     const browserLang = guessBrowserLang();
                     console.info(`Welcome, a new user!`);
-                    const newPlayer =  browserLang === "rus"
-                        ? DEFAULT_RUS_PLAYER
-                        : browserLang === "eng"
-                            ? DEFAULT_ENG_PLAYER
-                            : assertNever(browserLang);
-                    db.setConfigBoth(
-                        "player", newPlayer
-                    )                    
-                    .catch(e => this.setState({ error: e }));
+                    const newPlayer =
+                        browserLang === "rus"
+                            ? DEFAULT_RUS_PLAYER
+                            : browserLang === "eng"
+                                ? DEFAULT_ENG_PLAYER
+                                : assertNever(browserLang);
+                    db.setConfigBoth("player", newPlayer).catch(e =>
+                        this.setState({ error: e })
+                    );
                     this.setState({
                         player: newPlayer
-                    })
+                    });
                 }
             })
             .catch(e => {
@@ -185,82 +201,85 @@ class MainLoader extends React.Component<
                     <Route
                         path={"/auth"}
                         render={prop => (
-                            <>
-                                <AppNavbar
+                            <AppNavbar
                                     l={l}
                                     player={player}
                                     firebaseLoggedIn={firebaseLoggedIn}
-                                />
+                                    firebaseSyncing={this.state.firebaseSyncing}
+                                >
                                 <AuthTabContainer
                                     l={l}
                                     player={player}
                                     firebaseLoggedIn={firebaseLoggedIn}
+                                    firebaseSyncing={this.state.firebaseSyncing}
                                     app={app}
                                 />
-                            </>
+                            </AppNavbar>
                         )}
                     />
 
                     <Route
                         path={"/offlinemode"}
                         render={prop => (
-                            <>
+                            
                                 <AppNavbar
                                     l={l}
                                     player={player}
                                     firebaseLoggedIn={firebaseLoggedIn}
-                                />
+                                    firebaseSyncing={this.state.firebaseSyncing}
+                                >
 
                                 <OfflineModeTabContainer l={l} />
-                            </>
+                                </AppNavbar>
                         )}
                     />
 
                     <Route
                         path={"/options"}
                         render={prop => (
-                            <>
+                            
                                 <AppNavbar
                                     l={l}
                                     player={player}
                                     firebaseLoggedIn={firebaseLoggedIn}
-                                />
+                                    firebaseSyncing={this.state.firebaseSyncing}
+                                >
 
-                                 <OptionsTabContainer
-                                            l={l}
-                                            player={player}
-                                            onNewPlayer={player =>
-                                                this.setState({ player })
-                                            }
-                                            db={db}
-                                    />
-                            </>
+                                <OptionsTabContainer
+                                    l={l}
+                                    player={player}
+                                    onNewPlayer={player =>
+                                        this.setState({ player })
+                                    }
+                                    db={db}
+                                />
+                            </AppNavbar>
                         )}
                     />
 
                     <QuestListRouter
-                                            l={l}
-                                            player={player}
-                                            index={index}
-                                            db={db}    
-                                            firebaseLoggedIn={firebaseLoggedIn}                                        
+                        l={l}
+                        player={player}
+                        index={index}
+                        db={db}
+                        firebaseLoggedIn={firebaseLoggedIn}
+                        firebaseSyncing={this.state.firebaseSyncing}
                     />
 
                     <QuestPlayRouter
                         l={l}
                         player={player}
                         index={index}
-                        db={db}    
-                        firebaseLoggedIn={firebaseLoggedIn}     
+                        db={db}
+                        firebaseLoggedIn={firebaseLoggedIn}
+                        firebaseSyncing={this.state.firebaseSyncing}
                     />
 
                     <Route
                         path="/"
                         exact
-                        render={() => <Redirect to="quests"/>}
+                        render={() => <Redirect to="quests" />}
                     />
-
-                   
                 </>
             );
         }
