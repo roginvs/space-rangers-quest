@@ -50,10 +50,21 @@ export class QuestListRouter extends React.Component<
         dropdownOpen: false
     };
     componentDidMount() {
-        this.props.db
-            .getOwnWonGames()
-            .then(passedQuests => this.setState({ passedQuests }))
-            .catch(e => undefined);
+        Promise.all(
+            this.props.index.quests.map(async quest => {
+                const passed = await this.props.db.isGamePassedLocal(quest.gameName);
+                return {
+                    passed,
+                    gameName: quest.gameName
+                }
+            })
+        ).then(data => {
+            const passedQuests: WonProofs = {};
+            data.forEach(x => {
+                passedQuests[x.gameName] = x.passed
+            });
+            this.setState({ passedQuests })
+        })
     }
     render() {
         const { l, firebaseLoggedIn, player, index } = this.props;
@@ -226,24 +237,13 @@ export class QuestListRouter extends React.Component<
                                                                     quest
                                                                         .gameName
                                                                 ];
-                                                            const lastStep = passed
-                                                             && passed.performedJumps
-                                                                ? passed.performedJumps
-                                                                      .slice(-1)
-                                                                      .shift()
-                                                                : undefined;
-                                                            if (!lastStep) {
-                                                                return null;
+                                                            if (typeof(passed) !== 'object' || Object.keys(passed).length < 1) {
+                                                                return
                                                             }
-
+                                                            console.info(quest.gameName, passed);
                                                             return (
                                                                 <span>
-                                                                    {l.passed}{" "}
-                                                                    {moment(
-                                                                        lastStep.date.toISOString()
-                                                                    ).format(
-                                                                        "lll"
-                                                                    )}
+                                                                    {l.passed}                                                            
                                                                 </span>
                                                             );
                                                         })()}

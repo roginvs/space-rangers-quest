@@ -3,7 +3,14 @@ import { Loader, DivFadeinCss, Tabs } from "./common";
 import { LangTexts } from "./lang";
 import { DB, WonProofs } from "./db";
 import { Player, Lang } from "../lib/qmplayer/player";
-import { GameState, initGame, performJump, Quest, getUIState, getAllImagesToPreload } from "../lib/qmplayer/funcs";
+import {
+    GameState,
+    initGame,
+    performJump,
+    Quest,
+    getUIState,
+    getAllImagesToPreload
+} from "../lib/qmplayer/funcs";
 import { JUMP_I_AGREE } from "../lib/qmplayer/defs";
 import { Index, Game } from "../packGameData";
 import { AppNavbar } from "./appNavbar";
@@ -130,12 +137,24 @@ class QuestPlay extends React.Component<
             this.loadComments();
         }
 
+        Promise.all(
+            this.props.index.quests.map(async quest => {
+                const passed = await this.props.db.isGamePassedLocal(quest.gameName);
+                return {
+                    passed,
+                    gameName: quest.gameName
+                }
+            })
+        ).then(data => {
+            const passedQuests: WonProofs = {};
+            data.forEach(x => {
+                passedQuests[x.gameName] = x.passed
+            });
+            this.setState({ passedQuests })
+        })
+        
         this.props.db
-            .getOwnWonGames()
-            .then(passedQuests => this.setState({ passedQuests }))
-            .catch(e => undefined);
-        this.props.db
-            .getSavedGame(this.props.gameName)
+            .getLocalSaving(this.props.gameName)
             .catch(e => undefined)
             .then(gameState => {
                 this.setState({ gameState, gameStateLoaded: true });
@@ -147,7 +166,7 @@ class QuestPlay extends React.Component<
                     this.props.onPlayChange(false);
                 }
             });
-        this.props.db.getPrivate("noMusic").then(noMusic => {
+        this.props.db.getConfigLocal("noMusic").then(noMusic => {
             this.setState({
                 noMusic: !!noMusic
             });
@@ -222,22 +241,13 @@ class QuestPlay extends React.Component<
                                         const passed =
                                             passedQuests[game.gameName];
 
-                                        const lastStep =
-                                            passed && passed.performedJumps
-                                                ? passed.performedJumps
-                                                      .slice(-1)
-                                                      .shift()
-                                                : undefined;
-                                        if (!lastStep) {
-                                            return null;
-                                        }
-
+                                            if (typeof(passed) !== 'object' || Object.keys(passed).length < 1) {
+                                                return
+                                            }
+                                        
                                         return (
                                             <span>
-                                                {l.passed}{" "}
-                                                {moment(
-                                                    lastStep.date.toISOString()
-                                                ).format("lll")}
+                                                {l.passed}                                        
                                             </span>
                                         );
                                     })()}
@@ -295,7 +305,7 @@ class QuestPlay extends React.Component<
                                                     this.setState({
                                                         gameState: state
                                                     });
-                                                    await db.setSavedGame(
+                                                    await db.saveGame(
                                                         game.gameName,
                                                         state
                                                     );
@@ -328,10 +338,9 @@ class QuestPlay extends React.Component<
                                                 }
                                             )}
                                             onClick={async () => {
-                                                if (!this.state
-                                                    .gameState) {
-                                                        return
-                                                    }
+                                                if (!this.state.gameState) {
+                                                    return;
+                                                }
                                                 this.setState({
                                                     startButtonsAreBusy: true
                                                 });
@@ -350,7 +359,7 @@ class QuestPlay extends React.Component<
                                             }}
                                         >
                                             {!this.state.gameStateLoaded ? (
-                                                    <i className="fa fa-spin fa-spinner" />
+                                                <i className="fa fa-spin fa-spinner" />
                                             ) : this.state.gameState ? (
                                                 <>
                                                     <i className="fa fa-save" />{" "}
@@ -376,7 +385,7 @@ class QuestPlay extends React.Component<
                 </>
             );
         }
-        const quest = this.state.quest;        
+        const quest = this.state.quest;
         if (!quest) {
             return (
                 <>
@@ -388,140 +397,130 @@ class QuestPlay extends React.Component<
         const gameState = this.state.gameState;
         if (!gameState) {
             // unknown state
-            return <>
-                {audioTag}
-                <Redirect to={`..`}/>
-            </>
-        }        
+            return (
+                <>
+                    {audioTag}
+                    <Redirect to={`..`} />
+                </>
+            );
+        }
 
         const st = getUIState(quest, gameState, player);
         const image = st.imageFileName ? (
             <DivFadeinCss key={st.imageFileName}>
-            <img
-                className="game-img"
-                src={DATA_DIR + "img/" + st.imageFileName}
-            />
+                <img
+                    className="game-img"
+                    src={DATA_DIR + "img/" + st.imageFileName}
+                />
             </DivFadeinCss>
         ) : null;
-        
 
-        const imagesPreloaded = getAllImagesToPreload(quest, game.images)
-        .map(x => {
-            return (
-                <img
-                    key={x}
-                    src={DATA_DIR + "img/" + x}
-                    style={{ display: "none" }}
-                />
-            );
-        });
-
-        const locationText = <DivFadeinCss
-        key={
-            st.text +
-            "#" +
-            gameState.performedJumps.length
-        }>
-
-        {replaceTags(
-            st.text
-        )}
-        </DivFadeinCss>;
-
-const choices = <DivFadeinCss key={    
-    "#" +
-    gameState.performedJumps.length
-}>
-<ul
-
->
-{st.choices.map(choice => {
-        return (
-            <li key={choice.jumpId} className="mb-4">
-                <a
-                    href={`#/quests/${game.gameName}/play/gameStep${choice.jumpId}`}
-                    onClick={e => {
-                        e.preventDefault();
-
-                        this.playAudioIfEnabled(false);
-                        
-
-                        const newState = performJump(choice.jumpId,
-                        quest, gameState, game.images
-                        );
-                        db.setSavedGame(game.gameName, newState);
-                        
-                        this.setState({
-                            gameState: newState                                                      
-                        })
-                        // todo: scroll
-                    }}
-                    className={
-                        "game " + (choice.active ? "" : "disabled")
-                    }
-                    >{replaceTags(
-                        choice.text
-                    )}</a>                    
-            </li>
+        const imagesPreloaded = getAllImagesToPreload(quest, game.images).map(
+            x => {
+                return (
+                    <img
+                        key={x}
+                        src={DATA_DIR + "img/" + x}
+                        style={{ display: "none" }}
+                    />
+                );
+            }
         );
-    })
-}
-</ul>
-</DivFadeinCss>
 
-const params = <>{([] as string[])
-.concat(
-    ...st.paramsState.map(x =>
-        x.split("<br>")
-    )
-)
-.map((paramText, index) => {
-    return (
-        <DivFadeinCss
-            key={
-                paramText +
-                "###" +
-                index
-            }>
-            <div
-            style={{
-                whiteSpace: "pre-wrap",
-                textAlign: "center",
-                minHeight: '1em'
-            }}
-            >
-            {replaceTags(
-                paramText
-            )}</div>
-            </DivFadeinCss>                                                    
-    );
-})}</>
+        const locationText = (
+            <DivFadeinCss key={st.text + "#" + gameState.performedJumps.length}>
+                {replaceTags(st.text)}
+            </DivFadeinCss>
+        );
+
+        const choices = (
+            <DivFadeinCss key={"#" + gameState.performedJumps.length}>
+                <ul>
+                    {st.choices.map(choice => {
+                        return (
+                            <li key={choice.jumpId} className="mb-4">
+                                <a
+                                    href={`#/quests/${
+                                        game.gameName
+                                    }/play/gameStep${choice.jumpId}`}
+                                    onClick={e => {
+                                        e.preventDefault();
+
+                                        this.playAudioIfEnabled(false);
+
+                                        const newState = performJump(
+                                            choice.jumpId,
+                                            quest,
+                                            gameState,
+                                            game.images
+                                        );
+                                        db.saveGame(
+                                            game.gameName,
+                                            newState
+                                        );
+
+                                        this.setState({
+                                            gameState: newState
+                                        });
+                                        // todo: scroll
+                                    }}
+                                    className={
+                                        "game " +
+                                        (choice.active ? "" : "disabled")
+                                    }
+                                >
+                                    {replaceTags(choice.text)}
+                                </a>
+                            </li>
+                        );
+                    })}
+                </ul>
+            </DivFadeinCss>
+        );
+
+        const params = (
+            <>
+                {([] as string[])
+                    .concat(...st.paramsState.map(x => x.split("<br>")))
+                    .map((paramText, index) => {
+                        return (
+                            <DivFadeinCss key={paramText + "###" + index}>
+                                <div
+                                    style={{
+                                        whiteSpace: "pre-wrap",
+                                        textAlign: "center",
+                                        minHeight: "1em"
+                                    }}
+                                >
+                                    {replaceTags(paramText)}
+                                </div>
+                            </DivFadeinCss>
+                        );
+                    })}
+            </>
+        );
 
         return (
             <>
                 {audioTag}
 
-                        <div className="">
-                            <div className="row mb-1">
-                                <div className="col-12 col-sm-8 mb-3">
-                                    
-                                        {locationText}
-                                </div>
-                                <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
-                                    {imagesPreloaded}                                    
-                                        {image}                                    
-                                </div>
-                            </div>
-                            <div className="row">
-                                <div className="col-12 col-sm-8 mb-3">
-                                {choices}
-                                </div>
-<div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
-{params}
-                                </div>
-                            </div>
+                <div className="">
+                    <div className="row mb-1">
+                        <div className="col-12 col-sm-8 mb-3">
+                            {locationText}
+                        </div>
+                        <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
+                            {imagesPreloaded}
+                            {image}
+                        </div>
                     </div>
-
+                    <div className="row">
+                        <div className="col-12 col-sm-8 mb-3">{choices}</div>
+                        <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
+                            {params}
+                        </div>
+                    </div>
+                </div>
             </>
         );
     }

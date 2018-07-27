@@ -81,7 +81,7 @@ export class OptionsTabContainer extends React.Component<
     });
     (async () => {
         const db = this.props.db;
-        await db.setPrivate("player", {
+        await db.setConfigBoth("player", {
             Ranger: this.state.Ranger,
             Money: this.props.player.Money,
             Player: this.state.Ranger,
@@ -92,7 +92,7 @@ export class OptionsTabContainer extends React.Component<
             lang: this.state.lang,
         });
         await db.setOwnHighscoresName(this.state.Ranger);
-        const player = await db.getPrivate("player");
+        const player = await db.getConfigLocal("player");
         if (!player) {
             throw new Error('Where is the player?')
         }

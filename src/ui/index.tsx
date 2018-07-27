@@ -82,6 +82,9 @@ class MainLoader extends React.Component<
                 this.setState({
                     firebaseLoggedIn: user ? user : null
                 });
+                if (this.state.db) {
+                    this.state.db.syncWithFirebase().then(() => this.loadPlayer())
+                }
             })
         );
     } catch (e) {
@@ -94,10 +97,13 @@ class MainLoader extends React.Component<
                     {
                         db
                     },
-                    this.loadPlayer
+                    () => {
+                        db.syncWithFirebase().then(() => this.loadPlayer())
+                        .catch(e => this.setState({error:e}))
+                    }
                 );
 
-                db.getPrivate("lastPlayedGame")
+                db.getConfigLocal("lastPlayedGame")
                     .then(lastPlayedGame => {
                         if (lastPlayedGame) {
                             this.props.history.push(`/games/${lastPlayedGame}`);
@@ -129,7 +135,7 @@ class MainLoader extends React.Component<
         if (!db) {
             return;
         }
-        db.getPrivate("player")
+        db.getConfigLocal("player")
             .then(player => {
                 if (player) {
                     this.setState({
@@ -138,14 +144,18 @@ class MainLoader extends React.Component<
                 } else {
                     const browserLang = guessBrowserLang();
                     console.info(`Welcome, a new user!`);
-                    db.setPrivate(
-                        "player",
-                        browserLang === "rus"
-                            ? DEFAULT_RUS_PLAYER
-                            : browserLang === "eng"
-                                ? DEFAULT_ENG_PLAYER
-                                : assertNever(browserLang)
-                    ).catch(e => this.setState({ error: e }));
+                    const newPlayer =  browserLang === "rus"
+                        ? DEFAULT_RUS_PLAYER
+                        : browserLang === "eng"
+                            ? DEFAULT_ENG_PLAYER
+                            : assertNever(browserLang);
+                    db.setConfigBoth(
+                        "player", newPlayer
+                    )                    
+                    .catch(e => this.setState({ error: e }));
+                    this.setState({
+                        player: newPlayer
+                    })
                 }
             })
             .catch(e => {
