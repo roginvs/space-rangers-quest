@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Loader, DivFadeinCss, Tabs } from "./common";
+import { Loader, DivFadeinCss } from "./common";
 import { LangTexts } from "./lang";
 import { DB, WonProofs } from "./db";
 import { Player, Lang } from "../lib/qmplayer/player";

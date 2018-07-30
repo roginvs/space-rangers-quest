@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Loader, DivFadeinCss, Tabs } from "./common";
+import { Loader, DivFadeinCss, Redirect } from "./common";
 import { LangTexts } from "./lang";
 import { DB, WonProofs, GameWonProofs } from "./db";
 import { Player, Lang } from "../lib/qmplayer/player";
@@ -37,16 +37,6 @@ import { observer } from 'mobx-react';
 import { Store } from './store';
 
 
-class Redirect extends React.Component<{
-    to: string
-},{}> {
-    componentDidMount() {
-        location.hash = this.props.to;
-    }
-    render () {
-        return null
-    }
-}
 
 interface QuestInfoState {
   passedQuest?: GameWonProofs | null;

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Loader, DivFadeinCss, Tabs } from "./common";
+import { Loader, DivFadeinCss } from "./common";
 import { LangTexts } from "./lang";
 import { DB, WonProofs, GameWonProofs } from "./db";
 import { Player, Lang } from "../lib/qmplayer/player";
@@ -22,13 +22,6 @@ import {
     DropdownToggle,
     DropdownItem
 } from "reactstrap";
-import {
-    HashRouter,
-    Switch,
-    Route,
-    Redirect,
-    RouteComponentProps
-} from "react-router-dom";
 import moment from "moment";
 import { replaceTags } from "./questReplaceTags";
 import { substitute } from "../lib/substitution";

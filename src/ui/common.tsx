@@ -65,7 +65,19 @@ export class Loader extends React.Component<{
 }
 
 
+export class Redirect extends React.Component<{
+    to: string
+},{}> {
+    componentDidMount() {
+        location.hash = this.props.to;
+    }
+    render () {
+        return null
+    }
+}
 
+
+/*
 export class Tabs extends React.Component<
     {
         tabs: JSX.Element[];
@@ -139,3 +151,5 @@ export class Tabs extends React.Component<
         );
     }
 }
+
+*/

@@ -15,13 +15,6 @@ import {
 import { initGame } from "../lib/qmplayer";
 import { getUIState, performJump } from "../lib/qmplayer/funcs";
 import { Loader, DivFadeinCss } from "./common";
-import {
-    HashRouter,
-    Switch,
-    Route,
-    Redirect,
-    RouteComponentProps
-} from "react-router-dom";
 import { observer } from "mobx-react";
 import {
     Navbar,
