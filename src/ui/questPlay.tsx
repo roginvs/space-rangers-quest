@@ -33,24 +33,25 @@ import { DATA_DIR } from "./consts";
 import { parse } from "../lib/qmreader";
 import * as pako from "pako";
 
-
-import { observer } from 'mobx-react';
-import { Store } from './store';
-
+import { observer } from "mobx-react";
+import { Store } from "./store";
 
 interface QuestPlayState {
-    quest?: Quest,    
-    game?: Game,
-    gameState?: GameState,
+    quest?: Quest;
+    game?: Game;
+    gameState?: GameState;
     playingMobileView: boolean;
-    noMusic?: boolean
+    noMusic?: boolean;
 }
 
 @observer
-export class QuestPlay extends React.Component<{
-    store: Store,
-    gameName: string,
-},QuestPlayState> {
+export class QuestPlay extends React.Component<
+    {
+        store: Store;
+        gameName: string;
+    },
+    QuestPlayState
+> {
     state: QuestPlayState = {
         playingMobileView: this.isScreenWidthMobile()
     };
@@ -66,36 +67,49 @@ export class QuestPlay extends React.Component<{
         window.removeEventListener("resize", this.onResize);
     }
 
-
     async loadData() {
-        const game = this.props.store.index.quests.find(x => x.gameName === this.props.gameName);
+        const game = this.props.store.index.quests.find(
+            x => x.gameName === this.props.gameName
+        );
         if (!game) {
-            location.href = '#';
-            return
+            location.href = "#";
+            return;
         }
         this.setState({
             game
-        })
-        const noMusic = await await this.props.store.db.getConfigLocal('noMusic') || undefined;
+        });
+        const noMusic =
+            (await await this.props.store.db.getConfigLocal("noMusic")) ||
+            undefined;
         this.setState({
             noMusic
-        })
-        const quest= await fetch(DATA_DIR + game.filename)
+        });
+        const quest = await fetch(DATA_DIR + game.filename)
             .then(res => res.arrayBuffer())
             .then(arrayBuf => {
                 const quest = parse(
                     new Buffer(pako.ungzip(new Buffer(arrayBuf)))
-                ) as Quest;                
+                ) as Quest;
                 return quest;
             });
-        let gameState = await this.props.store.db.getLocalSaving(this.props.gameName);
-        if (! gameState) {
-            gameState = initGame(quest, Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2));
+        let gameState = await this.props.store.db.getLocalSaving(
+            this.props.gameName
+        );
+        if (!gameState) {
+            gameState = initGame(
+                quest,
+                Math.random()
+                    .toString(36)
+                    .slice(2) +
+                    Math.random()
+                        .toString(36)
+                        .slice(2)
+            );
         }
         this.setState({
             quest,
             gameState
-        })
+        });
     }
 
     onResize = () => {
@@ -105,16 +119,16 @@ export class QuestPlay extends React.Component<{
                 playingMobileView: isScreenWidthMobile
             });
         }
-    }
+    };
     render() {
-        const { l , player} = this.props.store;
+        const { l, player } = this.props.store;
         const quest = this.state.quest;
-        const gameState = this.state.gameState;        
+        const gameState = this.state.gameState;
         const game = this.state.game;
-        if (!quest || ! gameState || ! game) {
-            return <Loader text={l.loadingQuest}/>
+        if (!quest || !gameState || !game) {
+            return <Loader text={l.loadingQuest} />;
         }
-        
+
         const st = getUIState(quest, gameState, player);
         const image = st.imageFileName ? (
             <DivFadeinCss key={st.imageFileName}>
@@ -165,10 +179,23 @@ export class QuestPlay extends React.Component<{
                                             game.images
                                         );
 
-                                        this.props.store.db.saveGame(this.props.gameName, newState);
-                                        if (getUIState(quest, newState, player).gameState === "win") {
-                                            this.props.store.db.setGamePassing(this.props.gameName, getGameLog(newState));                                            
-                                        }                                        
+                                        this.props.store.db.saveGame(
+                                            this.props.gameName,
+                                            newState
+                                        );
+                                        if (
+                                            getUIState(quest, newState, player)
+                                                .gameState === "win"
+                                        ) {
+                                            this.props.store.db
+                                                .setGamePassing(
+                                                    this.props.gameName,
+                                                    getGameLog(newState)
+                                                )
+                                                .then(() =>
+                                                    this.props.store.loadWinProofsFromLocal()
+                                                );
+                                        }
 
                                         this.setState({
                                             gameState: newState
@@ -212,61 +239,56 @@ export class QuestPlay extends React.Component<{
         );
 
         return (
-        
-                <div className="">
-                    {!this.state.noMusic ? <audio
-                autoPlay={false}
-                controls={false}
-                onEnded={e => this.playAudio(true)}
-                ref={e => {
-                    this.audio = e;
-                    this.playAudio(false);
-                }}
-            /> : null}
+            <div className="">
+                {!this.state.noMusic ? (
+                    <audio
+                        autoPlay={false}
+                        controls={false}
+                        onEnded={e => this.playAudio(true)}
+                        ref={e => {
+                            this.audio = e;
+                            this.playAudio(false);
+                        }}
+                    />
+                ) : null}
 
-                    <div className="row mb-1">
-                        <div className="col-12 col-sm-8 mb-3">
-                            {locationText}
-                        </div>
-                        <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
-                            {imagesPreloaded}
-                            {image}
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-12 col-sm-8 mb-3">{choices}</div>
-                        <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
-                            {params}
-                        </div>
+                <div className="row mb-1">
+                    <div className="col-12 col-sm-8 mb-3">{locationText}</div>
+                    <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
+                        {imagesPreloaded}
+                        {image}
                     </div>
                 </div>
-            
+                <div className="row">
+                    <div className="col-12 col-sm-8 mb-3">{choices}</div>
+                    <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
+                        {params}
+                    </div>
+                </div>
+            </div>
         );
     }
 
     private audio: HTMLAudioElement | null = null;
 
     private playAudio(restart: boolean) {
-        if (this.audio) {            
-                if (!this.audio.src || restart) {
-                    const musicList = this.props.store.index.dir.music.files.map(
-                        x => x.path
-                    );
-                    const i = Math.floor(Math.random() * musicList.length);
-                    this.audio.src = DATA_DIR + musicList[i];
-                }
-                
-                    this.audio.play().catch(e => {
-                        console.warn(
-                            `Error with music src='${
-                                this.audio ? this.audio.src : "no audio tag"
-                            }'`,
-                            e
-                        );
-                    });
-                
+        if (this.audio) {
+            if (!this.audio.src || restart) {
+                const musicList = this.props.store.index.dir.music.files.map(
+                    x => x.path
+                );
+                const i = Math.floor(Math.random() * musicList.length);
+                this.audio.src = DATA_DIR + musicList[i];
             }
-        
-    }
 
+            this.audio.play().catch(e => {
+                console.warn(
+                    `Error with music src='${
+                        this.audio ? this.audio.src : "no audio tag"
+                    }'`,
+                    e
+                );
+            });
+        }
+    }
 }

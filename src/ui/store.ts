@@ -1,6 +1,6 @@
 import { observable, computed, action } from 'mobx';
 import { Index } from '../packGameData';
-import { DB } from './db';
+import { DB , GameWonProofs} from './db';
 import {
     Player
 } from "../lib/qmplayer/player";
@@ -51,6 +51,18 @@ export class Store {
         return getLang(this.player.lang);
     }
 
+    @observable
+    wonProofs: Map<string, GameWonProofs | undefined> | undefined;
+
+    async loadWinProofsFromLocal() {
+        const m = new Map<string, GameWonProofs | undefined>();
+        await Promise.all(
+            this.index.quests.map(async quest => {
+                const passed = await this.db.isGamePassedLocal(quest.gameName);
+                m.set(quest.gameName, passed);
+            }));  
+        this.wonProofs = m;              
+    }
 
     async syncWithFirebase() {
         if (this.firebaseSyncing) { // TODO: retry sync when first finished
@@ -64,6 +76,8 @@ export class Store {
         if (player) {
             this.player = player
         }
+
+        await this.loadWinProofsFromLocal();
 
         this.firebaseSyncing = false;
     }

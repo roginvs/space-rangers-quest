@@ -3,13 +3,6 @@ import * as React from "react";
 
 import { LangTexts } from "./lang";
 import {
-    HashRouter,
-    Switch,
-    Route,
-    Redirect,
-    RouteComponentProps
-} from "react-router-dom";
-import {
     Player,    
 } from "../lib/qmplayer/player";
 import {

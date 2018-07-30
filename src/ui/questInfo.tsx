@@ -38,8 +38,7 @@ import { Store } from './store';
 
 
 
-interface QuestInfoState {
-  passedQuest?: GameWonProofs | null;
+interface QuestInfoState {  
   lastSavedGameState?: GameState | null;
   error?: string | Error;
 }
@@ -53,13 +52,7 @@ export class QuestInfo extends React.Component<
     QuestInfoState
 > {
     state: QuestInfoState = {};
-    componentDidMount() {
-        this.props.store.db.isGamePassedLocal(this.props.gameName)
-        .then(x => x || null)
-        .catch(e => null)
-        .then(passedQuest => this.setState({
-            passedQuest
-        }));
+    componentDidMount() {        
         this.props.store.db
         .getLocalSaving(this.props.gameName)
         .then(x => x || null)
@@ -78,7 +71,8 @@ export class QuestInfo extends React.Component<
         if (!game) {
             return <Redirect to="#/" />;
         }         
-        const passedQuest = this.state.passedQuest;   
+        const passedQuest = this.props.store.wonProofs ? this.props.store.wonProofs.get(gameName) : null;
+        
         return <AppNavbar
        store={this.props.store}
     >        
@@ -186,7 +180,7 @@ export class QuestInfo extends React.Component<
                                 this.props.gameName,
                                 null
                             );
-                            location.hash = `quests/${gameName}/play`;                            
+                            location.hash = `/quests/${gameName}/play`;                            
                         }}
                     >
                         <i className="fa fa-rocket" />{" "}
@@ -205,7 +199,7 @@ export class QuestInfo extends React.Component<
                             }
                         )}
                         onClick={async () => {
-                            location.hash = `quests/${gameName}/play`;                            
+                            location.hash = `/quests/${gameName}/play`;                            
                         }}
                     >
                         {this.state.lastSavedGameState === undefined ? (
