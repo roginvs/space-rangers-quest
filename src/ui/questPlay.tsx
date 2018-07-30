@@ -20,7 +20,8 @@ import {
     ButtonDropdown,
     DropdownMenu,
     DropdownToggle,
-    DropdownItem
+    DropdownItem,
+    Progress
 } from "reactstrap";
 import moment from "moment";
 import { replaceTags } from "./questReplaceTags";
@@ -40,6 +41,7 @@ interface QuestPlayState {
     quest?: Quest;
     game?: Game;
     gameState?: GameState;
+    questLoadProgress: number;
     playingMobileView: boolean;
     noMusic?: boolean;
 }
@@ -53,7 +55,8 @@ export class QuestPlay extends React.Component<
     QuestPlayState
 > {
     state: QuestPlayState = {
-        playingMobileView: this.isScreenWidthMobile()
+        playingMobileView: this.isScreenWidthMobile(),
+        questLoadProgress: 0
     };
     isScreenWidthMobile() {
         return window.innerWidth < 400;
@@ -84,14 +87,39 @@ export class QuestPlay extends React.Component<
         this.setState({
             noMusic
         });
-        const quest = await fetch(DATA_DIR + game.filename)
-            .then(res => res.arrayBuffer())
-            .then(arrayBuf => {
-                const quest = parse(
-                    new Buffer(pako.ungzip(new Buffer(arrayBuf)))
-                ) as Quest;
-                return quest;
-            });
+
+        const questArrayBuffer = await new Promise<ArrayBuffer>(
+            (resolv, reject) => {
+                var xhr = new XMLHttpRequest();
+                const url = DATA_DIR + game.filename;
+                xhr.open("GET", url);
+
+                xhr.responseType = "arraybuffer";
+
+                xhr.onload = e => {
+                    if (xhr.status <= 299) {
+                        resolv(xhr.response);
+                    } else {
+                        reject(new Error(`Url ${url} ${xhr.status}`));
+                    }
+                };
+
+                xhr.onerror = e => {
+                    reject(new Error(e.message));
+                };
+
+                xhr.onprogress = e => {
+                    this.setState({
+                        questLoadProgress: e.loaded / e.total
+                    });
+                };
+                xhr.send();
+            }
+        );
+        const quest = parse(
+            new Buffer(pako.ungzip(new Buffer(questArrayBuffer)))
+        ) as Quest;
+
         let gameState = await this.props.store.db.getLocalSaving(
             this.props.gameName
         );
@@ -126,7 +154,15 @@ export class QuestPlay extends React.Component<
         const gameState = this.state.gameState;
         const game = this.state.game;
         if (!quest || !gameState || !game) {
-            return <Loader text={l.loadingQuest} />;
+            const percents = Math.round(this.state.questLoadProgress * 100);
+            return (
+                <div className="my-3 container">
+                    <div className="text-center">
+                        {l.loadingQuest} {percents}%
+                    </div>
+                    <Progress value={percents} />
+                </div>
+            );
         }
 
         const st = getUIState(quest, gameState, player);
