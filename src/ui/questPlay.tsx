@@ -59,7 +59,8 @@ export class QuestPlay extends React.Component<
         questLoadProgress: 0
     };
     isScreenWidthMobile() {
-        return window.innerWidth < 400;
+        // console.info(`windows innerWidth = ${window.innerWidth}`);
+        return window.innerWidth < 576; // 576px 768px
     }
 
     componentDidMount() {
@@ -169,7 +170,9 @@ export class QuestPlay extends React.Component<
         const image = st.imageFileName ? (
             <DivFadeinCss key={st.imageFileName}>
                 <img
-                    className="game-img"
+                    style={{
+                        width: "100%"
+                    }}
                     src={DATA_DIR + "img/" + st.imageFileName}
                 />
             </DivFadeinCss>
@@ -195,60 +198,58 @@ export class QuestPlay extends React.Component<
 
         const choices = (
             <DivFadeinCss key={"#" + gameState.performedJumps.length}>
-                <ul>
-                    {st.choices.map(choice => {
-                        return (
-                            <li key={choice.jumpId} className="mb-4">
-                                <a
-                                    href={`#/quests/${
-                                        game.gameName
-                                    }/play/gameStep${choice.jumpId}`}
-                                    onClick={e => {
-                                        e.preventDefault();
+                {st.choices.map(choice => {
+                    return (
+                        <div key={choice.jumpId} className="mb-4">
+                            <a
+                                href={`#/quests/${game.gameName}/play/gameStep${
+                                    choice.jumpId
+                                }`}
+                                onClick={e => {
+                                    e.preventDefault();
 
-                                        this.playAudio(false);
+                                    this.playAudio(false);
 
-                                        const newState = performJump(
-                                            choice.jumpId,
-                                            quest,
-                                            gameState,
-                                            game.images
-                                        );
+                                    const newState = performJump(
+                                        choice.jumpId,
+                                        quest,
+                                        gameState,
+                                        game.images
+                                    );
 
-                                        this.props.store.db.saveGame(
-                                            this.props.gameName,
-                                            newState
-                                        );
-                                        if (
-                                            getUIState(quest, newState, player)
-                                                .gameState === "win"
-                                        ) {
-                                            this.props.store.db
-                                                .setGamePassing(
-                                                    this.props.gameName,
-                                                    getGameLog(newState)
-                                                )
-                                                .then(() =>
-                                                    this.props.store.loadWinProofsFromLocal()
-                                                );
-                                        }
-
-                                        this.setState({
-                                            gameState: newState
-                                        });
-                                        // todo: scroll?
-                                    }}
-                                    className={
-                                        "game " +
-                                        (choice.active ? "" : "disabled")
+                                    this.props.store.db.saveGame(
+                                        this.props.gameName,
+                                        newState
+                                    );
+                                    if (
+                                        getUIState(quest, newState, player)
+                                            .gameState === "win"
+                                    ) {
+                                        this.props.store.db
+                                            .setGamePassing(
+                                                this.props.gameName,
+                                                getGameLog(newState)
+                                            )
+                                            .then(() =>
+                                                this.props.store.loadWinProofsFromLocal()
+                                            );
                                     }
-                                >
-                                    {replaceTags(choice.text)}
-                                </a>
-                            </li>
-                        );
-                    })}
-                </ul>
+
+                                    this.setState({
+                                        gameState: newState
+                                    });
+                                    // todo: scroll?
+                                }}
+                                className={
+                                    "game " + (choice.active ? "" : "disabled")
+                                }
+                            >
+                                <i className="fa fa-angle-double-right" />{" "}
+                                {replaceTags(choice.text)}
+                            </a>
+                        </div>
+                    );
+                })}
             </DivFadeinCss>
         );
 
@@ -274,6 +275,9 @@ export class QuestPlay extends React.Component<
             </>
         );
 
+        const isMobile = this.state.playingMobileView;
+        const br = "md";
+
         return (
             <div className="">
                 {!this.state.noMusic ? (
@@ -287,18 +291,84 @@ export class QuestPlay extends React.Component<
                         }}
                     />
                 ) : null}
-
-                <div className="row mb-1">
-                    <div className="col-12 col-sm-8 mb-3">{locationText}</div>
-                    <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
-                        {imagesPreloaded}
-                        {image}
-                    </div>
-                </div>
-                <div className="row">
-                    <div className="col-12 col-sm-8 mb-3">{choices}</div>
-                    <div className="col-12 col-sm-4 flex-first flex-sm-last mb-3">
-                        {params}
+                <div
+                    className=""
+                    style={{
+                        maxWidth: 992,
+                        marginLeft: "auto",
+                        marginRight: "auto",
+                    }}
+                >
+                    <div>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: isMobile
+                                    ? "column-reverse"
+                                    : "row"
+                            }}
+                        >
+                            <div
+                                style={{
+                                    flexBasis: isMobile
+                                    ? "100%"
+                                    : `${100 / 3 * 2}%`,
+                                flexGrow: 0,
+                                flexShrink: 0,
+                                    marginRight: isMobile ? 5 : 15,
+                                    marginLeft: isMobile ? 5 : 15,
+                                    marginTop: isMobile ? 5 : 15,
+                                    marginBottom: isMobile ? 5 : 15
+                                }}
+                            >
+                                {locationText}
+                            </div>
+                            <div
+                                style={{                                    
+                                    marginRight: isMobile ? 5 : 15,
+                                    marginLeft: isMobile ? 5 : 15,
+                                    marginTop: isMobile ? 5 : 15,
+                                    marginBottom: isMobile ? 5 : 15
+                                }}
+                            >
+                                {imagesPreloaded}
+                                {image}
+                            </div>
+                        </div>
+                        <div
+                            style={{
+                                display: "flex",
+                                flexDirection: isMobile
+                                    ? "column-reverse"
+                                    : "row"
+                            }}
+                        >
+                            <div
+                                style={{
+                                    flexBasis: isMobile
+                                    ? "100%"
+                                    : `${100 / 3 * 2}%`,
+                                flexGrow: 0,
+                                flexShrink: 0,
+                                    marginRight: isMobile ? 5 : 15,
+                                    marginLeft: isMobile ? 5 : 15,
+                                    marginTop: isMobile ? 5 : 15,
+                                    marginBottom: isMobile ? 5 : 15
+                                }}
+                            >
+                                {choices}
+                            </div>
+                            <div
+                                style={{                                
+                                    marginRight: isMobile ? 5 : 15,
+                                    marginLeft: isMobile ? 5 : 15,
+                                    marginTop: isMobile ? 5 : 15,
+                                    marginBottom: isMobile ? 5 : 15
+                                }}
+                            >
+                                {params}
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
