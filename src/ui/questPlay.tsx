@@ -41,30 +41,24 @@ import { parse } from "../lib/qmreader";
 import * as pako from "pako";
 
 
+import { observer } from 'mobx-react';
+import { Store } from './store';
 
 
-interface QuestPlayRealState {
+interface QuestPlayState {
     quest?: Quest,    
+    game?: Game,
     gameState?: GameState,
     playingMobileView: boolean;
+    noMusic?: boolean
 }
+
+@observer
 export class QuestPlay extends React.Component<{
-    l: LangTexts;
-    index: Index;
-    player: Player;
-    game: Game;
-
-    loadInitialState: () => Promise<GameState | undefined>,
-
-    onStateChange: (newGameState: GameState) => void,
-    onReturn: () => void;
-    onWin: (winningProof: GameLog) => void,
-
-    noMusic: boolean;
-    onNoMusicChange: (newNoMusic: boolean) => void,
-
-},QuestPlayRealState> {
-    state: QuestPlayRealState = {
+    store: Store,
+    gameName: string,
+},QuestPlayState> {
+    state: QuestPlayState = {
         playingMobileView: this.isScreenWidthMobile()
     };
     isScreenWidthMobile() {
@@ -81,7 +75,19 @@ export class QuestPlay extends React.Component<{
 
 
     async loadData() {
-        const quest= await fetch(DATA_DIR + this.props.game.filename)
+        const game = this.props.store.index.quests.find(x => x.gameName === this.props.gameName);
+        if (!game) {
+            location.href = '#';
+            return
+        }
+        this.setState({
+            game
+        })
+        const noMusic = await await this.props.store.db.getConfigLocal('noMusic') || undefined;
+        this.setState({
+            noMusic
+        })
+        const quest= await fetch(DATA_DIR + game.filename)
             .then(res => res.arrayBuffer())
             .then(arrayBuf => {
                 const quest = parse(
@@ -89,8 +95,10 @@ export class QuestPlay extends React.Component<{
                 ) as Quest;                
                 return quest;
             });
-        const gameState = (await this.props.loadInitialState()) ||
-            initGame(quest, Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2));
+        let gameState = await this.props.store.db.getLocalSaving(this.props.gameName);
+        if (! gameState) {
+            gameState = initGame(quest, Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2));
+        }
         this.setState({
             quest,
             gameState
@@ -106,15 +114,14 @@ export class QuestPlay extends React.Component<{
         }
     }
     render() {
-
+        const { l , player} = this.props.store;
         const quest = this.state.quest;
-        const gameState = this.state.gameState;
-        const player = this.props.player;
-        const l = this.props.l;
-        const game = this.props.game;
-        if (!quest || ! gameState) {
+        const gameState = this.state.gameState;        
+        const game = this.state.game;
+        if (!quest || ! gameState || ! game) {
             return <Loader text={l.loadingQuest}/>
         }
+        
         const st = getUIState(quest, gameState, player);
         const image = st.imageFileName ? (
             <DivFadeinCss key={st.imageFileName}>
@@ -164,16 +171,16 @@ export class QuestPlay extends React.Component<{
                                             gameState,
                                             game.images
                                         );
-                                        this.props.onStateChange(newState);
+
+                                        this.props.store.db.saveGame(this.props.gameName, newState);
                                         if (getUIState(quest, newState, player).gameState === "win") {
-                                            this.props.onWin(getGameLog(newState))
-                                        }
-                                        
+                                            this.props.store.db.setGamePassing(this.props.gameName, getGameLog(newState));                                            
+                                        }                                        
 
                                         this.setState({
                                             gameState: newState
                                         });
-                                        // todo: scroll
+                                        // todo: scroll?
                                     }}
                                     className={
                                         "game " +
@@ -214,7 +221,7 @@ export class QuestPlay extends React.Component<{
         return (
         
                 <div className="">
-                    {!this.props.noMusic ? <audio
+                    {!this.state.noMusic ? <audio
                 autoPlay={false}
                 controls={false}
                 onEnded={e => this.playAudio(true)}
@@ -249,7 +256,7 @@ export class QuestPlay extends React.Component<{
     private playAudio(restart: boolean) {
         if (this.audio) {            
                 if (!this.audio.src || restart) {
-                    const musicList = this.props.index.dir.music.files.map(
+                    const musicList = this.props.store.index.dir.music.files.map(
                         x => x.path
                     );
                     const i = Math.floor(Math.random() * musicList.length);

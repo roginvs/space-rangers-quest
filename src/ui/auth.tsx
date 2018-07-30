@@ -26,17 +26,16 @@ import { AppNavbar } from "./appNavbar";
 import { Loader, DivFadeinCss } from "./common";
 import { LoginTabContainer } from "./login";
 import { ProfileTabContainer } from "./profile";
+import { observer } from 'mobx-react';
+import { Store } from './store';
 
+@observer
 export class AuthTabContainer extends React.Component<{
-    l: LangTexts,    
-    player: Player;
-    firebaseLoggedIn: firebase.User | null | undefined,
-    firebaseSyncing: boolean | undefined;
-    app: firebase.app.App;
+    store: Store
 },{}> {
     
     render() {
-        const {l, firebaseLoggedIn, app} = this.props;
+        const {l, firebaseLoggedIn, app} = this.props.store;
         return firebaseLoggedIn === undefined ? (            
                                                 <Loader
                                                     text={l.waitForFirebase}
@@ -45,7 +44,7 @@ export class AuthTabContainer extends React.Component<{
                                                 <ProfileTabContainer
                                                     l={l}
                                                     user={firebaseLoggedIn}
-                                                    firebaseSyncing={this.props.firebaseSyncing}
+                                                    firebaseSyncing={this.props.store.firebaseSyncing}
                                                     app={app}
                                                 />
                                             ) : (

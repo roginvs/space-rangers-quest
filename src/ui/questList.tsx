@@ -10,13 +10,9 @@ import {
     DropdownToggle,
     DropdownItem
 } from "reactstrap";
-import {
-    HashRouter,
-    Switch,
-    Route,
-    Redirect,
-    RouteComponentProps
-} from "react-router-dom";
+import { observer } from 'mobx-react';
+import { Store } from './store';
+
 import { AppNavbar } from "./appNavbar";
 import { substitute } from "../lib/substitution";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
@@ -34,14 +30,10 @@ interface QuestListState {
 const ALL = "all";
 const OWN = "own";
 
-export class QuestListRouter extends React.Component<
+@observer
+export class QuestList extends React.Component<
     {
-        l: LangTexts;
-        index: Index;
-        player: Player;
-        db: DB;
-        firebaseLoggedIn: firebase.User | null | undefined;
-        firebaseSyncing: boolean | undefined;
+        store: Store
     },
     QuestListState
 > {
@@ -52,8 +44,8 @@ export class QuestListRouter extends React.Component<
     };
     componentDidMount() {
         Promise.all(
-            this.props.index.quests.map(async quest => {
-                const passed = await this.props.db.isGamePassedLocal(quest.gameName);
+            this.props.store.index.quests.map(async quest => {
+                const passed = await this.props.store.db.isGamePassedLocal(quest.gameName);
                 return {
                     passed,
                     gameName: quest.gameName
@@ -68,11 +60,11 @@ export class QuestListRouter extends React.Component<
         })
     }
     render() {
-        const { l, firebaseLoggedIn, player, index } = this.props;
+        const { l, firebaseLoggedIn, player, index } = this.props.store;
         const passedQuests = this.state.passedQuests;
 
         const origins = index.quests
-            .filter(x => x.lang === this.props.player.lang)
+            .filter(x => x.lang === player.lang)
             .map(x => x.questOrigin)
             .reduce(
                 (acc, d) => (acc.indexOf(d) > -1 ? acc : acc.concat(d)),
@@ -119,18 +111,8 @@ export class QuestListRouter extends React.Component<
                         : true
             );
 
-        return (
-            <Route
-                exact
-                path={"/quests/"}
-                render={prop => {
-                    return (
-             
-                            <AppNavbar
-                                l={l}
-                                player={player}
-                                firebaseLoggedIn={firebaseLoggedIn}
-                                firebaseSyncing={this.props.firebaseSyncing}
+        return              <AppNavbar
+               store={this.props.store}
                             >
                             <DivFadeinCss
                                 key="quest list"
@@ -269,10 +251,6 @@ export class QuestListRouter extends React.Component<
                                     </div>
                                 )}
                             </DivFadeinCss>
-                            </AppNavbar>
-                    );
-                }}
-            />
-        );
+                            </AppNavbar>                                
     }
 }

@@ -22,6 +22,7 @@ import {
     Redirect,
     RouteComponentProps
 } from "react-router-dom";
+import { observer } from "mobx-react";
 import {
     Navbar,
     NavbarBrand,
@@ -38,10 +39,12 @@ import { assertNever } from "../lib/formula/calculator";
 
 import { OfflineModeTabContainer } from "./offlineMode";
 import { OptionsTabContainer } from "./options";
-import { QuestListRouter } from "./questList";
+import { QuestList } from "./questList";
 import { AppNavbar } from "./appNavbar";
 import { AuthTabContainer } from "./auth";
-import { QuestInfoRouter } from "./questInfo";
+import { QuestInfo } from "./questInfo";
+import { Store } from "./store";
+import { QuestPlay } from "./questPlay";
 
 console.info("starting");
 
@@ -57,6 +60,7 @@ const config = {
 const app = firebase.initializeApp(config);
 //const app = firebase.initializeApp({} as typeof config);
 
+/*
 interface MainLoaderState {
     player?: Player;
     db?: DB;
@@ -68,7 +72,7 @@ interface MainLoaderState {
     firebaseSyncing?: boolean;
 }
 class MainLoader extends React.Component<
-    RouteComponentProps<{}>,
+    {},
     MainLoaderState
 > {
     state: MainLoaderState = {};
@@ -285,15 +289,109 @@ class MainLoader extends React.Component<
         }
     }
 }
+*/
+
+interface MainLoaderState {
+    store?: Store;
+    error?: string;
+}
+
+@observer
+class MainLoader extends React.Component<{}, MainLoaderState> {
+    state: MainLoaderState = {};
+
+    componentDidMount() {
+        /*
+        app.auth().onAuthStateChanged(user => {
+        this.setState({
+            firebaseLoggedIn: user ? user : null
+        });
+        })
+        */
+
+        (async () => {
+            const db = await getDb(app);
+            const lastPlayedGame = await db.getConfigLocal("lastPlayedGame");
+            let player = await db.getConfigLocal("player");
+            if (!player) {
+                const browserLang = guessBrowserLang();
+                console.info(`Welcome, a new user!`);
+                player =
+                    browserLang === "rus"
+                        ? DEFAULT_RUS_PLAYER
+                        : browserLang === "eng"
+                            ? DEFAULT_ENG_PLAYER
+                            : assertNever(browserLang);
+                await db.setConfigBoth("player", player);
+            }
+            const index = await fetch(INDEX_JSON).then(x => x.json());
+            const store = new Store(index, app, db, player);
+            if (lastPlayedGame) {
+                location.hash = `/quests/${lastPlayedGame}`;
+            }
+            app.auth().onAuthStateChanged(user => {
+                store.firebaseLoggedIn = user;
+                if (user) {
+                    store.syncWithFirebase();
+                }
+            });
+            this.setState({
+                store
+            });
+        })().catch(e =>
+            this.setState({
+                error: e
+            })
+        );
+    }
+    render() {
+        if (this.state.error) {
+            return (
+                <div className="text-center p-3 text-danger">
+                    {this.state.error.toString()}
+                </div>
+            );
+        }
+        const store = this.state.store;
+        if (!store) {
+            return <Loader text="Loading" />;
+        }
+
+        const {tab0, tab1, tab2} = store.path;
+        if (tab0 === "auth") {
+            return (
+                <AppNavbar store={store}>
+                    <AuthTabContainer store={store} />
+                </AppNavbar>
+            );
+        } else if(tab0 === 'options') {
+            return <AppNavbar
+            store={store}
+            >
+
+        <OptionsTabContainer
+           store={store}
+        />
+    </AppNavbar>
+        } else if (tab0 === 'quests') {
+            if (!tab1) {
+                return <QuestList store={store}/>                
+            } else {
+                if (!tab2) {
+                    return <QuestInfo key={tab1} store={store} gameName={tab1}/>
+                } else {
+                    return <QuestPlay key={tab1} store={store} gameName={tab1}/>
+                }
+            }
+            // asdasd
+        }
+        return <div>TODO tab={store.path.tab0}</div>;
+    }
+}
 
 const root = document.getElementById("root");
 if (!root) {
     throw new Error("No root element!");
 }
 
-ReactDOM.render(
-    <HashRouter>
-        <Route path={"/"} render={prop => <MainLoader {...prop} />} />
-    </HashRouter>,
-    root
-);
+ReactDOM.render(<MainLoader />, root);

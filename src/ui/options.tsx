@@ -3,6 +3,10 @@ import { Loader, DivFadeinCss } from "./common";
 import { LangTexts } from "./lang";
 import { DB } from "./db";
 import { Player, Lang } from "../lib/qmplayer/player";
+import { observer } from 'mobx-react';
+import { Store } from './store';
+
+
 
 interface OptionsState {    
     Ranger: string;
@@ -15,21 +19,19 @@ interface OptionsState {
     busy: boolean;
 }
 
+@observer
 export class OptionsTabContainer extends React.Component<
     {
-        l: LangTexts;
-        db: DB;
-        player: Player,
-        onNewPlayer: (newPlayer: Player) => void,
+        store: Store
     },
     OptionsState
 > {
     state = {
-        ...this.props.player,
+        ...this.props.store.player,
         busy: false,
     }
     render() {
-        const l = this.props.l;
+        const l = this.props.store.l;
         if (this.state.busy) {
             return <Loader text={l.saving}/>
         }
@@ -80,10 +82,10 @@ export class OptionsTabContainer extends React.Component<
         busy: true
     });
     (async () => {
-        const db = this.props.db;
+        const db = this.props.store.db;
         await db.setConfigBoth("player", {
             Ranger: this.state.Ranger,
-            Money: this.props.player.Money,
+            Money: this.props.store.player.Money,
             Player: this.state.Ranger,
             FromPlanet: this.state.FromPlanet,
             FromStar: this.state.FromStar,
@@ -96,7 +98,7 @@ export class OptionsTabContainer extends React.Component<
         if (!player) {
             throw new Error('Where is the player?')
         }
-        this.props.onNewPlayer(player);
+        this.props.store.player = player;        
         this.setState({
             busy: false
         })

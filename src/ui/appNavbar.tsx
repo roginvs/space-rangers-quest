@@ -22,24 +22,21 @@ import {
     Container
 } from "reactstrap";
 
+import { observer } from 'mobx-react';
+import { Store } from './store';
+
 interface AppNavbarState {
     navbarIsOpen: boolean;
 }
+@observer
 export class AppNavbar extends React.Component<{
-    l: LangTexts,    
-    player: Player;
-    firebaseLoggedIn: firebase.User | null | undefined,
-    firebaseSyncing: boolean | undefined;
+    store: Store
 },AppNavbarState> {
     state: AppNavbarState = { navbarIsOpen: false}; // For mobile view    
     render() {
-        const {l, firebaseLoggedIn, player} = this.props;
-        return <Route
-                        path={"/:tab?"}
-                        render={prop => {
-                            const tab = prop.match.params.tab;
-                            return (
-                        <>            
+        const {l, firebaseLoggedIn, player} = this.props.store;
+        const tab0 = this.props.store.path.tab0;
+        return                        <>            
                                     <Navbar color="light" light expand="md" className="mb-3">
                                         <NavbarBrand href="#/">
                                             {l.hi} {player.Player}
@@ -60,7 +57,7 @@ export class AppNavbar extends React.Component<{
                                                 <NavItem>
                                                     <NavLink
                                                         active={
-                                                            tab === "quests"
+                                                            tab0 === "quests"
                                                         }
                                                         href="#/quests"
                                                     >
@@ -71,7 +68,7 @@ export class AppNavbar extends React.Component<{
                                                 <NavItem>
                                                     <NavLink
                                                         active={
-                                                            tab === "topplayers"
+                                                            tab0 === "topplayers"
                                                         }
                                                         href="#/topplayers"
                                                     >
@@ -83,7 +80,7 @@ export class AppNavbar extends React.Component<{
                                                     <NavLink
                                                         href="#/options"
                                                         active={
-                                                            tab === "options"
+                                                            tab0 === "options"
                                                         }
                                                     >
                                                         <i className="fa fa-cogs" />{" "}
@@ -94,7 +91,7 @@ export class AppNavbar extends React.Component<{
                                                     <NavLink
                                                         href="#/useown"
                                                         active={
-                                                            tab === "useown"
+                                                            tab0 === "useown"
                                                         }
                                                     >
                                                         <i className="fa fa-upload" />{" "}
@@ -105,7 +102,7 @@ export class AppNavbar extends React.Component<{
                                                     <NavLink
                                                         href="#/offlinemode"
                                                         active={
-                                                            tab ===
+                                                            tab0 ===
                                                             "offlinemode"
                                                         }
                                                     >
@@ -120,12 +117,12 @@ export class AppNavbar extends React.Component<{
                                                         <NavLink
                                                             href="#/auth"
                                                             active={
-                                                                tab === "auth"
+                                                                tab0 === "auth"
                                                             }
                                                         >
                                                             {firebaseLoggedIn ? (
                                                                 <>
-                                                                {this.props.firebaseSyncing?
+                                                                {this.props.store.firebaseSyncing?
                                                                 <i className="fa fa-spinner fa-spin"/> :
                                                                 <i className="fa fa-vcard" />}{" "}
                                                                     {l.profile}
@@ -146,6 +143,5 @@ export class AppNavbar extends React.Component<{
                                         {this.props.children}
                                         </Container>
                                     </>
-                            )}}/>
-                    }
-                                            }
+    }
+}
