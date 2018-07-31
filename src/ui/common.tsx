@@ -72,7 +72,7 @@ export class Redirect extends React.Component<{
         location.hash = this.props.to;
     }
     render () {
-        return null
+        return <Loader text={`Redirecting to ${this.props.to}`}/>
     }
 }
 

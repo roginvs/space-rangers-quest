@@ -14,7 +14,7 @@ import {
 } from "../lib/qmplayer/player";
 import { initGame } from "../lib/qmplayer";
 import { getUIState, performJump } from "../lib/qmplayer/funcs";
-import { Loader, DivFadeinCss } from "./common";
+import { Loader, DivFadeinCss, Redirect } from "./common";
 import { observer } from "mobx-react";
 import {
     Navbar,
@@ -350,30 +350,33 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
             return <Loader text="Loading" />;
         }
 
-        const {tab0, tab1, tab2} = store.path;
-        if (tab0 === "auth") {
+        const { tab0, tab1, tab2 } = store.path;
+        if (!tab0) {
+            return <Redirect to='#/quests'/>
+        } if (tab0 === "auth") {
             return (
                 <AppNavbar store={store}>
                     <AuthTabContainer store={store} />
                 </AppNavbar>
             );
-        } else if(tab0 === 'options') {
-            return <AppNavbar
-            store={store}
-            >
-
-        <OptionsTabContainer
-           store={store}
-        />
-    </AppNavbar>
-        } else if (tab0 === 'quests') {
+        } else if (tab0 === "options") {
+            return (
+                <AppNavbar store={store}>
+                    <OptionsTabContainer store={store} />
+                </AppNavbar>
+            );
+        } else if (tab0 === "quests") {
             if (!tab1) {
-                return <QuestList store={store}/>                
+                return <QuestList store={store} />;
             } else {
                 if (!tab2) {
-                    return <QuestInfo key={tab1} store={store} gameName={tab1}/>
+                    return (
+                        <QuestInfo key={tab1} store={store} gameName={tab1} />
+                    );
                 } else {
-                    return <QuestPlay key={tab1} store={store} gameName={tab1}/>
+                    return (
+                        <QuestPlay key={tab1} store={store} gameName={tab1} />
+                    );
                 }
             }
             // asdasd

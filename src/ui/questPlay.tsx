@@ -83,8 +83,8 @@ export class QuestPlay extends React.Component<
         const game = this.props.store.index.quests.find(
             x => x.gameName === this.props.gameName
         );
-        if (!game) {
-            location.href = "#";
+        if (!game) {            
+            location.hash = "#";
             return;
         }
         this.setState({

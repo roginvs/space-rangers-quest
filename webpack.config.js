@@ -2,9 +2,9 @@ const webpack = require('webpack');
 
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-// const WebpackVersionHashPlugin = require("webpack-version-hash-plugin");
 
 const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
+// const WebpackVersionHashPlugin = require("webpack-version-hash-plugin");
  
 
 const devServer /*: webpackDevServer.Configuration */ = {
@@ -15,7 +15,7 @@ const devServer /*: webpackDevServer.Configuration */ = {
 const config /*: webpack.Configuration */ = {
     entry: {
 	    index: './src/ui/index.tsx',
-	    'serviceWorker.beforeinjection': './src/ui/serviceWorker.beforeinjection.ts'
+	    serviceWorker: './src/ui/serviceWorker.ts'
     },
 
     output: {
@@ -42,11 +42,11 @@ const config /*: webpack.Configuration */ = {
         //}),
         new webpack.DefinePlugin({
             __VERSION__: JSON.stringify(new Date().toISOString()),
-        }),        
+        }),                              
         new ServiceWorkerWebpackPlugin({
-            entry: './src/ui/serviceWorker.beforeinjection.ts',
-            filename: 'serviceWorker.js',
-        }),        
+            entry: './src/ui/serviceWorker.ts',
+            filename: "serviceWorker.injected.js",
+        }),
     ],
 
     module: {
