@@ -48,6 +48,8 @@ interface QuestPlayState {
     noMusic?: boolean;
 
     reallyRestart?: boolean;
+
+    error?: Error,
 }
 
 const MOBILE_THRESHOLD = 576; // 576px 768px
@@ -55,18 +57,18 @@ const MOBILE_THRESHOLD = 576; // 576px 768px
 export class QuestPlay extends React.Component<
     {
         store: Store;
-        gameName: string;
+        gameName: string;        
     },
     QuestPlayState
 > {
     state: QuestPlayState = {
         width: window.innerWidth,
-        questLoadProgress: 0
+        questLoadProgress: 0,        
     };
 
     componentDidMount() {
         window.addEventListener("resize", this.onResize);
-        this.loadData();
+        this.loadData().catch(e => this.setState({error: e}));
     }
     componentWillUnmount() {
         window.removeEventListener("resize", this.onResize);
@@ -88,7 +90,7 @@ export class QuestPlay extends React.Component<
             game
         });
         const noMusic =
-            (await await this.props.store.db.getConfigLocal("noMusic")) ||
+            (await this.props.store.db.getConfigLocal("noMusic")) ||
             undefined;
         this.setState({
             noMusic
@@ -159,6 +161,19 @@ export class QuestPlay extends React.Component<
         const quest = this.state.quest;
         const gameState = this.state.gameState;
         const game = this.state.game;
+        if (this.state.error) {
+            return (
+                <div className="my-3 container">
+                    <div className="text-danger">
+                        {this.state.error.toString()}
+                    </div>
+                    <a href="#">{l.back}</a>
+                </div>
+            );
+        }
+        
+        const isMobile = this.state.width < MOBILE_THRESHOLD;
+
         if (!quest || !gameState || !game) {
             const percents = Math.round(this.state.questLoadProgress * 100);
             return (
@@ -196,13 +211,13 @@ export class QuestPlay extends React.Component<
         );
 
         const locationText = (
-            <DivFadeinCss key={st.text + "#" + gameState.performedJumps.length}>
+            <DivFadeinCss key={`${st.text}#${gameState.performedJumps.length}`}>
                 <QuestReplaceTags str={st.text} />
             </DivFadeinCss>
         );
 
         const choices = (
-            <DivFadeinCss key={"#" + gameState.performedJumps.length}>
+            <DivFadeinCss key={`#${gameState.performedJumps.length}`}>
                 {st.choices.map(choice => {
                     return (
                         <div key={choice.jumpId} className="mb-4">
@@ -223,7 +238,7 @@ export class QuestPlay extends React.Component<
                                     this.props.store.db.saveGame(
                                         this.props.gameName,
                                         newState
-                                    );
+                                    ).catch(e => console.warn(e))
                                     if (
                                         getUIState(quest, newState, player)
                                             .gameState === "win"
@@ -235,7 +250,7 @@ export class QuestPlay extends React.Component<
                                             )
                                             .then(() =>
                                                 this.props.store.loadWinProofsFromLocal()
-                                            );
+                                            ).catch(e => console.warn(e))
                                     }
 
                                     this.setState({
@@ -263,7 +278,7 @@ export class QuestPlay extends React.Component<
                     .concat(...st.paramsState.map(x => x.split("<br>")))
                     .map((paramText, index) => {
                         return (
-                            <DivFadeinCss key={paramText + "###" + index}>
+                            <DivFadeinCss key={`${paramText}###${index}`}>
                                 <div
                                     style={{
                                         whiteSpace: "pre-wrap",
@@ -278,8 +293,6 @@ export class QuestPlay extends React.Component<
                     })}
             </>
         );
-
-        const isMobile = this.state.width < MOBILE_THRESHOLD;
 
         const controlButtons = (
             <>
@@ -303,7 +316,7 @@ export class QuestPlay extends React.Component<
                                 this.props.store.db.setConfigBoth(
                                     "noMusic",
                                     !!this.state.noMusic
-                                );
+                                ).catch(e => console.warn(e))
                             }
                         );
                     }}
@@ -452,9 +465,9 @@ export class QuestPlay extends React.Component<
                             </div>
                             <div
                                 style={{
-                                    marginLeft: 'auto',
-                                    marginRight: 'auto',
-                                    width: this.state.width * 0.90,
+                                    marginLeft: "auto",
+                                    marginRight: "auto",
+                                    width: this.state.width * 0.9
                                 }}
                             >
                                 <div
@@ -465,9 +478,9 @@ export class QuestPlay extends React.Component<
                                 >
                                     <div
                                         style={{
-                                            flex: `0 0 ${(100 / 3) * 2}%`,                                            
-                                            maxWidth: `${100/3*2}%`,
-                                            boxSizing: "border-box",                                            
+                                            flex: `0 0 ${(100 / 3) * 2}%`,
+                                            maxWidth: `${(100 / 3) * 2}%`,
+                                            boxSizing: "border-box",
                                             padding: 15
                                         }}
                                     >
@@ -475,8 +488,8 @@ export class QuestPlay extends React.Component<
                                     </div>
                                     <div
                                         style={{
-                                            flex: `0 0 ${(100 / 3)}%`,
-                                            maxWidth: `${100/3}%`,                                            
+                                            flex: `0 0 ${100 / 3}%`,
+                                            maxWidth: `${100 / 3}%`,
                                             padding: 15
                                         }}
                                     >
@@ -491,21 +504,21 @@ export class QuestPlay extends React.Component<
                                     }}
                                 >
                                     <div
-                                        style={{                                            
-                                            flex: `0 0 ${(100 / 3) * 2}%`,                                            
-                                            maxWidth: `${100/3*2}%`,
-                                            boxSizing: "border-box",                                            
-                                            padding: 15,
+                                        style={{
+                                            flex: `0 0 ${(100 / 3) * 2}%`,
+                                            maxWidth: `${(100 / 3) * 2}%`,
+                                            boxSizing: "border-box",
+                                            padding: 15
                                         }}
                                     >
                                         {choices}
                                     </div>
                                     <div
                                         style={{
-                                            flex: `0 0 ${(100 / 3)}%`,
-                                            maxWidth: `${100/3}%`,                                            
+                                            flex: `0 0 ${100 / 3}%`,
+                                            maxWidth: `${100 / 3}%`,
                                             padding: 15,
-                                            paddingBottom: 65,
+                                            paddingBottom: 65
                                         }}
                                     >
                                         {params}

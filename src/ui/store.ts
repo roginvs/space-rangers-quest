@@ -1,27 +1,27 @@
-import { observable, computed, action } from 'mobx';
-import { Index } from '../packGameData';
-import { DB , GameWonProofs} from './db';
-import {
-    Player
-} from "../lib/qmplayer/player";
-import { getLang } from './lang';
-import { CACHE_NAME_MUSIC, DATA_DIR, CACHE_NAME_IMAGES } from './consts';
+import { observable, computed, action } from "mobx";
+import { Index } from "../packGameData";
+import { DB, GameWonProofs } from "./db";
+import { Player } from "../lib/qmplayer/player";
+import { getLang } from "./lang";
+import { CACHE_NAME_MUSIC, DATA_DIR, CACHE_NAME_IMAGES } from "./consts";
 
 type CacheInfo = "no" | "yes" | undefined;
 interface CacheInstallInfo {
-    sizeTotal: number,
-    downloaded: number,
-    currentFile: string
+    sizeTotal: number;
+    downloaded: number;
+    currentFile: string;
 }
-export const QUEST_SEARCH_ALL = 'all';
-export const QUEST_SEARCH_OWN = 'own';
+export const QUEST_SEARCH_ALL = "all";
+export const QUEST_SEARCH_OWN = "own";
 
 export class Store {
-    constructor(public index: Index, 
+    constructor(
+        public index: Index,
         public app: firebase.app.App,
-        public db: DB, 
-        player: Player) {
-        window.onhashchange = () => this.setPath();        
+        public db: DB,
+        player: Player
+    ) {
+        window.onhashchange = () => this.setPath();
         this.setPath();
         this.player = player;
 
@@ -31,39 +31,35 @@ export class Store {
     @observable player: Player;
 
     private setPath() {
-        const hash = location.hash.replace(/^#/, '').replace(/^\//, '');
+        const hash = location.hash.replace(/^#/, "").replace(/^\//, "");
         if (this.hash === hash) {
-            return
+            return;
         }
-        this.hash = hash;        
+        this.hash = hash;
     }
-    
-    @observable
-    private hash: string = '';
-    
+
+    @observable private hash: string = "";
+
     @computed
     get path() {
-        const arr = this.hash.split('/');
+        const arr = this.hash.split("/");
         return {
             tab0: arr[0],
             tab1: arr[1],
-            tab2: arr[2],
-        }
+            tab2: arr[2]
+        };
     }
 
-    @observable
-    firebaseLoggedIn: firebase.User | null | undefined = null;
+    @observable firebaseLoggedIn: firebase.User | null | undefined = null;
 
-    @observable
-    firebaseSyncing: boolean = false;
-    
+    @observable firebaseSyncing: boolean = false;
+
     @computed
     get l() {
         return getLang(this.player.lang);
     }
 
-    @observable
-    wonProofs: Map<string, GameWonProofs | undefined> | undefined;
+    @observable wonProofs: Map<string, GameWonProofs | undefined> | undefined;
 
     async loadWinProofsFromLocal() {
         const m = new Map<string, GameWonProofs | undefined>();
@@ -71,95 +67,84 @@ export class Store {
             this.index.quests.map(async quest => {
                 const passed = await this.db.isGamePassedLocal(quest.gameName);
                 m.set(quest.gameName, passed);
-            }));  
-        this.wonProofs = m;              
+            })
+        );
+        this.wonProofs = m;
     }
 
     async syncWithFirebase() {
-        if (this.firebaseSyncing) { // TODO: retry sync when first finished
-            return
+        if (this.firebaseSyncing) {
+            // TODO: retry sync when first finished
+            return;
         }
         this.firebaseSyncing = true;
         await this.db.syncWithFirebase();
-        
+
         // console.info: renew all cached values
         const player = await this.db.getConfigLocal("player");
         if (player) {
-            this.player = player
+            this.player = player;
         }
 
         await this.loadWinProofsFromLocal();
 
         this.firebaseSyncing = false;
     }
-    
+
     lastQuestListScroll: number = 0;
 
-    @observable
-    serviceWorkerController: ServiceWorkerState | null = null;
+    @observable serviceWorkerController: ServiceWorkerState | null = null;
 
-    @observable
-    serviceWorkerStoragePersistent: boolean | undefined = undefined;
+    @observable serviceWorkerStoragePersistent: boolean | undefined = undefined;
 
-    @observable
-    haveInstallingServiceWorker: ServiceWorkerState | null = null;
-    @observable
-    haveWaitingServiceWorker: ServiceWorkerState | null = null;
-    @observable
-    haveActiveServiceWorker: ServiceWorkerState | null = null;
-    
-    @observable
-    questsListTab: string = QUEST_SEARCH_ALL;
-    @observable
-    questsListSearch: string = '';
+    @observable haveInstallingServiceWorker: ServiceWorkerState | null = null;
+    @observable haveWaitingServiceWorker: ServiceWorkerState | null = null;
+    @observable haveActiveServiceWorker: ServiceWorkerState | null = null;
 
-    @observable
-    imagesCache: CacheInfo;
-    @observable
-    imagesCacheInstallInfo: CacheInstallInfo | undefined;
+    @observable questsListTab: string = QUEST_SEARCH_ALL;
+    @observable questsListSearch: string = "";
 
-    @observable
-    musicCache: CacheInfo;
-    @observable
-    musicCacheInstallInfo: CacheInstallInfo | undefined;
+    @observable imagesCache: CacheInfo;
+    @observable imagesCacheInstallInfo: CacheInstallInfo | undefined;
+
+    @observable musicCache: CacheInfo;
+    @observable musicCacheInstallInfo: CacheInstallInfo | undefined;
 
     async queryCacheInfo() {
-        
-           const cacheMusic = await caches.open(CACHE_NAME_MUSIC);  
-           let somethingMissingMusic = false;
-           for (const f of this.index.dir.music.files) {
-               if (! await cacheMusic.match(DATA_DIR + f.path)) {
+        const cacheMusic = await caches.open(CACHE_NAME_MUSIC);
+        let somethingMissingMusic = false;
+        for (const f of this.index.dir.music.files) {
+            if (!(await cacheMusic.match(DATA_DIR + f.path))) {
                 somethingMissingMusic = true;
-                   break;
-               }
-           }
-           if (! this.musicCacheInstallInfo) {
-                this.musicCache = somethingMissingMusic ? "no" : "yes";
-           }
-        
-
-            const cacheImages = await caches.open(CACHE_NAME_IMAGES);  
-            let somethingMissingImages = false;
-            for (const f of this.index.dir.images.files) {
-                if (! await cacheImages.match(DATA_DIR + f.path)) {
-                    somethingMissingImages = true;
-                    break;
-                }
+                break;
             }
-            if (! this.imagesCacheInstallInfo) {
-                this.imagesCache = somethingMissingImages ? "no" : "yes";
-            }       
+        }
+        if (!this.musicCacheInstallInfo) {
+            this.musicCache = somethingMissingMusic ? "no" : "yes";
+        }
+
+        const cacheImages = await caches.open(CACHE_NAME_IMAGES);
+        let somethingMissingImages = false;
+        for (const f of this.index.dir.images.files) {
+            if (!(await cacheImages.match(DATA_DIR + f.path))) {
+                somethingMissingImages = true;
+                break;
+            }
+        }
+        if (!this.imagesCacheInstallInfo) {
+            this.imagesCache = somethingMissingImages ? "no" : "yes";
+        }
     }
     async installMusicCache() {
         if (this.musicCacheInstallInfo) {
-            return
+            return;
         }
         this.musicCacheInstallInfo = {
             currentFile: "",
             sizeTotal: this.index.dir.music.totalSize,
-            downloaded: 0,
-        }
-        const cacheMusic = await caches.open(CACHE_NAME_MUSIC);          
+            downloaded: 0
+        };
+        const cacheMusic = await caches.open(CACHE_NAME_MUSIC);
         for (const f of this.index.dir.music.files) {
             this.musicCacheInstallInfo.currentFile = f.path;
             const url = DATA_DIR + f.path;
@@ -167,19 +152,19 @@ export class Store {
             await cacheMusic.put(url, data);
             this.musicCacheInstallInfo.downloaded += f.size;
         }
-        this.musicCache = 'yes';
-        this.musicCacheInstallInfo = undefined;        
+        this.musicCache = "yes";
+        this.musicCacheInstallInfo = undefined;
     }
     async installImagesCache() {
         if (this.imagesCacheInstallInfo) {
-            return
+            return;
         }
         this.imagesCacheInstallInfo = {
             currentFile: "",
             sizeTotal: this.index.dir.images.totalSize,
-            downloaded: 0,
-        }
-        const cacheImages = await caches.open(CACHE_NAME_IMAGES);          
+            downloaded: 0
+        };
+        const cacheImages = await caches.open(CACHE_NAME_IMAGES);
         for (const f of this.index.dir.images.files) {
             this.imagesCacheInstallInfo.currentFile = f.path;
             const url = DATA_DIR + f.path;
@@ -187,25 +172,24 @@ export class Store {
             await cacheImages.put(url, data);
             this.imagesCacheInstallInfo.downloaded += f.size;
         }
-        this.imagesCache = 'yes';
-        this.imagesCacheInstallInfo = undefined;        
+        this.imagesCache = "yes";
+        this.imagesCacheInstallInfo = undefined;
     }
     async removeMusicCache() {
         if (this.musicCacheInstallInfo) {
-            return
+            return;
         }
-        await caches.delete(CACHE_NAME_MUSIC);          
-        this.musicCache = 'no';        
+        await caches.delete(CACHE_NAME_MUSIC);
+        this.musicCache = "no";
     }
     async removeImagesCache() {
         if (this.imagesCacheInstallInfo) {
-            return
+            return;
         }
-        await caches.delete(CACHE_NAME_IMAGES);          
-        this.imagesCache = 'no';        
+        await caches.delete(CACHE_NAME_IMAGES);
+        this.imagesCache = "no";
     }
 }
-
 
 /*
 - page is server by sw.js: true/false

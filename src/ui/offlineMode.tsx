@@ -38,7 +38,8 @@ class StorageUsedInfo extends React.Component<
         if (navigator.storage) {
             navigator.storage
                 .estimate()
-                .then(({ quota, usage }) => this.setState({ quota, usage }));
+                .then(({ quota, usage }) => this.setState({ quota, usage }))
+                .catch(e => console.warn(e));
         }
     };
     render() {

@@ -48,7 +48,7 @@ export class QuestList extends React.Component<
         }
     }
     render() {
-        const { l, firebaseLoggedIn, player, index } = this.props.store;
+        const { l, player, index } = this.props.store;
         const passedQuests = this.props.store.wonProofs;
         const store = this.props.store;
 

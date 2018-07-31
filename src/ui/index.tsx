@@ -107,7 +107,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                 app.auth().onAuthStateChanged(user => {
                     store.firebaseLoggedIn = user;
                     if (user) {
-                        store.syncWithFirebase();
+                        store.syncWithFirebase().catch(e => console.warn(e))
                     }
                 });
             } catch (e) {
@@ -191,7 +191,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                 navigator.storage.persist().then(persisted => {
                     console.info(`Persisted=`, persisted);
                     store.serviceWorkerStoragePersistent = persisted;
-                });
+                }).catch(e => console.warn(e));
             }
             this.setState({
                 store

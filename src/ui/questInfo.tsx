@@ -60,6 +60,7 @@ export class QuestInfo extends React.Component<
         .then(lastSavedGameState => this.setState({
             lastSavedGameState
         }))
+        .catch(e => console.warn(e))
     }
     render() {
         const { l, firebaseLoggedIn, player, index, db } = this.props.store;
