@@ -102,7 +102,7 @@ export class QuestList extends React.Component<
 
         return (
             <AppNavbar store={this.props.store}>
-                <DivFadeinCss key="quest list" className="container">
+                <DivFadeinCss key="quest list" className="container mb-5">
                     <div className="text-center mb-3">
                         <h5>{l.welcomeHeader}</h5>
                     </div>
