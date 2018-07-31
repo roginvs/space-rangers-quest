@@ -36,6 +36,7 @@ export class LoginTabContainer extends React.Component<
         return (
             <DivFadeinCss key="login" className="text-center">
                 <div className="mb-3">
+                    <div className="mb-3">{this.props.l.loginInfo}</div>
                     <button
                         className="btn btn-light px-3"
                         onClick={() => {
