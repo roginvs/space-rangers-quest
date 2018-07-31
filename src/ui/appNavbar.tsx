@@ -95,6 +95,7 @@ export class AppNavbar extends React.Component<{
                                                     </NavLink>
                                                 </NavItem>
                                                     */}
+                                                    {"serviceWorker" in navigator ?
                                                 <NavItem>
                                                     <NavLink
                                                         href="#/offlinemode"
@@ -106,7 +107,7 @@ export class AppNavbar extends React.Component<{
                                                         <i className="fa fa-cloud-download" />{" "}
                                                         {l.installMode}
                                                     </NavLink>
-                                                </NavItem>
+                                                </NavItem> : null}
 
                                                 {firebaseLoggedIn !==
                                                 undefined ? (

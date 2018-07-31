@@ -81,4 +81,25 @@ export class Store {
 
         this.firebaseSyncing = false;
     }
+
+
+    @observable
+    serviceWorkerController: ServiceWorkerState | null = null;
+
+    @observable
+    serviceWorkerStoragePersistent: boolean | undefined = undefined;
+
+    @observable
+    haveInstallingServiceWorker: ServiceWorkerState | null = null;
+    @observable
+    haveWaitingServiceWorker: ServiceWorkerState | null = null;
+    @observable
+    haveActiveServiceWorker: ServiceWorkerState | null = null;
 }
+
+/*
+- page is server by sw.js: true/false
+- another installing
+- another waiting
+
+*/

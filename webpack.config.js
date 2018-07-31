@@ -45,7 +45,7 @@ const config /*: webpack.Configuration */ = {
         }),                              
         new ServiceWorkerWebpackPlugin({
             entry: './src/ui/serviceWorker.ts',
-            filename: "serviceWorker.injected.js",
+            filename: "sw.js",
         }),
     ],
 

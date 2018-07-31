@@ -8,7 +8,6 @@ import "./version.ts";
 declare var serviceWorkerOption: {
     assets: string[];
 };
-const { assets } = serviceWorkerOption;
 
 import {
     INDEX_JSON,
@@ -25,6 +24,7 @@ const engineUrls = [
     ...serviceWorkerOption.assets,
     `/?version=${new Date(__VERSION__).getTime()}` // to enforce a reinstall after rebuild
 ];
+console.info('Service worker engine urls: ', engineUrls);
 
 function getIndex() {
     return fetch(INDEX_JSON).then(data => data.json()) as Promise<Index>;
@@ -60,8 +60,8 @@ self.addEventListener("install", event => {
                 await cache.add(url)
             };
             */
-            console.info(new Date() + ` Catching done`);
-            // (<any>self).skipWaiting();
+            console.info(new Date() + ` Catching done`);            
+            //await self.skipWaiting();
         })().catch(e => {
             console.error(new Date() + ` Error in sw`, e);
             throw e;
@@ -88,7 +88,7 @@ self.addEventListener("activate", event => {
                     //cache.delete(key);
                 }
                 */
-            }
+            }            
             console.info(new Date() + " Service worker activation finished");
         })()
     );

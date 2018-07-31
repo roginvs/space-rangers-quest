@@ -53,236 +53,15 @@ const config = {
 const app = firebase.initializeApp(config);
 //const app = firebase.initializeApp({} as typeof config);
 
-/*
-interface MainLoaderState {
-    player?: Player;
-    db?: DB;
-    index?: Index;
-    error?: string;
-
-    firebaseLoggedIn?: firebase.User | null;
-
-    firebaseSyncing?: boolean;
-}
-class MainLoader extends React.Component<
-    {},
-    MainLoaderState
-> {
-    state: MainLoaderState = {};
-    private unsubscribe: (() => void)[] = [];
-    componentWillUnmount() {
-        this.unsubscribe.forEach(f => f());
-    }
-    syncWithFirebase = async () => {
-        const db = this.state.db;
-        if (!db) {
-            return;
-        }
-        this.setState({
-            firebaseSyncing: true
-        });
-        await db.syncWithFirebase().catch(e => console.warn(e));
-        this.setState({
-            firebaseSyncing: false
-        });
-        await this.loadPlayer();
-    };
-
-    componentDidMount() {
-        try {
-            this.unsubscribe.push(
-                app.auth().onAuthStateChanged(user => {
-                    this.setState({
-                        firebaseLoggedIn: user ? user : null
-                    });
-                    if (user) {
-                        this.syncWithFirebase();
-                    }
-                })
-            );
-        } catch (e) {
-            console.warn(`Firebase subscribe error`, e);
-        }
-
-        getDb(app)
-            .then(db => {
-                this.setState(
-                    {
-                        db
-                    },
-                    async () => {
-                        this.loadPlayer();
-                        this.syncWithFirebase();
-                    }
-                );
-
-                db.getConfigLocal("lastPlayedGame")
-                    .then(lastPlayedGame => {
-                        if (lastPlayedGame) {
-                            this.props.history.push(`/games/${lastPlayedGame}`);
-                        }
-                    })
-                    .catch(e => undefined);
-
-                fetch(INDEX_JSON)
-                    .then(x => x.json())
-                    .then(index =>
-                        this.setState({
-                            index
-                        })
-                    )
-                    .catch(e =>
-                        this.setState({
-                            error: e
-                        })
-                    );
-            })
-            .catch(e => {
-                this.setState({
-                    error: e
-                });
-            });
-    }
-    loadPlayer = () => {
-        const db = this.state.db;
-        if (!db) {
-            return;
-        }
-        db.getConfigLocal("player")
-            .then(player => {
-                if (player) {
-                    this.setState({
-                        player
-                    });
-                } else {
-                    const browserLang = guessBrowserLang();
-                    console.info(`Welcome, a new user!`);
-                    const newPlayer =
-                        browserLang === "rus"
-                            ? DEFAULT_RUS_PLAYER
-                            : browserLang === "eng"
-                                ? DEFAULT_ENG_PLAYER
-                                : assertNever(browserLang);
-                    db.setConfigBoth("player", newPlayer).catch(e =>
-                        this.setState({ error: e })
-                    );
-                    this.setState({
-                        player: newPlayer
-                    });
-                }
-            })
-            .catch(e => {
-                this.setState({
-                    error: e
-                });
-            });
-    };
-    render() {
-        const db = this.state.db;
-        const player = this.state.player;
-        const index = this.state.index;
-        if (this.state.error) {
-            return (
-                <div className="text-center p-3 text-danger">
-                    {this.state.error.toString()}
-                </div>
-            );
-        }
-        const firebaseLoggedIn = this.state.firebaseLoggedIn;
-        if (!player || !db || !index) {
-            return <Loader text="Loading" />;
-        } else {
-            const l = getLang(player.lang);
-            return (
-                <>
-                    <Route
-                        path={"/auth"}
-                        render={prop => (
-                            <AppNavbar
-                                    l={l}
-                                    player={player}
-                                    firebaseLoggedIn={firebaseLoggedIn}
-                                    firebaseSyncing={this.state.firebaseSyncing}
-                                >
-                                <AuthTabContainer
-                                    l={l}
-                                    player={player}
-                                    firebaseLoggedIn={firebaseLoggedIn}
-                                    firebaseSyncing={this.state.firebaseSyncing}
-                                    app={app}
-                                />
-                            </AppNavbar>
-                        )}
-                    />
-
-                    <Route
-                        path={"/offlinemode"}
-                        render={prop => (
-                            
-                                <AppNavbar
-                                    l={l}
-                                    player={player}
-                                    firebaseLoggedIn={firebaseLoggedIn}
-                                    firebaseSyncing={this.state.firebaseSyncing}
-                                >
-
-                                <OfflineModeTabContainer l={l} />
-                                </AppNavbar>
-                        )}
-                    />
-
-                    <Route
-                        path={"/options"}
-                        render={prop => (
-                            
-                                <AppNavbar
-                                    l={l}
-                                    player={player}
-                                    firebaseLoggedIn={firebaseLoggedIn}
-                                    firebaseSyncing={this.state.firebaseSyncing}
-                                >
-
-                                <OptionsTabContainer
-                                    l={l}
-                                    player={player}
-                                    onNewPlayer={player =>
-                                        this.setState({ player })
-                                    }
-                                    db={db}
-                                />
-                            </AppNavbar>
-                        )}
-                    />
-
-                    <QuestListRouter
-                        l={l}
-                        player={player}
-                        index={index}
-                        db={db}
-                        firebaseLoggedIn={firebaseLoggedIn}
-                        firebaseSyncing={this.state.firebaseSyncing}
-                    />
-
-                    <QuestInfoRouter
-                        l={l}
-                        player={player}
-                        index={index}
-                        db={db}
-                        firebaseLoggedIn={firebaseLoggedIn}
-                        firebaseSyncing={this.state.firebaseSyncing}
-                    />
-
-                    <Route
-                        path="/"
-                        exact
-                        render={() => <Redirect to="quests" />}
-                    />
-                </>
-            );
-        }
+declare global {
+    interface Navigator {
+        storage?: {
+            estimate: () => Promise<{quota: number, usage: number}>,
+            persisted: () => Promise<boolean>,
+            persist: () => Promise<boolean>,            
+        },
     }
 }
-*/
 
 interface MainLoaderState {
     store?: Store;
@@ -328,6 +107,74 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                     store.syncWithFirebase();
                 }
             });
+
+            if ("serviceWorker" in navigator) {
+                navigator.serviceWorker
+                    .register("/sw.js")
+                    .then(reg => {
+                        function updateStore() {
+                            console.info(
+                                `serviceWorker installing=${
+                                    reg.installing
+                                        ? reg.installing.state
+                                        : "null"
+                                } ` +
+                                    `waiting=${
+                                        reg.waiting ? reg.waiting.state : "null"
+                                    } ` +
+                                    `active=${
+                                        reg.active ? reg.active.state : "null"
+                                    } `
+                            );
+                            store.haveInstallingServiceWorker = reg.installing ? reg.installing.state : null;
+                            store.haveWaitingServiceWorker = reg.waiting ? reg.waiting.state : null;
+                            store.haveActiveServiceWorker = reg.active ? reg.active.state : null;
+                            if (reg.installing) {
+                                reg.installing.onstatechange = updateStore;
+                            }
+                            if (reg.waiting) {
+                                reg.waiting.onstatechange = updateStore;
+                            }
+                            if (reg.active) {
+                                reg.active.onstatechange = updateStore;
+                            }
+                        }
+                        updateStore();
+                        reg.addEventListener("updatefound", () => {
+                            updateStore();                            
+                        });
+                    })
+                    .catch(e => undefined);
+                navigator.serviceWorker.addEventListener(
+                    "controllerchange",
+                    e => {
+                        store.serviceWorkerController =
+                            navigator.serviceWorker.controller ? navigator.serviceWorker.controller.state : null;
+                        console.info(
+                            `serviceWorker controller=${
+                                navigator.serviceWorker.controller
+                                    ? navigator.serviceWorker.controller.state
+                                    : "null"
+                            }`
+                        );
+                    }
+                );
+                store.serviceWorkerController =
+                            navigator.serviceWorker.controller ? navigator.serviceWorker.controller.state : null;
+                console.info(
+                    `serviceWorker controller=${
+                        navigator.serviceWorker.controller
+                            ? navigator.serviceWorker.controller.state
+                            : "null"
+                    }`
+                );
+            }
+            if (navigator.storage) {            
+                navigator.storage.persist().then(persisted => {
+                    console.info(`Persisted=`,persisted);
+                    store.serviceWorkerStoragePersistent = persisted
+                });
+            }
             this.setState({
                 store
             });
@@ -352,8 +199,9 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
 
         const { tab0, tab1, tab2 } = store.path;
         if (!tab0) {
-            return <Redirect to='#/quests'/>
-        } if (tab0 === "auth") {
+            return <Redirect to="#/quests" />;
+        }
+        if (tab0 === "auth") {
             return (
                 <AppNavbar store={store}>
                     <AuthTabContainer store={store} />
@@ -363,6 +211,12 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
             return (
                 <AppNavbar store={store}>
                     <OptionsTabContainer store={store} />
+                </AppNavbar>
+            );
+        } else if (tab0 === "offlinemode") {
+            return (
+                <AppNavbar store={store}>
+                    <OfflineModeTabContainer store={store} />
                 </AppNavbar>
             );
         } else if (tab0 === "quests") {
