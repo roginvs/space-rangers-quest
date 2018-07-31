@@ -71,10 +71,10 @@ export class QuestPlay extends React.Component<
     }
     componentWillUnmount() {
         window.removeEventListener("resize", this.onResize);
-        document.getElementsByTagName('body')[0].className = ''
+        document.getElementsByTagName("body")[0].className = "";
     }
     componentWillMount() {
-        document.getElementsByTagName('body')[0].className = 'game'
+        document.getElementsByTagName("body")[0].className = "game";
     }
 
     async loadData() {
@@ -198,7 +198,7 @@ export class QuestPlay extends React.Component<
 
         const locationText = (
             <DivFadeinCss key={st.text + "#" + gameState.performedJumps.length}>
-                <QuestReplaceTags str={st.text}/>
+                <QuestReplaceTags str={st.text} />
             </DivFadeinCss>
         );
 
@@ -208,9 +208,7 @@ export class QuestPlay extends React.Component<
                     return (
                         <div key={choice.jumpId} className="mb-4">
                             <a
-                                href={`#/quests/${game.gameName}/play/gameStep${
-                                    choice.jumpId
-                                }`}
+                                href={`#/quests/${game.gameName}/play/gameStep`}
                                 onClick={e => {
                                     e.preventDefault();
 
@@ -251,7 +249,7 @@ export class QuestPlay extends React.Component<
                                 }
                             >
                                 <i className="fa fa-angle-double-right" />{" "}
-                                <QuestReplaceTags str={choice.text}/>
+                                <QuestReplaceTags str={choice.text} />
                             </a>
                         </div>
                     );
@@ -273,7 +271,7 @@ export class QuestPlay extends React.Component<
                                         minHeight: "1em"
                                     }}
                                 >
-                                    <QuestReplaceTags str={paramText}/>
+                                    <QuestReplaceTags str={paramText} />
                                 </div>
                             </DivFadeinCss>
                         );
@@ -298,87 +296,109 @@ export class QuestPlay extends React.Component<
                     />
                 ) : null}
                 <div
-                    className=""
                     style={{
                         maxWidth: 992,
                         marginLeft: "auto",
                         marginRight: "auto",
-                        marginTop: isMobile ? 0 : "2rem",                        
+                        marginTop: isMobile ? 0 : "2rem"
                     }}
                 >
-                    <div>
-                        <div
-                            style={{
-                                display: "flex",
-                                flexDirection: isMobile
-                                    ? "column-reverse"
-                                    : "row"
-                            }}
-                        >
+                    {isMobile ? (
+                        <>
                             <div
                                 style={{
-                                    flexBasis: isMobile
-                                    ? "100%"
-                                    : `${100 / 3 * 2}%`,
-                                flexGrow: 0,
-                                flexShrink: 0,
-                                    marginRight: isMobile ? 5 : 15,
-                                    marginLeft: isMobile ? 5 : 15,
-                                    marginTop: isMobile ? 5 : 15,
-                                    marginBottom: isMobile ? 5 : 15
-                                }}
-                            >
-                                {locationText}
-                            </div>
-                            <div
-                                style={{                                    
-                                    marginRight: isMobile ? 5 : 15,
-                                    marginLeft: isMobile ? 5 : 15,
-                                    marginTop: isMobile ? 5 : 15,
-                                    marginBottom: isMobile ? 5 : 15
+                                    margin: 5
                                 }}
                             >
                                 {imagesPreloaded}
                                 {image}
                             </div>
-                        </div>
-                        <div
-                            style={{
-                                display: "flex",
-                                flexDirection: isMobile
-                                    ? "column-reverse"
-                                    : "row"
-                            }}
-                        >
+
                             <div
                                 style={{
-                                    flexBasis: isMobile
-                                    ? "100%"
-                                    : `${100 / 3 * 2}%`,
-                                flexGrow: 0,
-                                flexShrink: 0,
-                                    marginRight: isMobile ? 5 : 15,
-                                    marginLeft: isMobile ? 5 : 15,
-                                    marginTop: isMobile ? 5 : 15,
-                                    marginBottom: isMobile ? 5 : 15
+                                    margin: 5
                                 }}
                             >
-                                {choices}
+                                {locationText}
                             </div>
+
                             <div
-                                style={{                                
-                                    marginTop: isMobile ? 25 : 15,
-                                    marginBottom: isMobile ? 25 : 15,
-                                    //marginRight: isMobile ? 5 : 15,
-                                    //marginLeft: isMobile ? 5 : 15,
+                                style={{
+                                    marginTop: 25,
+                                    marginBottom: 25,
                                     marginLeft: "auto",
-                                    marginRight: "auto",
+                                    marginRight: "auto"
                                 }}
                             >
                                 {params}
                             </div>
-                        </div>
-                    </div>
+
+                            <div
+                                style={{
+                                    margin: 5
+                                }}
+                            >
+                                {choices}
+                            </div>
+                        </>
+                    ) : (
+                        <>
+                            <div>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row"
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            flexBasis: `${(100 / 3) * 2}%`,
+                                            flexGrow: 0,
+                                            flexShrink: 0,
+                                            margin: 15
+                                        }}
+                                    >
+                                        {locationText}
+                                    </div>
+                                    <div
+                                        style={{
+                                            margin: 15
+                                        }}
+                                    >
+                                        {imagesPreloaded}
+                                        {image}
+                                    </div>
+                                </div>
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "row"
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            flexBasis: `${(100 / 3) * 2}%`,
+                                            flexGrow: 0,
+                                            flexShrink: 0,
+                                            margin: 15
+                                        }}
+                                    >
+                                        {choices}
+                                    </div>
+                                    <div
+                                        style={{
+                                            marginTop: 15,
+                                            marginBottom: 15,
+                                            marginLeft: "auto",
+                                            marginRight: "auto"
+                                        }}
+                                    >
+                                        {params}
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
                 </div>
             </div>
         );
@@ -406,5 +426,4 @@ export class QuestPlay extends React.Component<
             });
         }
     }
-    
 }
