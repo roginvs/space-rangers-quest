@@ -37,6 +37,8 @@ import * as pako from "pako";
 import { observer } from "mobx-react";
 import { Store } from "./store";
 
+import "./questPlay.css";
+
 interface QuestPlayState {
     quest?: Quest;
     game?: Game;
@@ -69,6 +71,10 @@ export class QuestPlay extends React.Component<
     }
     componentWillUnmount() {
         window.removeEventListener("resize", this.onResize);
+        document.getElementsByTagName('body')[0].className = ''
+    }
+    componentWillMount() {
+        document.getElementsByTagName('body')[0].className = 'game'
     }
 
     async loadData() {
@@ -297,6 +303,7 @@ export class QuestPlay extends React.Component<
                         maxWidth: 992,
                         marginLeft: "auto",
                         marginRight: "auto",
+                        marginTop: isMobile ? 0 : "2rem",                        
                     }}
                 >
                     <div>
@@ -360,10 +367,12 @@ export class QuestPlay extends React.Component<
                             </div>
                             <div
                                 style={{                                
-                                    marginRight: isMobile ? 5 : 15,
-                                    marginLeft: isMobile ? 5 : 15,
-                                    marginTop: isMobile ? 5 : 15,
-                                    marginBottom: isMobile ? 5 : 15
+                                    marginTop: isMobile ? 25 : 15,
+                                    marginBottom: isMobile ? 25 : 15,
+                                    //marginRight: isMobile ? 5 : 15,
+                                    //marginLeft: isMobile ? 5 : 15,
+                                    marginLeft: "auto",
+                                    marginRight: "auto",
                                 }}
                             >
                                 {params}
@@ -397,4 +406,5 @@ export class QuestPlay extends React.Component<
             });
         }
     }
+    
 }

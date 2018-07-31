@@ -9,3 +9,10 @@ a.game.disabled {
   /* And disable the pointer events */
   pointer-events: none;
 }
+
+
+body.game {
+  background-color: #eceeef;
+  /* padding-top: 2rem; */
+  overflow-y: scroll;
+}
