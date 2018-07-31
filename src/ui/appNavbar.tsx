@@ -55,7 +55,7 @@ export class AppNavbar extends React.Component<{
                                                         }
                                                         href="#/quests"
                                                     >
-                                                        <i className="fa fa-list" />{" "}
+                                                        <i className="fa fa-fw fa-list" />{" "}
                                                         {l.quests}
                                                     </NavLink>
                                                 </NavItem>
@@ -67,7 +67,7 @@ export class AppNavbar extends React.Component<{
                                                         }
                                                         href="#/topplayers"
                                                     >
-                                                        <i className="fa fa-users" />{" "}
+                                                        <i className="fa fa-fw fa-users" />{" "}
                                                         {l.topplayers}
                                                     </NavLink>
                                                 </NavItem>
@@ -79,7 +79,7 @@ export class AppNavbar extends React.Component<{
                                                             tab0 === "options"
                                                         }
                                                     >
-                                                        <i className="fa fa-cogs" />{" "}
+                                                        <i className="fa fa-fw fa-cogs" />{" "}
                                                         {l.options}
                                                     </NavLink>
                                                 </NavItem>
@@ -91,7 +91,7 @@ export class AppNavbar extends React.Component<{
                                                             tab0 === "useown"
                                                         }
                                                     >
-                                                        <i className="fa fa-upload" />{" "}
+                                                        <i className="fa fa-fw fa-upload" />{" "}
                                                         {l.useown}
                                                     </NavLink>
                                                 </NavItem>
@@ -107,8 +107,8 @@ export class AppNavbar extends React.Component<{
                                                     >
                                                     {! store.haveInstallingServiceWorker &&
                                                      ! store.imagesCacheInstallInfo && ! store.musicCacheInstallInfo ?
-                                                        <i className="fa fa-cloud-download" />
-                                                        : <i className="fa fa-spin fa-circle-o-notch"/>}
+                                                        <i className="fa fa-fw fa-cloud-download" />
+                                                        : <i className="fa fa-fw fa-spin fa-circle-o-notch"/>}
                                                         {" "}
                                                         {l.installMode}
                                                     </NavLink>
@@ -126,13 +126,13 @@ export class AppNavbar extends React.Component<{
                                                             {firebaseLoggedIn ? (
                                                                 <>
                                                                 {this.props.store.firebaseSyncing?
-                                                                <i className="fa fa-spinner fa-spin"/> :
-                                                                <i className="fa fa-vcard" />}{" "}
+                                                                <i className="fa fa-fw fa-spinner fa-spin"/> :
+                                                                <i className="fa fa-fw fa-vcard" />}{" "}
                                                                     {l.profile}
                                                                 </>
                                                             ) : (
                                                                 <>
-                                                                    <i className="fa fa-sign-in" />{" "}
+                                                                    <i className="fa fa-fw fa-sign-in" />{" "}
                                                                     {l.login}
                                                                 </>
                                                             )}
@@ -148,7 +148,7 @@ export class AppNavbar extends React.Component<{
                                                             "about"
                                                         }
                                                     >
-                                                        <i className="fa fa-info-circle"/>{" "}
+                                                        <i className="fa fa-fw fa-info-circle"/>{" "}
                                                         {" "}
                                                         {l.about}
                                                     </NavLink>
