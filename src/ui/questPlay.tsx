@@ -46,6 +46,8 @@ interface QuestPlayState {
     questLoadProgress: number;
     playingMobileView: boolean;
     noMusic?: boolean;
+
+    reallyRestart?: boolean;
 }
 
 @observer
@@ -242,7 +244,8 @@ export class QuestPlay extends React.Component<
                                     this.setState({
                                         gameState: newState
                                     });
-                                    window.scrollTo(0, 0);                                    
+                                    //window.scrollTo(0, isMobile ? 44 : 0);
+                                    window.scrollTo(0, isMobile ? 42 : 0);
                                 }}
                                 className={
                                     "game " + (choice.active ? "" : "disabled")
@@ -280,7 +283,56 @@ export class QuestPlay extends React.Component<
         );
 
         const isMobile = this.state.playingMobileView;
-        const br = "md";
+
+        const controlButtons = (
+            <>
+                <button
+                    className="btn btn-light mr-1"
+                    onClick={() => {
+                        location.hash = `/quests/${this.props.gameName}`;
+                    }}
+                >
+                    <i className="fa fa-share-square-o fa-fw" />
+                </button>
+
+                <button
+                    className="btn btn-light mr-1"
+                    onClick={() => {
+                        this.setState(
+                            {
+                                noMusic: !this.state.noMusic
+                            },
+                            () => {
+                                this.props.store.db.setConfigBoth(
+                                    "noMusic",
+                                    !!this.state.noMusic
+                                );
+                            }
+                        );
+                    }}
+                >
+                    <i
+                        className={classnames(
+                            "fa fa-fw",
+                            this.state.noMusic
+                                ? "fa-volume-off"
+                                : "fa-volume-up"
+                        )}
+                    />
+                </button>
+
+                <button
+                    className="btn btn-light mr-1"
+                    onClick={() => {
+                        this.setState({
+                            reallyRestart: true
+                        })
+                    }}
+                >
+                    <i className="fa fa-refresh fa-fw" />
+                </button>
+            </>
+        );
 
         return (
             <div className="">
@@ -303,8 +355,49 @@ export class QuestPlay extends React.Component<
                         marginTop: isMobile ? 0 : "2rem"
                     }}
                 >
-                    {isMobile ? (
+                    {this.state.reallyRestart ? <>
+                        <div className="text-center m-2">
+                        <div>{l.reallyRestart}</div>
+                        <div>
+                            <button className="btn btn-warning mt-1 mr-1" onClick={() => {
+                                const gameState = initGame(
+                                    quest,
+                                    Math.random()
+                                        .toString(36)
+                                        .slice(2) +
+                                        Math.random()
+                                            .toString(36)
+                                            .slice(2)
+                                );
+                                this.setState({
+                                    reallyRestart: false,
+                                    gameState,
+                                });                                    
+                            }}>
+                            <i className="fa fa-refresh fa-fw"/>{" "}
+                            {l.yes}
+                            </button>
+
+                            <button className="btn btn-secondary mt-1" onClick={() => this.setState({
+                                reallyRestart: false
+                            })}>
+                            <i className="fa fa-reply fa-fw"/>{" "}
+                            {l.no}
+                            </button>
+                            </div>
+                        </div>
+                        
+                    </> : isMobile ? (
                         <>
+                            <div
+                                style={{
+                                    margin: 5,
+                                    textAlign: "center"
+                                }}
+                            >
+                                {controlButtons}
+                            </div>
+
                             <div
                                 style={{
                                     margin: 5
@@ -427,7 +520,6 @@ export class QuestPlay extends React.Component<
         }
     }
 }
-
 
 /*
 function scrollToTop(scrollDuration: number, offsetTop = 0) {
