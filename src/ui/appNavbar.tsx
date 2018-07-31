@@ -28,6 +28,7 @@ export class AppNavbar extends React.Component<{
     state: AppNavbarState = { navbarIsOpen: false}; // For mobile view    
     render() {
         const {l, firebaseLoggedIn, player} = this.props.store;
+        const store = this.props.store;
         const tab0 = this.props.store.path.tab0;
         return                        <>            
                                     <Navbar color="light" light expand="md" className="mb-3">
@@ -104,7 +105,11 @@ export class AppNavbar extends React.Component<{
                                                             "offlinemode"
                                                         }
                                                     >
-                                                        <i className="fa fa-cloud-download" />{" "}
+                                                    {! store.haveInstallingServiceWorker &&
+                                                     ! store.imagesCacheInstallInfo && ! store.musicCacheInstallInfo ?
+                                                        <i className="fa fa-cloud-download" />
+                                                        : <i className="fa fa-spin fa-circle-o-notch"/>}
+                                                        {" "}
                                                         {l.installMode}
                                                     </NavLink>
                                                 </NavItem> : null}

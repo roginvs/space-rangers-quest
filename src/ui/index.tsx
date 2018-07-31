@@ -39,6 +39,8 @@ import { QuestInfo } from "./questInfo";
 import { Store } from "./store";
 import { QuestPlay } from "./questPlay";
 
+
+
 console.info("starting");
 
 const config = {

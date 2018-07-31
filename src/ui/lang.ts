@@ -49,13 +49,30 @@ const RUS = {
     no: "Нет",
 
     back: "Назад",
+
+    installingEngine: "Установка оффлайн режима для приложения",
+    installEngineError: "Ошибка установки",
+    engineInstalledNeedReload: "Приложение установлено, необходимо обновить страницу",
+    engineInstalledAndInOfflineMode: "Приложение установлено и работает в оффлайн режиме",
+    storePersisted: "Хранилище устойчивое, браузер не удалит",
+    storeNotPersisted: "Хранилище неустойчивое, браузер может удалить. Можно попробовать добавить приложение на главный экран или добавить в закладки",
+
+    images: "Картинки",
+    music: "Музыка",
+    installing: "Установка",
+    installed: "Установлено",
+    uninstall: "Удалить",
+    notInstalled: "Не установлено",
+    install: "Установить",
+    storageUsed: "Использовано",
+    storageUsedFrom: "из",
 }
 
 export type LangTexts = typeof RUS;
 
 const ENG: LangTexts = {
     ...RUS,
-    hi: 'Hi,'
+    hi: 'Hi, '
 }
 
 
