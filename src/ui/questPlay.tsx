@@ -242,7 +242,7 @@ export class QuestPlay extends React.Component<
                                     this.setState({
                                         gameState: newState
                                     });
-                                    // todo: scroll?
+                                    window.scrollTo(0, 0);                                    
                                 }}
                                 className={
                                     "game " + (choice.active ? "" : "disabled")
@@ -427,3 +427,29 @@ export class QuestPlay extends React.Component<
         }
     }
 }
+
+
+/*
+function scrollToTop(scrollDuration: number, offsetTop = 0) {
+    const originalScrollY = window.scrollY;    
+    const startedTimestamp = performance.now();
+    function step(nowTimestamp: number) {        
+        if (nowTimestamp - startedTimestamp >= scrollDuration) {
+            window.scrollTo(0, offsetTop);
+            return
+        }
+        if (window.scrollY === offsetTop) {
+            return;
+        }
+        
+        const coefficient = Math.cos( (nowTimestamp - startedTimestamp) / scrollDuration * Math.PI / 2);        
+        window.scrollTo(
+            0,
+            (originalScrollY - offsetTop)* coefficient + offsetTop,
+        );        
+        console.info((originalScrollY - offsetTop)* coefficient + offsetTop);
+        window.requestAnimationFrame(step);
+    }
+    window.requestAnimationFrame(step);
+}
+*/
