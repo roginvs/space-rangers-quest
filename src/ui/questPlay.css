@@ -16,3 +16,10 @@ body.game {
   /* padding-top: 2rem; */
   overflow-y: scroll;
 }
+
+
+.game-fix {
+  font-family: monospace;
+  white-space: pre;
+  font-size: 1.2em;
+}
