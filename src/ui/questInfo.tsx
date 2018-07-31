@@ -23,7 +23,7 @@ import {
     DropdownItem
 } from "reactstrap";
 import moment from "moment";
-import { replaceTags } from "./questReplaceTags";
+import { QuestReplaceTags } from "./questReplaceTags";
 import { substitute } from "../lib/substitution";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
 import { SRDateToString } from "../lib/qmplayer/funcs";
@@ -145,8 +145,9 @@ export class QuestInfo extends React.Component<
                     </small>
                 </div>
             </div>
-            <div className="mb-3">
-                {replaceTags(
+            <div className="mb-3">            
+            <QuestReplaceTags
+            str={
                     substitute(
                         game.taskText,
                         {
@@ -164,7 +165,8 @@ export class QuestInfo extends React.Component<
                                 ? Math.floor(Math.random() * n)
                                 : Math.random()
                     )
-                )}
+                }
+                />
             </div>
             <div className="row">
                 <div className="col-md-6">

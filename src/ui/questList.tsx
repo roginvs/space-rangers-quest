@@ -18,7 +18,7 @@ import { substitute } from "../lib/substitution";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
 import { SRDateToString } from "../lib/qmplayer/funcs";
 import moment from "moment";
-import { replaceTags } from "./questReplaceTags";
+import { QuestReplaceTags } from "./questReplaceTags";
 
 interface QuestListState {
     tab: string;
@@ -205,7 +205,7 @@ export class QuestList extends React.Component<
                                         </small>
                                     </div>
                                     <p className="mb-1">
-                                        {replaceTags(quest.taskText)}
+                                    <QuestReplaceTags str={quest.taskText}/>
                                     </p>
                                     <small>{quest.smallDescription}</small>
                                 </a>

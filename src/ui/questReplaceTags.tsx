@@ -1,6 +1,6 @@
 import * as React from "react";
 
-export function replaceTags(str: string) {
+export function QuestReplaceTags(props: {str: string}) {
     // Я не знаю как это сделать React-way
 
     /*  x.match(/\<format=(left|right|center),(\d+)\>(.*?)\<\/format\>/)
@@ -9,7 +9,7 @@ export function replaceTags(str: string) {
 '30',
 'текст',
 */
-    let cloneStr = str.slice();
+    let cloneStr = props.str.slice();
 
     while (true) {
         const m = cloneStr.match(

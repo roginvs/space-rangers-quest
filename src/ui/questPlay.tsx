@@ -24,7 +24,7 @@ import {
     Progress
 } from "reactstrap";
 import moment from "moment";
-import { replaceTags } from "./questReplaceTags";
+import { QuestReplaceTags } from "./questReplaceTags";
 import { substitute } from "../lib/substitution";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
 import { SRDateToString } from "../lib/qmplayer/funcs";
@@ -192,7 +192,7 @@ export class QuestPlay extends React.Component<
 
         const locationText = (
             <DivFadeinCss key={st.text + "#" + gameState.performedJumps.length}>
-                {replaceTags(st.text)}
+                <QuestReplaceTags str={st.text}/>
             </DivFadeinCss>
         );
 
@@ -245,7 +245,7 @@ export class QuestPlay extends React.Component<
                                 }
                             >
                                 <i className="fa fa-angle-double-right" />{" "}
-                                {replaceTags(choice.text)}
+                                <QuestReplaceTags str={choice.text}/>
                             </a>
                         </div>
                     );
@@ -267,7 +267,7 @@ export class QuestPlay extends React.Component<
                                         minHeight: "1em"
                                     }}
                                 >
-                                    {replaceTags(paramText)}
+                                    <QuestReplaceTags str={paramText}/>
                                 </div>
                             </DivFadeinCss>
                         );
