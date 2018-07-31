@@ -1,9 +1,22 @@
 import { parse } from './formula';
-import { Player } from './qmplayer';
+// import { Lang } from './qmplayer/player';
+import { RandomFunc } from './randomFunc';
+import { PlayerSubstitute } from './qmplayer/funcs';
 export const clr = '<clr>';
 export const clrEnd = '<clrEnd>';
 
-export function substitute(str: string, player: Player, params: number[], diamondIndex?: number) {
+export const PLAYER_KEYS_TO_REPLACE: (keyof PlayerSubstitute)[] = ["Ranger",
+"Player",
+"FromPlanet",
+"FromStar",
+"ToPlanet",
+"ToStar",
+"Money",
+"Date",
+"Day",
+"CurDate"]; // TODO: Maybe move from here
+
+export function substitute(str: string, player: PlayerSubstitute, params: ReadonlyArray<number>, random: RandomFunc, diamondIndex?: number) {
     if (diamondIndex !== undefined) {
         str = str.replace(/<>/g,
             `[p${diamondIndex + 1}]`);
@@ -15,10 +28,10 @@ export function substitute(str: string, player: Player, params: number[], diamon
         }
         const formulaWithBrackets = m[0];
         const result = parse(formulaWithBrackets.slice(1, formulaWithBrackets.length - 1),
-            params);
+            params, random);
         str = str.replace(formulaWithBrackets, `${clr}${result}${clrEnd}`);
     }
-    for (const k of Object.keys(player) as (keyof Player)[]) {
+    for (const k of PLAYER_KEYS_TO_REPLACE) {
         while (str.indexOf(`<${k}>`) > -1) {
             str = str.replace(`<${k}>`, `${clr}${player[k]}${clrEnd}`);
         }

@@ -1,0 +1,22 @@
+import { MaybeDocument } from '../model/document';
+import { MutationBatch } from '../model/mutation_batch';
+import { JsonProtoSerializer } from '../remote/serializer';
+import { DbMutationBatch, DbRemoteDocument, DbTarget } from './indexeddb_schema';
+import { QueryData } from './query_data';
+/** Serializer for values stored in the LocalStore. */
+export declare class LocalSerializer {
+    private remoteSerializer;
+    constructor(remoteSerializer: JsonProtoSerializer);
+    /** Decodes a remote document from storage locally to a Document. */
+    fromDbRemoteDocument(remoteDoc: DbRemoteDocument): MaybeDocument;
+    /** Encodes a document for storage locally. */
+    toDbRemoteDocument(maybeDoc: MaybeDocument): DbRemoteDocument;
+    /** Encodes a batch of mutations into a DbMutationBatch for local storage. */
+    toDbMutationBatch(userId: string, batch: MutationBatch): DbMutationBatch;
+    /** Decodes a DbMutationBatch into a MutationBatch */
+    fromDbMutationBatch(dbBatch: DbMutationBatch): MutationBatch;
+    /** Decodes a DbTarget into QueryData */
+    fromDbTarget(dbTarget: DbTarget): QueryData;
+    /** Encodes QueryData into a DbTarget for storage locally. */
+    toDbTarget(queryData: QueryData): DbTarget;
+}

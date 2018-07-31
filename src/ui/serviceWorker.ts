@@ -1,49 +1,46 @@
-import { INDEX_JSON, DATA_DIR, CACHE_NAME } from "./consts";
-import { Index } from "../packGameData";
+/// <reference path='../../node_modules/typescript/lib/lib.es6.d.ts' />
+/// <reference path='../../node_modules/typescript/lib/lib.webworker.d.ts' />
 
-/* 
-    Not used now, but maybe I will use this in the future.
-    Right now only purpose of this is to make serviceWorker code changed
-        in order to make all installions to reinstall to most up-to-date version
-*/
-const ENGINE_VERSION = 8;
+declare var self: ServiceWorkerGlobalScope;
+
+import "./version.ts";
+
+declare var serviceWorkerOption: {
+    assets: string[];
+};
+
+import {
+    INDEX_JSON,
+    DATA_DIR,
+    CACHE_NAME_ENGINE,
+    CACHE_NAME_MUSIC,
+    CACHE_NAME_IMAGES
+} from "./consts";
+import { Index } from "../packGameData";
 
 const engineUrls = [
     "/",
-    "bundle.js",
-    "bundle.css",
-    "favicon.png",
-    "manifest.json",
     INDEX_JSON,
-    `version.json`,
-    `version.json?${ENGINE_VERSION}`
+    ...serviceWorkerOption.assets,
+    `/?version=${new Date(__VERSION__).getTime()}` // to enforce a reinstall after rebuild
 ];
-
-//declare function skipWaiting(): void;
-
-interface ExtendableEvent extends Event {
-    waitUntil(fn: Promise<any>): void;
-}
-interface ActivateEvent extends ExtendableEvent {}
-
-interface FetchEvent extends Event {
-    request: Request;
-    respondWith(response: Promise<Response> | Response): Promise<Response>;
-}
+console.info('Service worker engine urls: ', engineUrls);
 
 function getIndex() {
     return fetch(INDEX_JSON).then(data => data.json()) as Promise<Index>;
 }
+
+declare const x: ServiceWorkerGlobalScope;
+
 self.addEventListener("install", event => {
     // Perform install steps
     console.info(new Date() + ` Serviceworker got install event.`);
-    (event as ExtendableEvent).waitUntil(
+    event.waitUntil(
         (async () => {
-            const cache = await caches.open(CACHE_NAME);
+            const cache = await caches.open(CACHE_NAME_ENGINE);
             console.info(new Date() + ` Serviceworker opened cache`);
             const data = await getIndex();
 
-            // for (const dir of [data.dir.quests, data.dir.images]) {
             for (const dir of [data.dir.quests]) {
                 const urlsToCache = engineUrls.concat(
                     ...dir.files
@@ -63,8 +60,8 @@ self.addEventListener("install", event => {
                 await cache.add(url)
             };
             */
-            console.info(new Date() + ` Catching done`);
-            // (<any>self).skipWaiting();
+            console.info(new Date() + ` Catching done`);            
+            //await self.skipWaiting();
         })().catch(e => {
             console.error(new Date() + ` Error in sw`, e);
             throw e;
@@ -74,13 +71,13 @@ self.addEventListener("install", event => {
 
 self.addEventListener("activate", event => {
     console.log(new Date() + " ServiceWorker activation started");
-    (event as ActivateEvent).waitUntil(
+    event.waitUntil(
         (async () => {
             (await caches.keys()).map((x: string) => {
                 console.info(`Have cache key:`, x);
             });
 
-            const cache = await caches.open(CACHE_NAME);
+            const cache = await caches.open(CACHE_NAME_ENGINE);
             const keys = await cache.keys();
             const index = await getIndex();
             for (const key of keys) {
@@ -91,107 +88,72 @@ self.addEventListener("activate", event => {
                     //cache.delete(key);
                 }
                 */
-            }
+            }            
             console.info(new Date() + " Service worker activation finished");
         })()
     );
 });
 
-self.addEventListener("fetch", eventRaw => {
-    const event = eventRaw as FetchEvent;
-    const headersRange = event.request.headers.get("range");
-    if (headersRange) {
-        console.info(`headersRange='${headersRange}'`);
-        const m = headersRange.match(/^bytes\=(\d+)\-$/);
-        if (!m) {
-            // ????
-            event.respondWith(fetch(event.request));
-            return;
-        }
-        const pos = parseInt(m[1]);
-        console.log(
-            "Range request for",
-            event.request.url,
-            ", starting position:",
-            pos
-        );
-        event.respondWith(
-            caches
-                .open(CACHE_NAME)
-                .then(function(cache) {
-                    return cache.match(event.request.url);
-                })
-                .then(function(res) {
-                    if (!res) {
-                        console.info(`No audio cache for ${event.request.url}`);
-                        return fetch(event.request).then(res => {
-                            return res.arrayBuffer();
-                        });
-                    } else {
-                        console.info(
-                            `Cache audio hit for ${event.request.url}`
-                        );
-                        return res.arrayBuffer();
-                    }
-                })
-                .then(function(ab) {
-                    return new Response(ab.slice(pos), {
-                        status: 206,
-                        statusText: "Partial Content",
-                        headers: [
-                            // ['Content-Type', 'video/webm'],
-                            [
-                                "Content-Range",
-                                "bytes " +
-                                    pos +
-                                    "-" +
-                                    (ab.byteLength - 1) +
-                                    "/" +
-                                    ab.byteLength
-                            ]
-                        ]
-                    });
-                })
-        );
-    } else {
-        event.respondWith(
-            (async () => {
-                const cache = await caches.open(CACHE_NAME);
-                const response = await cache.match(event.request);
-                if (response) {
-                    console.info(`Cache hit for ${event.request.url}`);
-                    return response;
-                } else {
-                    console.info(`No cache for ${event.request.url}`);
-                    return fetch(event.request);
-                }
+self.addEventListener("fetch", event => {
+    event.respondWith((async () => {
+        const cacheHit =
+            (await caches
+                .open(CACHE_NAME_ENGINE)
+                .then(cache => cache.match(event.request.url))) ||
+            (await caches
+                .open(CACHE_NAME_IMAGES)
+                .then(cache => cache.match(event.request.url))) ||
+            (await caches
+                .open(CACHE_NAME_MUSIC)
+                .then(cache => cache.match(event.request.url)));
 
-                /*
-                try {
-                    const res = await fetch(event.request);
-                    console.info(
-                        `Network-first success for ${event.request.url}`
-                    );
-                    return res;
-                } catch (e) {
-                    // console.info(`Network-first failed for ${event.request.url}`)
-                }
-                const response = caches.match(event.request);
-                if (response) {
-                    console.info(
-                        `Network-first failed, but cache hit for ${event.request
-                            .url}`
-                    );
-                    return response;
-                } else {
-                    console.warn(
-                        `Network-first failed and no cache for ${event.request
-                            .url}`
-                    );
-                    return fetch(event.request);
-                }
-                */
-            })()
-        );
-    }
+        const headersRange = event.request.headers.get("range");
+        if (headersRange) {
+            console.info(`headersRange='${headersRange}'`);
+            const m = headersRange.match(/^bytes\=(\d+)\-$/);
+            if (!m) {
+                // ????
+                return fetch(event.request);
+            }
+
+            const pos = parseInt(m[1]);
+            console.log(
+                "Range request for",
+                event.request.url,
+                ", starting position:",
+                pos
+            );
+            if (!cacheHit) {
+                console.info(`No audio cache for ${event.request.url}`);
+                return fetch(event.request);
+            } else {
+                console.info(`Cache audio hit for ${event.request.url}`);
+                const arrayBuffer = await cacheHit.arrayBuffer();
+                return new Response(arrayBuffer.slice(pos), {
+                    status: 206,
+                    statusText: "Partial Content",
+                    headers: [
+                        // ['Content-Type', 'video/webm'],
+                        [
+                            "Content-Range",
+                            "bytes " +
+                                pos +
+                                "-" +
+                                (arrayBuffer.byteLength - 1) +
+                                "/" +
+                                arrayBuffer.byteLength
+                        ]
+                    ]
+                });
+            }
+        }
+
+        if (cacheHit) {
+            console.info(`Cache hit for ${event.request.url}`);
+            return cacheHit;
+        } else {
+            console.info(`No cache for ${event.request.url}`);
+            return fetch(event.request);
+        }
+    })());
 });

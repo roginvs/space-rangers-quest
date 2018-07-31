@@ -103,12 +103,18 @@ enum PlayerCareer {
     Воин = 4
 }
 
-type HeaderMagic =
-    | 0x423a35d6
-    | 0x423a35d7
-    | 0x423a35d3
-    | 0x423a35d2
-    | 0x423a35d4;
+export const HEADER_QM_2 = 0x423a35d2; // 24 parameters
+export const HEADER_QM_3 = 0x423a35d3; // 48 parameters
+export const HEADER_QM_4 = 0x423a35d4; // 96 parameters
+export const HEADER_QMM_6 = 0x423a35d6;
+export const HEADER_QMM_7 = 0x423a35d7;
+export type HeaderMagic =
+    | typeof HEADER_QM_3
+    | typeof HEADER_QM_2
+    | typeof HEADER_QM_4
+    | typeof HEADER_QMM_6
+    | typeof HEADER_QMM_7;
+
 
 interface QMBase {
     givingRace: number;
@@ -127,14 +133,17 @@ interface QMBase {
 
     screenSizeX: number;
     screenSizeY: number;
+    reputationChange: number;
+    widthSize: number;
+    heigthSize: number;
 }
 
 function parseBase(r: Reader, header: HeaderMagic): QMBase {
-    if (header === 0x423a35d6 || header === 0x423a35d7) {
-        const majorVersion = header === 0x423a35d7 ? r.int32() : undefined;
-        const minorVersion = header === 0x423a35d7 ? r.int32() : undefined;
+    if (header === HEADER_QMM_6 || header === HEADER_QMM_7) {
+        const majorVersion = header === HEADER_QMM_7 ? r.int32() : undefined;
+        const minorVersion = header === HEADER_QMM_7 ? r.int32() : undefined;
         const changeLogString =
-            header === 0x423a35d7 ? r.readString() : undefined;
+            header === HEADER_QMM_7 ? r.readString() : undefined;
 
         const givingRace = r.byte();
         const whenDone = r.byte();
@@ -165,15 +174,18 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
             majorVersion,
             minorVersion,
             screenSizeX,
-            screenSizeY
+            screenSizeY,
+            reputationChange,
+            widthSize,
+            heigthSize,
         };
     } else {
         const paramsCount =
-            header === 0x423a35d3
+            header === HEADER_QM_3
                 ? 48
-                : header === 0x423a35d2
+                : header === HEADER_QM_2
                   ? 24
-                  : header === 0x423a35d4 ? 96 : undefined;
+                  : header === HEADER_QM_4 ? 96 : undefined;
         if (!paramsCount) {
             throw new Error(`Unknown header ${header}`);
         }
@@ -204,9 +216,13 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
             hardness,
             paramsCount,
 
+            reputationChange,
+
             // TODO
             screenSizeX: 200,
-             screenSizeY: 200
+            screenSizeY: 200,            
+            heigthSize: 100,
+            widthSize: 100,
         };
     }
 }
@@ -352,10 +368,9 @@ function parseParamQmm(r: Reader): QMParam {
     return param;
 }
 
-export interface QM extends QMBase, QMBase2 {
-    params: QMParam[];
-    locations: Location[];
-    jumps: Jump[];
+
+interface QMBase3 {    
+    header: HeaderMagic,    
 }
 
 interface QMBase2 {
@@ -375,6 +390,14 @@ interface QMBase2 {
     successText: string;
     taskText: string;
 }
+
+export interface QM extends QMBase, QMBase2, QMBase3 {
+    params: QMParam[];
+    locations: Location[];
+    jumps: Jump[];
+}
+
+
 function parseBase2(r: Reader, isQmm: boolean): QMBase2 {
     const ToStar = r.readString();
 
@@ -395,6 +418,7 @@ function parseBase2(r: Reader, isQmm: boolean): QMBase2 {
 
     const taskText = r.readString();
 
+    // tslint:disable-next-line:no-dead-store
     const unknownText = isQmm ? undefined : r.readString();
 
     return {
@@ -891,7 +915,7 @@ export function parse(data: Buffer): QM {
 
     const base = parseBase(r, header);
 
-    const isQmm = header === 0x423a35d6 || header === 0x423a35d7;
+    const isQmm = header === HEADER_QMM_6 || header === HEADER_QMM_7;
     const params: QMParam[] = [];
     for (let i = 0; i < base.paramsCount; i++) {
         params.push(isQmm ? parseParamQmm(r) : parseParam(r));
@@ -922,17 +946,21 @@ export function parse(data: Buffer): QM {
         throw new Error(r.isNotEnd());
     }
 
+    const base3: QMBase3 = {        
+        header,
+    }
     return {
         ...base,
         ...base2,
-        params: params,
+        ...base3,
+        params,
         locations,
         jumps
     };
 }
 
 export function getImagesListFromQmm(qmmQuest: QM) {
-    let images: {
+    const images: {
         [imageName: string]: string[];
     } = {};
     let tracks: (string | undefined)[] = [];
@@ -949,33 +977,33 @@ export function getImagesListFromQmm(qmmQuest: QM) {
         }
     };
 
-    qmmQuest.params.map((p, pid) => {
+    qmmQuest.params.forEach((p, pid) => {
         addImg(p.img, `Param p${pid}`);
         tracks.push(p.track);
         sounds.push(p.sound);
     });
 
     for (const l of qmmQuest.locations) {
-        l.media.map(x => x.img).map(x => addImg(x, `Loc ${l.id}`));
-        tracks.concat(...l.media.map(x => x.track));
-        sounds.concat(...l.media.map(x => x.sound));
+        l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id}`));
+        l.media.map(x => x.track).forEach(x => x ? tracks.push(x) : undefined);
+        l.media.map(x => x.sound).forEach(x => x ? sounds.push(x) : undefined);        
 
-        l.paramsChanges.map((p, pid) => {
+        l.paramsChanges.forEach((p, pid) => {
             l.media
                 .map(x => x.img)
-                .map(x => addImg(x, `Loc ${l.id} p${pid + 1}`));
+                .forEach(x => addImg(x, `Loc ${l.id} p${pid + 1}`));
             tracks.push(p.track);
             sounds.push(p.sound);
         });
     }
 
-    qmmQuest.jumps.map((j, jid) => {
+    qmmQuest.jumps.forEach((j, jid) => {
         addImg(j.img, `Jump ${jid}`);
 
         tracks.push(j.track);
         sounds.push(j.sound);
 
-        j.paramsChanges.map((p, pid) => {
+        j.paramsChanges.forEach((p, pid) => {
             addImg(p.img, `Jump ${jid} p${pid}`);
             tracks.push(p.track);
             sounds.push(p.sound);

@@ -1,4 +1,4 @@
-build-node/*
-build-web/*
+built-node/*
+built-web/*
 coverage/*
 .nyc_output/*

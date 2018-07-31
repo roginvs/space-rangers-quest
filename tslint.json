@@ -1,0 +1,7 @@
+{
+    "extends": "typestrict",
+    "defaultSeverity": "warning",
+    "rules": {
+      "no-unused-variable": false
+    }    
+  }

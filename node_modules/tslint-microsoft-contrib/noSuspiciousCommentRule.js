@@ -1,0 +1,76 @@
+"use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
+var ts = require("typescript");
+var Lint = require("tslint");
+var tsutils_1 = require("tsutils");
+var FAILURE_STRING = 'Suspicious comment found: ';
+var SUSPICIOUS_WORDS = ['BUG', 'HACK', 'FIXME', 'LATER', 'LATER2', 'TODO'];
+var Rule = (function (_super) {
+    __extends(Rule, _super);
+    function Rule() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    Rule.prototype.apply = function (sourceFile) {
+        return this.applyWithWalker(new NoSuspiciousCommentRuleWalker(sourceFile, this.getOptions()));
+    };
+    Rule.metadata = {
+        ruleName: 'no-suspicious-comment',
+        type: 'maintainability',
+        description: "Do not use suspicious comments, such as " + SUSPICIOUS_WORDS.join(', '),
+        options: null,
+        optionsDescription: '',
+        typescriptOnly: true,
+        issueClass: 'Non-SDL',
+        issueType: 'Warning',
+        severity: 'Low',
+        level: 'Opportunity for Excellence',
+        group: 'Clarity',
+        commonWeaknessEnumeration: '546'
+    };
+    return Rule;
+}(Lint.Rules.AbstractRule));
+exports.Rule = Rule;
+var NoSuspiciousCommentRuleWalker = (function (_super) {
+    __extends(NoSuspiciousCommentRuleWalker, _super);
+    function NoSuspiciousCommentRuleWalker() {
+        return _super !== null && _super.apply(this, arguments) || this;
+    }
+    NoSuspiciousCommentRuleWalker.prototype.visitSourceFile = function (node) {
+        var _this = this;
+        tsutils_1.forEachTokenWithTrivia(node, function (text, tokenSyntaxKind, range) {
+            if (tokenSyntaxKind === ts.SyntaxKind.SingleLineCommentTrivia ||
+                tokenSyntaxKind === ts.SyntaxKind.MultiLineCommentTrivia) {
+                _this.scanCommentForSuspiciousWords(range.pos, text.substring(range.pos, range.end));
+            }
+        });
+    };
+    NoSuspiciousCommentRuleWalker.prototype.scanCommentForSuspiciousWords = function (startPosition, commentText) {
+        var _this = this;
+        SUSPICIOUS_WORDS.forEach(function (suspiciousWord) {
+            _this.scanCommentForSuspiciousWord(suspiciousWord, commentText, startPosition);
+        });
+    };
+    NoSuspiciousCommentRuleWalker.prototype.scanCommentForSuspiciousWord = function (suspiciousWord, commentText, startPosition) {
+        var regexExactCaseNoColon = new RegExp('\\b' + suspiciousWord + '\\b');
+        var regexCaseInsensistiveWithColon = new RegExp('\\b' + suspiciousWord + '\\b\:', 'i');
+        if (regexExactCaseNoColon.test(commentText) || regexCaseInsensistiveWithColon.test(commentText)) {
+            this.foundSuspiciousComment(startPosition, commentText, suspiciousWord);
+        }
+    };
+    NoSuspiciousCommentRuleWalker.prototype.foundSuspiciousComment = function (startPosition, commentText, suspiciousWord) {
+        var errorMessage = FAILURE_STRING + suspiciousWord;
+        this.addFailureAt(startPosition, commentText.length, errorMessage);
+    };
+    return NoSuspiciousCommentRuleWalker;
+}(Lint.RuleWalker));
+//# sourceMappingURL=noSuspiciousCommentRule.js.map

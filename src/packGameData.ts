@@ -3,24 +3,25 @@ import { parse, QM, ParamType, ParamCritType, getImagesListFromQmm } from './lib
 import * as pako from 'pako';
 import * as fs from 'fs';
 
-import { QMPlayer, QMImages } from './lib/qmplayer'
+import { QMPlayer } from './lib/qmplayer'
+import { PQImages } from './lib/pqImages';
+import { Lang } from './lib/qmplayer/player';
 
 const pqiSR1Parsed = JSON.parse(fs.readFileSync(__dirname + '/../src/sr1-pqi.json').toString()) as {
-    [questName: string]: QMImages
+    [questName: string]: PQImages
 };
 
 export type Origin = string;
 
-export type Lang = 'rus' | 'eng';
 
 export interface Game {
     filename: string,
-    description?: string,
+    taskText: string,
     smallDescription?: string,
     gameName: string,
-    images: QMImages,
+    images: PQImages,
     questOrigin: Origin,
-    oldTgeBehaviour: boolean,
+    // oldTgeBehaviour: boolean,
     hardness: number,
     lang: Lang
 }
@@ -45,14 +46,14 @@ export interface Index {
 let warns: string[] = [];
 
 const dataSrcPath = __dirname + '/../borrowed'
-const dataDstPath = __dirname + '/../build-web/data'
+const dataDstPath = __dirname + '/../built-web/data'
 
 const resultJsonFile = dataDstPath + '/index.json';
 
 
 function readPqi(filename: string) {
     let result: {
-        [name: string]: QMImages
+        [name: string]: PQImages
     } = {};
 
     if (!fs.existsSync(filename)) {
@@ -130,32 +131,32 @@ function areThereAnyQmmImages(qmmQuest: QM) {
         }
     }
 
-    qmmQuest.params.map((p, pid) => {
+    qmmQuest.params.forEach((p, pid) => {
         addImg(p.img, `Param p${pid}`);
         tracks.push(p.track)
         sounds.push(p.sound)
     })
 
     for (const l of qmmQuest.locations) {
-        l.media.map(x => x.img).map(x => addImg(x, `Loc ${l.id}`))
-        tracks.concat(...l.media.map(x => x.track));
-        sounds.concat(...l.media.map(x => x.sound));
+        l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id}`))
+        tracks = tracks.concat(...l.media.map(x => x.track));
+        sounds = sounds.concat(...l.media.map(x => x.sound));
 
-        l.paramsChanges.map((p, pid) => {
-            l.media.map(x => x.img).map(x => addImg(x, `Loc ${l.id} p${pid + 1}`))
+        l.paramsChanges.forEach((p, pid) => {
+            l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id} p${pid + 1}`))
             tracks.push(p.track)
             sounds.push(p.sound)
         })
     }
 
-    qmmQuest.jumps.map((j, jid) => {
+    qmmQuest.jumps.forEach((j, jid) => {
         addImg(j.img, `Jump ${jid}`)
 
         tracks.push(j.track)
         sounds.push(j.sound)
 
 
-        j.paramsChanges.map((p, pid) => {
+        j.paramsChanges.forEach((p, pid) => {
             addImg(p.img, `Jump ${jid} p${pid}`)
             tracks.push(p.track)
             sounds.push(p.sound)
@@ -247,8 +248,8 @@ for (const origin of fs.readdirSync(dataSrcPath + '/qm')) {
         const srcQmName = qmDir + qmShortName;
         const lang = origin.endsWith('eng') ? 'eng' : 'rus';
         const oldTge = qmShortName.endsWith('.qm') && lang !== 'eng'; //origin.startsWith('Tge');
-        const gameName = qmShortName.replace(/(\.qm|\.qmm)$/, '')
-            .replace(/_eng$/, '');
+        const gameName = qmShortName.replace(/(\.qm|\.qmm)$/, '');
+            // .replace(/_eng$/, '');
         console.info(`Reading ${srcQmName} (${lang}, oldTge=${oldTge}) gameName=${gameName}`);
 
         const data = fs.readFileSync(srcQmName);
@@ -258,7 +259,7 @@ for (const origin of fs.readdirSync(dataSrcPath + '/qm')) {
         }
 
         const quest = parse(data);
-        const player = new QMPlayer(quest, undefined, lang, oldTge);
+        const player = new QMPlayer(quest, undefined, lang); // oldTge
         player.start();
 
         
@@ -300,14 +301,14 @@ for (const origin of fs.readdirSync(dataSrcPath + '/qm')) {
         const gameFilePath = 'qm/' + qmShortName + '.gz';
         const game: Game = {
             filename: gameFilePath,
-            description: player.getState().text.replace(/<clr>|<clrEnd>/g, ''),
+            taskText: quest.taskText,
             smallDescription: lang === 'rus' ? `Сложность: ${quest.hardness}, из ${origin}` :
                 `Hardness: ${quest.hardness}, from ${origin}`,
             gameName,
             images,
             hardness: quest.hardness,
             questOrigin: origin,
-            oldTgeBehaviour: oldTge,
+            // oldTgeBehaviour: oldTge,
             lang
         }
 

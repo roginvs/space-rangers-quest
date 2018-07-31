@@ -1,18 +1,18 @@
-image: node:6.9.2
+image: node:8.11.3
 pages:
   stage: deploy
   script:
-  - rm -R build-web || true
+  - rm -R built-web || true
 #  - rm -R node_modules
 #  - npm install
   - chmod a+x node_modules/.bin/*
-  - mkdir build-web
+  - mkdir built-web
   - npm run tsc
   - npm run test
-  - mv coverage build-web
-  - node build-node/packGameData.js
+  - mv coverage built-web
+  - node built-node/packGameData.js
   - npm run build
-  - mv build-web public
+  - mv built-web public
   artifacts:
     paths:
     - public

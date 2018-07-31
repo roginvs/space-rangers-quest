@@ -1,84 +1,88 @@
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-const WebpackVersionHashPlugin = require('webpack-version-hash-plugin');
-module.exports = {
-  entry: {
-	  bundle: './src/ui/index.tsx',
-	  serviceWorker: './src/ui/serviceWorker.ts'
-  },
-  output: {
-    filename: '[name].js',
-    path: __dirname + '/build-web'
-  },
-  module: {
-    rules: [
-      {
-        enforce: 'pre',
-        test: /\.js$/,
-        loader: "source-map-loader"
-      },
-      {
-        enforce: 'pre',
-        test: /\.tsx?$/,
-        use: "source-map-loader"
-      },
-      {
-        test: /\.tsx?$/,
-        loader: 'ts-loader',
-        exclude: /node_modules/,
-      },
-      {
-        test: /\.css$/,
-        loader: ExtractTextPlugin.extract({ fallback: 'style-loader', use: 'css-loader' })
-      },
+const webpack = require('webpack');
 
-      {
-        test: /\.(png|woff|woff2|eot|ttf|svg)$/,
-        loader: 'url-loader?limit=100000&name=./fonts/[hash].[ext]'
-      },
-      /*
-      {
-        test: /\.woff(\?v=\d+\.\d+\.\d+)?$/,
-        loader: "url?limit=10000&mimetype=application/font-woff"
-      }, {
-        test: /\.woff2(\?v=\d+\.\d+\.\d+)?$/,
-        loader: "url?limit=10000&mimetype=application/font-woff"
-      }, {
-        test: /\.ttf(\?v=\d+\.\d+\.\d+)?$/,
-        loader: "url?limit=10000&mimetype=application/octet-stream"
-      }, {
-        test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
-        loader: "file"
-      }, {
-        test: /\.svg(\?v=\d+\.\d+\.\d+)?$/,
-        loader: "url?limit=10000&mimetype=image/svg+xml"
-      }
-      */
-    ]
-  },
-  resolve: {
-    extensions: [".tsx", ".ts", ".js"]
-  },
-  plugins: [
-    new ExtractTextPlugin("bundle.css"),
-    new CopyWebpackPlugin([
-      { from: 'src/webstatic' },
-    ]),
-    new WebpackVersionHashPlugin({
-      filename: 'version.json',
-      include_date: true
-    })
-  ],  
-  devtool: '#cheap-module-source-map',
-  devServer: {
-    contentBase: "build-web",
-    port: 4000,
-    // host: '0.0.0.0',
-    // disableHostCheck: true
-    /* overlay: {
-      warnings: true,
-      errors: true
-    }
-    */
-  }
+const CopyWebpackPlugin = require("copy-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
+// const WebpackVersionHashPlugin = require("webpack-version-hash-plugin");
+ 
+
+const devServer /*: webpackDevServer.Configuration */ = {
+    contentBase: "./built-web",
+    port: 4000
 };
+
+const config /*: webpack.Configuration */ = {
+    entry: {
+	    index: './src/ui/index.tsx',
+	    serviceWorker: './src/ui/serviceWorker.ts'
+    },
+
+    output: {
+        filename: "[name].js",
+        chunkFilename: "[id].js",
+        path: __dirname + "/built-web"
+    },
+
+    plugins: [        
+        new CopyWebpackPlugin([
+            {
+                from: "src/webstatic"
+            }
+        ]),
+        new MiniCssExtractPlugin({
+            // Options similar to the same options in webpackOptions.output
+            // both options are optional
+            filename: "[name].css",
+            chunkFilename: "[id].css"
+        }),
+        //new WebpackVersionHashPlugin({
+        //    filename: 'version.json',
+        //    include_date: true
+        //}),
+        new webpack.DefinePlugin({
+            __VERSION__: JSON.stringify(new Date().toISOString()),
+        }),                              
+        new ServiceWorkerWebpackPlugin({
+            entry: './src/ui/serviceWorker.ts',
+            filename: "sw.js",
+        }),
+    ],
+
+    module: {
+        rules: [
+            {
+                enforce: "pre",
+                test: /\.(js|ts|tsx)$/,
+                loader: "source-map-loader",
+                exclude: /node_modules/
+            },
+            {
+                test: /\.tsx?$/,
+                loader: "ts-loader",
+                exclude: /node_modules/
+            },
+            
+            {
+                test: /\.css$/,
+                use: [MiniCssExtractPlugin.loader, "css-loader"]
+            },
+
+            {
+                test: /\.(png|svg|jpg|gif)$/,
+                use: ["file-loader?name=img/[hash].[ext]"]
+            },
+            {
+                test: /\.(woff|woff2|eot|ttf|otf)$/,
+                use: ["file-loader?name=fonts/[hash].[ext]"]
+            }
+        ]
+    },
+    resolve: {
+        extensions: [".ts", ".tsx", ".js", ".json"]
+    },
+    
+    devServer
+};
+
+module.exports = config;

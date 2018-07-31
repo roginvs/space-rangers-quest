@@ -1,0 +1,6 @@
+#!/usr/bin/env node
+
+const SonarTsServer = require("../lib/runner/sonartsServer").SonarTsServer;
+
+const sonartsServer = new SonarTsServer();
+sonartsServer.start(process.argv[2]);

@@ -2,10 +2,12 @@ import * as fs from 'fs';
 import * as assert from 'assert';
 import "mocha";
 
-import { QMPlayer, GameState, Player } from '../lib/qmplayer'
+import { QMPlayer, GameState } from '../lib/qmplayer'
 import { parse, QM } from '../lib/qmreader';
 import { substitute } from '../lib/substitution';
 import * as formula from '../lib/formula';
+import { PlayerSubstitute } from '../lib/qmplayer/funcs';
+import { randomFromMathRandom } from '../lib/randomFunc';
 
 
 const srcDir = __dirname + `/../../borrowed/qm/`;
@@ -17,7 +19,7 @@ describe(`Checking all quests for formulas and params substitution`, function ()
             describe(`Checking quest ${fullname}`, () => {
                 let quest: QM;
                 let params: number[];
-                let player: Player = {
+                let player: PlayerSubstitute = {
                     Ranger: 'Ranger',
                     Player: 'Player',
                     FromPlanet: 'FromPlanet',
@@ -28,25 +30,62 @@ describe(`Checking all quests for formulas and params substitution`, function ()
                     Day: 'Day',
                     Money: 'Money',
                     CurDate: 'CurDate',
+                    lang: "rus",
                 }
                 function check(str: string, place = '', isDiamond = false) {
                     try {
-                        substitute(str, player, params, isDiamond ? 1 : undefined);
+                        substitute(str, player, params, randomFromMathRandom, isDiamond ? 1 : undefined);
                     } catch (e) {
                         throw new Error(`String failed '${str}' with ${e} in ${place}`);
                     }
                 }
                 function checkFormula(str: string, place = '') {
+                    const staticRandomGenerated = [ 0.8098721706321894,
+                        0.7650745137670785,
+                        0.5122628148859116,
+                        0.7001314250579083,
+                        0.9777148783782501,
+                        0.6484951526791192,
+                        0.6277520602629139,
+                        0.6271209273581702,
+                        0.5929518455455183,
+                        0.555114104030954,
+                        0.8769248658117874,
+                        0.9012611135928128,
+                        0.9887903872842161,
+                        0.9032020764410791,
+                        0.09244706438405847,
+                        0.6841815116128189,
+                        0.26661520895002355,
+                        0.95424331893931,
+                        0.8900907263092355,
+                        0.9796112746203975 ];
+                      
+                    function createRandom(staticRandom: number[]) {
+                        let i = 0;                        
+                        return () => {
+                            i++;
+                            if (i >= staticRandom.length) {
+                                throw new Error(`Lots of random`)
+                                i = 0;
+                            }
+                            return staticRandom[i]
+                        }
+                    }
                     try {
-                        formula.parse(str, params);
+                        const formulaResult = formula.parse(str, params, createRandom(staticRandomGenerated));
                     } catch (e) {
                         throw new Error(`String failed '${str}' with ${e} in ${place}`);
                     }
                 }
                 it(`Loads quest and substitute variables`, () => {
                     const data = fs.readFileSync(fullname);
-                    quest = parse(data);
+                    quest = parse(data);                    
                     params = quest.params.map((p, i) => i * i);
+                });
+                it(`Creates player and starts (to check init values)`, () => {
+                    const player = new QMPlayer(quest, [], "rus");
+                    player.start();
                 })
                 it(`Starting/ending text`, () => {
                     check(quest.taskText, 'start');
