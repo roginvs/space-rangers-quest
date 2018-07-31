@@ -47,6 +47,8 @@ const RUS = {
     reallyRestart: "Начать сначала?",
     yes: "Да",
     no: "Нет",
+
+    back: "Назад",
 }
 
 export type LangTexts = typeof RUS;

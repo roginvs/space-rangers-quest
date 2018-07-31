@@ -436,6 +436,13 @@ export class QuestPlay extends React.Component<
                         </>
                     ) : (
                         <>
+                        <div style={{
+                            position: "fixed",
+                            right: 15,
+                            bottom: 15,
+                        }}>
+                            {controlButtons}
+                            </div>
                             <div>
                                 <div
                                     style={{

@@ -169,7 +169,7 @@ export class QuestInfo extends React.Component<
                 />
             </div>
             <div className="row">
-                <div className="col-md-6">
+                <div className="col-md-4">
                     <button
                         className={classnames(
                             "btn btn-block mb-2",
@@ -189,7 +189,7 @@ export class QuestInfo extends React.Component<
                         {l.startFromTheStart}
                     </button>
                 </div>
-                <div className="col-md-6">
+                <div className="col-md-4">
                     <button
                         className={classnames(
                             "btn btn-block mb-2",
@@ -218,6 +218,20 @@ export class QuestInfo extends React.Component<
                                 {l.noLastSave}
                             </>
                         )}
+                    </button>
+                </div>
+
+                <div className="col-md-4">
+                    <button
+                        className={classnames(
+                            "btn btn-block btn-ligth mb-2",                            
+                        )}
+                        onClick={async () => {                            
+                            location.hash = `/quests`;
+                        }}
+                    >
+                        <i className="fa fa-reply" />{" "}
+                        {l.back}
                     </button>
                 </div>
             </div>
