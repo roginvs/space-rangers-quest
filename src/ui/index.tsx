@@ -39,8 +39,6 @@ import { QuestInfo } from "./questInfo";
 import { Store } from "./store";
 import { QuestPlay } from "./questPlay";
 
-
-
 console.info("starting");
 
 const config = {
@@ -53,15 +51,15 @@ const config = {
 };
 
 const app = firebase.initializeApp(config);
-//const app = firebase.initializeApp({} as typeof config);
+// const app = firebase.initializeApp({} as typeof config);
 
 declare global {
     interface Navigator {
         storage?: {
-            estimate: () => Promise<{quota: number, usage: number}>,
-            persisted: () => Promise<boolean>,
-            persist: () => Promise<boolean>,            
-        },
+            estimate: () => Promise<{ quota: number; usage: number }>;
+            persisted: () => Promise<boolean>;
+            persist: () => Promise<boolean>;
+        };
     }
 }
 
@@ -103,14 +101,21 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
             if (lastPlayedGame) {
                 location.hash = `/quests/${lastPlayedGame}`;
             }
-            app.auth().onAuthStateChanged(user => {
-                store.firebaseLoggedIn = user;
-                if (user) {
-                    store.syncWithFirebase();
-                }
-            });
-
-            if ("serviceWorker" in navigator && location.hostname !== 'localhost') {
+            await store.loadWinProofsFromLocal();
+            try {
+                app.auth().onAuthStateChanged(user => {
+                    store.firebaseLoggedIn = user;
+                    if (user) {
+                        store.syncWithFirebase();
+                    }
+                });
+            } catch (e) {
+                console.warn("Error with firebase", e);
+            }
+            if (
+                "serviceWorker" in navigator &&
+                location.hostname !== "localhost"
+            ) {
                 navigator.serviceWorker
                     .register("/sw.js")
                     .then(reg => {
@@ -128,9 +133,15 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                                         reg.active ? reg.active.state : "null"
                                     } `
                             );
-                            store.haveInstallingServiceWorker = reg.installing ? reg.installing.state : null;
-                            store.haveWaitingServiceWorker = reg.waiting ? reg.waiting.state : null;
-                            store.haveActiveServiceWorker = reg.active ? reg.active.state : null;
+                            store.haveInstallingServiceWorker = reg.installing
+                                ? reg.installing.state
+                                : null;
+                            store.haveWaitingServiceWorker = reg.waiting
+                                ? reg.waiting.state
+                                : null;
+                            store.haveActiveServiceWorker = reg.active
+                                ? reg.active.state
+                                : null;
                             if (reg.installing) {
                                 reg.installing.onstatechange = updateStore;
                             }
@@ -143,15 +154,17 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                         }
                         updateStore();
                         reg.addEventListener("updatefound", () => {
-                            updateStore();                            
+                            updateStore();
                         });
                     })
                     .catch(e => undefined);
                 navigator.serviceWorker.addEventListener(
                     "controllerchange",
                     e => {
-                        store.serviceWorkerController =
-                            navigator.serviceWorker.controller ? navigator.serviceWorker.controller.state : null;
+                        store.serviceWorkerController = navigator.serviceWorker
+                            .controller
+                            ? navigator.serviceWorker.controller.state
+                            : null;
                         console.info(
                             `serviceWorker controller=${
                                 navigator.serviceWorker.controller
@@ -161,8 +174,10 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                         );
                     }
                 );
-                store.serviceWorkerController =
-                            navigator.serviceWorker.controller ? navigator.serviceWorker.controller.state : null;
+                store.serviceWorkerController = navigator.serviceWorker
+                    .controller
+                    ? navigator.serviceWorker.controller.state
+                    : null;
                 console.info(
                     `serviceWorker controller=${
                         navigator.serviceWorker.controller
@@ -171,10 +186,10 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                     }`
                 );
             }
-            if (navigator.storage) {            
+            if (navigator.storage) {
                 navigator.storage.persist().then(persisted => {
-                    console.info(`Persisted=`,persisted);
-                    store.serviceWorkerStoragePersistent = persisted
+                    console.info(`Persisted=`, persisted);
+                    store.serviceWorkerStoragePersistent = persisted;
                 });
             }
             this.setState({
