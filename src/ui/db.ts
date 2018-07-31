@@ -390,9 +390,9 @@ export async function getDb(app: firebase.app.App) {
                 }
             }
         }
+        console.info(`Sync syncWithFirebase config done`);
 
-        console.info(`Sync syncWithFirebase step1 done`);
-
+        /*
         // Local saving always overwrite remote
         const localSavings = await getAllLocal(INDEXEDDB_SAVED_STORE_NAME);        
         for (const gameName of Object.keys(localSavings)) {            
@@ -403,8 +403,10 @@ export async function getDb(app: firebase.app.App) {
                 savingRaw
             );
         }
+        console.info(`Sync syncWithFirebase local savings done`);
+        */
 
-        console.info(`Sync syncWithFirebase step2 done`);
+        
 
         try {
             const allLocalWons = await getAllLocal(INDEXEDDB_WON_STORE_NAME);            
@@ -468,10 +470,8 @@ export async function getDb(app: firebase.app.App) {
         } catch (e) {
             console.warn(`wining state sync error`, e, e.stack);
         }
-
-        console.info(`Sync syncWithFirebase step3 done`);
-
-        console.info(`TODO: update highscores table!`);
+        console.info(`Sync syncWithFirebase passed games done`);
+        
         await updateFirebaseOwnHighscore();
 
         console.info(`Sync with firebase finished`);
@@ -508,11 +508,13 @@ export async function getDb(app: firebase.app.App) {
     async function saveGame(gameName: string, saving: GameState | null) {
         const savingRaw = saving  ? JSON.stringify(saving) : saving;
         await setLocal(INDEXEDDB_SAVED_STORE_NAME, gameName, savingRaw);
+        /*
         await setFirebase(
             FIREBASE_USERS_PRIVATE,
             `${INDEXEDDB_SAVED_STORE_NAME}/${gameName}/${localInfo.uid}`,
             savingRaw
         );
+        */
     }
 
     async function getLocalSaving(gameName: string) {
@@ -524,6 +526,7 @@ export async function getDb(app: firebase.app.App) {
             return null;
         }
     }
+    /*
     async function getAllRemoteSavings(gameName: string) {
         const rawValue = await getFirebase(
             FIREBASE_USERS_PRIVATE,
@@ -541,6 +544,7 @@ export async function getDb(app: firebase.app.App) {
             return null;
         }
     }
+    */
 
     console.info(`Returning db instance`);
     return {
@@ -554,7 +558,7 @@ export async function getDb(app: firebase.app.App) {
 
         saveGame,
         getLocalSaving,
-        getAllRemoteSavings,
+        // getAllRemoteSavings,
 
         syncWithFirebase,
 
