@@ -13,6 +13,9 @@ interface CacheInstallInfo {
     downloaded: number,
     currentFile: string
 }
+export const QUEST_SEARCH_ALL = 'all';
+export const QUEST_SEARCH_OWN = 'own';
+
 export class Store {
     constructor(public index: Index, 
         public app: firebase.app.App,
@@ -203,8 +206,6 @@ export class Store {
     }
 }
 
-export const QUEST_SEARCH_ALL = 'all';
-export const QUEST_SEARCH_OWN = 'own';
 
 /*
 - page is server by sw.js: true/false
