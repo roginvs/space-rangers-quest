@@ -1,7 +1,7 @@
-/// <reference path='../../node_modules/typescript/lib/lib.es6.d.ts' />
-/// <reference path='../../node_modules/typescript/lib/lib.webworker.d.ts' />
+import { ServiceWorkerGlobalScope } from "./lib.webworker";
 
 declare var self: ServiceWorkerGlobalScope;
+declare var fetch: ServiceWorkerGlobalScope["fetch"];
 
 import "./version.ts";
 
@@ -29,8 +29,6 @@ console.info('Service worker engine urls: ', engineUrls);
 function getIndex() {
     return fetch(INDEX_JSON).then(data => data.json()) as Promise<Index>;
 }
-
-declare const x: ServiceWorkerGlobalScope;
 
 self.addEventListener("install", event => {
     // Perform install steps
