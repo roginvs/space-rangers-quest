@@ -41,7 +41,18 @@ export class QuestList extends React.Component<
         search: "",
         dropdownOpen: false
     };
-    componentDidMount() {}
+    onScroll = () => {
+        this.props.store.lastQuestListScroll = window.scrollY;        
+    }
+    componentWillUnmount() {
+        window.removeEventListener('scroll', this.onScroll);
+    }
+    componentDidMount() {
+        window.addEventListener('scroll', this.onScroll);
+        if (this.props.store.lastQuestListScroll) {            
+            window.scrollTo(0, this.props.store.lastQuestListScroll)
+        }
+    }
     render() {
         const { l, firebaseLoggedIn, player, index } = this.props.store;
         const passedQuests = this.props.store.wonProofs;

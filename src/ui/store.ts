@@ -81,7 +81,8 @@ export class Store {
 
         this.firebaseSyncing = false;
     }
-
+    
+    lastQuestListScroll: number = 0;
 
     @observable
     serviceWorkerController: ServiceWorkerState | null = null;
