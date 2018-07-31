@@ -96,7 +96,15 @@ export class Store {
     haveWaitingServiceWorker: ServiceWorkerState | null = null;
     @observable
     haveActiveServiceWorker: ServiceWorkerState | null = null;
+    
+    @observable
+    questsListTab: string = QUEST_SEARCH_ALL;
+    @observable
+    questsListSearch: string = '';
 }
+
+export const QUEST_SEARCH_ALL = 'all';
+export const QUEST_SEARCH_OWN = 'own';
 
 /*
 - page is server by sw.js: true/false

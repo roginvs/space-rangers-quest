@@ -44,12 +44,13 @@ interface QuestPlayState {
     game?: Game;
     gameState?: GameState;
     questLoadProgress: number;
-    playingMobileView: boolean;
+    width: number;
     noMusic?: boolean;
 
     reallyRestart?: boolean;
 }
 
+const MOBILE_THRESHOLD = 576; // 576px 768px
 @observer
 export class QuestPlay extends React.Component<
     {
@@ -59,13 +60,9 @@ export class QuestPlay extends React.Component<
     QuestPlayState
 > {
     state: QuestPlayState = {
-        playingMobileView: this.isScreenWidthMobile(),
+        width: window.innerWidth,
         questLoadProgress: 0
     };
-    isScreenWidthMobile() {
-        // console.info(`windows innerWidth = ${window.innerWidth}`);
-        return window.innerWidth < 576; // 576px 768px
-    }
 
     componentDidMount() {
         window.addEventListener("resize", this.onResize);
@@ -83,7 +80,7 @@ export class QuestPlay extends React.Component<
         const game = this.props.store.index.quests.find(
             x => x.gameName === this.props.gameName
         );
-        if (!game) {            
+        if (!game) {
             location.hash = "#";
             return;
         }
@@ -150,10 +147,10 @@ export class QuestPlay extends React.Component<
     }
 
     onResize = () => {
-        const isScreenWidthMobile = this.isScreenWidthMobile();
-        if (this.state.playingMobileView !== isScreenWidthMobile) {
+        const width = window.innerWidth;
+        if (this.state.width !== width) {
             this.setState({
-                playingMobileView: isScreenWidthMobile
+                width
             });
         }
     };
@@ -282,7 +279,7 @@ export class QuestPlay extends React.Component<
             </>
         );
 
-        const isMobile = this.state.playingMobileView;
+        const isMobile = this.state.width < MOBILE_THRESHOLD;
 
         const controlButtons = (
             <>
@@ -326,7 +323,7 @@ export class QuestPlay extends React.Component<
                     onClick={() => {
                         this.setState({
                             reallyRestart: true
-                        })
+                        });
                     }}
                 >
                     <i className="fa fa-refresh fa-fw" />
@@ -349,45 +346,53 @@ export class QuestPlay extends React.Component<
                 ) : null}
                 <div
                     style={{
-                        maxWidth: 992,
                         marginLeft: "auto",
                         marginRight: "auto",
                         marginTop: isMobile ? 0 : "2rem"
                     }}
                 >
-                    {this.state.reallyRestart ? <>
-                        <div className="text-center m-2">
-                        <div>{l.reallyRestart}</div>
-                        <div>
-                            <button className="btn btn-warning mt-1 mr-1" onClick={() => {
-                                const gameState = initGame(
-                                    quest,
-                                    Math.random()
-                                        .toString(36)
-                                        .slice(2) +
-                                        Math.random()
-                                            .toString(36)
-                                            .slice(2)
-                                );
-                                this.setState({
-                                    reallyRestart: false,
-                                    gameState,
-                                });                                    
-                            }}>
-                            <i className="fa fa-refresh fa-fw"/>{" "}
-                            {l.yes}
-                            </button>
+                    {this.state.reallyRestart ? (
+                        <>
+                            <div className="text-center m-2">
+                                <div>{l.reallyRestart}</div>
+                                <div>
+                                    <button
+                                        className="btn btn-warning mt-1 mr-1"
+                                        onClick={() => {
+                                            const gameState = initGame(
+                                                quest,
+                                                Math.random()
+                                                    .toString(36)
+                                                    .slice(2) +
+                                                    Math.random()
+                                                        .toString(36)
+                                                        .slice(2)
+                                            );
+                                            this.setState({
+                                                reallyRestart: false,
+                                                gameState
+                                            });
+                                        }}
+                                    >
+                                        <i className="fa fa-refresh fa-fw" />{" "}
+                                        {l.yes}
+                                    </button>
 
-                            <button className="btn btn-secondary mt-1" onClick={() => this.setState({
-                                reallyRestart: false
-                            })}>
-                            <i className="fa fa-reply fa-fw"/>{" "}
-                            {l.no}
-                            </button>
+                                    <button
+                                        className="btn btn-secondary mt-1"
+                                        onClick={() =>
+                                            this.setState({
+                                                reallyRestart: false
+                                            })
+                                        }
+                                    >
+                                        <i className="fa fa-reply fa-fw" />{" "}
+                                        {l.no}
+                                    </button>
+                                </div>
                             </div>
-                        </div>
-                        
-                    </> : isMobile ? (
+                        </>
+                    ) : isMobile ? (
                         <>
                             <div
                                 style={{
@@ -436,14 +441,22 @@ export class QuestPlay extends React.Component<
                         </>
                     ) : (
                         <>
-                        <div style={{
-                            position: "fixed",
-                            right: 15,
-                            bottom: 15,
-                        }}>
-                            {controlButtons}
+                            <div
+                                style={{
+                                    position: "fixed",
+                                    right: 15,
+                                    bottom: 15
+                                }}
+                            >
+                                {controlButtons}
                             </div>
-                            <div>
+                            <div
+                                style={{
+                                    marginLeft: 'auto',
+                                    marginRight: 'auto',
+                                    width: this.state.width * 0.90,
+                                }}
+                            >
                                 <div
                                     style={{
                                         display: "flex",
@@ -452,17 +465,19 @@ export class QuestPlay extends React.Component<
                                 >
                                     <div
                                         style={{
-                                            flexBasis: `${(100 / 3) * 2}%`,
-                                            flexGrow: 0,
-                                            flexShrink: 0,
-                                            margin: 15
+                                            flex: `0 0 ${(100 / 3) * 2}%`,                                            
+                                            maxWidth: `${100/3*2}%`,
+                                            boxSizing: "border-box",                                            
+                                            padding: 15
                                         }}
                                     >
                                         {locationText}
                                     </div>
                                     <div
                                         style={{
-                                            margin: 15
+                                            flex: `0 0 ${(100 / 3)}%`,
+                                            maxWidth: `${100/3}%`,                                            
+                                            padding: 15
                                         }}
                                     >
                                         {imagesPreloaded}
@@ -476,21 +491,21 @@ export class QuestPlay extends React.Component<
                                     }}
                                 >
                                     <div
-                                        style={{
-                                            flexBasis: `${(100 / 3) * 2}%`,
-                                            flexGrow: 0,
-                                            flexShrink: 0,
-                                            margin: 15
+                                        style={{                                            
+                                            flex: `0 0 ${(100 / 3) * 2}%`,                                            
+                                            maxWidth: `${100/3*2}%`,
+                                            boxSizing: "border-box",                                            
+                                            padding: 15,
                                         }}
                                     >
                                         {choices}
                                     </div>
                                     <div
                                         style={{
-                                            marginTop: 15,
-                                            marginBottom: 15,
-                                            marginLeft: "auto",
-                                            marginRight: "auto"
+                                            flex: `0 0 ${(100 / 3)}%`,
+                                            maxWidth: `${100/3}%`,                                            
+                                            padding: 15,
+                                            paddingBottom: 65,
                                         }}
                                     >
                                         {params}

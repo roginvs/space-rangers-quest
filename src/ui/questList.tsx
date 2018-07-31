@@ -11,7 +11,7 @@ import {
     DropdownItem
 } from "reactstrap";
 import { observer } from "mobx-react";
-import { Store } from "./store";
+import { Store, QUEST_SEARCH_ALL, QUEST_SEARCH_OWN } from "./store";
 
 import { AppNavbar } from "./appNavbar";
 import { substitute } from "../lib/substitution";
@@ -20,14 +20,10 @@ import { SRDateToString } from "../lib/qmplayer/funcs";
 import moment from "moment";
 import { QuestReplaceTags } from "./questReplaceTags";
 
-interface QuestListState {
-    tab: string;
-    search: string;
+interface QuestListState {        
     dropdownOpen: boolean;
 }
 
-const ALL = "all";
-const OWN = "own";
 
 @observer
 export class QuestList extends React.Component<
@@ -37,9 +33,7 @@ export class QuestList extends React.Component<
     QuestListState
 > {
     state: QuestListState = {
-        tab: ALL,
-        search: "",
-        dropdownOpen: false
+        dropdownOpen: false,
     };
     onScroll = () => {
         this.props.store.lastQuestListScroll = window.scrollY;        
@@ -56,6 +50,7 @@ export class QuestList extends React.Component<
     render() {
         const { l, firebaseLoggedIn, player, index } = this.props.store;
         const passedQuests = this.props.store.wonProofs;
+        const store = this.props.store;
 
         const origins = index.quests
             .filter(x => x.lang === player.lang)
@@ -69,8 +64,8 @@ export class QuestList extends React.Component<
             .filter(quest => quest.lang === player.lang)
             .filter(
                 quest =>
-                    this.state.tab !== ALL
-                        ? quest.questOrigin === this.state.tab
+                    store.questsListTab !== QUEST_SEARCH_ALL
+                        ? quest.questOrigin === store.questsListTab
                         : true
             )
             .map(quest => ({
@@ -95,13 +90,13 @@ export class QuestList extends React.Component<
             }))
             .filter(
                 quest =>
-                    this.state.search
+                store.questsListSearch
                         ? quest.gameName
                               .toLowerCase()
-                              .indexOf(this.state.search.toLowerCase()) > -1 ||
+                              .indexOf(store.questsListSearch.toLowerCase()) > -1 ||
                           quest.taskText
                               .toLowerCase()
-                              .indexOf(this.state.search.toLowerCase()) > -1
+                              .indexOf(store.questsListSearch.toLowerCase()) > -1
                         : true
             );
 
@@ -125,18 +120,16 @@ export class QuestList extends React.Component<
                                 }
                             >
                                 <DropdownToggle color="info" caret block>
-                                    {this.state.tab === ALL
+                                    {store.questsListTab === QUEST_SEARCH_ALL
                                         ? l.all
-                                        : this.state.tab === OWN
+                                        : store.questsListTab === QUEST_SEARCH_OWN
                                             ? l.own
-                                            : this.state.tab}
+                                            : store.questsListTab}
                                 </DropdownToggle>
                                 <DropdownMenu>
                                     <DropdownItem
                                         onClick={() =>
-                                            this.setState({
-                                                tab: ALL
-                                            })
+                                            store.questsListTab = QUEST_SEARCH_ALL
                                         }
                                     >
                                         {l.all}
@@ -146,16 +139,15 @@ export class QuestList extends React.Component<
                                         <DropdownItem
                                             key={originName}
                                             onClick={() =>
-                                                this.setState({
-                                                    tab: originName
-                                                })
+                                                store.questsListTab = originName
                                             }
                                         >
                                             {originName}
                                         </DropdownItem>
                                     ))}
-                                    <DropdownItem divider />
                                     {/*
+                                    <DropdownItem divider />
+                                    
                                     <DropdownItem
                                         onClick={() =>
                                             this.setState({
@@ -172,12 +164,9 @@ export class QuestList extends React.Component<
                         <div className="col-md-6 mb-3">
                             <input
                                 className="form-control"
-                                value={this.state.search}
-                                onChange={e =>
-                                    this.setState({
-                                        search: e.target.value
-                                    })
-                                }
+                                value={store.questsListSearch}
+                                onChange={e => store.questsListSearch = e.target.value}
+                                onKeyUp={e => e.which === 27 /* ESC */ ? store.questsListSearch = '' : undefined}
                                 placeholder={l.search}
                             />
                         </div>

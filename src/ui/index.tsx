@@ -108,7 +108,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                 }
             });
 
-            if ("serviceWorker" in navigator) {
+            if ("serviceWorker" in navigator && location.hostname !== 'localhost') {
                 navigator.serviceWorker
                     .register("/sw.js")
                     .then(reg => {
