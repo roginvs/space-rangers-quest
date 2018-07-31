@@ -1,5 +1,7 @@
 # TODO
-- ui bug: after sync tabs have own state with winning games
+- upload own (and play)
+- champions
+- editor?
 - posts: timestamp server-side in firebase
     firebase.database.ServerValue.TIMESTAMP
 

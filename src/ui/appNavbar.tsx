@@ -58,6 +58,7 @@ export class AppNavbar extends React.Component<{
                                                         {l.quests}
                                                     </NavLink>
                                                 </NavItem>
+                                                {/*
                                                 <NavItem>
                                                     <NavLink
                                                         active={
@@ -69,6 +70,7 @@ export class AppNavbar extends React.Component<{
                                                         {l.topplayers}
                                                     </NavLink>
                                                 </NavItem>
+                                                    */}
                                                 <NavItem>
                                                     <NavLink
                                                         href="#/options"
@@ -80,6 +82,7 @@ export class AppNavbar extends React.Component<{
                                                         {l.options}
                                                     </NavLink>
                                                 </NavItem>
+                                                {/*
                                                 <NavItem>
                                                     <NavLink
                                                         href="#/useown"
@@ -91,6 +94,7 @@ export class AppNavbar extends React.Component<{
                                                         {l.useown}
                                                     </NavLink>
                                                 </NavItem>
+                                                    */}
                                                 <NavItem>
                                                     <NavLink
                                                         href="#/offlinemode"

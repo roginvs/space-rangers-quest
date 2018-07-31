@@ -144,6 +144,7 @@ export class QuestList extends React.Component<
                                         </DropdownItem>
                                     ))}
                                     <DropdownItem divider />
+                                    {/*
                                     <DropdownItem
                                         onClick={() =>
                                             this.setState({
@@ -153,6 +154,7 @@ export class QuestList extends React.Component<
                                     >
                                         {l.own}
                                     </DropdownItem>
+                                    */}
                                 </DropdownMenu>
                             </ButtonDropdown>
                         </div>
