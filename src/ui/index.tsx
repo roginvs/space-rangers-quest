@@ -38,6 +38,7 @@ import { AuthTabContainer } from "./auth";
 import { QuestInfo } from "./questInfo";
 import { Store } from "./store";
 import { QuestPlay } from "./questPlay";
+import { AboutTabContainer } from "./about";
 
 console.info("starting");
 
@@ -236,6 +237,12 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                     <OfflineModeTabContainer store={store} />
                 </AppNavbar>
             );
+        } else if (tab0 === 'about') {
+            return (
+                <AppNavbar store={store}>
+                    <AboutTabContainer store={store} />
+                </AppNavbar>
+             )            
         } else if (tab0 === "quests") {
             if (!tab1) {
                 return <QuestList store={store} />;

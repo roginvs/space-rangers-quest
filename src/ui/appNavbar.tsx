@@ -139,6 +139,20 @@ export class AppNavbar extends React.Component<{
                                                         </NavLink>
                                                     </NavItem>
                                                 ) : null}
+
+                                                <NavItem>
+                                                    <NavLink
+                                                        href="#/about"
+                                                        active={
+                                                            tab0 ===
+                                                            "about"
+                                                        }
+                                                    >
+                                                        <i className="fa fa-info-circle"/>{" "}
+                                                        {" "}
+                                                        {l.about}
+                                                    </NavLink>
+                                                </NavItem> 
                                             </Nav>
                                         </Collapse>
                                     </Navbar>

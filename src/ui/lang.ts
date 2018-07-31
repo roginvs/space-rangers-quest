@@ -66,6 +66,9 @@ const RUS = {
     install: "Установить",
     storageUsed: "Использовано",
     storageUsedFrom: "из",
+
+    about: "О приложении",
+    buildAt: "Сборка",
 }
 
 export type LangTexts = typeof RUS;
