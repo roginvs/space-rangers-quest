@@ -24,7 +24,8 @@
     "pako": "^1.0.6",
     "react": "^16.4.1",
     "react-dom": "^16.4.1",
-    "reactstrap": "^6.3.0"
+    "reactstrap": "^6.3.0",
+    "serviceworker-webpack-plugin": "^1.0.1"
   },
   "devDependencies": {
     "@types/deep-diff": "0.0.31",

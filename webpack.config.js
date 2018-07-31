@@ -1,7 +1,11 @@
+const webpack = require('webpack');
+
 const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const WebpackVersionHashPlugin = require("webpack-version-hash-plugin");
+// const WebpackVersionHashPlugin = require("webpack-version-hash-plugin");
 
+const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
+ 
 
 const devServer /*: webpackDevServer.Configuration */ = {
     contentBase: "./built-web",
@@ -11,7 +15,7 @@ const devServer /*: webpackDevServer.Configuration */ = {
 const config /*: webpack.Configuration */ = {
     entry: {
 	    index: './src/ui/index.tsx',
-//	    serviceWorker: './src/ui/serviceWorker.ts'
+	    'serviceWorker.beforeinjection': './src/ui/serviceWorker.beforeinjection.ts'
     },
 
     output: {
@@ -32,10 +36,17 @@ const config /*: webpack.Configuration */ = {
             filename: "[name].css",
             chunkFilename: "[id].css"
         }),
-        new WebpackVersionHashPlugin({
-            filename: 'version.json',
-            include_date: true
-        })
+        //new WebpackVersionHashPlugin({
+        //    filename: 'version.json',
+        //    include_date: true
+        //}),
+        new webpack.DefinePlugin({
+            __VERSION__: JSON.stringify(new Date().toISOString()),
+        }),        
+        new ServiceWorkerWebpackPlugin({
+            entry: './src/ui/serviceWorker.beforeinjection.ts',
+            filename: 'serviceWorker.js',
+        }),        
     ],
 
     module: {

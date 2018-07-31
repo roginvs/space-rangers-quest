@@ -11,7 +11,7 @@ import * as fs from 'fs';
 import * as assert from 'assert';
 
 import { QMPlayer } from './lib/qmplayer'
-const data = fs.readFileSync(__dirname + '/../../Boat.qm');
+const data = fs.readFileSync(__dirname + '/../borrowed/qm/КР 1/Boat.qm');
 //const data = fs.readFileSync('../Bank.qm');
 
 const qm = parse(data);
