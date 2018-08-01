@@ -38,6 +38,7 @@ const RUS = {
     own: "Загруженные",
     search: "Поиск",
     nothingFound: "Ничего не найдено",
+    startRandomUnpassed: "Выбрать случайный из непройденного",
     passed: "Пройден",
     startFromTheStart: "Начать сначала",
     startFromLastSave: "Загрузить сохранение",

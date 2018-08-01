@@ -20,10 +20,9 @@ import { SRDateToString } from "../lib/qmplayer/funcs";
 import moment from "moment";
 import { QuestReplaceTags } from "./questReplaceTags";
 
-interface QuestListState {        
+interface QuestListState {
     dropdownOpen: boolean;
 }
-
 
 @observer
 export class QuestList extends React.Component<
@@ -33,18 +32,18 @@ export class QuestList extends React.Component<
     QuestListState
 > {
     state: QuestListState = {
-        dropdownOpen: false,
+        dropdownOpen: false
     };
     onScroll = () => {
-        this.props.store.lastQuestListScroll = window.scrollY;        
-    }
+        this.props.store.lastQuestListScroll = window.scrollY;
+    };
     componentWillUnmount() {
-        window.removeEventListener('scroll', this.onScroll);
+        window.removeEventListener("scroll", this.onScroll);
     }
     componentDidMount() {
-        window.addEventListener('scroll', this.onScroll);
-        if (this.props.store.lastQuestListScroll) {            
-            window.scrollTo(0, this.props.store.lastQuestListScroll)
+        window.addEventListener("scroll", this.onScroll);
+        if (this.props.store.lastQuestListScroll) {
+            window.scrollTo(0, this.props.store.lastQuestListScroll);
         }
     }
     render() {
@@ -70,6 +69,19 @@ export class QuestList extends React.Component<
             )
             .map(quest => ({
                 ...quest,
+                passed: (() => {
+                    if (!passedQuests) {
+                        return undefined;
+                    }
+                    const passed = passedQuests.get(quest.gameName);
+                    if (
+                        typeof passed !== "object" ||
+                        Object.keys(passed).length < 1
+                    ) {
+                        return false;
+                    }
+                    return true;
+                })(),
                 taskText: substitute(
                     quest.taskText,
                     {
@@ -90,15 +102,20 @@ export class QuestList extends React.Component<
             }))
             .filter(
                 quest =>
-                store.questsListSearch
+                    store.questsListSearch
                         ? quest.gameName
                               .toLowerCase()
-                              .indexOf(store.questsListSearch.toLowerCase()) > -1 ||
+                              .indexOf(store.questsListSearch.toLowerCase()) >
+                              -1 ||
                           quest.taskText
                               .toLowerCase()
-                              .indexOf(store.questsListSearch.toLowerCase()) > -1
+                              .indexOf(store.questsListSearch.toLowerCase()) >
+                              -1
                         : true
             );
+        const questsToShowUnpassed = questsToShow.filter(
+            x => x.passed === false
+        );
 
         return (
             <AppNavbar store={this.props.store}>
@@ -122,14 +139,15 @@ export class QuestList extends React.Component<
                                 <DropdownToggle color="info" caret block>
                                     {store.questsListTab === QUEST_SEARCH_ALL
                                         ? l.all
-                                        : store.questsListTab === QUEST_SEARCH_OWN
+                                        : store.questsListTab ===
+                                          QUEST_SEARCH_OWN
                                             ? l.own
                                             : store.questsListTab}
                                 </DropdownToggle>
                                 <DropdownMenu>
                                     <DropdownItem
                                         onClick={() =>
-                                            store.questsListTab = QUEST_SEARCH_ALL
+                                            (store.questsListTab = QUEST_SEARCH_ALL)
                                         }
                                     >
                                         {l.all}
@@ -139,7 +157,7 @@ export class QuestList extends React.Component<
                                         <DropdownItem
                                             key={originName}
                                             onClick={() =>
-                                                store.questsListTab = originName
+                                                (store.questsListTab = originName)
                                             }
                                         >
                                             {originName}
@@ -165,54 +183,75 @@ export class QuestList extends React.Component<
                             <input
                                 className="form-control"
                                 value={store.questsListSearch}
-                                onChange={e => store.questsListSearch = e.target.value}
-                                onKeyUp={e => e.which === 27 /* ESC */ ? store.questsListSearch = '' : undefined}
+                                onChange={e =>
+                                    (store.questsListSearch = e.target.value)
+                                }
+                                onKeyUp={e =>
+                                    e.which === 27 /* ESC */
+                                        ? (store.questsListSearch = "")
+                                        : undefined
+                                }
                                 placeholder={l.search}
                             />
                         </div>
                     </div>
                     {questsToShow.length > 0 ? (
-                        <div className="list-group">
-                            {questsToShow.map(quest => (
-                                <a
-                                    href={`#/quests/${quest.gameName}`}
-                                    key={quest.gameName}
-                                    className="list-group-item list-group-item-action flex-column align-items-start"
+                        <>
+                            {questsToShowUnpassed.length > 0 ? (
+                                <button
+                                    className="btn btn-block btn-primary mb-3"
+                                    style={{
+                                        whiteSpace: "normal"
+                                    }}
+                                    onClick={() => {
+                                        const idx = Math.floor(
+                                            Math.random() *
+                                                questsToShowUnpassed.length
+                                        );
+                                        const quest = questsToShowUnpassed[idx];
+                                        location.href = `#/quests/${
+                                            quest.gameName
+                                        }`;
+                                    }}
                                 >
-                                    <div className="d-flex w-100 justify-content-between">
-                                        <h5 className="mb-1">
-                                            {quest.gameName}
-                                        </h5>
-                                        <small>
-                                            {(() => {
-                                                if (!passedQuests) {
-                                                    return (
-                                                        <i className="text-muted fa fa-spin circle-o-notch" />
-                                                    );
-                                                }
-                                                const passed = passedQuests.get(
-                                                    quest.gameName
-                                                );
-                                                if (
-                                                    typeof passed !==
-                                                        "object" ||
-                                                    Object.keys(passed).length <
-                                                        1
-                                                ) {
-                                                    return;
-                                                }
-                                                // console.info(quest.gameName, passed);
-                                                return <span>{l.passed}</span>;
-                                            })()}
-                                        </small>
+                                    <div className="d-flex align-items-center justify-content-center">
+                                        <span className="mr-1">
+                                            <i className="fa fa-random fa-fw" />
+                                        </span>
+                                        <span>{l.startRandomUnpassed}</span>
                                     </div>
-                                    <p className="mb-1">
-                                    <QuestReplaceTags str={quest.taskText}/>
-                                    </p>
-                                    <small>{quest.smallDescription}</small>
-                                </a>
-                            ))}
-                        </div>
+                                </button>
+                            ) : null}
+
+                            <div className="list-group">
+                                {questsToShow.map(quest => (
+                                    <a
+                                        href={`#/quests/${quest.gameName}`}
+                                        key={quest.gameName}
+                                        className="list-group-item list-group-item-action flex-column align-items-start"
+                                    >
+                                        <div className="d-flex w-100 justify-content-between">
+                                            <h5 className="mb-1">
+                                                {quest.gameName}
+                                            </h5>
+                                            <small>
+                                                {quest.passed === undefined ? (
+                                                    <i className="text-muted fa fa-spin circle-o-notch" />
+                                                ) : quest.passed === true ? (
+                                                    <span>{l.passed}</span>
+                                                ) : null}
+                                            </small>
+                                        </div>
+                                        <p className="mb-1">
+                                            <QuestReplaceTags
+                                                str={quest.taskText}
+                                            />
+                                        </p>
+                                        <small>{quest.smallDescription}</small>
+                                    </a>
+                                ))}
+                            </div>
+                        </>
                     ) : (
                         <div className="text-center">
                             <i className="fa fa-circle-o" /> {l.nothingFound}
