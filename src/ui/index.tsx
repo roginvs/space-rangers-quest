@@ -256,8 +256,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                         <QuestPlay key={tab1} store={store} gameName={tab1} />
                     );
                 }
-            }
-            // asdasd
+            }         
         }
         return <div>TODO tab={store.path.tab0}</div>;
     }
