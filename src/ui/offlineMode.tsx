@@ -71,15 +71,28 @@ export class OfflineModeTabContainer extends React.Component<
                 key="offlinemode"
                 className="text-center container my-3"
             >
-                {store.haveInstallingServiceWorker ? (
+                {store.serviceWorkerController ? (
+                    <>
+                        <h5>
+                            <i className="fa fa-check" />{" "}
+                            {l.engineInstalledAndInOfflineMode}
+                        </h5>
+                        {store.haveInstallingServiceWorker ? (
+                            <h6>
+                                <i className="fa fa-spin fa-circle-o-notch" />{" "}
+                                {l.installingEngineUpdate}
+                            </h6>
+                        ) : store.haveWaitingServiceWorker ? (
+                            <h6>
+                                <i className="fa fa-refresh" />{" "}
+                                {l.engineUpdatedNeedReload}
+                            </h6>
+                        ) : null}
+                    </>
+                ) : store.haveInstallingServiceWorker ? (
                     <h5>
                         <i className="fa fa-spin fa-circle-o-notch" />{" "}
                         {l.installingEngine}
-                    </h5>
-                ) : store.serviceWorkerController ? (
-                    <h5>
-                        <i className="fa fa-check" />{" "}
-                        {l.engineInstalledAndInOfflineMode}
                     </h5>
                 ) : store.haveWaitingServiceWorker ||
                 store.haveActiveServiceWorker ? (
@@ -162,7 +175,9 @@ export class OfflineModeTabContainer extends React.Component<
                                         {l.install}
                                     </button>
                                 </>
-                            ) : <Loader/>}
+                            ) : (
+                                <Loader />
+                            )}
                         </div>
                     </div>
 
@@ -193,9 +208,7 @@ export class OfflineModeTabContainer extends React.Component<
                                     <p className="card-text">{l.installed}</p>
                                     <button
                                         className="btn btn-danger"
-                                        onClick={() =>
-                                            store.removeMusicCache()
-                                        }
+                                        onClick={() => store.removeMusicCache()}
                                     >
                                         {l.uninstall}
                                     </button>
@@ -214,13 +227,12 @@ export class OfflineModeTabContainer extends React.Component<
                                         {l.install}
                                     </button>
                                 </>
-                            ) : <Loader/>}
+                            ) : (
+                                <Loader />
+                            )}
                         </div>
                     </div>
-                
                 </div>
-
-                
             </DivFadeinCss>
         );
     }
