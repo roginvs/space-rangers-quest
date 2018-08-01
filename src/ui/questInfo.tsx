@@ -185,7 +185,7 @@ export class QuestInfo extends React.Component<
                                     await this.props.store.db.saveGame(
                                         this.props.gameName,
                                         null
-                                    );
+                                    );                                    
                                     location.hash = `/quests/${gameName}/play`;
                                 }}
                             >

@@ -366,19 +366,21 @@ export class QuestPlay extends React.Component<
             </>
         );
 
+        const audioComponent = (
+            <audio
+                autoPlay={true}
+                controls={false}
+                onEnded={e => this.playAudio(true)}
+                ref={e => {
+                    this.audio = e;
+                    this.playAudio(false);
+                }}
+            />
+        );
+
         return (
             <div className="">
-                {!this.state.noMusic ? (
-                    <audio
-                        autoPlay={false}
-                        controls={false}
-                        onEnded={e => this.playAudio(true)}
-                        ref={e => {
-                            this.audio = e;
-                            this.playAudio(false);
-                        }}
-                    />
-                ) : null}
+                {!this.state.noMusic ? audioComponent : null}
                 <div
                     style={{
                         marginLeft: "auto",
@@ -566,14 +568,17 @@ export class QuestPlay extends React.Component<
                 this.audio.src = DATA_DIR + musicList[i];
             }
 
-            this.audio.play().catch(e => {
-                console.warn(
-                    `Error with music src='${
-                        this.audio ? this.audio.src : "no audio tag"
-                    }'`,
-                    e
-                );
-            });
+            const audioPlayPromise = this.audio.play();
+            if (audioPlayPromise) {
+                audioPlayPromise.catch(e => {
+                    console.warn(
+                        `Error with music src='${
+                            this.audio ? this.audio.src : "no audio tag"
+                        }'`,
+                        e
+                    );
+                });
+            }
         }
     }
 }

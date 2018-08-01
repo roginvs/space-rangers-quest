@@ -126,10 +126,14 @@ export async function getDb(app: firebase.app.App) {
     async function setLocal(storeName: string, key: string, value: any) {
         const trx = db.transaction([storeName], "readwrite");
         const objectStore = trx.objectStore(storeName);
-        const getReq = objectStore.put(value, key);
+        
+        const req = value ? objectStore.put(value, key) : objectStore.delete(key);
         await new Promise<void>((resolve, reject) => {
-            getReq.onsuccess = e => resolve(getReq.result);
-            getReq.onerror = e => reject(new Error(getReq.error.toString()));
+            req.onsuccess = e => resolve(req.result);
+            req.onerror = e => {
+                console.warn('Indexeddb error', req.error);
+                reject(new Error(`IndexedDB error: ${req.error.name} ${req.error.message}`));
+            };
         });
     }
 
