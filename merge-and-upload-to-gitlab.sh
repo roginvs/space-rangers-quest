@@ -8,3 +8,5 @@ echo "Uploading"
 git push -u gitlab saturated:master
 echo "Checkouting master branch"
 git checkout master
+echo "Copying borrowed files"
+cp -R ../space-rangers-borrowed/* borrowed/
