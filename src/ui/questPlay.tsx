@@ -49,7 +49,7 @@ interface QuestPlayState {
 
     reallyRestart?: boolean;
 
-    error?: Error,
+    error?: Error;
 }
 
 const MOBILE_THRESHOLD = 576; // 576px 768px
@@ -57,18 +57,18 @@ const MOBILE_THRESHOLD = 576; // 576px 768px
 export class QuestPlay extends React.Component<
     {
         store: Store;
-        gameName: string;        
+        gameName: string;
     },
     QuestPlayState
 > {
     state: QuestPlayState = {
         width: window.innerWidth,
-        questLoadProgress: 0,        
+        questLoadProgress: 0
     };
 
     componentDidMount() {
         window.addEventListener("resize", this.onResize);
-        this.loadData().catch(e => this.setState({error: e}));
+        this.loadData().catch(e => this.setState({ error: e }));
     }
     componentWillUnmount() {
         window.removeEventListener("resize", this.onResize);
@@ -90,8 +90,7 @@ export class QuestPlay extends React.Component<
             game
         });
         const noMusic =
-            (await this.props.store.db.getConfigLocal("noMusic")) ||
-            undefined;
+            (await this.props.store.db.getConfigLocal("noMusic")) || undefined;
         this.setState({
             noMusic
         });
@@ -171,7 +170,7 @@ export class QuestPlay extends React.Component<
                 </div>
             );
         }
-        
+
         const isMobile = this.state.width < MOBILE_THRESHOLD;
 
         if (!quest || !gameState || !game) {
@@ -235,10 +234,9 @@ export class QuestPlay extends React.Component<
                                         game.images
                                     );
 
-                                    this.props.store.db.saveGame(
-                                        this.props.gameName,
-                                        newState
-                                    ).catch(e => console.warn(e))
+                                    this.props.store.db
+                                        .saveGame(this.props.gameName, newState)
+                                        .catch(e => console.warn(e));
                                     if (
                                         getUIState(quest, newState, player)
                                             .gameState === "win"
@@ -250,7 +248,8 @@ export class QuestPlay extends React.Component<
                                             )
                                             .then(() =>
                                                 this.props.store.loadWinProofsFromLocal()
-                                            ).catch(e => console.warn(e))
+                                            )
+                                            .catch(e => console.warn(e));
                                     }
 
                                     this.setState({
@@ -313,10 +312,12 @@ export class QuestPlay extends React.Component<
                                 noMusic: !this.state.noMusic
                             },
                             () => {
-                                this.props.store.db.setConfigBoth(
-                                    "noMusic",
-                                    !!this.state.noMusic
-                                ).catch(e => console.warn(e))
+                                this.props.store.db
+                                    .setConfigBoth(
+                                        "noMusic",
+                                        !!this.state.noMusic
+                                    )
+                                    .catch(e => console.warn(e));
                             }
                         );
                     }}
@@ -334,9 +335,33 @@ export class QuestPlay extends React.Component<
                 <button
                     className="btn btn-light mr-1"
                     onClick={() => {
-                        this.setState({
-                            reallyRestart: true
-                        });
+                        let gameState = this.state.gameState;
+                        const uiState = gameState
+                            ? getUIState(quest, gameState, player)
+                            : undefined;
+                        if (
+                            !uiState ||
+                            uiState.gameState === "dead" ||
+                            uiState.gameState === "fail" ||
+                            uiState.gameState === "win"
+                        ) {
+                            gameState = initGame(
+                                quest,
+                                Math.random()
+                                    .toString(36)
+                                    .slice(2) +
+                                    Math.random()
+                                        .toString(36)
+                                        .slice(2)
+                            );
+                            this.setState({
+                                gameState
+                            });
+                        } else {
+                            this.setState({
+                                reallyRestart: true
+                            });
+                        }
                     }}
                 >
                     <i className="fa fa-refresh fa-fw" />
