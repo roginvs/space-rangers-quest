@@ -212,7 +212,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
         }
         const store = this.state.store;
         if (!store) {
-            return <Loader text="Loading" />;
+            return <Loader text="Loading index" />;
         }
 
         const { tab0, tab1, tab2 } = store.path;

@@ -66,10 +66,12 @@ export class Loader extends React.Component<{
 
 
 export class Redirect extends React.Component<{
-    to: string
+    to: string,    
 },{}> {
     componentDidMount() {
-        location.hash = this.props.to;
+        // window.history.replaceState({}, this.props.to, this.props.to); // this not emitting onhashchange
+        // location.hash = this.props.to;
+        location.replace(this.props.to);
     }
     render () {
         return <Loader text={`Redirecting to ${this.props.to}`}/>
