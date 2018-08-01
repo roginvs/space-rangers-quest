@@ -12,13 +12,17 @@ declare var serviceWorkerOption: {
 import {
     INDEX_JSON,
     DATA_DIR,
-    CACHE_PREFIX_ENGINE,
-    CACHE_NAME_MUSIC,
-    CACHE_NAME_IMAGES
+    CACHE_MUSIC_NAME,
+    CACHE_IMAGES_NAME
 } from "./consts";
 import { Index } from "../packGameData";
 
-const CACHE_NAME_ENGINE = `${CACHE_PREFIX_ENGINE}-${new Date(__VERSION__).toISOString()}`;
+export const CACHE_QUESTS_NAME = 'spacerangers-quests';
+
+
+export const CACHE_ENGINE_PREFIX = 'spacerangers-engine';
+const CACHE_ENGINE_NAME = `${CACHE_ENGINE_PREFIX}-${new Date(__VERSION__).toISOString()}`;
+
 const engineUrls = [
     "/",
     INDEX_JSON,
@@ -36,29 +40,26 @@ self.addEventListener("install", event => {
     console.info(`${new Date()} Serviceworker got install event.`);
     event.waitUntil(
         (async () => {
-            const cache = await caches.open(CACHE_NAME_ENGINE);
-            console.info(`${new Date()} Serviceworker opened cache`);
+            const cacheEngine = await caches.open(CACHE_ENGINE_NAME);
+            console.info(`${new Date()} Serviceworker opened engine cache='${CACHE_ENGINE_NAME}, downloading engine'`);                
+            await cacheEngine.addAll(engineUrls);
+            
+            console.info(`Downloading index.json`);
             const data = await getIndex();
-
-            for (const dir of [data.dir.quests]) {
-                const urlsToCache = engineUrls.concat(
-                    ...dir.files
-                        .map(x => x.path)
-                        // .slice(0, 3)
-                        .map(x => DATA_DIR + x)
-                );
-
-                console.info(
-                    `${new Date()} Starting to fill cache size=${dir.totalSize}`
-                );
-                await cache.addAll(urlsToCache);
-            }
-            /*                
-            for (const url of urlsToCache) {
-                console.info(new Date() + ` Caching ${url}`);            
-                await cache.add(url)
-            };
-            */
+            console.info(`Opening quests cache`);
+            const cacheQuests = await caches.open(CACHE_QUESTS_NAME);
+            console.info(`Checking quests and downloading if needed. Total quests size=${data.dir.quests.totalSize}`);
+            
+            await Promise.all(data.dir.quests.files.map(async quest => {
+                const url = DATA_DIR + quest.path;
+                if (! await cacheQuests.match(url)) {
+                    console.info(`Quest ${url} no match in cache, downloading`);
+                    await cacheQuests.add(url);
+                } else {
+                    console.info(`Quest ${url} is already in cache`)
+                }
+            }));            
+            
             console.info(`${new Date()} Catching done`);
             //await self.skipWaiting();
         })().catch(e => {
@@ -73,10 +74,10 @@ self.addEventListener("activate", event => {
     event.waitUntil(
         (async () => {
             for (const cacheKey of await caches.keys()) {
-                if (cacheKey.indexOf(CACHE_PREFIX_ENGINE) !== 0) {
+                if (cacheKey.indexOf(CACHE_ENGINE_PREFIX) !== 0) {
                     continue
                 }
-                if (cacheKey === CACHE_NAME_ENGINE) {
+                if (cacheKey === CACHE_ENGINE_NAME) {
                     continue
                 }
                 console.info(`Removing old engine cache ${cacheKey}`);
@@ -95,13 +96,16 @@ self.addEventListener("fetch", event => {
         (async () => {
             const cacheHit =
                 (await caches
-                    .open(CACHE_NAME_ENGINE)
+                    .open(CACHE_ENGINE_NAME)
+                    .then(cache => cache.match(event.request.url))) ||                    
+                (await caches
+                        .open(CACHE_QUESTS_NAME)
+                        .then(cache => cache.match(event.request.url))) ||    
+                (await caches
+                    .open(CACHE_IMAGES_NAME)
                     .then(cache => cache.match(event.request.url))) ||
                 (await caches
-                    .open(CACHE_NAME_IMAGES)
-                    .then(cache => cache.match(event.request.url))) ||
-                (await caches
-                    .open(CACHE_NAME_MUSIC)
+                    .open(CACHE_MUSIC_NAME)
                     .then(cache => cache.match(event.request.url)));
 
             const headersRange = event.request.headers.get("range");

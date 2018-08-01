@@ -3,7 +3,7 @@ import { Index } from "../packGameData";
 import { DB, GameWonProofs } from "./db";
 import { Player } from "../lib/qmplayer/player";
 import { getLang } from "./lang";
-import { CACHE_NAME_MUSIC, DATA_DIR, CACHE_NAME_IMAGES } from "./consts";
+import { CACHE_MUSIC_NAME, DATA_DIR, CACHE_IMAGES_NAME } from "./consts";
 
 type CacheInfo = "no" | "yes" | undefined;
 interface CacheInstallInfo {
@@ -111,7 +111,7 @@ export class Store {
     @observable musicCacheInstallInfo: CacheInstallInfo | undefined;
 
     async queryCacheInfo() {
-        const cacheMusic = await caches.open(CACHE_NAME_MUSIC);
+        const cacheMusic = await caches.open(CACHE_MUSIC_NAME);
         let somethingMissingMusic = false;
         for (const f of this.index.dir.music.files) {
             if (!(await cacheMusic.match(DATA_DIR + f.path))) {
@@ -123,7 +123,7 @@ export class Store {
             this.musicCache = somethingMissingMusic ? "no" : "yes";
         }
 
-        const cacheImages = await caches.open(CACHE_NAME_IMAGES);
+        const cacheImages = await caches.open(CACHE_IMAGES_NAME);
         let somethingMissingImages = false;
         for (const f of this.index.dir.images.files) {
             if (!(await cacheImages.match(DATA_DIR + f.path))) {
@@ -144,7 +144,7 @@ export class Store {
             sizeTotal: this.index.dir.music.totalSize,
             downloaded: 0
         };
-        const cacheMusic = await caches.open(CACHE_NAME_MUSIC);
+        const cacheMusic = await caches.open(CACHE_MUSIC_NAME);
         for (const f of this.index.dir.music.files) {
             this.musicCacheInstallInfo.currentFile = f.path;
             const url = DATA_DIR + f.path;
@@ -164,7 +164,7 @@ export class Store {
             sizeTotal: this.index.dir.images.totalSize,
             downloaded: 0
         };
-        const cacheImages = await caches.open(CACHE_NAME_IMAGES);
+        const cacheImages = await caches.open(CACHE_IMAGES_NAME);
         for (const f of this.index.dir.images.files) {
             this.imagesCacheInstallInfo.currentFile = f.path;
             const url = DATA_DIR + f.path;
@@ -179,14 +179,14 @@ export class Store {
         if (this.musicCacheInstallInfo) {
             return;
         }
-        await caches.delete(CACHE_NAME_MUSIC);
+        await caches.delete(CACHE_MUSIC_NAME);
         this.musicCache = "no";
     }
     async removeImagesCache() {
         if (this.imagesCacheInstallInfo) {
             return;
         }
-        await caches.delete(CACHE_NAME_IMAGES);
+        await caches.delete(CACHE_IMAGES_NAME);
         this.imagesCache = "no";
     }
 }
