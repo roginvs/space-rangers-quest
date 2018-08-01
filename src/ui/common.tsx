@@ -51,9 +51,12 @@ export class DivFadeinCss extends React.Component<
     }
 }
 
-export class Loader extends React.Component<{
-    text?: string,
-}, {}> {
+export class Loader extends React.Component<
+    {
+        text?: string;
+    },
+    {}
+> {
     render() {
         return (
             <DivFadeinCss className="p-3 text-center">
@@ -64,20 +67,21 @@ export class Loader extends React.Component<{
     }
 }
 
-
-export class Redirect extends React.Component<{
-    to: string,    
-},{}> {
+export class Redirect extends React.Component<
+    {
+        to: string;
+    },
+    {}
+> {
     componentDidMount() {
         // window.history.replaceState({}, this.props.to, this.props.to); // this not emitting onhashchange
         // location.hash = this.props.to;
         location.replace(this.props.to);
     }
-    render () {
-        return <Loader text={`Redirecting to ${this.props.to}`}/>
+    render() {
+        return <Loader text={`Redirecting to ${this.props.to}`} />;
     }
 }
-
 
 /*
 export class Tabs extends React.Component<
@@ -155,3 +159,30 @@ export class Tabs extends React.Component<
 }
 
 */
+
+export class ErrorInfo extends React.Component<
+    {
+        error: Error | string;
+    },
+    {}
+> {
+    render() {
+        const e = this.props.error;
+        console.warn(e);
+        return (
+            <div className="text-center p-3 text-danger">
+                {e instanceof Error ? (
+                    <div>
+                        <div>
+                            {e.name}: {e.message}
+                        </div>
+                        <div>{e.stack}</div>
+                    </div>
+                ) : (
+                    <span>{e.toString()}</span>
+                )}
+                <div>{this.props.children}</div>
+            </div>
+        );
+    }
+}

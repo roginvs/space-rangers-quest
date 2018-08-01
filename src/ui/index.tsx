@@ -14,7 +14,7 @@ import {
 } from "../lib/qmplayer/player";
 import { initGame } from "../lib/qmplayer";
 import { getUIState, performJump } from "../lib/qmplayer/funcs";
-import { Loader, DivFadeinCss, Redirect } from "./common";
+import { Loader, DivFadeinCss, Redirect, ErrorInfo } from "./common";
 import { observer } from "mobx-react";
 import {
     Navbar,
@@ -205,9 +205,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
     render() {
         if (this.state.error) {
             return (
-                <div className="text-center p-3 text-danger">
-                    {this.state.error.toString()}
-                </div>
+                <ErrorInfo error={this.state.error}/>
             );
         }
         const store = this.state.store;

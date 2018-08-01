@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Loader, DivFadeinCss } from "./common";
+import { Loader, DivFadeinCss, ErrorInfo } from "./common";
 import { LangTexts } from "./lang";
 import { DB, WonProofs, GameWonProofs } from "./db";
 import { Player, Lang } from "../lib/qmplayer/player";
@@ -162,12 +162,9 @@ export class QuestPlay extends React.Component<
         const game = this.state.game;
         if (this.state.error) {
             return (
-                <div className="my-3 container">
-                    <div className="text-danger">
-                        {this.state.error.toString()}
-                    </div>
+                <ErrorInfo error={this.state.error}>
                     <a href="#">{l.back}</a>
-                </div>
+                </ErrorInfo>
             );
         }
 

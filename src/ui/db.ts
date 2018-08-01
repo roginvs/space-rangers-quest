@@ -55,10 +55,10 @@ interface FirebasePublic {
 
 export async function getDb(app: firebase.app.App) {
     console.info("Starting to get db");
-    const idb = indexedDB.open(INDEXEDDB_NAME, 6);
+    const idb = indexedDB.open(INDEXEDDB_NAME, 7);
 
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
-        idb.onerror = e => reject(new Error(idb.error.toString()));
+        idb.onerror = e => reject(new Error(`IndexedDB error: ${idb.error.name} ${idb.error.message}`))
         idb.onsuccess = (e: any) => resolve(e.target.result);
         idb.onupgradeneeded = (e: any) => {
             console.info("onupgradeneeded");
@@ -80,8 +80,10 @@ export async function getDb(app: firebase.app.App) {
                     console.info(`It containt ${storeName} store`);
                 }
             }
-        };
+        };        
     });
+    console.info('Got indexedDB');
+    await new Promise(resolve => setTimeout(resolve, 1));
 
     async function getLocal(storeName: string, key: string) {
         const trx = db.transaction([storeName], "readonly");
