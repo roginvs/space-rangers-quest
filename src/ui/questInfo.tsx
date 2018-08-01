@@ -103,7 +103,6 @@ export class QuestInfo extends React.Component<
                                     return Object.keys(passedQuest)
                                         .map(k => {
                                             const log = passedQuest[k];
-                                            console.info(k, log);
                                             const firstStep = log.performedJumps
                                                 .slice(0)
                                                 .shift();
@@ -142,7 +141,9 @@ export class QuestInfo extends React.Component<
                                                 x ? (
                                                     <div key={x.k}>
                                                         {l.passed}{" "}
-                                                        {new Date(x.end).toLocaleString()}{" "}
+                                                        {new Date(
+                                                            x.end
+                                                        ).toLocaleString()}{" "}
                                                         ({x.durationsMins}{" "}
                                                         {l.minutesShort})
                                                     </div>
