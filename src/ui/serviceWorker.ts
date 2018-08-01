@@ -12,12 +12,13 @@ declare var serviceWorkerOption: {
 import {
     INDEX_JSON,
     DATA_DIR,
-    CACHE_NAME_ENGINE,
+    CACHE_PREFIX_ENGINE,
     CACHE_NAME_MUSIC,
     CACHE_NAME_IMAGES
 } from "./consts";
 import { Index } from "../packGameData";
 
+const CACHE_NAME_ENGINE = `${CACHE_PREFIX_ENGINE}-${new Date(__VERSION__).toISOString()}`;
 const engineUrls = [
     "/",
     INDEX_JSON,
@@ -71,22 +72,19 @@ self.addEventListener("activate", event => {
     console.log(`${new Date()} ServiceWorker activation started`);
     event.waitUntil(
         (async () => {
-            (await caches.keys()).forEach((x: string) => {
-                console.info(`Have cache key:`, x);
-            });
-
-            const cache = await caches.open(CACHE_NAME_ENGINE);
-            const keys = await cache.keys();
-            // const index = await getIndex();
-            for (const key of keys) {
-                // key is Request
-                /*
-                if (index.filesToCache.indexOf(key) < 0) {
-                    console.info(new Date() + ` No file ${key} in index, removing`);
-                    //cache.delete(key);
+            for (const cacheKey of await caches.keys()) {
+                if (cacheKey.indexOf(CACHE_PREFIX_ENGINE) !== 0) {
+                    continue
                 }
-                */
+                if (cacheKey === CACHE_NAME_ENGINE) {
+                    continue
+                }
+                console.info(`Removing old engine cache ${cacheKey}`);
+                const deleteResult = await caches.delete(cacheKey);
+                console.info(`Old cache ${cacheKey} deleteResult=${deleteResult}`);
             }
+            
+            
             console.info(`${new Date()} Service worker activation finished`);
         })()
     );

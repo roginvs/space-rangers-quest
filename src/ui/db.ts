@@ -55,9 +55,10 @@ interface FirebasePublic {
 
 export async function getDb(app: firebase.app.App) {
     console.info("Starting to get db");
-    const idb = indexedDB.open(INDEXEDDB_NAME, 7);
-
+    
     const db = await new Promise<IDBDatabase>((resolve, reject) => {
+        const idb = indexedDB.open(INDEXEDDB_NAME, 7);
+        console.info('idb opened');
         idb.onerror = e => reject(new Error(`IndexedDB error: ${idb.error.name} ${idb.error.message}`))
         idb.onsuccess = (e: any) => resolve(e.target.result);
         idb.onupgradeneeded = (e: any) => {

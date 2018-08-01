@@ -161,8 +161,10 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                         reg.addEventListener("updatefound", () => {
                             updateStore();
                         });
+
+                        setInterval(() => reg.update().catch(e => console.warn(e)), 1000 * 60 * 60);
                     })
-                    .catch(e => undefined);
+                    .catch(e => undefined);                    
                 navigator.serviceWorker.addEventListener(
                     "controllerchange",
                     e => {
