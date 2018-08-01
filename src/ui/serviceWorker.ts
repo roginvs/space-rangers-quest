@@ -25,7 +25,7 @@ const engineUrls = [
     ...serviceWorkerOption.assets,
     `/?version=${new Date(__VERSION__).getTime()}` // to enforce a reinstall after rebuild
 ];
-console.info("Service worker engine urls: ", engineUrls);
+console.info(`Service version ${__VERSION__} worker engine urls: `, engineUrls);
 
 function getIndex() {
     return fetch(INDEX_JSON).then(data => data.json()) as Promise<Index>;

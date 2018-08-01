@@ -6,6 +6,8 @@ const RUS = {
     quests: "Квесты",
     options: "Опции",
     installMode: "Установить",
+    installModeInstalling: "Загрузка",
+    installModeNeedReload: "Готово обновление",
     login: "Войти",
     useown: "Загрузить .qm/.qmm",
     loginWithGoogle: "Войти через Google",    
