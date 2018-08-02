@@ -298,8 +298,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
             }
         }
         return (
-            <div>
-                TODO tab={store.path.tab0}
+            <div>                
                 <Redirect to="#/quests" />
             </div>
         );
