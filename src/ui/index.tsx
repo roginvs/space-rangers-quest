@@ -145,54 +145,63 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                 "serviceWorker" in navigator &&
                 location.hostname !== "localhost"
             ) {
-                navigator.serviceWorker
-                    .register("/sw.js")
-                    .then(reg => {
-                        function updateStore() {
-                            console.info(
-                                `serviceWorker installing=${
-                                    reg.installing
-                                        ? reg.installing.state
-                                        : "null"
-                                } ` +
-                                    `waiting=${
-                                        reg.waiting ? reg.waiting.state : "null"
-                                    } ` +
-                                    `active=${
-                                        reg.active ? reg.active.state : "null"
-                                    } `
-                            );
-                            store.installingServiceWorkerState = reg.installing
-                                ? reg.installing.state
-                                : null;
-                            store.waitingServiceWorkerState = reg.waiting
-                                ? reg.waiting.state
-                                : null;
-                            store.waitingServiceWorker = reg.waiting;
-                            store.activeServiceWorkerState = reg.active
-                                ? reg.active.state
-                                : null;
-                            if (reg.installing) {
-                                reg.installing.onstatechange = updateStore;
-                            }
-                            if (reg.waiting) {
-                                reg.waiting.onstatechange = updateStore;
-                            }
-                            if (reg.active) {
-                                reg.active.onstatechange = updateStore;
-                            }
-                        }
-                        updateStore();
-                        reg.addEventListener("updatefound", () => {
-                            updateStore();
-                        });
+                (async () => {
+                    const registrationOld = await navigator.serviceWorker.getRegistration();
 
-                        setInterval(
-                            () => reg.update().catch(e => console.warn(e)),
-                            1000 * 60 * 60
+                    if (registrationOld) {
+                        console.info(`Service worker have old registration`);
+                    } else {
+                        console.info(
+                            `Service worker do not have old registration, will register now`
                         );
-                    })
-                    .catch(e => undefined);
+                    }
+                    const reg =
+                        registrationOld ||
+                        (await navigator.serviceWorker.register("/sw.js"));
+
+                    function updateStore() {
+                        console.info(
+                            `serviceWorker installing=${
+                                reg.installing ? reg.installing.state : "null"
+                            } ` +
+                                `waiting=${
+                                    reg.waiting ? reg.waiting.state : "null"
+                                } ` +
+                                `active=${
+                                    reg.active ? reg.active.state : "null"
+                                } `
+                        );
+                        store.installingServiceWorkerState = reg.installing
+                            ? reg.installing.state
+                            : null;
+                        store.waitingServiceWorkerState = reg.waiting
+                            ? reg.waiting.state
+                            : null;
+                        store.waitingServiceWorker = reg.waiting;
+                        store.activeServiceWorkerState = reg.active
+                            ? reg.active.state
+                            : null;
+                        if (reg.installing) {
+                            reg.installing.onstatechange = updateStore;
+                        }
+                        if (reg.waiting) {
+                            reg.waiting.onstatechange = updateStore;
+                        }
+                        if (reg.active) {
+                            reg.active.onstatechange = updateStore;
+                        }
+                    }
+                    updateStore();
+                    reg.addEventListener("updatefound", () => {
+                        console.info(`SW regisration: updatefound`);
+                        updateStore();
+                    });
+
+                    setInterval(
+                        () => reg.update().catch(e => console.warn(e)),
+                        1000 * 60 * 60
+                    );
+                })().catch(e => console.warn(e));
 
                 navigator.serviceWorker.addEventListener(
                     "controllerchange",
@@ -311,7 +320,7 @@ if (!root) {
 }
 if (
     document.location.href.indexOf("https://") === 0 ||
-    document.location.hostname === 'localhost' ||
+    document.location.hostname === "localhost" ||
     document.location.hostname === "127.0.0.1"
 ) {
     console.info("Mounting main component");
@@ -323,7 +332,9 @@ if (
         "https://"
     );
     ReactDOM.render(
-        <div className="p-1 text-center">Redirecting to <a href={newLocation}>{newLocation}</a></div>,
+        <div className="p-1 text-center">
+            Redirecting to <a href={newLocation}>{newLocation}</a>
+        </div>,
         root
     );
     document.location.href = newLocation;

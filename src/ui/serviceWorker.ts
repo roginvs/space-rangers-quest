@@ -73,6 +73,10 @@ self.addEventListener("install", event => {
                 }
             }));                                            
             */
+
+            // console.info(`${new Date()} waiting for 30 sec`);
+            // await new Promise(resolve => setTimeout(resolve, 30 *1000));
+
             console.info(`${new Date()} Catching done`);
         })().catch(e => {
             console.error(`${new Date()} Error in sw`, e);
@@ -108,7 +112,7 @@ self.addEventListener("activate", event => {
                 console.info(
                     `${new Date()} Removing old engine cache ${cacheKey}`
                 );
-                await caches.delete(cacheKey);                
+                await caches.delete(cacheKey);
             }
             console.info(`${new Date()} Service worker activation finished`);
         })()
