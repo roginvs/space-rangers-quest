@@ -25,7 +25,7 @@ export class AboutTabContainer extends React.Component<
                         <a href="https://github.com/roginvs/space-rangers-quest">https://github.com/roginvs/space-rangers-quest</a>
                     </h5>
                     <div>
-                        {l.buildAt}{" "}{new Date(__VERSION__).toLocaleString()}
+                        {l.builtAt}{" "}{new Date(__VERSION__).toLocaleString()}
                         </div>
             </DivFadeinCss>
         );

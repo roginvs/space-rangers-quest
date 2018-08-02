@@ -29,12 +29,13 @@ const RUS = {
     fromStar: "С системы",
     toPlanet: "Прилетел на планету",
     toStar: "В системе",
-    lang: "Язык",
+
+    lang: "Язык/Language",
+    rus: "Русский",
+    eng: "English",
+    
     save: "Сохранить",
     saving: "Сохраняю",
-
-    rus: "Русский",
-    eng: "Английский",
 
     welcomeHeader: "Добро пожаловать в онлайн плеер квестов!",
     all: "Все",
@@ -66,7 +67,8 @@ const RUS = {
         "Приложение установлено и работает в оффлайн режиме",
     storePersisted: "Хранилище устойчивое, браузер не удалит",
     storeNotPersisted:
-        "Хранилище неустойчивое, браузер может удалить. Можно попробовать добавить приложение на главный экран или добавить в закладки",
+        "Хранилище неустойчивое, браузер может удалить. " +
+        "Можно попробовать добавить приложение на главный экран или добавить в закладки",
 
     cacheImagesMusicInfo:
         "По-умолчанию для оффлайн режима устанавливаются только код и текстовые квесты, " +
@@ -84,14 +86,97 @@ const RUS = {
     storageUsedFrom: "из",
 
     about: "О приложении",
-    buildAt: "Сборка"
+    builtAt: "Сборка"
 };
 
 export type LangTexts = typeof RUS;
 
-const ENG: LangTexts = {
-    ...RUS,
-    hi: "Hi, "
+const ENG: LangTexts = {    
+    hi: "Hi, ",
+    quests: "Quests",
+    options: "Option",
+    installMode: "Install",
+    installModeInstalling: "Downloading",
+    installModeNeedReload: "Update ready",
+    login: "Log in",
+    useown: "Upload .qm/.qmm",
+    loginWithGoogle: "Log in with Google",
+    profile: "Profile",
+    loginInfo:
+        "The entry to the systems allows to synchronize options and quests completed between different devices",
+    topplayers: "Champions",
+    logout: "Are you sure you want to log out?",
+    waitForFirebase: "Waiting for firebase",
+
+    firebaseSyncing: "Synchronizing with firebase",
+    // showingName: "Имя пользователя",
+    // showingNameDesc: "Это имя будет в общем списке",
+
+    minutesShort: "min.",
+
+    ranger: "Ranger",
+    fromPlanet: "From the planet",
+    fromStar: "From the system",
+    toPlanet: "Arrived at the planet",
+    toStar: "In the system",
+
+    lang: "Язык/Language",
+    rus: "Русский",
+    eng: "English",
+
+    save: "Save",
+    saving: "Saving",
+
+    welcomeHeader: "Welcome to the online quest player!",
+    all: "All",
+    own: "Uploaded",
+    search: "Search",
+    nothingFound: "Nothing is found",
+    startRandomUnpassed: "Choose a randome quest from those you have not completed",
+    passed: "Complete",
+    startFromTheStart: "Start over",
+    startFromLastSave: "Start saving",
+    noLastSave: "No saving",
+    loading: "Loading",
+    loadingQuest: "Quest loading",
+
+    reallyRestart: "Really restart?",
+    yes: "Yes",
+    no: "No",
+
+    back: "Back",
+
+    installingEngine: "Offline application mode is being installed",
+    installingEngineUpdate: "Background updating is underway",
+    installEngineError: "The application is not installed, offline mode is unavailable",
+    engineInstalledNeedReload:
+        "The application is installed, click here to reload offline mode",
+    engineUpdatedNeedReload:
+        "The update is installed, click here to reload",
+    engineInstalledAndInOfflineMode:
+        "The application is installed and working in an offline mode",
+    storePersisted: "The storage is persisted, browser won't delete this",
+    storeNotPersisted:
+        "The storage is not persisted, browser may delete this. " +
+        "You can try to add the app to the main screen or add to bookmarks",
+
+    cacheImagesMusicInfo:
+        "Only code and text quests are installed for offline mode by default. " +
+        "This has been done to save space on your device. " +
+        "Pics and music can be installed separately here",
+
+    images: "Pictures",
+    music: "Music",
+    installing: "Installing",
+    installed: "Installed",
+    uninstall: "Uninstall",
+    notInstalled: "Not installed",
+    install: "Install",
+    storageUsed: "Storage is using",
+    storageUsedFrom: "from",
+
+    about: "About",
+    builtAt: "Built at"
 };
 
 export function getLang(lang: Lang) {
