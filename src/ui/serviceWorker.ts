@@ -48,8 +48,9 @@ self.addEventListener("install", event => {
             const data = await getIndex();
             console.info(`Opening quests cache`);
             const cacheQuests = await caches.open(CACHE_QUESTS_NAME);
-            console.info(`Checking quests and downloading if needed. Total quests size=${data.dir.quests.totalSize}`);
-            
+            console.info(`Downloading quest. Total quests size=${data.dir.quests.totalSize}`);
+            cacheQuests.addAll(data.dir.quests.files.map(quest => DATA_DIR + quest.path));
+            /*
             await Promise.all(data.dir.quests.files.map(async quest => {
                 const url = DATA_DIR + quest.path;
                 if (! await cacheQuests.match(url)) {
@@ -58,8 +59,8 @@ self.addEventListener("install", event => {
                 } else {
                     console.info(`Quest ${url} is already in cache`)
                 }
-            }));            
-            
+            }));                                            
+            */
             console.info(`${new Date()} Catching done`);
             //await self.skipWaiting();
         })().catch(e => {
