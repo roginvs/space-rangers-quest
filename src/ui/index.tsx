@@ -7,8 +7,8 @@ import * as ReactDOM from "react-dom";
 import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
 
-import firebase from 'firebase/app';
-import 'firebase/database';
+import firebase from "firebase/app";
+import "firebase/database";
 
 import { Index, Game } from "../packGameData";
 
@@ -298,7 +298,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
             }
         }
         return (
-            <div>                
+            <div>
                 <Redirect to="#/quests" />
             </div>
         );
@@ -309,5 +309,22 @@ const root = document.getElementById("root");
 if (!root) {
     throw new Error("No root element!");
 }
-console.info("Mounting main component");
-ReactDOM.render(<MainLoader />, root);
+if (
+    document.location.href.indexOf("https://") === 0 ||
+    document.location.hostname === 'localhost' ||
+    document.location.hostname === "127.0.0.1"
+) {
+    console.info("Mounting main component");
+    ReactDOM.render(<MainLoader />, root);
+} else {
+    console.info("Mounting redirect");
+    const newLocation = document.location.href.replace(
+        /^http:\/\//,
+        "https://"
+    );
+    ReactDOM.render(
+        <div className="p-1 text-center">Redirecting to {newLocation}</div>,
+        root
+    );
+    document.location.href = newLocation;
+}
