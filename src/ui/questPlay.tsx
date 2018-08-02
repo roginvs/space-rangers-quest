@@ -38,6 +38,7 @@ import { observer } from "mobx-react";
 import { Store } from "./store";
 
 import "./questPlay.css";
+import { PQImages } from "../lib/pqImages";
 
 interface QuestPlayState {
     quest?: Quest;
@@ -130,16 +131,8 @@ export class QuestPlay extends React.Component<
         let gameState = await this.props.store.db.getLocalSaving(
             this.props.gameName
         );
-        if (!gameState) {
-            gameState = initGame(
-                quest,
-                Math.random()
-                    .toString(36)
-                    .slice(2) +
-                    Math.random()
-                        .toString(36)
-                        .slice(2)
-            );
+        if (! gameState) {
+            gameState = initRandomGameAndDoFirstStep(quest, game.images);
         }
         this.setState({
             quest,
@@ -342,15 +335,7 @@ export class QuestPlay extends React.Component<
                             uiState.gameState === "fail" ||
                             uiState.gameState === "win"
                         ) {
-                            gameState = initGame(
-                                quest,
-                                Math.random()
-                                    .toString(36)
-                                    .slice(2) +
-                                    Math.random()
-                                        .toString(36)
-                                        .slice(2)
-                            );
+                            gameState = initRandomGameAndDoFirstStep(quest, game.images);                            
                             this.setState({
                                 gameState
                             });
@@ -396,15 +381,7 @@ export class QuestPlay extends React.Component<
                                     <button
                                         className="btn btn-warning mt-1 mr-1"
                                         onClick={() => {
-                                            const gameState = initGame(
-                                                quest,
-                                                Math.random()
-                                                    .toString(36)
-                                                    .slice(2) +
-                                                    Math.random()
-                                                        .toString(36)
-                                                        .slice(2)
-                                            );
+                                            const gameState = initRandomGameAndDoFirstStep(quest, game.images);
                                             this.setState({
                                                 reallyRestart: false,
                                                 gameState
@@ -607,3 +584,18 @@ function scrollToTop(scrollDuration: number, offsetTop = 0) {
     window.requestAnimationFrame(step);
 }
 */
+
+
+function initRandomGameAndDoFirstStep(quest: Quest, images: PQImages) {
+    let gameState = initGame(
+        quest,
+        Math.random()
+            .toString(36)
+            .slice(2) +
+            Math.random()
+                .toString(36)
+                .slice(2)
+    );
+    gameState = performJump(JUMP_I_AGREE, quest, gameState, images, new Date().getTime());
+    return gameState;
+}
