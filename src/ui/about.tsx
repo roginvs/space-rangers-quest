@@ -22,12 +22,12 @@ export class AboutTabContainer extends React.Component<
         const l = store.l;
         return (
             <DivFadeinCss key="about" className="text-center container my-3">
-                <h5 className="mb-3">
+                <h5 className="mb-3" style={{wordWrap: "break-word"}}>
                     <a href={GITHUB_LINK}>{GITHUB_LINK}</a>
                 </h5>
                 <div className="mb-3">
                     <div>{l.linkForBugreports}</div>
-                    <div>
+                    <div style={{wordWrap: "break-word"}}>
                         <a href={PIKABU_LINK}>{PIKABU_LINK}</a>
                     </div>
                 </div>
