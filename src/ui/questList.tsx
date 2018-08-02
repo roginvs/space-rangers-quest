@@ -17,7 +17,6 @@ import { AppNavbar } from "./appNavbar";
 import { substitute } from "../lib/substitution";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
 import { SRDateToString } from "../lib/qmplayer/funcs";
-import moment from "moment";
 import { QuestReplaceTags } from "./questReplaceTags";
 
 interface QuestListState {

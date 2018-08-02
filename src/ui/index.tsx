@@ -4,7 +4,6 @@ import "babel-polyfill";
 import * as React from "react";
 import * as ReactDOM from "react-dom";
 
-
 import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
 
@@ -71,6 +70,7 @@ declare global {
 
 interface MainLoaderState {
     store?: Store;
+    loadingStage?: "db" | "index";
     error?: string;
 }
 
@@ -88,7 +88,15 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
         */
 
         (async () => {
-            const db = await getDb(app);            
+            this.setState({
+                loadingStage: "index"
+            });
+            const index = await fetch(INDEX_JSON).then(x => x.json());
+
+            this.setState({
+                loadingStage: "db"
+            });
+            const db = await getDb(app);
             let player = await db.getConfigLocal("player");
             if (!player) {
                 const browserLang = guessBrowserLang();
@@ -101,15 +109,20 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                             : assertNever(browserLang);
                 await db.setConfigBoth("player", player);
             }
+
             const lastLocation = await db.getConfigLocal("lastLocation");
-            const index = await fetch(INDEX_JSON).then(x => x.json());
             const store = new Store(index, app, db, player);
             autorun(() => {
-                db.setConfigBoth('lastLocation', store.hash)
-                .catch(e => console.warn(e));                
-            })
+                db.setConfigBoth("lastLocation", store.hash).catch(e =>
+                    console.warn(e)
+                );
+            });
             if (lastLocation) {
-                location.replace(lastLocation.indexOf("#") === 0 ? lastLocation : "#" + lastLocation)
+                location.replace(
+                    lastLocation.indexOf("#") === 0
+                        ? lastLocation
+                        : "#" + lastLocation
+                );
             }
             //if (lastPlayedGame) {
             //    location.hash = `/quests/${lastPlayedGame}`;
@@ -119,7 +132,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                 app.auth().onAuthStateChanged(user => {
                     store.firebaseLoggedIn = user;
                     if (user) {
-                        store.syncWithFirebase().catch(e => console.warn(e))
+                        store.syncWithFirebase().catch(e => console.warn(e));
                     }
                 });
             } catch (e) {
@@ -152,7 +165,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                             store.waitingServiceWorkerState = reg.waiting
                                 ? reg.waiting.state
                                 : null;
-                            store.waitingServiceWorker = reg.waiting;                                
+                            store.waitingServiceWorker = reg.waiting;
                             store.activeServiceWorkerState = reg.active
                                 ? reg.active.state
                                 : null;
@@ -171,18 +184,20 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                             updateStore();
                         });
 
-                        setInterval(() => reg.update().catch(e => console.warn(e)), 1000 * 60 * 60);
+                        setInterval(
+                            () => reg.update().catch(e => console.warn(e)),
+                            1000 * 60 * 60
+                        );
                     })
-                    .catch(e => undefined);      
-                    
-                    
+                    .catch(e => undefined);
+
                 navigator.serviceWorker.addEventListener(
                     "controllerchange",
                     e => {
                         if (store.reloadingPage) {
-                            return
+                            return;
                         }
-                        store.reloadingPage = true;                        
+                        store.reloadingPage = true;
                         window.location.reload(); // Call to "reload" does not stop the page!
                     }
                 );
@@ -199,15 +214,19 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                 );
                 if (navigator.serviceWorker.controller) {
                     if (navigator.storage) {
-                        navigator.storage.persist().then(persisted => {
-                            console.info(`Persisted=`, persisted);
-                            store.serviceWorkerStoragePersistent = persisted;
-                        }).catch(e => console.warn(e));
+                        navigator.storage
+                            .persist()
+                            .then(persisted => {
+                                console.info(`Persisted=`, persisted);
+                                store.serviceWorkerStoragePersistent = persisted;
+                            })
+                            .catch(e => console.warn(e));
                     }
                 }
-            }            
+            }
             this.setState({
-                store
+                store,
+                loadingStage: undefined
             });
         })().catch(e =>
             this.setState({
@@ -217,13 +236,19 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
     }
     render() {
         if (this.state.error) {
-            return (
-                <ErrorInfo error={this.state.error}/>
-            );
+            return <ErrorInfo error={this.state.error} />;
         }
         const store = this.state.store;
         if (!store) {
-            return <Loader text="Loading index" />;
+            if (this.state.loadingStage === "index") {
+                return <Loader text="Loading index" />;
+            } else if (this.state.loadingStage === "db") {
+                return <Loader text="Loading localdb" />;
+            } else if (this.state.loadingStage === undefined) {
+                return <Loader text="Loading root" />;
+            } else {
+                return assertNever(this.state.loadingStage);
+            }
         }
         if (store.reloadingPage) {
             return <Loader text="Reloading" />;
@@ -248,12 +273,12 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                     <OfflineModeTabContainer store={store} />
                 </AppNavbar>
             );
-        } else if (tab0 === 'about') {
+        } else if (tab0 === "about") {
             return (
                 <AppNavbar store={store}>
                     <AboutTabContainer store={store} />
                 </AppNavbar>
-             )            
+            );
         } else if (tab0 === "quests") {
             if (!tab1) {
                 return <QuestList store={store} />;
@@ -267,12 +292,14 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                         <QuestPlay key={tab1} store={store} gameName={tab1} />
                     );
                 }
-            }         
+            }
         }
-        return <div>
-            TODO tab={store.path.tab0}
-            <Redirect to="#/quests"/>    
-        </div>;
+        return (
+            <div>
+                TODO tab={store.path.tab0}
+                <Redirect to="#/quests" />
+            </div>
+        );
     }
 }
 

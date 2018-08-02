@@ -97,7 +97,7 @@ export async function getDb(app: firebase.app.App) {
             ? "Got indexedDB"
             : "IndexedDB is not available, will use localStorage"
     );
-    await new Promise<void>(resolve => setTimeout(resolve, 1));
+    // await new Promise<void>(resolve => setTimeout(resolve, 1));
 
     async function getLocal(storeName: string, key: string) {
         if (db) {
@@ -200,6 +200,7 @@ export async function getDb(app: firebase.app.App) {
         }
     }
 
+    /*
     const localInfo = await (async () => {
         interface LocalInfo {
             uid: string;
@@ -227,6 +228,7 @@ export async function getDb(app: firebase.app.App) {
         }
         return localInfoTmp;
     })();
+    */
 
     let firebaseUser: firebase.User | null;
     try {
@@ -237,12 +239,6 @@ export async function getDb(app: firebase.app.App) {
                     firebaseUser ? firebaseUser.uid : "<null>"
                 }`
             );
-        });
-        await new Promise<void>(resolve => {
-            const unsubscribe = app.auth().onAuthStateChanged(() => {
-                unsubscribe();
-                resolve();
-            });
         });
 
         app.database()
