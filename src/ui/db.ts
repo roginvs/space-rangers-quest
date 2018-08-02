@@ -1,4 +1,5 @@
-import firebase from "firebase";
+import firebase from 'firebase/app';
+import 'firebase/database';
 
 import { Player } from "../lib/qmplayer/player";
 import { GameLog, GameState } from "../lib/qmplayer/funcs";

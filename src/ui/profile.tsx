@@ -1,5 +1,7 @@
 import * as React from "react";
-import firebase from "firebase";
+
+import firebase from 'firebase/app';
+
 import { getDb } from "./db";
 import {
     DEFAULT_RUS_PLAYER,
