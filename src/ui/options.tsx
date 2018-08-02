@@ -59,14 +59,13 @@ export class OptionsTabContainer extends React.Component<
   </div>
 
   <div className="form-group col-md-6">
-    <label >{l.toPlanet}</label>
-    <input type="text" className="form-control" placeholder="" value={this.state.ToPlanet} onChange={e => this.setState({ToPlanet: e.target.value})}/>
-  </div>
-
-
-  <div className="form-group col-md-6">
     <label >{l.fromStar}</label>
     <input type="text" className="form-control" placeholder="" value={this.state.FromStar} onChange={e => this.setState({FromStar: e.target.value})}/>
+  </div>
+
+  <div className="form-group col-md-6">
+    <label >{l.toPlanet}</label>
+    <input type="text" className="form-control" placeholder="" value={this.state.ToPlanet} onChange={e => this.setState({ToPlanet: e.target.value})}/>
   </div>
 
   <div className="form-group col-md-6">
