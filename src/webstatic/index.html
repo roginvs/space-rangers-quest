@@ -23,14 +23,40 @@
 
 <body>
   <div id="root">
-    <div class="text-center p-2">
+    <div class="text-center p-2" id="loader_div">
       <i class="fa fa-spin fa-spinner"></i> Loading code
     </div>
+    <div class="text-center p-2" id="loading_errors_div"></div>
   </div>
   
   <link href="index.css" rel="stylesheet">
 
+  
+  <script type="text/javascript">     
+     window.onerror = function(message, source, lineno, colno, error) { 
+        var logErrorDiv = document.getElementById('loading_errors_div');
+        // This handler will show errors until main React component is mounted
+        var msg = 'Error: ' + message + ' at ' + source + ':' + lineno + ':' + colno + ' ' + (
+                error ? error.message : '');
+        console.info('Got window onerror: ' + msg);
+        if (logErrorDiv) {
+            var lineDiv = document.createElement('div');
+            lineDiv.innerText = msg;
+            lineDiv.className = 'text-danger';
+            logErrorDiv.appendChild(lineDiv);
+        } else {
+            window.onerror = null;
+        }
+
+        var loaderDiv = document.getElementById('loader_div');
+        if (loaderDiv) {
+            loaderDiv.innerHTML = 'Try to use Chrome/Firefox/Edge/Safari'
+        }
+     }
+  </script>
+
   <script src="index.js"></script>
+
   <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
   <script src="https://v4-alpha.getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
 
