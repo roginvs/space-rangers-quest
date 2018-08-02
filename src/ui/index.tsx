@@ -243,7 +243,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
             if (this.state.loadingStage === "index") {
                 return <Loader text="Loading index" />;
             } else if (this.state.loadingStage === "db") {
-                return <Loader text="Loading localdb" />;
+                return <Loader text="Loading local database" />;
             } else if (this.state.loadingStage === undefined) {
                 return <Loader text="Loading root" />;
             } else {
