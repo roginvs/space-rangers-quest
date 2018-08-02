@@ -323,7 +323,7 @@ if (
         "https://"
     );
     ReactDOM.render(
-        <div className="p-1 text-center">Redirecting to {newLocation}</div>,
+        <div className="p-1 text-center">Redirecting to <a href={newLocation}>{newLocation}</a></div>,
         root
     );
     document.location.href = newLocation;
