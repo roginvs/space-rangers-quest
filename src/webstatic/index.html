@@ -2,96 +2,100 @@
 <html lang="ru">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-  <meta name="description" content="Космические Рейнджеры, квесты онлайн">
-  <meta name="author" content="">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Космические Рейнджеры, квесты онлайн">
+    <meta name="author" content="">
 
 
-  <title>Текстовые квесты онлайн - Космические Рейнджеры</title>
+    <title>Текстовые квесты онлайн - Космические Рейнджеры</title>
 
-  <link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json">
 
-  <link rel="icon" type="image/png" href="favicon.png" />
-  <link rel="shortcut icon" type="image/png" href="favicon.png" />
-  <link rel="apple-touch-icon" href="favicon.png">
-  <meta name="apple-mobile-web-app-title" content="Квесты КР">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="shortcut icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="favicon.png">
+    <meta name="apple-mobile-web-app-title" content="Квесты КР">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
 
 </head>
 
 <body>
-  <div id="root">
-    <div style="text-align: center; padding: 10px;" id="loader_div">
-      <i class="fa fa-spin fa-spinner"></i> Loading code
+    <div id="root">
+        <div style="text-align: center; padding: 10px;" id="loader_div">
+            <i class="fa fa-spin fa-spinner"></i> Loading code
+        </div>
+        <div style="text-align: center; padding: 10px;" id="loading_errors_div"></div>
     </div>
-    <div style="text-align: center; padding: 10px;" id="loading_errors_div"></div>
-  </div>
-  
-  <link href="index.css" rel="stylesheet">
 
-  
-  <script type="text/javascript">     
-     window.onerror = function(message, source, lineno, colno, error) { 
-        var logErrorDiv = document.getElementById('loading_errors_div');
-        // This handler will show errors until main React component is mounted
-        var msg = 'Error: ' + message + ' at ' + source + ':' + lineno + ':' + colno + ' ' + (
+    <link href="index.css" rel="stylesheet">
+
+
+    <script type="text/javascript">     
+        window.onerror = function (message, source, lineno, colno, error) {
+            var logErrorDiv = document.getElementById('loading_errors_div');
+            // This handler will show errors until main React component is mounted
+            var msg = 'Error: ' + message + ' at ' + source + ':' + lineno + ':' + colno + ' ' + (
                 error ? error.message : '');
-        console.info('Got window onerror: ' + msg);
-        if (logErrorDiv) {
-            var lineDiv = document.createElement('div');
-            lineDiv.innerText = msg;
-            lineDiv.className = 'text-danger';
-            logErrorDiv.appendChild(lineDiv);
-        } else {
-            console.info('Div loading_errors_div is not found, this means that root React component is mounted '+
-            'and will handle errors');            
+            console.info('Got window onerror: ' + msg);
+            if (logErrorDiv) {
+                var lineDiv = document.createElement('div');
+                lineDiv.innerText = msg;
+                lineDiv.className = 'text-danger';
+                logErrorDiv.appendChild(lineDiv);
+            } else {
+                console.info('Div loading_errors_div is not found, this means that root React component is mounted ' +
+                    'and will handle errors');
+            }
+
+            var loaderDiv = document.getElementById('loader_div');
+            if (loaderDiv) {
+                loaderDiv.innerHTML = 'Try to use Chrome/Firefox/Edge/Safari'
+            }
         }
+    </script>
 
-        var loaderDiv = document.getElementById('loader_div');
-        if (loaderDiv) {
-            loaderDiv.innerHTML = 'Try to use Chrome/Firefox/Edge/Safari'
-        }
-     }
-  </script>
+    <script src="index.js"></script>
 
-  <script src="index.js"></script>
-
-  <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-  <script src="https://v4-alpha.getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="https://v4-alpha.getbootstrap.com/assets/js/ie10-viewport-bug-workaround.js"></script>
 
 
 
-  <!-- Yandex.Metrika counter -->
-<script type="text/javascript" >
-  (function (d, w, c) {
-      (w[c] = w[c] || []).push(function() {
-          try {
-              w.yaCounter49814347 = new Ya.Metrika2({
-                  id:49814347,
-                  clickmap:true,
-                  trackLinks:true,
-                  accurateTrackBounce:true,
-                  trackHash:true
-              });
-          } catch(e) { }
-      });
+    <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+            (function (d, w, c) {
+                (w[c] = w[c] || []).push(function () {
+                    try {
+                        w.yaCounter49814347 = new Ya.Metrika2({
+                            id: 49814347,
+                            clickmap: true,
+                            trackLinks: true,
+                            accurateTrackBounce: true,
+                            trackHash: true
+                        });
+                    } catch (e) { }
+                });
 
-      var n = d.getElementsByTagName("script")[0],
-          s = d.createElement("script"),
-          f = function () { n.parentNode.insertBefore(s, n); };
-      s.type = "text/javascript";
-      s.async = true;
-      s.src = "https://mc.yandex.ru/metrika/tag.js";
+                var n = d.getElementsByTagName("script")[0],
+                    s = d.createElement("script"),
+                    f = function () { n.parentNode.insertBefore(s, n); };
+                s.type = "text/javascript";
+                s.async = true;
+                s.src = "https://mc.yandex.ru/metrika/tag.js";
 
-      if (w.opera == "[object Opera]") {
-          d.addEventListener("DOMContentLoaded", f, false);
-      } else { f(); }
-  })(document, window, "yandex_metrika_callbacks2");
-</script>
-<noscript><div><img src="https://mc.yandex.ru/watch/49814347" style="position:absolute; left:-9999px;" alt="" /></div></noscript>
-<!-- /Yandex.Metrika counter -->
+                if (w.opera == "[object Opera]") {
+                    d.addEventListener("DOMContentLoaded", f, false);
+                } else { f(); }
+            })(document, window, "yandex_metrika_callbacks2");
+    </script>
+    <noscript>
+        <div>
+            <img src="https://mc.yandex.ru/watch/49814347" style="position:absolute; left:-9999px;" alt="" />
+        </div>
+    </noscript>
+    <!-- /Yandex.Metrika counter -->
 
 
 </body>
