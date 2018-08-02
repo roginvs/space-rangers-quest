@@ -37,7 +37,7 @@
             var logErrorDiv = document.getElementById('loading_errors_div');
             // This handler will show errors until main React component is mounted
             var msg = 'Error: ' + message + ' at ' + source + ':' + lineno + ':' + colno + ' ' + (
-                error ? error.message : '');
+                error ? error.name + ' ' + error.message + ' ' + error.stack : '');
             console.info('Got window onerror: ' + msg);
             if (logErrorDiv) {
                 var lineDiv = document.createElement('div');
