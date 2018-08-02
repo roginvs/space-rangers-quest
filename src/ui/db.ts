@@ -84,7 +84,7 @@ export async function getDb(app: firebase.app.App) {
         };        
     });
     console.info('Got indexedDB');
-    await new Promise(resolve => setTimeout(resolve, 1));
+    await new Promise<void>(resolve => setTimeout(resolve, 1));
 
     async function getLocal(storeName: string, key: string) {
         const trx = db.transaction([storeName], "readonly");
