@@ -2,7 +2,7 @@ import { Lang } from "../lib/qmplayer/player";
 import { assertNever } from "../lib/formula/calculator";
 
 const RUS = {
-    hi: 'Привет, ',
+    hi: "Привет, ",
     quests: "Квесты",
     options: "Опции",
     installMode: "Установить",
@@ -10,9 +10,10 @@ const RUS = {
     installModeNeedReload: "Готово обновление",
     login: "Войти",
     useown: "Загрузить .qm/.qmm",
-    loginWithGoogle: "Войти через Google",    
+    loginWithGoogle: "Войти через Google",
     profile: "Профиль",
-    loginInfo: "Вход в систему позволяет синхронизировать опции и пройденные квесты на разных устройствах",
+    loginInfo:
+        "Вход в систему позволяет синхронизировать опции и пройденные квесты на разных устройствах",
     topplayers: "Чемпионы",
     logout: "Действительно выйти",
     waitForFirebase: "Ждем ответа от firebase",
@@ -57,15 +58,20 @@ const RUS = {
     installingEngine: "Установка оффлайн режима для приложения",
     installingEngineUpdate: "Идет фоновое обновление",
     installEngineError: "Приложение не установлено, оффлайн режим недоступен",
-    engineInstalledNeedReload: "Приложение установлено, нажмите здесь для перезапуска в оффлайн режиме",
-    engineUpdatedNeedReload: "Обновление установлено, нажмите здесь для перезапуска",
-    engineInstalledAndInOfflineMode: "Приложение установлено и работает в оффлайн режиме",
+    engineInstalledNeedReload:
+        "Приложение установлено, нажмите здесь для перезапуска в оффлайн режиме",
+    engineUpdatedNeedReload:
+        "Обновление установлено, нажмите здесь для перезапуска",
+    engineInstalledAndInOfflineMode:
+        "Приложение установлено и работает в оффлайн режиме",
     storePersisted: "Хранилище устойчивое, браузер не удалит",
-    storeNotPersisted: "Хранилище неустойчивое, браузер может удалить. Можно попробовать добавить приложение на главный экран или добавить в закладки",
+    storeNotPersisted:
+        "Хранилище неустойчивое, браузер может удалить. Можно попробовать добавить приложение на главный экран или добавить в закладки",
 
-    cacheImagesMusicInfo: "По-умолчанию для оффлайн режима устанавливаются только код и текстовые квесты, " + 
-    "это сделано для того, чтобы не занимать много места на устройстве. " + 
-    "Картинки и музыку можно установить отдельно здесь",    
+    cacheImagesMusicInfo:
+        "По-умолчанию для оффлайн режима устанавливаются только код и текстовые квесты, " +
+        "это сделано для того, чтобы не занимать много места на устройстве. " +
+        "Картинки и музыку можно установить отдельно здесь",
 
     images: "Картинки",
     music: "Музыка",
@@ -78,45 +84,43 @@ const RUS = {
     storageUsedFrom: "из",
 
     about: "О приложении",
-    buildAt: "Сборка",
-}
+    buildAt: "Сборка"
+};
 
 export type LangTexts = typeof RUS;
 
 const ENG: LangTexts = {
     ...RUS,
-    hi: 'Hi, '
-}
-
-
+    hi: "Hi, "
+};
 
 export function getLang(lang: Lang) {
-    if (lang === 'rus') {
-        return RUS
-    } else if (lang === 'eng') {
-        return ENG
+    if (lang === "rus") {
+        return RUS;
+    } else if (lang === "eng") {
+        return ENG;
     } else {
-        return assertNever(lang)
+        return assertNever(lang);
     }
 }
 
-export function guessBrowserLang(): Lang {    
-const browserLanguages = navigator.languages || [    
-    navigator.language || (navigator as any).userLanguage || "sv"
-  ];
-  console.info(
-    `languages=${
-        navigator.languages ? navigator.languages.join(",") : "null"
-    } ` +
-        `language=${navigator.language} ` +
-        `userLanguage=${
-            (navigator as any).userLanguage
-        } browserLanguages=${browserLanguages.join(",")}`
-  );
-  for (const browserLang of browserLanguages) {
-    if (browserLang.indexOf('ru') === 0) {
-        return 'rus'
+export function guessBrowserLang(): Lang {
+    const browserLanguages = navigator.languages || [
+        navigator.language || (navigator as any).userLanguage || "sv"
+    ];
+    console.info(
+        `languages=${
+            navigator.languages ? navigator.languages.join(",") : "null"
+        } ` +
+            `language=${navigator.language} ` +
+            `userLanguage=${
+                (navigator as any).userLanguage
+            } browserLanguages=${browserLanguages.join(",")}`
+    );
+    for (const browserLang of browserLanguages) {
+        if (browserLang.indexOf("ru") === 0) {
+            return "rus";
+        }
     }
-  }
-  return "eng"
+    return "eng";
 }
