@@ -86,7 +86,8 @@ const RUS = {
     storageUsedFrom: "из",
 
     about: "О приложении",
-    builtAt: "Сборка"
+    builtAt: "Сборка",
+    linkForBugreports: "Сообщения об ошибках можно оставлять в багтрекере Github-а или на Pikabu",
 };
 
 export type LangTexts = typeof RUS;
@@ -176,7 +177,8 @@ const ENG: LangTexts = {
     storageUsedFrom: "from",
 
     about: "About",
-    builtAt: "Built at"
+    builtAt: "Built at",
+    linkForBugreports: "You can add a bugreport into Github bug tracker or into Pikabu",
 };
 
 export function getLang(lang: Lang) {
