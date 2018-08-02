@@ -55,87 +55,149 @@ interface FirebasePublic {
 
 export async function getDb(app: firebase.app.App) {
     console.info("Starting to get db");
-    
-    const db = await new Promise<IDBDatabase>((resolve, reject) => {
-        const idb = indexedDB.open(INDEXEDDB_NAME, 7);
-        console.info('idb opened');
-        idb.onerror = e => reject(new Error(`IndexedDB error: ${idb.error.name} ${idb.error.message}`))
-        idb.onsuccess = (e: any) => resolve(e.target.result);
-        idb.onupgradeneeded = (e: any) => {
-            console.info("onupgradeneeded");
-            const db: IDBDatabase = e.target.result;
-            // console.info(`Old version=${db.}`)
 
-            for (const storeName of [
-                INDEXEDDB_CONFIG_STORE_NAME,
-                INDEXEDDB_SAVED_STORE_NAME,
-                INDEXEDDB_WON_STORE_NAME
-            ]) {
-                if (!db.objectStoreNames.contains(storeName)) {
-                    console.info(`Creating ${storeName} store`);
-                    db.createObjectStore(storeName, {
-                        // keyPath: false,
-                        autoIncrement: false
-                    });
-                } else {
-                    console.info(`It containt ${storeName} store`);
-                }
-            }
-        };        
-    });
-    console.info('Got indexedDB');
+    const db = indexedDB
+        ? await new Promise<IDBDatabase>((resolve, reject) => {
+              const idb = indexedDB.open(INDEXEDDB_NAME, 7);
+              console.info("idb opened");
+              idb.onerror = e =>
+                  reject(
+                      new Error(
+                          `IndexedDB error: ${idb.error.name} ${
+                              idb.error.message
+                          }`
+                      )
+                  );
+              idb.onsuccess = (e: any) => resolve(e.target.result);
+              idb.onupgradeneeded = (e: any) => {
+                  console.info("onupgradeneeded");
+                  const db: IDBDatabase = e.target.result;
+                  // console.info(`Old version=${db.}`)
+
+                  for (const storeName of [
+                      INDEXEDDB_CONFIG_STORE_NAME,
+                      INDEXEDDB_SAVED_STORE_NAME,
+                      INDEXEDDB_WON_STORE_NAME
+                  ]) {
+                      if (!db.objectStoreNames.contains(storeName)) {
+                          console.info(`Creating ${storeName} store`);
+                          db.createObjectStore(storeName, {
+                              // keyPath: false,
+                              autoIncrement: false
+                          });
+                      } else {
+                          console.info(`It containt ${storeName} store`);
+                      }
+                  }
+              };
+          })
+        : undefined;
+    console.info(
+        db
+            ? "Got indexedDB"
+            : "IndexedDB is not available, will use localStorage"
+    );
     await new Promise<void>(resolve => setTimeout(resolve, 1));
 
     async function getLocal(storeName: string, key: string) {
-        const trx = db.transaction([storeName], "readonly");
-        const objectStore = trx.objectStore(storeName);
-        const getReq = objectStore.get(key);
-        const localResult = await new Promise<any>((resolve, reject) => {
-            getReq.onsuccess = e => {
-                resolve(getReq.result);
-            };
-            getReq.onerror = e => reject(new Error(getReq.error.toString()));
-        });
-        return localResult;
+        if (db) {
+            const trx = db.transaction([storeName], "readonly");
+            const objectStore = trx.objectStore(storeName);
+            const getReq = objectStore.get(key);
+            const localResult = await new Promise<any>((resolve, reject) => {
+                getReq.onsuccess = e => {
+                    resolve(getReq.result);
+                };
+                getReq.onerror = e =>
+                    reject(new Error(getReq.error.toString()));
+            });
+            return localResult;
+        } else {
+            // fallback to localStorage
+            const raw = localStorage.getItem(`RANGERS-${storeName}-${key}`);
+            if (raw) {
+                return JSON.parse(raw);
+            } else {
+                return null;
+            }
+        }
     }
 
     async function getAllLocal(storeName: string) {
-        const objectStore = db.transaction([storeName]).objectStore(storeName);
-        return new Promise<WonProofs>((resolve, reject) => {
-            const data: {
+        if (db) {
+            const objectStore = db
+                .transaction([storeName])
+                .objectStore(storeName);
+            return new Promise<WonProofs>((resolve, reject) => {
+                const data: {
+                    [key: string]: any;
+                } = {};
+                const openCursor = objectStore.openCursor();
+                openCursor.onsuccess = function(event: any) {
+                    var cursor = event.target.result;
+                    if (cursor) {
+                        if (cursor.value) {
+                            data[cursor.key] = cursor.value;
+                        }
+                        cursor.continue();
+                    } else {
+                        // alert("No more entries!");
+                        resolve(data);
+                    }
+                };
+                openCursor.onerror = e => {
+                    reject(new Error(openCursor.error.toString()));
+                };
+            });
+        } else {
+            const prefix = `RANGERS-${storeName}-`;
+            let r: {
                 [key: string]: any;
             } = {};
-            const openCursor = objectStore.openCursor();
-            openCursor.onsuccess = function(event: any) {
-                var cursor = event.target.result;
-                if (cursor) {
-                    if (cursor.value) {
-                        data[cursor.key] = cursor.value;
-                    }
-                    cursor.continue();
-                } else {
-                    // alert("No more entries!");
-                    resolve(data);
+            for (const lsFullKey of Object.keys(localStorage)) {
+                if (lsFullKey.indexOf(prefix) !== 0) {
+                    continue;
                 }
-            };
-            openCursor.onerror = e => {
-                reject(new Error(openCursor.error.toString()));
-            };
-        });
+                const key = lsFullKey.slice(prefix.length);
+                const raw = localStorage.getItem(lsFullKey);
+
+                if (raw) {
+                    r[key] = JSON.parse(raw);
+                }
+            }
+            return r;
+        }
     }
 
     async function setLocal(storeName: string, key: string, value: any) {
-        const trx = db.transaction([storeName], "readwrite");
-        const objectStore = trx.objectStore(storeName);
-        
-        const req = value ? objectStore.put(value, key) : objectStore.delete(key);
-        await new Promise<void>((resolve, reject) => {
-            req.onsuccess = e => resolve(req.result);
-            req.onerror = e => {
-                console.warn('Indexeddb error', req.error);
-                reject(new Error(`IndexedDB error: ${req.error.name} ${req.error.message}`));
-            };
-        });
+        if (db) {
+            const trx = db.transaction([storeName], "readwrite");
+            const objectStore = trx.objectStore(storeName);
+
+            const req = value
+                ? objectStore.put(value, key)
+                : objectStore.delete(key);
+            await new Promise<void>((resolve, reject) => {
+                req.onsuccess = e => resolve(req.result);
+                req.onerror = e => {
+                    console.warn("Indexeddb error", req.error);
+                    reject(
+                        new Error(
+                            `IndexedDB error: ${req.error.name} ${
+                                req.error.message
+                            }`
+                        )
+                    );
+                };
+            });
+        } else {
+            const lsFullKey = `RANGERS-${storeName}-${key}`;
+            if (value) {
+                localStorage.setItem(lsFullKey, JSON.stringify(value));
+            } else {
+                localStorage.removeItem(lsFullKey);
+            }
+        }
     }
 
     const localInfo = await (async () => {
@@ -334,7 +396,7 @@ export async function getDb(app: firebase.app.App) {
                     `${INDEXEDDB_WON_STORE_NAME}`
                 )) || {};
             let newCount = 0;
-            const newProofs: WonProofs = {};            
+            const newProofs: WonProofs = {};
             for (const gameName of Object.keys(allRemotePrivateWons)) {
                 const proofs = allRemotePrivateWons[gameName];
                 if (!proofs || Object.keys(proofs).length < 1) {
@@ -413,10 +475,8 @@ export async function getDb(app: firebase.app.App) {
         console.info(`Sync syncWithFirebase local savings done`);
         */
 
-        
-
         try {
-            const allLocalWons = await getAllLocal(INDEXEDDB_WON_STORE_NAME);            
+            const allLocalWons = await getAllLocal(INDEXEDDB_WON_STORE_NAME);
             const allRemoteWons =
                 (await getFirebase(
                     FIREBASE_USERS_PRIVATE,
@@ -478,7 +538,7 @@ export async function getDb(app: firebase.app.App) {
             console.warn(`wining state sync error`, e, e.stack);
         }
         console.info(`Sync syncWithFirebase passed games done`);
-        
+
         await updateFirebaseOwnHighscore();
 
         console.info(`Sync with firebase finished`);
@@ -513,7 +573,7 @@ export async function getDb(app: firebase.app.App) {
     }
 
     async function saveGame(gameName: string, saving: GameState | null) {
-        const savingRaw = saving  ? JSON.stringify(saving) : saving;
+        const savingRaw = saving ? JSON.stringify(saving) : saving;
         await setLocal(INDEXEDDB_SAVED_STORE_NAME, gameName, savingRaw);
         /*
         await setFirebase(
