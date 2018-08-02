@@ -19,9 +19,10 @@ import {
 } from "./consts";
 import { Index } from "../packGameData";
 
+const CACHE_ENGINE_PREFIX = "spacerangers-engine";
+const CACHE_ENGINE_NAME = `${CACHE_ENGINE_PREFIX}-${__VERSION__}`;
 
-export const CACHE_ENGINE_PREFIX = 'spacerangers-engine';
-const CACHE_ENGINE_NAME = `${CACHE_ENGINE_PREFIX}-${new Date(__VERSION__).toISOString()}`;
+const CACHE_QUESTS_NAME = "spacerangers-quests";
 
 const engineUrls = [
     "/",
@@ -29,7 +30,10 @@ const engineUrls = [
     ...serviceWorkerOption.assets,
     `/?version=${new Date(__VERSION__).getTime()}` // to enforce a reinstall after rebuild
 ];
-console.info(`${new Date()} Service version ${__VERSION__} worker engine urls: `, engineUrls);
+console.info(
+    `${new Date()} Service version ${__VERSION__} worker engine urls: `,
+    engineUrls
+);
 
 function getIndex() {
     return fetch(INDEX_JSON).then(data => data.json()) as Promise<Index>;
@@ -44,11 +48,20 @@ self.addEventListener("install", event => {
             const data = await getIndex();
 
             const cacheEngine = await caches.open(CACHE_ENGINE_NAME);
-            console.info(`${new Date()} Serviceworker opened engine cache='${CACHE_ENGINE_NAME}', ` +
-            `downloading engine and quests size=${data.dir.quests.totalSize}`); 
-            await cacheEngine.addAll([...engineUrls, 
-            ...data.dir.quests.files.map(quest => DATA_DIR + quest.path)]);
-            
+            console.info(
+                `${new Date()} Serviceworker opened engine cache='${CACHE_ENGINE_NAME}', downloading engine`
+            );
+            await cacheEngine.addAll(engineUrls);
+
+            const cacheQuests = await caches.open(CACHE_QUESTS_NAME);
+            console.info(
+                `${new Date()} Serviceworker opened quests cache='${CACHE_QUESTS_NAME}', ` +
+                    `downloading quests size=${data.dir.quests.totalSize}`
+            );
+            await cacheQuests.addAll(
+                data.dir.quests.files.map(quest => DATA_DIR + quest.path)
+            );
+
             /*
             await Promise.all((async quest => {
                 const url = DATA_DIR + quest.path;
@@ -61,7 +74,6 @@ self.addEventListener("install", event => {
             }));                                            
             */
             console.info(`${new Date()} Catching done`);
-            //await self.skipWaiting();
         })().catch(e => {
             console.error(`${new Date()} Error in sw`, e);
             throw e;
@@ -71,32 +83,33 @@ self.addEventListener("install", event => {
 
 self.addEventListener("activate", event => {
     console.info(`${new Date()} ServiceWorker activation started`);
-    
+
     /*
      If client is controlled by serviceWorker, then skipWaiting will took control.
      If client loaded before serviceWorker, then skipWaiting will do nothing.
-     I will not took control of uncontrolled clients because claim() reloads them     
+     I will not took control of uncontrolled clients because claim() reloads them
+       (if there was no serviceWorker and then installed one, then serviceWorker will go to "activate" state.
+        In that case all pages are "uncontrolled", and there is no need to force them to reload - 
+            user is not expecting the page to be reloaded
+        )
      */
 
     event.waitUntil(
         (async () => {
-            for (const cacheKey of await caches.keys()) {
-                if (cacheKey === CACHE_MUSIC_NAME_OGG_OLD) {
-                    console.info(`${new Date()} dropping old ogg music cache ${CACHE_MUSIC_NAME_OGG_OLD}`);
-                    await caches.delete(CACHE_MUSIC_NAME_OGG_OLD);
-                }
-                if (cacheKey.indexOf(CACHE_ENGINE_PREFIX) !== 0) {
-                    continue
-                }
-                if (cacheKey === CACHE_ENGINE_NAME) {
-                    continue
-                }
-                console.info(`${new Date()} Removing old engine cache ${cacheKey}`);
-                const deleteResult = await caches.delete(cacheKey);
-                // console.info(`${new Date()} Old cache ${cacheKey} deleteResult=${deleteResult}`);
+            if (await caches.has(CACHE_MUSIC_NAME_OGG_OLD)) {
+                console.info(
+                    `${new Date()} dropping old ogg music cache ${CACHE_MUSIC_NAME_OGG_OLD}`
+                );
+                await caches.delete(CACHE_MUSIC_NAME_OGG_OLD);
             }
-            
-            
+            for (const cacheKey of (await caches.keys())
+                .filter(cacheKey => cacheKey.indexOf(CACHE_ENGINE_PREFIX) === 0)
+                .filter(cacheKey => cacheKey !== CACHE_ENGINE_NAME)) {
+                console.info(
+                    `${new Date()} Removing old engine cache ${cacheKey}`
+                );
+                await caches.delete(cacheKey);                
+            }
             console.info(`${new Date()} Service worker activation finished`);
         })()
     );
@@ -108,7 +121,10 @@ self.addEventListener("fetch", event => {
             const cacheHit =
                 (await caches
                     .open(CACHE_ENGINE_NAME)
-                    .then(cache => cache.match(event.request.url))) ||                
+                    .then(cache => cache.match(event.request.url))) ||
+                (await caches
+                    .open(CACHE_QUESTS_NAME)
+                    .then(cache => cache.match(event.request.url))) ||
                 (await caches
                     .open(CACHE_IMAGES_NAME)
                     .then(cache => cache.match(event.request.url))) ||
@@ -133,10 +149,14 @@ self.addEventListener("fetch", event => {
                 );
 
                 if (!cacheHit) {
-                    console.info(`${new Date()} No audio cache for ${event.request.url}`);
+                    console.info(
+                        `${new Date()} No audio cache for ${event.request.url}`
+                    );
                     return fetch(event.request);
                 } else {
-                    console.info(`${new Date()} Cache audio hit for ${event.request.url}`);
+                    console.info(
+                        `${new Date()} Cache audio hit for ${event.request.url}`
+                    );
                     const arrayBuffer = await cacheHit.arrayBuffer();
                     return new Response(arrayBuffer.slice(pos), {
                         status: 206,
@@ -155,7 +175,9 @@ self.addEventListener("fetch", event => {
             }
 
             if (cacheHit) {
-                console.info(`${new Date()} Cache hit for ${event.request.url}`);
+                console.info(
+                    `${new Date()} Cache hit for ${event.request.url}`
+                );
                 return cacheHit;
             } else {
                 console.info(`${new Date()} No cache for ${event.request.url}`);
@@ -165,11 +187,12 @@ self.addEventListener("fetch", event => {
     );
 });
 
-
-self.addEventListener('message', messageEvent => {
-    console.info(`${new Date()} Got a message=${messageEvent.data}`)
+self.addEventListener("message", messageEvent => {
+    console.info(`${new Date()} Got a message=${messageEvent.data}`);
     if (messageEvent.data === SKIP_WAITING_MESSAGE_DATA) {
-        console.info(`${new Date()} service worker will skipWaiting and start to activate`);
+        console.info(
+            `${new Date()} service worker will skipWaiting and start to activate`
+        );
         return self.skipWaiting();
     }
 });
