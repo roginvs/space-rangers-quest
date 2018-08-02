@@ -209,5 +209,8 @@ export function guessBrowserLang(): Lang {
             return "rus";
         }
     }
+    if (navigator.userAgent.indexOf('Googlebot') > -1) { // Чтобы google русский вариант индексировал
+        return "rus"
+    }
     return "eng";
 }
