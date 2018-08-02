@@ -5,6 +5,7 @@ import { Progress } from "reactstrap";
 
 import { observer } from "mobx-react";
 import { Store } from "./store";
+import { SKIP_WAITING_MESSAGE_DATA } from "./consts";
 
 declare global {
     interface Navigator {
@@ -77,25 +78,38 @@ export class OfflineModeTabContainer extends React.Component<
                             <i className="fa fa-check" />{" "}
                             {l.engineInstalledAndInOfflineMode}
                         </h5>
-                        {store.haveInstallingServiceWorker ? (
+                        {store.installingServiceWorkerState ? (
                             <h6>
                                 <i className="fa fa-spin fa-circle-o-notch" />{" "}
                                 {l.installingEngineUpdate}
                             </h6>
-                        ) : store.haveWaitingServiceWorker ? (
+                        ) : store.waitingServiceWorkerState &&
+                        store.waitingServiceWorker ? (
                             <h6>
-                                <i className="fa fa-refresh" />{" "}
-                                {l.engineUpdatedNeedReload}
+                                <a
+                                    href="#"
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        if (store.waitingServiceWorker) {
+                                            store.waitingServiceWorker.postMessage(
+                                                SKIP_WAITING_MESSAGE_DATA
+                                            );
+                                        }
+                                    }}
+                                >
+                                    <i className="fa fa-refresh" />{" "}
+                                    {l.engineUpdatedNeedReload}
+                                </a>
                             </h6>
                         ) : null}
                     </>
-                ) : store.haveInstallingServiceWorker ? (
+                ) : store.installingServiceWorkerState ? (
                     <h5>
                         <i className="fa fa-spin fa-circle-o-notch" />{" "}
                         {l.installingEngine}
                     </h5>
-                ) : store.haveWaitingServiceWorker ||
-                store.haveActiveServiceWorker ? (
+                ) : store.waitingServiceWorkerState ||
+                store.activeServiceWorkerState ? (
                     <h5>
                         <a
                             href="#"
@@ -120,12 +134,15 @@ export class OfflineModeTabContainer extends React.Component<
                             : l.storeNotPersisted}
                     </small>
                 </div>
-                <div className="mb-3">
+                <div className="mb-4">
                     <small>
                         <StorageUsedInfo l={store.l} />
                     </small>
                 </div>
 
+                <div>
+                    <i>{l.cacheImagesMusicInfo}</i>
+                </div>
                 <div className="card-group">
                     <div className="card">
                         <div className="card-header">{l.images}</div>

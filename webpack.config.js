@@ -9,7 +9,8 @@ const ServiceWorkerWebpackPlugin = require('serviceworker-webpack-plugin');
 
 const devServer /*: webpackDevServer.Configuration */ = {
     contentBase: "./built-web",
-    port: 4000
+    port: 4000,
+    // inline: false, // for serviceWorker development tests
 };
 
 const config /*: webpack.Configuration */ = {

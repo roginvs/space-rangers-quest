@@ -138,13 +138,14 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                                         reg.active ? reg.active.state : "null"
                                     } `
                             );
-                            store.haveInstallingServiceWorker = reg.installing
+                            store.installingServiceWorkerState = reg.installing
                                 ? reg.installing.state
                                 : null;
-                            store.haveWaitingServiceWorker = reg.waiting
+                            store.waitingServiceWorkerState = reg.waiting
                                 ? reg.waiting.state
                                 : null;
-                            store.haveActiveServiceWorker = reg.active
+                            store.waitingServiceWorker = reg.waiting;                                
+                            store.activeServiceWorkerState = reg.active
                                 ? reg.active.state
                                 : null;
                             if (reg.installing) {
@@ -164,21 +165,17 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
 
                         setInterval(() => reg.update().catch(e => console.warn(e)), 1000 * 60 * 60);
                     })
-                    .catch(e => undefined);                    
+                    .catch(e => undefined);      
+                    
+                    
                 navigator.serviceWorker.addEventListener(
                     "controllerchange",
                     e => {
-                        store.serviceWorkerController = navigator.serviceWorker
-                            .controller
-                            ? navigator.serviceWorker.controller.state
-                            : null;
-                        console.info(
-                            `serviceWorker controller=${
-                                navigator.serviceWorker.controller
-                                    ? navigator.serviceWorker.controller.state
-                                    : "null"
-                            }`
-                        );
+                        if (store.reloadingPage) {
+                            return
+                        }
+                        store.reloadingPage = true;                        
+                        window.location.reload(); // Call to "reload" does not stop the page!
                     }
                 );
                 store.serviceWorkerController = navigator.serviceWorker
@@ -192,13 +189,15 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                             : "null"
                     }`
                 );
-            }
-            if (navigator.storage) {
-                navigator.storage.persist().then(persisted => {
-                    console.info(`Persisted=`, persisted);
-                    store.serviceWorkerStoragePersistent = persisted;
-                }).catch(e => console.warn(e));
-            }
+                if (navigator.serviceWorker.controller) {
+                    if (navigator.storage) {
+                        navigator.storage.persist().then(persisted => {
+                            console.info(`Persisted=`, persisted);
+                            store.serviceWorkerStoragePersistent = persisted;
+                        }).catch(e => console.warn(e));
+                    }
+                }
+            }            
             this.setState({
                 store
             });
@@ -217,6 +216,9 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
         const store = this.state.store;
         if (!store) {
             return <Loader text="Loading index" />;
+        }
+        if (store.reloadingPage) {
+            return <Loader text="Reloading" />;
         }
 
         const { tab0, tab1, tab2 } = store.path;

@@ -96,14 +96,14 @@ export class AppNavbar extends React.Component<
                                         href="#/offlinemode"
                                         active={tab0 === "offlinemode"}
                                     >
-                                        {store.haveInstallingServiceWorker ||
+                                        {store.installingServiceWorkerState ||
                                         store.imagesCacheInstallInfo ||
                                         store.musicCacheInstallInfo ? (
                                             <>
                                                 <i className="fa fa-fw fa-spin fa-circle-o-notch" />{" "}
                                                 {l.installModeInstalling}
                                             </>
-                                        ) : store.haveWaitingServiceWorker ? (
+                                        ) : store.waitingServiceWorkerState ? (
                                             <span className="text-success">
                                                 <i className="fa fa-fw fa-truck fa-flip-horizontal" />{" "}
                                                 {l.installModeNeedReload}

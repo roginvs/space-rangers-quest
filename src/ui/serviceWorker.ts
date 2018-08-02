@@ -13,11 +13,10 @@ import {
     INDEX_JSON,
     DATA_DIR,
     CACHE_MUSIC_NAME,
-    CACHE_IMAGES_NAME
+    CACHE_IMAGES_NAME,
+    SKIP_WAITING_MESSAGE_DATA
 } from "./consts";
 import { Index } from "../packGameData";
-
-export const CACHE_QUESTS_NAME = 'spacerangers-quests';
 
 
 export const CACHE_ENGINE_PREFIX = 'spacerangers-engine';
@@ -29,7 +28,7 @@ const engineUrls = [
     ...serviceWorkerOption.assets,
     `/?version=${new Date(__VERSION__).getTime()}` // to enforce a reinstall after rebuild
 ];
-console.info(`Service version ${__VERSION__} worker engine urls: `, engineUrls);
+console.info(`${new Date()} Service version ${__VERSION__} worker engine urls: `, engineUrls);
 
 function getIndex() {
     return fetch(INDEX_JSON).then(data => data.json()) as Promise<Index>;
@@ -40,24 +39,23 @@ self.addEventListener("install", event => {
     console.info(`${new Date()} Serviceworker got install event.`);
     event.waitUntil(
         (async () => {
-            const cacheEngine = await caches.open(CACHE_ENGINE_NAME);
-            console.info(`${new Date()} Serviceworker opened engine cache='${CACHE_ENGINE_NAME}, downloading engine'`);                
-            await cacheEngine.addAll(engineUrls);
-            
-            console.info(`Downloading index.json`);
+            console.info(`${new Date()} Downloading index.json`);
             const data = await getIndex();
-            console.info(`Opening quests cache`);
-            const cacheQuests = await caches.open(CACHE_QUESTS_NAME);
-            console.info(`Downloading quest. Total quests size=${data.dir.quests.totalSize}`);
-            cacheQuests.addAll(data.dir.quests.files.map(quest => DATA_DIR + quest.path));
+
+            const cacheEngine = await caches.open(CACHE_ENGINE_NAME);
+            console.info(`${new Date()} Serviceworker opened engine cache='${CACHE_ENGINE_NAME}', ` +
+            `downloading engine and quests size=${data.dir.quests.totalSize}`); 
+            await cacheEngine.addAll([...engineUrls, 
+            ...data.dir.quests.files.map(quest => DATA_DIR + quest.path)]);
+            
             /*
-            await Promise.all(data.dir.quests.files.map(async quest => {
+            await Promise.all((async quest => {
                 const url = DATA_DIR + quest.path;
                 if (! await cacheQuests.match(url)) {
-                    console.info(`Quest ${url} no match in cache, downloading`);
+                    console.info(`${new Date()} Quest ${url} no match in cache, downloading`);
                     await cacheQuests.add(url);
                 } else {
-                    console.info(`Quest ${url} is already in cache`)
+                    console.info(`${new Date()} Quest ${url} is already in cache`)
                 }
             }));                                            
             */
@@ -71,7 +69,14 @@ self.addEventListener("install", event => {
 });
 
 self.addEventListener("activate", event => {
-    console.log(`${new Date()} ServiceWorker activation started`);
+    console.info(`${new Date()} ServiceWorker activation started`);
+    
+    /*
+     If client is controlled by serviceWorker, then skipWaiting will took control.
+     If client loaded before serviceWorker, then skipWaiting will do nothing.
+     I will not took control of uncontrolled clients because claim() reloads them     
+     */
+
     event.waitUntil(
         (async () => {
             for (const cacheKey of await caches.keys()) {
@@ -81,9 +86,9 @@ self.addEventListener("activate", event => {
                 if (cacheKey === CACHE_ENGINE_NAME) {
                     continue
                 }
-                console.info(`Removing old engine cache ${cacheKey}`);
+                console.info(`${new Date()} Removing old engine cache ${cacheKey}`);
                 const deleteResult = await caches.delete(cacheKey);
-                console.info(`Old cache ${cacheKey} deleteResult=${deleteResult}`);
+                console.info(`${new Date()} Old cache ${cacheKey} deleteResult=${deleteResult}`);
             }
             
             
@@ -98,10 +103,7 @@ self.addEventListener("fetch", event => {
             const cacheHit =
                 (await caches
                     .open(CACHE_ENGINE_NAME)
-                    .then(cache => cache.match(event.request.url))) ||                    
-                (await caches
-                        .open(CACHE_QUESTS_NAME)
-                        .then(cache => cache.match(event.request.url))) ||    
+                    .then(cache => cache.match(event.request.url))) ||                
                 (await caches
                     .open(CACHE_IMAGES_NAME)
                     .then(cache => cache.match(event.request.url))) ||
@@ -111,7 +113,7 @@ self.addEventListener("fetch", event => {
 
             const headersRange = event.request.headers.get("range");
             if (headersRange) {
-                console.info(`headersRange='${headersRange}'`);
+                console.info(`${new Date()} headersRange='${headersRange}'`);
                 const m = headersRange.match(/^bytes\=(\d+)\-$/);
                 if (!m) {
                     // ????
@@ -120,16 +122,16 @@ self.addEventListener("fetch", event => {
 
                 const pos = parseInt(m[1]);
                 console.log(
-                    `Range request for ${
+                    `${new Date()} Range request for ${
                         event.request.url
                     }, starting position: ${pos}`
                 );
 
                 if (!cacheHit) {
-                    console.info(`No audio cache for ${event.request.url}`);
+                    console.info(`${new Date()} No audio cache for ${event.request.url}`);
                     return fetch(event.request);
                 } else {
-                    console.info(`Cache audio hit for ${event.request.url}`);
+                    console.info(`${new Date()} Cache audio hit for ${event.request.url}`);
                     const arrayBuffer = await cacheHit.arrayBuffer();
                     return new Response(arrayBuffer.slice(pos), {
                         status: 206,
@@ -148,12 +150,21 @@ self.addEventListener("fetch", event => {
             }
 
             if (cacheHit) {
-                console.info(`Cache hit for ${event.request.url}`);
+                console.info(`${new Date()} Cache hit for ${event.request.url}`);
                 return cacheHit;
             } else {
-                console.info(`No cache for ${event.request.url}`);
+                console.info(`${new Date()} No cache for ${event.request.url}`);
                 return fetch(event.request);
             }
         })()
     );
+});
+
+
+self.addEventListener('message', messageEvent => {
+    console.info(`${new Date()} Got a message=${messageEvent.data}`)
+    if (messageEvent.data === SKIP_WAITING_MESSAGE_DATA) {
+        console.info(`${new Date()} service worker will skipWaiting and start to activate`);
+        return self.skipWaiting();
+    }
 });

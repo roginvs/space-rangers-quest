@@ -95,11 +95,14 @@ export class Store {
 
     @observable serviceWorkerController: ServiceWorkerState | null = null;
 
+    @observable reloadingPage: boolean = false;
+
     @observable serviceWorkerStoragePersistent: boolean | undefined = undefined;
 
-    @observable haveInstallingServiceWorker: ServiceWorkerState | null = null;
-    @observable haveWaitingServiceWorker: ServiceWorkerState | null = null;
-    @observable haveActiveServiceWorker: ServiceWorkerState | null = null;
+    @observable installingServiceWorkerState: ServiceWorkerState | null = null;
+    @observable waitingServiceWorkerState: ServiceWorkerState | null = null;
+    @observable waitingServiceWorker: ServiceWorker | null = null;
+    @observable activeServiceWorkerState: ServiceWorkerState | null = null;
 
     @observable questsListTab: string = QUEST_SEARCH_ALL;
     @observable questsListSearch: string = "";
