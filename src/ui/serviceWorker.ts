@@ -12,9 +12,10 @@ declare var serviceWorkerOption: {
 import {
     INDEX_JSON,
     DATA_DIR,
-    CACHE_MUSIC_NAME,
+    CACHE_MUSIC_NAME_MP3,
     CACHE_IMAGES_NAME,
-    SKIP_WAITING_MESSAGE_DATA
+    SKIP_WAITING_MESSAGE_DATA,
+    CACHE_MUSIC_NAME_OGG_OLD
 } from "./consts";
 import { Index } from "../packGameData";
 
@@ -80,6 +81,10 @@ self.addEventListener("activate", event => {
     event.waitUntil(
         (async () => {
             for (const cacheKey of await caches.keys()) {
+                if (cacheKey === CACHE_MUSIC_NAME_OGG_OLD) {
+                    console.info(`${new Date()} dropping old ogg music cache ${CACHE_MUSIC_NAME_OGG_OLD}`);
+                    await caches.delete(CACHE_MUSIC_NAME_OGG_OLD);
+                }
                 if (cacheKey.indexOf(CACHE_ENGINE_PREFIX) !== 0) {
                     continue
                 }
@@ -88,7 +93,7 @@ self.addEventListener("activate", event => {
                 }
                 console.info(`${new Date()} Removing old engine cache ${cacheKey}`);
                 const deleteResult = await caches.delete(cacheKey);
-                console.info(`${new Date()} Old cache ${cacheKey} deleteResult=${deleteResult}`);
+                // console.info(`${new Date()} Old cache ${cacheKey} deleteResult=${deleteResult}`);
             }
             
             
@@ -108,7 +113,7 @@ self.addEventListener("fetch", event => {
                     .open(CACHE_IMAGES_NAME)
                     .then(cache => cache.match(event.request.url))) ||
                 (await caches
-                    .open(CACHE_MUSIC_NAME)
+                    .open(CACHE_MUSIC_NAME_MP3)
                     .then(cache => cache.match(event.request.url)));
 
             const headersRange = event.request.headers.get("range");

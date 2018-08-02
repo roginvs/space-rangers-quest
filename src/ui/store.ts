@@ -3,7 +3,7 @@ import { Index } from "../packGameData";
 import { DB, GameWonProofs } from "./db";
 import { Player } from "../lib/qmplayer/player";
 import { getLang } from "./lang";
-import { CACHE_MUSIC_NAME, DATA_DIR, CACHE_IMAGES_NAME } from "./consts";
+import { CACHE_MUSIC_NAME_MP3, DATA_DIR, CACHE_IMAGES_NAME } from "./consts";
 
 type CacheInfo = "no" | "yes" | undefined;
 interface CacheInstallInfo {
@@ -117,7 +117,7 @@ export class Store {
     @observable musicCacheInstallInfo: CacheInstallInfo | undefined;
 
     async queryCacheInfo() {
-        const cacheMusic = await caches.open(CACHE_MUSIC_NAME);
+        const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
         let somethingMissingMusic = false;
         for (const f of this.index.dir.music.files) {
             if (!(await cacheMusic.match(DATA_DIR + f.path))) {
@@ -150,7 +150,7 @@ export class Store {
             sizeTotal: this.index.dir.music.totalSize,
             downloaded: 0
         };
-        const cacheMusic = await caches.open(CACHE_MUSIC_NAME);
+        const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
         for (const f of this.index.dir.music.files) {
             this.musicCacheInstallInfo.currentFile = f.path;
             const url = DATA_DIR + f.path;
@@ -185,7 +185,7 @@ export class Store {
         if (this.musicCacheInstallInfo) {
             return;
         }
-        await caches.delete(CACHE_MUSIC_NAME);
+        await caches.delete(CACHE_MUSIC_NAME_MP3);
         this.musicCache = "no";
     }
     async removeImagesCache() {
