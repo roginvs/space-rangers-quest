@@ -20,6 +20,7 @@ import { initGame } from "../lib/qmplayer";
 import { getUIState, performJump } from "../lib/qmplayer/funcs";
 import { Loader, DivFadeinCss, Redirect, ErrorInfo } from "./common";
 import { observer } from "mobx-react";
+import { autorun } from "mobx";
 import {
     Navbar,
     NavbarBrand,
@@ -87,8 +88,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
         */
 
         (async () => {
-            const db = await getDb(app);
-            const lastPlayedGame = await db.getConfigLocal("lastPlayedGame");
+            const db = await getDb(app);            
             let player = await db.getConfigLocal("player");
             if (!player) {
                 const browserLang = guessBrowserLang();
@@ -101,11 +101,19 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                             : assertNever(browserLang);
                 await db.setConfigBoth("player", player);
             }
+            const lastLocation = await db.getConfigLocal("lastLocation");
             const index = await fetch(INDEX_JSON).then(x => x.json());
             const store = new Store(index, app, db, player);
-            if (lastPlayedGame) {
-                location.hash = `/quests/${lastPlayedGame}`;
+            autorun(() => {
+                db.setConfigBoth('lastLocation', store.hash)
+                .catch(e => console.warn(e));                
+            })
+            if (lastLocation) {
+                location.replace(lastLocation.indexOf("#") === 0 ? lastLocation : "#" + lastLocation)
             }
+            //if (lastPlayedGame) {
+            //    location.hash = `/quests/${lastPlayedGame}`;
+            //}
             await store.loadWinProofsFromLocal();
             try {
                 app.auth().onAuthStateChanged(user => {
@@ -222,9 +230,6 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
         }
 
         const { tab0, tab1, tab2 } = store.path;
-        if (!tab0) {
-            return <Redirect to="#/quests" />;
-        }
         if (tab0 === "auth") {
             return (
                 <AppNavbar store={store}>
@@ -264,7 +269,10 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                 }
             }         
         }
-        return <div>TODO tab={store.path.tab0}</div>;
+        return <div>
+            TODO tab={store.path.tab0}
+            <Redirect to="#/quests"/>    
+        </div>;
     }
 }
 

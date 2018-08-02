@@ -6,7 +6,7 @@ import { resolve } from "path";
 
 interface Config {
     player: Player;
-    lastPlayedGame: string;
+    lastLocation: string;
     noMusic: boolean;
 }
 

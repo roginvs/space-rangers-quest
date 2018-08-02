@@ -32,17 +32,20 @@ export class Store {
 
     private setPath() {
         const hash = location.hash.replace(/^#/, "").replace(/^\//, "");
-        if (this.hash === hash) {
+        if (this._hash === hash) {
             return;
         }
-        this.hash = hash;
+        this._hash = hash;
     }
 
-    @observable private hash: string = "";
+    @observable private _hash: string = "";
 
+    @computed get hash() {
+        return '#/' + this._hash;
+    }
     @computed
     get path() {
-        const arr = this.hash.split("/");
+        const arr = this._hash.split("/");
         return {
             tab0: arr[0],
             tab1: arr[1],
