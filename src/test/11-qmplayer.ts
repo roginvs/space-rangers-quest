@@ -4,7 +4,7 @@ import * as fs from 'fs';
 import * as assert from 'assert';
 import "mocha";
 
-import { QMPlayer, GameState, JUMP_I_AGREE } from '../lib/qmplayer'
+import { QMPlayer, GameState, JUMP_I_AGREE, JUMP_GO_BACK_TO_SHIP, JUMP_NEXT } from '../lib/qmplayer'
 
 let player: QMPlayer;
 
@@ -23,6 +23,63 @@ function jumpTo(text: string = '') {
     // console.info(player.getState());
     return player.getState();
 }
+
+describe('test11-critonlocation.qm', function () {
+        beforeEach(`Reads and parses quest`, () => {
+            const data = fs.readFileSync(__dirname + '/../../src/test/test11-critonlocation.qm');
+            const qm = parse(data);
+            player = new QMPlayer(qm, undefined, 'rus'); // false
+            player.start();
+            player.performJump(JUMP_I_AGREE)
+        })
+        it('-> L2', () => {
+            const st = jumpTo('L2');
+            assert.equal(st.gameState, 'win');
+            assert.equal(st.choices.length, 1, "one choice");
+            assert.equal(st.choices[0].jumpId, JUMP_GO_BACK_TO_SHIP, "It is go back to ship");            
+        })
+        it('-> L4', () => {
+            const st = jumpTo('L4');
+            console.info(st);
+            assert.equal(st.gameState, 'fail');
+            assert.equal(st.choices.length, 0, "no choice");            
+        })
+        it('-> L5', () => {
+            const st = jumpTo('L5');            
+            assert.equal(st.gameState, 'dead');
+            assert.equal(st.choices.length, 0, "no choice");            
+            assert.ok(false)
+        });
+
+        it('-> L6', () => {
+            const st = jumpTo('L6');
+            assert.equal(st.text, 'L6');
+            const st2 = jumpTo('');
+            assert.equal(st2.gameState, 'fail');
+            assert.equal(st2.choices.length, 0, "no choice");            
+        })
+        it('-> L7', () => {
+            const st = jumpTo('L7');
+            assert.equal(st.text, 'L7');
+            const st2 = jumpTo('');
+            assert.equal(st2.gameState, 'dead');
+            assert.equal(st2.choices.length, 0, "no choice");            
+        })
+        it('-> L8', () => {
+            const st = jumpTo('L8');
+            console.info(st);
+            assert.equal(st.gameState, 'fail');
+            assert.equal(st.choices.length, 0, "no choice");            
+        })
+        it('-> L10', () => {
+            const st = jumpTo('L10');
+            console.info(st);
+            assert.equal(st.gameState, 'fail');
+            assert.equal(st.choices.length, 0, "no choice");            
+        })
+})
+
+
 
 for (const ext of ['qm','qmm']) {
 describe(`Player on test10-locationtexts.${ext}`, function () {
