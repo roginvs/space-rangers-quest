@@ -15,10 +15,11 @@ const RUS = {
     loginInfo:
         "Вход в систему позволяет синхронизировать опции и пройденные квесты на разных устройствах",
     topplayers: "Чемпионы",
-    logout: "Действительно выйти",
+    logout: "Выйти",
     waitForFirebase: "Ждем ответа от firebase",
 
     firebaseSyncing: "Синхронизация с firebase",
+    doFirebaseSync: "Выполнить синхронизацию с firebase",
     // showingName: "Имя пользователя",
     // showingNameDesc: "Это имя будет в общем списке",
 
@@ -110,10 +111,11 @@ const ENG: LangTexts = {
     loginInfo:
         "The entry to the systems allows to synchronize options and quests completed between different devices",
     topplayers: "Champions",
-    logout: "Are you sure you want to log out?",
+    logout: "Log out",
     waitForFirebase: "Waiting for firebase",
 
     firebaseSyncing: "Synchronizing with firebase",
+    doFirebaseSync: "Sync data with firebase",
     // showingName: "Имя пользователя",
     // showingNameDesc: "Это имя будет в общем списке",
 

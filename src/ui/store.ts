@@ -40,8 +40,9 @@ export class Store {
 
     @observable private _hash: string = "";
 
-    @computed get hash() {
-        return '#/' + this._hash;
+    @computed
+    get hash() {
+        return "#/" + this._hash;
     }
     @computed
     get path() {
@@ -53,7 +54,7 @@ export class Store {
         };
     }
 
-    @observable firebaseLoggedIn: firebase.User | null | undefined = null;
+    @observable firebaseLoggedIn: firebase.User | null | undefined = undefined;
 
     @observable firebaseSyncing: boolean = false;
 
