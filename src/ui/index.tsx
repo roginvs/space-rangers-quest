@@ -211,6 +211,8 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                           - if there was no controller: this is a first install and 
                             a "clients.claim()" was called from service worker "activate" state
                             (which were triggered automatically)
+                            We do a service worker registration immediately after page loads,
+                                so installed version will be probably the same as loaded
                           - if there is a controller: serviceWorkers "activate" state was
                             triggered by sendMessage from the page, i.e. from user click
                         */
