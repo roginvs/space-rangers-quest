@@ -131,7 +131,7 @@ export class QuestPlay extends React.Component<
         let gameState = await this.props.store.db.getLocalSaving(
             this.props.gameName
         );
-        if (! gameState) {
+        if (!gameState) {
             gameState = initRandomGameAndDoFirstStep(quest, game.images);
         }
         this.setState({
@@ -335,10 +335,16 @@ export class QuestPlay extends React.Component<
                             uiState.gameState === "fail" ||
                             uiState.gameState === "win"
                         ) {
-                            gameState = initRandomGameAndDoFirstStep(quest, game.images);                            
+                            gameState = initRandomGameAndDoFirstStep(
+                                quest,
+                                game.images
+                            );
                             this.setState({
                                 gameState
                             });
+                            this.props.store.db
+                                .saveGame(this.props.gameName, null)
+                                .catch(e => console.warn(e));
                         } else {
                             this.setState({
                                 reallyRestart: true
@@ -381,11 +387,20 @@ export class QuestPlay extends React.Component<
                                     <button
                                         className="btn btn-warning mt-1 mr-1"
                                         onClick={() => {
-                                            const gameState = initRandomGameAndDoFirstStep(quest, game.images);
+                                            const gameState = initRandomGameAndDoFirstStep(
+                                                quest,
+                                                game.images
+                                            );
                                             this.setState({
                                                 reallyRestart: false,
                                                 gameState
                                             });
+                                            this.props.store.db
+                                                .saveGame(
+                                                    this.props.gameName,
+                                                    null
+                                                )
+                                                .catch(e => console.warn(e));
                                         }}
                                     >
                                         <i className="fa fa-refresh fa-fw" />{" "}
@@ -585,7 +600,6 @@ function scrollToTop(scrollDuration: number, offsetTop = 0) {
 }
 */
 
-
 function initRandomGameAndDoFirstStep(quest: Quest, images: PQImages) {
     let gameState = initGame(
         quest,
@@ -596,6 +610,12 @@ function initRandomGameAndDoFirstStep(quest: Quest, images: PQImages) {
                 .toString(36)
                 .slice(2)
     );
-    gameState = performJump(JUMP_I_AGREE, quest, gameState, images, new Date().getTime());
+    gameState = performJump(
+        JUMP_I_AGREE,
+        quest,
+        gameState,
+        images,
+        new Date().getTime()
+    );
     return gameState;
 }
