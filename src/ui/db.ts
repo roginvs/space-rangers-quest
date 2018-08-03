@@ -5,9 +5,13 @@ import { Player } from "../lib/qmplayer/player";
 import { GameLog, GameState } from "../lib/qmplayer/funcs";
 import { resolve } from "path";
 
-interface Config {
-    player: Player;
+
+interface ConfigLocalOnly {
     lastLocation: string;
+}
+
+interface ConfigBoth extends ConfigLocalOnly {
+    player: Player;    
     noMusic: boolean;
 }
 
@@ -375,9 +379,9 @@ export async function getDb(app: firebase.app.App) {
     }
     */
 
-    async function setConfigBoth(key: keyof Config, value: Config[typeof key]) {
+    async function setConfigBoth(key: keyof ConfigBoth, value: ConfigBoth[typeof key]) {
         console.info(`setConfig key=${key} value=${JSON.stringify(value)}`);
-        await setLocal(INDEXEDDB_CONFIG_STORE_NAME, key, value);
+        await setLocal(INDEXEDDB_CONFIG_STORE_NAME, key, value);        
         await setFirebase(
             FIREBASE_USERS_PRIVATE,
             `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`,
@@ -385,12 +389,17 @@ export async function getDb(app: firebase.app.App) {
         );
     }
 
+    async function setConfigLocal(key: keyof ConfigLocalOnly, value: ConfigLocalOnly[typeof key]) {
+        console.info(`setConfig key=${key} value=${JSON.stringify(value)}`);
+        await setLocal(INDEXEDDB_CONFIG_STORE_NAME, key, value);                
+    }
+
     // async function getBoth<T extends keyof Config>(key: T): Promise<Config[T] | null> {
     //    return getLocalAndFirebase(INDEXEDDB_CONFIG_STORE_NAME, key);
     //}
-    async function getConfigLocal<T extends keyof Config>(
+    async function getConfigLocal<T extends keyof ConfigBoth>(
         key: T
-    ): Promise<Config[T] | null> {
+    ): Promise<ConfigBoth[T] | null> {
         return getLocal(INDEXEDDB_CONFIG_STORE_NAME, key);
     }
 
@@ -432,7 +441,7 @@ export async function getDb(app: firebase.app.App) {
             "player",
             "lastPlayedGame",
             "noMusic"
-        ] as (keyof Config)[]) {
+        ] as (keyof ConfigBoth)[]) {
             const firebaseResult = await getFirebase(
                 FIREBASE_USERS_PRIVATE,
                 `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`
