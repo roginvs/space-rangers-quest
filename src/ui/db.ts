@@ -634,6 +634,7 @@ export async function getDb(app: firebase.app.App) {
     console.info(`Returning db instance`);
     return {
         setConfigBoth,
+        setConfigLocal,
         getConfigLocal,
 
         isGamePassedLocal,
