@@ -1,4 +1,5 @@
-# TODO
+# TODO IN UI
+- pics/music install: need to show if failed (not just hang)
 - upload own (and play)
 - champions
 - editor?
