@@ -17,13 +17,17 @@ import { parse } from "../formula";
 import { DeepImmutable } from "./deepImmutable";
 import { RandomFunc } from "../randomFunc";
 import { substitute } from "../substitution";
-import { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP, DEFAULT_DAYS_TO_PASS_QUEST } from "./defs";
+import {
+    JUMP_I_AGREE,
+    JUMP_NEXT,
+    JUMP_GO_BACK_TO_SHIP,
+    DEFAULT_DAYS_TO_PASS_QUEST
+} from "./defs";
 import { assertNever } from "../formula/calculator";
-import * as assert from 'assert';
+import * as assert from "assert";
 import { Player, Lang } from "./player";
 
 export type Quest = DeepImmutable<QM>;
-
 
 export interface PlayerSubstitute extends Player {
     // TODO: move from this file
@@ -39,7 +43,7 @@ export interface GameLogStep {
 export type GameLog = DeepImmutable<{
     aleaSeed: string;
     performedJumps: GameLogStep[];
-}>
+}>;
 export type GameState = DeepImmutable<{
     state:
         | "starting"
@@ -69,7 +73,8 @@ export type GameState = DeepImmutable<{
     imageFilename: string | null;
 
     aleaState: AleaState;
-}> & GameLog;
+}> &
+    GameLog;
 
 interface PlayerChoice {
     text: string;
@@ -85,7 +90,6 @@ export interface PlayerState {
     gameState: "running" | "fail" | "win" | "dead";
 }
 
-
 export function initGame(quest: Quest, seed: string): GameState {
     const alea = new Alea(seed);
 
@@ -100,11 +104,11 @@ export function initGame(quest: Quest, seed: string): GameState {
         if (param.isMoney) {
             const giveMoney = 2000;
             const money = param.max > giveMoney ? giveMoney : param.max;
-            const starting = `[${money}]`;         
+            const starting = `[${money}]`;
             return parse(starting, [], alea.random);
-        }        
-        return parse(param.starting.replace('h','..'), [], alea.random);
-    });    
+        }
+        return parse(param.starting.replace("h", ".."), [], alea.random);
+    });
     const startingShowing = quest.params.map(() => true);
 
     const state: GameState = {
@@ -301,7 +305,7 @@ export function getUIState(
                 }
             ],
             gameState: "running",
-            imageFileName: null,
+            imageFileName: null
         };
     } else if (state.state === "jump") {
         const jump = quest.jumps.find(x => x.id === state.lastJumpId);
@@ -527,7 +531,7 @@ export function getUIState(
             paramsState: [],
             choices: [],
             gameState: "win",
-            imageFileName: null,
+            imageFileName: null
         };
     } else {
         return assertNever(state.state);
@@ -793,8 +797,7 @@ function performJumpInternal(
             (state.critParamId !== null &&
                 jump &&
                 jump.paramsChanges[state.critParamId].img) ||
-            (state.critParamId !== null &&
-                quest.params[state.critParamId].img);
+            (state.critParamId !== null && quest.params[state.critParamId].img);
         const image = qmmImg
             ? qmmImg.toLowerCase() + ".jpg"
             : images
@@ -813,7 +816,7 @@ function performJumpInternal(
                 imageFilename: image
             };
         }
-    } else if (state.state === "critonlocation") {        
+    } else if (state.state === "critonlocation") {
         state = {
             ...state,
             state: "critonlocationlastmessage"
@@ -831,7 +834,7 @@ function calculateLocation(
     images: PQImages,
     random: RandomFunc
 ): GameState {
-    if (stateOriginal.state !== 'location') {
+    if (stateOriginal.state !== "location") {
         throw new Error(`Internal error: expecting "location" state`);
     }
 
@@ -1136,7 +1139,7 @@ function calculateLocation(
             // Do nothing because some jumps allows this
         } else {
             const lastjump = quest.jumps.find(x => x.id === state.lastJumpId);
-            
+
             state = {
                 ...state,
                 state: location.isEmpty
@@ -1171,10 +1174,9 @@ function calculateLocation(
     }
 
     // calculateLocation is always called when state.state === "location", but state.state can change
-    
-    
+
     /* А это дикий костыль для пустых локаций и переходов */
-    if (state.state === 'location' && state.possibleJumps.length === 1) {        
+    if (state.state === "location" && state.possibleJumps.length === 1) {
         const lonenyCurrentJumpInPossible = state.possibleJumps[0];
         const lonenyCurrentJump = quest.jumps.find(
             x => x.id === lonenyCurrentJumpInPossible.id
@@ -1219,7 +1221,8 @@ function calculateLocation(
                 random
             );
         }
-    } else if (state.state === 'critonlocation') {
+    } else if (state.state === "critonlocation") {
+        // Little bit copy-paste from branch above
         const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
         const locTextId = calculateLocationShowingTextId(
             location,
@@ -1231,12 +1234,12 @@ function calculateLocation(
             ? lastJump
                 ? !lastJump.description
                 : true
-            : !locationOwnText;        
+            : !locationOwnText;
         if (locationDoNotHaveText) {
             state = {
                 ...state,
                 state: "critonlocationlastmessage"
-            }
+            };
         }
     }
 
@@ -1258,7 +1261,7 @@ export function getAllImagesToPreload(quest: Quest, images: PQImages) {
 export function validateState(
     quest: Quest,
     stateOriginal: GameState,
-    images: PQImages = []    
+    images: PQImages = []
 ) {
     try {
         let state = initGame(quest, stateOriginal.aleaSeed);
@@ -1269,10 +1272,10 @@ export function validateState(
                 state,
                 images,
                 performedJump.dateUnix
-            )
-        };
+            );
+        }
         assert.deepEqual(stateOriginal, state);
-        return true
+        return true;
     } catch (e) {
         console.info(e);
         return false;
@@ -1282,14 +1285,11 @@ export function validateState(
 export function getGameLog(state: GameState): GameLog {
     return {
         aleaSeed: state.aleaSeed,
-        performedJumps: state.performedJumps,
-    }
+        performedJumps: state.performedJumps
+    };
 }
 
-export function validateWinningLog(
-    quest: Quest,
-    gameLog: GameLog,    
-) {
+export function validateWinningLog(quest: Quest, gameLog: GameLog) {
     try {
         let state = initGame(quest, gameLog.aleaSeed);
         for (const performedJump of gameLog.performedJumps) {
@@ -1299,15 +1299,14 @@ export function validateWinningLog(
                 state,
                 [],
                 performedJump.dateUnix
-            )
-        };
-        if (state.state !== "returnedending") {
-            throw new Error('Not a winning state')
+            );
         }
-        return true
+        if (state.state !== "returnedending") {
+            throw new Error("Not a winning state");
+        }
+        return true;
     } catch (e) {
         console.info(e);
         return false;
     }
 }
-
