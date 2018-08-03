@@ -15,7 +15,6 @@ interface ConfigBoth extends ConfigLocalOnly {
     noMusic: boolean;
 }
 
-console.info(`TODO: SET TIMEOUTS ON FIREBASE`);
 
 /*
 Here is firebase rules:
