@@ -88,27 +88,16 @@ self.addEventListener("install", event => {
 self.addEventListener("activate", event => {
     console.info(`${new Date()} ServiceWorker activation started`);
 
-    /*
-     If client is controlled by serviceWorker, then skipWaiting will took control.
-     If client loaded before serviceWorker, then skipWaiting will do nothing.
-     I will not took control of uncontrolled clients because claim() reloads them
-       (if there was no serviceWorker and then installed one, then serviceWorker will go to "activate" state.
-        In that case all pages are "uncontrolled", and there is no need to force them to reload - 
-            user is not expecting the page to be reloaded
-        )
-     */
-    
     event.waitUntil(
         (async () => {
-             /*
+            /*
                 During "activating" state browser is not able to load an application.
                 Browser will wait untill "activate" even finishes, and only after this
                     will give a "fetch" event to activated serviceWorker
              */
-             // console.info(`${new Date()} waiting for 30 sec`);
-             // await new Promise(resolve => setTimeout(resolve, 54 *1000));
-             // console.info(`${new Date()} waiting done`);
-
+            // console.info(`${new Date()} waiting for 30 sec`);
+            // await new Promise(resolve => setTimeout(resolve, 54 *1000));
+            // console.info(`${new Date()} waiting done`);
 
             if (await caches.has(CACHE_MUSIC_NAME_OGG_OLD)) {
                 console.info(
@@ -124,6 +113,21 @@ self.addEventListener("activate", event => {
                 );
                 await caches.delete(cacheKey);
             }
+
+            /*
+             If client is controlled by serviceWorker, then skipWaiting will took control.
+             If client loaded before serviceWorker, then skipWaiting will do nothing.
+             I will not took control of uncontrolled clients because claim() reloads them
+               (if there was no serviceWorker and then installed one, then serviceWorker will go to "activate" state.
+                In that case all pages are "uncontrolled", and there is no need to force them to reload - 
+                    user is not expecting the page to be reloaded)
+             UPDATE: I will call "claim", but I know that page knows when it was uncontrolled and page
+                will not reload only when it was uncontrolled before.
+            */
+
+            console.info(`${new Date()} Service worker claiming clients`);
+            await self.clients.claim();
+
             console.info(`${new Date()} Service worker activation finished`);
         })()
     );

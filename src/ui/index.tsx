@@ -206,11 +206,26 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                 navigator.serviceWorker.addEventListener(
                     "controllerchange",
                     e => {
-                        if (store.reloadingPage) {
-                            return;
+                        /*
+                          Only do a reload if there was a controller and a new controlled appeared.
+                          - if there was no controller: this is a first install and 
+                            a "clients.claim()" was called from service worker "activate" state
+                            (which were triggered automatically)
+                          - if there is a controller: serviceWorkers "activate" state was
+                            triggered by sendMessage from the page, i.e. from user click
+                        */
+                        if (store.serviceWorkerController && navigator.serviceWorker
+                            .controller) {
+                            if (!store.reloadingPage) {
+                                store.reloadingPage = true;
+                                window.location.reload(); // Call to "reload" does not stop the page!
+                            }
                         }
-                        store.reloadingPage = true;
-                        window.location.reload(); // Call to "reload" does not stop the page!
+
+                        store.serviceWorkerController = navigator.serviceWorker
+                            .controller
+                            ? navigator.serviceWorker.controller.state
+                            : null;
                     }
                 );
                 store.serviceWorkerController = navigator.serviceWorker
