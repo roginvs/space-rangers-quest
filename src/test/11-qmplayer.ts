@@ -48,8 +48,7 @@ describe('test11-critonlocation.qm', function () {
         it('-> L5', () => {
             const st = jumpTo('L5');            
             assert.equal(st.gameState, 'dead');
-            assert.equal(st.choices.length, 0, "no choice");            
-            assert.ok(false)
+            assert.equal(st.choices.length, 0, "no choice");                        
         });
 
         it('-> L6', () => {

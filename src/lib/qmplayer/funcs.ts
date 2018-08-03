@@ -1171,9 +1171,10 @@ function calculateLocation(
     }
 
     // calculateLocation is always called when state.state === "location", but state.state can change
-
+    
+    
     /* А это дикий костыль для пустых локаций и переходов */
-    if (state.state === "location" && state.possibleJumps.length === 1) {
+    if (state.state === 'location' && state.possibleJumps.length === 1) {        
         const lonenyCurrentJumpInPossible = state.possibleJumps[0];
         const lonenyCurrentJump = quest.jumps.find(
             x => x.id === lonenyCurrentJumpInPossible.id
@@ -1217,6 +1218,25 @@ function calculateLocation(
                 images,
                 random
             );
+        }
+    } else if (state.state === 'critonlocation') {
+        const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
+        const locTextId = calculateLocationShowingTextId(
+            location,
+            state,
+            random
+        );
+        const locationOwnText = location.texts[locTextId] || "";
+        const locationDoNotHaveText = location.isEmpty
+            ? lastJump
+                ? !lastJump.description
+                : true
+            : !locationOwnText;        
+        if (locationDoNotHaveText) {
+            state = {
+                ...state,
+                state: "critonlocationlastmessage"
+            }
         }
     }
 
