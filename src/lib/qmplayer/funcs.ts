@@ -813,7 +813,7 @@ function performJumpInternal(
                 imageFilename: image
             };
         }
-    } else if (state.state === "critonlocation") {
+    } else if (state.state === "critonlocation") {        
         state = {
             ...state,
             state: "critonlocationlastmessage"
@@ -831,6 +831,10 @@ function calculateLocation(
     images: PQImages,
     random: RandomFunc
 ): GameState {
+    if (stateOriginal.state !== 'location') {
+        throw new Error(`Internal error: expecting "location" state`);
+    }
+
     let state = stateOriginal;
     state = {
         ...state,
@@ -1124,11 +1128,13 @@ function calculateLocation(
     };
 
     for (const critParam of critParamsTriggered) {
-        const gotCritWithChoices =
+        const gotFailyCritWithChoices =
             (quest.params[critParam].type === ParamType.Провальный ||
                 quest.params[critParam].type === ParamType.Смертельный) &&
             state.possibleJumps.filter(x => x.active).length > 0;
-        if (!oldTgeBehaviour || !gotCritWithChoices) {
+        if (oldTgeBehaviour && gotFailyCritWithChoices) {
+            // Do nothing because some jumps allows this
+        } else {
             const lastjump = quest.jumps.find(x => x.id === state.lastJumpId);
             state = {
                 ...state,
@@ -1159,6 +1165,7 @@ function calculateLocation(
                     imageFilename: image
                 };
             }
+            // asdasd adasdasd
         }
     }
 
