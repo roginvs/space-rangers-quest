@@ -261,24 +261,26 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
             })
         );
     }
-    render() {
+    render() {        
         if (this.state.error) {
             return <ErrorInfo error={this.state.error} />;
         }
         const store = this.state.store;
+        
         if (!store) {
+            const l = getLang(guessBrowserLang()); // Not from store because obviously store if not ready yet
             if (this.state.loadingStage === "index") {
-                return <Loader text="Loading index" />;
+                return <Loader text={l.loadingIndex} />;
             } else if (this.state.loadingStage === "db") {
-                return <Loader text="Loading local database" />;
+                return <Loader text={l.loadingLocalDatabase} />;
             } else if (this.state.loadingStage === undefined) {
-                return <Loader text="Loading root" />;
+                return <Loader text={l.loading} />;
             } else {
                 return assertNever(this.state.loadingStage);
             }
         }
         if (store.reloadingPage) {
-            return <Loader text="Reloading" />;
+            return <Loader text={store.l.reloading} />;
         }
 
         const { tab0, tab1, tab2 } = store.path;

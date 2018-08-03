@@ -48,6 +48,10 @@ const RUS = {
     startFromLastSave: "Загрузить сохранение",
     noLastSave: "Нет сохранения",
     loading: "Загрузка",
+    loadingIndex: "Загрузка индекса",
+    loadingLocalDatabase: "Загрузка локальной базы данных",
+    reloading: "Перезагрузка",
+
     loadingQuest: "Загрузка квеста",
 
     reallyRestart: "Начать сначала?",
@@ -139,6 +143,10 @@ const ENG: LangTexts = {
     startFromLastSave: "Start saving",
     noLastSave: "No saving",
     loading: "Loading",
+    loadingIndex: "Loading index",
+    loadingLocalDatabase: "Loading local database",
+    reloading: "Reloading",
+
     loadingQuest: "Quest loading",
 
     reallyRestart: "Really restart?",
