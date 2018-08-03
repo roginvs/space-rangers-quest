@@ -34,9 +34,10 @@ describe('test11-critonlocation.qm', function () {
         })
         it('-> L2', () => {
             const st = jumpTo('L2');
-            assert.equal(st.gameState, 'win');
+            assert.equal(st.choices[0].jumpId, JUMP_GO_BACK_TO_SHIP, "It is go back to ship");                        
             assert.equal(st.choices.length, 1, "one choice");
-            assert.equal(st.choices[0].jumpId, JUMP_GO_BACK_TO_SHIP, "It is go back to ship");            
+            player.performJump(JUMP_GO_BACK_TO_SHIP);
+            assert.equal(player.getState().gameState, "win");            
         })
         it('-> L4', () => {
             const st = jumpTo('L4');

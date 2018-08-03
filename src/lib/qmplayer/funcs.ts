@@ -1136,6 +1136,7 @@ function calculateLocation(
             // Do nothing because some jumps allows this
         } else {
             const lastjump = quest.jumps.find(x => x.id === state.lastJumpId);
+            
             state = {
                 ...state,
                 state: location.isEmpty
@@ -1169,10 +1170,10 @@ function calculateLocation(
         }
     }
 
-    // calculateLocation is always called when state.state === "location"
+    // calculateLocation is always called when state.state === "location", but state.state can change
 
     /* А это дикий костыль для пустых локаций и переходов */
-    if (state.possibleJumps.length === 1) {
+    if (state.state === "location" && state.possibleJumps.length === 1) {
         const lonenyCurrentJumpInPossible = state.possibleJumps[0];
         const lonenyCurrentJump = quest.jumps.find(
             x => x.id === lonenyCurrentJumpInPossible.id
