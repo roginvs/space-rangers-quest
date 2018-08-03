@@ -1,5 +1,5 @@
-import firebase from 'firebase/app';
-import 'firebase/database';
+import firebase from "firebase/app";
+import "firebase/database";
 
 import { Player } from "../lib/qmplayer/player";
 import { GameLog, GameState } from "../lib/qmplayer/funcs";
@@ -258,6 +258,7 @@ export async function getDb(app: firebase.app.App) {
         value: any
     ) {
         try {
+            app.database().goOnline();
             if (firebaseUser) {
                 const fullRefPath = `${store}/${firebaseUser.uid}/${userPath}`;
                 console.info(
@@ -275,6 +276,8 @@ export async function getDb(app: firebase.app.App) {
             }
         } catch (e) {
             console.error(`Error with firebase: `, e);
+        } finally {
+            app.database().goOffline();
         }
     }
     async function getFirebase(
@@ -282,6 +285,7 @@ export async function getDb(app: firebase.app.App) {
         userPath: string
     ) {
         try {
+            app.database().goOnline();
             const firebaseResult = await Promise.race([
                 new Promise<any | null>(
                     resolve =>
@@ -315,6 +319,8 @@ export async function getDb(app: firebase.app.App) {
         } catch (e) {
             console.error(`Error with firebase: `, e);
             return null;
+        } finally {
+            app.database().goOffline();
         }
     }
 
@@ -323,6 +329,7 @@ export async function getDb(app: firebase.app.App) {
         await setFirebase(FIREBASE_USERS_PUBLIC, "info/name", name);
     }
 
+    /*
     function getHighscores() {
         // Only from firebase!
         return new Promise<{
@@ -338,7 +345,8 @@ export async function getDb(app: firebase.app.App) {
                 .catch(e => reject(e));
         });
     }
-
+    */
+    /*
     async function getLocalAndFirebase(storeName: string, key: string) {
         const localResult = await getLocal(storeName, key);
         console.info(
@@ -365,6 +373,7 @@ export async function getDb(app: firebase.app.App) {
         );
         return localResult;
     }
+    */
 
     async function setConfigBoth(key: keyof Config, value: Config[typeof key]) {
         console.info(`setConfig key=${key} value=${JSON.stringify(value)}`);
@@ -610,6 +619,9 @@ export async function getDb(app: firebase.app.App) {
     }
     */
 
+    console.info(`Asking firebase to go offline`);
+    app.database().goOffline();
+
     console.info(`Returning db instance`);
     return {
         setConfigBoth,
@@ -618,7 +630,7 @@ export async function getDb(app: firebase.app.App) {
         isGamePassedLocal,
         setGamePassing,
 
-        getHighscores,
+        // getHighscores,
 
         saveGame,
         getLocalSaving,
