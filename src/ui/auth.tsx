@@ -29,6 +29,23 @@ export class AuthTabContainer extends React.Component<
 > {
     render() {
         const { l, firebaseLoggedIn, app } = this.props.store;
+        const userGoogleAuth =
+            firebaseLoggedIn &&
+            firebaseLoggedIn.providerData.find(
+                x =>
+                    !!x &&
+                    x.providerId ===
+                        firebase.auth.GoogleAuthProvider.PROVIDER_ID
+            );
+        const userGithubAuth =
+            firebaseLoggedIn &&
+            firebaseLoggedIn.providerData.find(
+                x =>
+                    !!x &&
+                    x.providerId ===
+                        firebase.auth.GithubAuthProvider.PROVIDER_ID
+            );
+
         return firebaseLoggedIn === undefined ? (
             <Loader text={l.waitForFirebase} />
         ) : firebaseLoggedIn ? (
@@ -37,7 +54,51 @@ export class AuthTabContainer extends React.Component<
                     <h5>{firebaseLoggedIn.displayName}</h5>
                 </div>
 
-                <div className="mb-5">
+                <div className="mb-3">
+                    {userGoogleAuth ? (
+                        <span>
+                            <i className="fa fa-google fa-fw" />
+                            {l.authConnectedTo} {userGoogleAuth.email}
+                        </span>
+                    ) : (
+                        <button
+                            className="btn btn-light"
+                            onClick={() => {
+                                const provider = new firebase.auth.GoogleAuthProvider();
+                                firebaseLoggedIn
+                                    .linkWithPopup(provider)
+                                    .then(() => this.forceUpdate());
+                            }}
+                        >
+                            <i className="fa fa-google fa-fw" />
+                            {l.authConnectTo} Google
+                        </button>
+                    )}
+                </div>
+
+                <div className="mb-3">
+                    {userGithubAuth ? (
+                        <span>
+                            <i className="fa fa-github fa-fw" />
+                            {l.authConnectedTo} {userGithubAuth.email}
+                        </span>
+                    ) : (
+                        <button
+                            className="btn btn-light"
+                            onClick={() => {
+                                const provider = new firebase.auth.GithubAuthProvider();
+                                firebaseLoggedIn
+                                    .linkWithPopup(provider)
+                                    .then(() => this.forceUpdate());
+                            }}
+                        >
+                            <i className="fa fa-github fa-fw" />
+                            {l.authConnectTo} Github
+                        </button>
+                    )}
+                </div>
+
+                <div className="my-5">
                     {this.props.store.firebaseSyncing ? (
                         <span>
                             <i className="fa fa-spin fa-spinner" />{" "}
@@ -46,9 +107,7 @@ export class AuthTabContainer extends React.Component<
                     ) : (
                         <button
                             className="btn btn-info"
-                            onClick={() =>
-                                this.props.store.syncWithFirebase()
-                            }
+                            onClick={() => this.props.store.syncWithFirebase()}
                         >
                             <div
                                 className="d-flex align-items-center justify-content-center"
@@ -83,18 +142,37 @@ export class AuthTabContainer extends React.Component<
             <DivFadeinCss key="login" className="text-center">
                 <div className="mb-3">
                     <div className="mb-3">{l.loginInfo}</div>
-                    <button
-                        className="btn btn-light px-3"
-                        onClick={() => {
-                            const authProvider = new firebase.auth.GoogleAuthProvider();
-                            this.props.store.app
-                                .auth()
-                                .signInWithPopup(authProvider)
-                                .catch(e => undefined);
-                        }}
-                    >
-                        <i className="fa fa-google" /> {l.loginWithGoogle}
-                    </button>
+                    <div className="mb-3">
+                        <button
+                            className="btn btn-light px-3"
+                            onClick={() => {
+                                const authProvider = new firebase.auth.GoogleAuthProvider();
+                                this.props.store.app
+                                    .auth()
+                                    .signInWithPopup(authProvider)
+                                    .catch(e => undefined);
+                            }}
+                        >
+                            <i className="fa fa-google fa-fw" />
+                            {l.loginWith} Google
+                        </button>
+                    </div>
+
+                    <div className="mb-3">
+                        <button
+                            className="btn btn-light px-3"
+                            onClick={() => {
+                                const authProvider = new firebase.auth.GithubAuthProvider();
+                                this.props.store.app
+                                    .auth()
+                                    .signInWithRedirect(authProvider)
+                                    .catch(e => undefined);
+                            }}
+                        >
+                            <i className="fa fa-github fa-fw" />
+                            {l.loginWith} Github
+                        </button>
+                    </div>
                 </div>
             </DivFadeinCss>
         );

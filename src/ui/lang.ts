@@ -10,7 +10,9 @@ const RUS = {
     installModeNeedReload: "Готово обновление",
     login: "Войти",
     useown: "Загрузить .qm/.qmm",
-    loginWithGoogle: "Войти через Google",
+    loginWith: "Войти через",
+    authConnectedTo: "Привязан к",
+    authConnectTo: "Привязать к",
     profile: "Профиль",
     loginInfo:
         "Вход в систему позволяет синхронизировать опции и пройденные квесты на разных устройствах",
@@ -108,7 +110,9 @@ const ENG: LangTexts = {
     installModeNeedReload: "Update ready",
     login: "Log in",
     useown: "Upload .qm/.qmm",
-    loginWithGoogle: "Log in with Google",
+    loginWith: "Log in with",
+    authConnectedTo: "Connected to",
+    authConnectTo: "Connect to",
     profile: "Profile",
     loginInfo:
         "The entry to the systems allows to synchronize options and quests completed between different devices",
