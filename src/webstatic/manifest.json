@@ -1,7 +1,7 @@
 {
     "name": "Квесты из Космических Рейнджеров",
     "short_name": "Квесты КР",
-    "start_url": "/#/",
+    "start_url": "./#/",
     "display": "standalone",
     "icons": [
         {
