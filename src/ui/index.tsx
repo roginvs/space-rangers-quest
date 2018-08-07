@@ -120,12 +120,14 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                     console.warn(e)
                 );
             });
-            if (lastLocation) {
+            if (lastLocation) {       
+                /* Disabled this feature
                 location.replace(
                     lastLocation.indexOf("#") === 0
                         ? lastLocation
                         : "#" + lastLocation
                 );
+                */
             }
             //if (lastPlayedGame) {
             //    location.hash = `/quests/${lastPlayedGame}`;
