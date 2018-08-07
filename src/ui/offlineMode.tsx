@@ -57,7 +57,7 @@ class StorageUsedInfo extends React.Component<
             return <span>{this.state.error.message}</span>
         }
         if (this.state.quota === undefined || this.state.usage === undefined) {
-            return <span><Loader text={l.storageUsed}/></span>;
+            return <span>{l.storageUsed} <i className="fa fa-spin fa-cog"/></span>;
         }
         return (
             <span>
