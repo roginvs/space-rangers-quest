@@ -70,11 +70,11 @@ const RUS = {
         "Обновление установлено, нажмите здесь для перезапуска",
     engineInstalledAndInOfflineMode:
         "Приложение установлено и работает в оффлайн режиме",
-    storePersisted: "Хранилище устойчивое, браузер не удалит",
-    storeNotPersisted:
+    storageIsPersisted: "Хранилище устойчивое, браузер не удалит",
+    storageIsNotPersisted:
         "Хранилище неустойчивое, браузер может удалить. " +
         "Можно попробовать добавить приложение на главный экран или добавить в закладки",
-    storePersistedUnknown: "Статус устойчивости хранилища неизвестен",
+    storePersistedIsUnknown: "Статус устойчивости хранилища неизвестен",
 
     cacheImagesMusicInfo:
         "По-умолчанию для оффлайн режима устанавливаются только код и текстовые квесты, " +
@@ -167,11 +167,11 @@ const ENG: LangTexts = {
         "The update is installed, click here to reload",
     engineInstalledAndInOfflineMode:
         "The application is installed and working in an offline mode",
-    storePersisted: "The storage is persisted, browser won't delete this",
-    storeNotPersisted:
+    storageIsPersisted: "The storage is persisted, browser won't delete this",
+    storageIsNotPersisted:
         "The storage is not persisted, browser may delete this. " +
         "You can try to add the app to the main screen or add to bookmarks",
-    storePersistedUnknown: "Storage persisted status is unknown",
+    storePersistedIsUnknown: "Storage persisted status is unknown",
 
     cacheImagesMusicInfo:
         "Only code and text quests are installed for offline mode by default. " +
