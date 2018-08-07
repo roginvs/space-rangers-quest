@@ -74,6 +74,7 @@ const RUS = {
     storeNotPersisted:
         "Хранилище неустойчивое, браузер может удалить. " +
         "Можно попробовать добавить приложение на главный экран или добавить в закладки",
+    storePersistedUnknown: "Статус устойчивости хранилища неизвестен",
 
     cacheImagesMusicInfo:
         "По-умолчанию для оффлайн режима устанавливаются только код и текстовые квесты, " +
@@ -170,6 +171,7 @@ const ENG: LangTexts = {
     storeNotPersisted:
         "The storage is not persisted, browser may delete this. " +
         "You can try to add the app to the main screen or add to bookmarks",
+    storePersistedUnknown: "Storage persisted status is unknown",
 
     cacheImagesMusicInfo:
         "Only code and text quests are installed for offline mode by default. " +

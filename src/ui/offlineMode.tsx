@@ -129,7 +129,8 @@ export class OfflineModeTabContainer extends React.Component<
                 )}
                 <div className="">
                     <small>
-                        {store.serviceWorkerStoragePersistent
+                        {store.storageIsPersisted === undefined ? 
+                        l.storePersistedUnknown : store.storageIsPersisted
                             ? l.storePersisted
                             : l.storeNotPersisted}
                     </small>

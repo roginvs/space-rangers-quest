@@ -101,7 +101,7 @@ export class Store {
 
     @observable reloadingPage: boolean = false;
 
-    @observable serviceWorkerStoragePersistent: boolean | undefined = undefined;
+    @observable storageIsPersisted: boolean | undefined = undefined;
 
     @observable installingServiceWorkerState: ServiceWorkerState | null = null;
     @observable waitingServiceWorkerState: ServiceWorkerState | null = null;

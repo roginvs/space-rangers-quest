@@ -216,8 +216,10 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                           - if there is a controller: serviceWorkers "activate" state was
                             triggered by sendMessage from the page, i.e. from user click
                         */
-                        if (store.serviceWorkerController && navigator.serviceWorker
-                            .controller) {
+                        if (
+                            store.serviceWorkerController &&
+                            navigator.serviceWorker.controller
+                        ) {
                             if (!store.reloadingPage) {
                                 store.reloadingPage = true;
                                 window.location.reload(); // Call to "reload" does not stop the page!
@@ -241,18 +243,25 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                             : "null"
                     }`
                 );
-                if (navigator.serviceWorker.controller) {
-                    if (navigator.storage) {
-                        navigator.storage
-                            .persist()
-                            .then(persisted => {
-                                console.info(`Persisted=`, persisted);
-                                store.serviceWorkerStoragePersistent = persisted;
-                            })
-                            .catch(e => console.warn(e));
+            }
+
+            (async () => {
+                if (navigator.storage) {
+                    const alreadyPersisted = await navigator.storage.persisted();
+                    console.info(
+                        `Storage current persist status=${alreadyPersisted}`
+                    );
+                    store.storageIsPersisted = alreadyPersisted;
+
+                    if (!alreadyPersisted && navigator.serviceWorker && navigator.serviceWorker.controller) {
+                        const requestedPersist = await navigator.storage.persist();
+                        console.info(
+                            `Storage requested persist status=${requestedPersist}`
+                        );
+                        store.storageIsPersisted = requestedPersist;
                     }
                 }
-            }
+            })().catch(e => console.warn(e));
             this.setState({
                 store,
                 loadingStage: undefined
@@ -263,12 +272,12 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
             })
         );
     }
-    render() {        
+    render() {
         if (this.state.error) {
             return <ErrorInfo error={this.state.error} />;
         }
         const store = this.state.store;
-        
+
         if (!store) {
             const l = getLang(guessBrowserLang()); // Not from store because obviously store if not ready yet
             if (this.state.loadingStage === "index") {
