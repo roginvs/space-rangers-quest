@@ -18,6 +18,7 @@ declare global {
 }
 
 interface StorageUsedInfoState {
+    error?: Error;
     quota?: number;
     usage?: number;
 }
@@ -36,17 +37,27 @@ class StorageUsedInfo extends React.Component<
         clearInterval(this.timer);
     }
     updateInfo = () => {
-        if (navigator.storage) {
+        if (navigator.storage && navigator.storage
+            .estimate) {
             navigator.storage
                 .estimate()
                 .then(({ quota, usage }) => this.setState({ quota, usage }))
-                .catch(e => console.warn(e));
+                .catch(e => this.setState({
+                    error: e instanceof Error ? e : new Error(`${e}`)
+                }));
+        } else {
+            this.setState({
+                error: new Error(this.props.l.storageUsageUnavailable)
+            })
         }
     };
     render() {
         const l = this.props.l;
+        if (this.state.error) {
+            return <span>{this.state.error.message}</span>
+        }
         if (this.state.quota === undefined || this.state.usage === undefined) {
-            return <span>{l.storageUsed} ???</span>;
+            return <span><Loader text={l.storageUsed}/></span>;
         }
         return (
             <span>

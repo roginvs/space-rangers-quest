@@ -90,6 +90,7 @@ const RUS = {
     install: "Установить",
     storageUsed: "Использовано",
     storageUsedFrom: "из",
+    storageUsageUnavailable: "Статус использования хранилища недоступен",
 
     about: "О приложении",
     builtAt: "Сборка",
@@ -187,6 +188,7 @@ const ENG: LangTexts = {
     install: "Install",
     storageUsed: "Storage is using",
     storageUsedFrom: "from",
+    storageUsageUnavailable: "Storage usage is unavailable",
 
     about: "About",
     builtAt: "Built at",
