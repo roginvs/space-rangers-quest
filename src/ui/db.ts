@@ -55,6 +55,7 @@ interface FirebasePublic {
     name: string;
     gamesWonCount: number;
     wonProofs: WonProofs;
+    userId: string;
 }
 
 export async function getDb(app: firebase.app.App) {
@@ -327,28 +328,47 @@ export async function getDb(app: firebase.app.App) {
         }
     }
 
+    
     async function setOwnHighscoresName(name: string) {
-        await setLocal(INDEXEDDB_CONFIG_STORE_NAME, "name", name);
         await setFirebase(FIREBASE_USERS_PUBLIC, "info/name", name);
     }
+    
 
-    /*
-    function getHighscores() {
-        // Only from firebase!
-        return new Promise<{
-            [userId: string]: FirebasePublic;
-        }>((resolve, reject) => {
+    
+    async function getFirebasePublicHighscores() {        
+        app.database().goOnline();
+        try {
+        const data = await new Promise<FirebasePublic[] | null>((resolve, reject) => {
             const allUsersRef = app.database().ref(FIREBASE_USERS_PUBLIC);
             allUsersRef
                 .orderByChild("gamesWonCount")
-                .limitToFirst(1000)
-                .once("value", snapshot =>
-                    resolve(snapshot ? snapshot.val() : null)
-                )
+                .limitToLast(100)
+                .once("value", snapshot => {
+                    if (snapshot) {
+                    const champions: FirebasePublic[] = [];
+                    snapshot.forEach(champion => {
+                        champions.push({
+                            ...champion.val(),
+                            userId: champion.key,
+                        });
+                        return undefined // Typescript needs this for some unknown reasons
+                    });
+                    resolve(champions.reverse())
+                    } else {
+                        resolve(null)
+                    }                    
+                })
                 .catch(e => reject(e));
         });
+        return data
+    } catch (e) {
+        console.warn(e);
+        return null
+    } finally {
+        app.database().goOffline();            
     }
-    */
+    }
+    
     /*
     async function getLocalAndFirebase(storeName: string, key: string) {
         const localResult = await getLocal(storeName, key);
@@ -380,7 +400,7 @@ export async function getDb(app: firebase.app.App) {
 
     async function setConfigBoth(key: keyof ConfigBoth, value: ConfigBoth[typeof key]) {
         console.info(`setConfig key=${key} value=${JSON.stringify(value)}`);
-        await setLocal(INDEXEDDB_CONFIG_STORE_NAME, key, value);        
+        await setLocal(INDEXEDDB_CONFIG_STORE_NAME, key, value);
         await setFirebase(
             FIREBASE_USERS_PRIVATE,
             `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`,
@@ -554,6 +574,13 @@ export async function getDb(app: firebase.app.App) {
         console.info(`Sync syncWithFirebase passed games done`);
 
         await updateFirebaseOwnHighscore();
+        console.info(`Own highscores synced`);
+        
+        const localName = await getConfigLocal("player");
+        if (localName) {
+            setOwnHighscoresName(localName.Ranger || "");
+        }
+        console.info(`Public ranger name synced`);
 
         console.info(`Sync with firebase finished`);
     }
@@ -639,7 +666,7 @@ export async function getDb(app: firebase.app.App) {
         isGamePassedLocal,
         setGamePassing,
 
-        // getHighscores,
+        getFirebasePublicHighscores,
 
         saveGame,
         getLocalSaving,
