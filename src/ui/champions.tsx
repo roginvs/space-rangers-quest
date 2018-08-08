@@ -149,7 +149,9 @@ export class ChampionsTabContainer extends React.Component<
                 {champions ? (
                     <div>
                         <div className="mb-3">
-                            {!this.validating ? (
+                            {this.validationComplete ? (
+                                <h5>l.validationComplete</h5>
+                            ) : !this.validating ? (
                                 <button
                                     className="btn btn-primary px-3"
                                     onClick={() => this.validateAll()}
@@ -158,11 +160,7 @@ export class ChampionsTabContainer extends React.Component<
                                     {l.validateResult}
                                 </button>
                             ) : (
-                                <h5>
-                                    {this.validationComplete
-                                        ? l.validationComplete
-                                        : l.validatingInfo}
-                                </h5>
+                                <i>{l.validatingInfo}</i>
                             )}
                         </div>
 
