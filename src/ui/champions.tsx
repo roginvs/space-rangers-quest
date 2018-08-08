@@ -3,10 +3,25 @@ import { Loader, DivFadeinCss } from "./common";
 import { LangTexts } from "./lang";
 import { Progress } from "reactstrap";
 
+import { parse } from "../lib/qmreader";
+import * as pako from "pako";
+
 import { observer } from "mobx-react";
 import { observable } from "mobx";
 import { Store } from "./store";
 import { FirebasePublic } from "./db";
+import { DATA_DIR } from "./consts";
+import {
+    GameState,
+    initGame,
+    performJump,
+    Quest,
+    getUIState,
+    getAllImagesToPreload,
+    getGameLog,
+    GameLog,
+    validateWinningLog
+} from "../lib/qmplayer/funcs";
 
 interface ValidationStatus {
     userId: string;
@@ -58,17 +73,47 @@ export class ChampionsTabContainer extends React.Component<
             return;
         }
         for (const champion of champions) {
-            for (const { gameName, idx } of Object.keys(
-                champion.gamesWonProofs
-            ).map((gameName, idx) => ({ gameName, idx }))) {
-                this.validating = {
-                    userId: champion.userId,
-                    currentQuestGameName: gameName,
-                    currentQuestNumber: idx
-                };
+            try {
+                for (const { gameName, idx } of Object.keys(
+                    champion.gamesWonProofs
+                ).map((gameName, idx) => ({ gameName, idx }))) {
+                    this.validating = {
+                        userId: champion.userId,
+                        currentQuestGameName: gameName,
+                        currentQuestNumber: idx
+                    };
 
-                // here it is
+                    const game = this.props.store.index.quests.find(
+                        x => x.gameName === gameName
+                    );
+                    if (!game) {
+                        throw new Error(`No game ${gameName}`);
+                    }
+                    const questArrayBuffer = await fetch(
+                        DATA_DIR + game.filename
+                    ).then(x => x.arrayBuffer());
+                    const quest = parse(
+                        new Buffer(pako.ungzip(new Buffer(questArrayBuffer)))
+                    ) as Quest;
+
+                    let gameValidated = false;
+                    const wons = champion.gamesWonProofs[gameName];
+                    for (const gameSeed of Object.keys(wons)) {
+                        if (validateWinningLog(quest, wons[gameSeed])) {
+                            gameValidated = true;
+                            break;
+                        }
+                    }
+
+                    if (!gameValidated) {
+                        throw new Error(`Not validated!`);
+                    }
+                }
+
                 champion.validatedStatus = "success";
+            } catch (e) {
+                console.warn(`Champion failed: `, e);
+                champion.validatedStatus = "failed";
             }
         }
         this.validating = undefined;
@@ -92,72 +137,134 @@ export class ChampionsTabContainer extends React.Component<
                                     className="btn btn-primary px-3"
                                     onClick={() => this.validateAll()}
                                 >
-                                    Validate{" "}
+                                    <i className="fa fa-fw fa-search" />
+                                    {l.validateResult}
                                 </button>
                             </div>
                         ) : null}
                         <table className="table">
                             <thead>
                                 <tr>
-                                    <th>Name</th>
-                                    <th>Won count</th>
-                                    <th>Games names</th>
+                                    <th>{l.championName}</th>
+                                    <th>{l.championWonGames}</th>
+                                    <th>{l.championGameNames}</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {champions.map(champion => {
-                                    try {
-                                        const itIsYou =
-                                            store.firebaseLoggedIn &&
-                                            champion.userId ===
-                                                store.firebaseLoggedIn.uid;
-                                        const name =
-                                            (champion.info &&
-                                                champion.info.name) ||
-                                            "NONAME";
-                                        return (
-                                            <tr key={champion.userId}>
-                                                <td>
-                                                    {itIsYou ? (
-                                                        <b>{name}</b>
-                                                    ) : (
-                                                        name
-                                                    )}
-                                                </td>
-                                                <td>
-                                                    {champion.gamesWonCount}{" "}
-                                                    {champion.validatedStatus ===
-                                                    "success" ? (
-                                                        <i className="fa fa-check text-success" />
-                                                    ) : champion.validatedStatus ===
-                                                    "failed" ? (
-                                                        <i className="fa fa-times text-danger" />
-                                                    ) : this.validating &&
-                                                    this.validating.userId ===
-                                                        champion.userId ? (
-                                                        <i className="fa fa-spin fa-spinner" />
-                                                    ) : null}
-                                                </td>
-                                                <td>
-                                                    {Object.keys(
-                                                        champion.gamesWonProofs
-                                                    ).map((gameName, idx) => (
-                                                        <span key={gameName}>
-                                                            {idx !== 0
-                                                                ? ", "
-                                                                : ""}
-
-                                                            {gameName}
-                                                        </span>
-                                                    ))}
-                                                </td>
-                                            </tr>
-                                        );
-                                    } catch (e) {
-                                        console.warn(`User error`, e);
-                                        return null;
-                                    }
-                                })}
+                                {champions
+                                    .filter(
+                                        champion =>
+                                            champion.validatedStatus ===
+                                                undefined ||
+                                            champion.validatedStatus ===
+                                                "success"
+                                    )
+                                    .map(champion => {
+                                        try {
+                                            const itIsYou =
+                                                store.firebaseLoggedIn &&
+                                                champion.userId ===
+                                                    store.firebaseLoggedIn.uid;
+                                            const name =
+                                                (champion.info &&
+                                                    champion.info.name) ||
+                                                l.championNoName;
+                                            return (
+                                                <tr key={champion.userId}>
+                                                    <td>
+                                                        {itIsYou ? (
+                                                            <b>{name}</b>
+                                                        ) : (
+                                                            name
+                                                        )}
+                                                    </td>
+                                                    <td
+                                                        className={
+                                                            champion.validatedStatus ===
+                                                            "success"
+                                                                ? "text-success"
+                                                                : champion.validatedStatus ===
+                                                                  "failed"
+                                                                    ? "text-danger"
+                                                                    : ""
+                                                        }
+                                                    >
+                                                        {champion.gamesWonCount}{" "}
+                                                        {champion.validatedStatus ===
+                                                        "success" ? (
+                                                            <i className="fa fa-check" />
+                                                        ) : champion.validatedStatus ===
+                                                        "failed" ? (
+                                                            <i className="fa fa-times" />
+                                                        ) : null}
+                                                        <br />
+                                                    </td>
+                                                    <td>
+                                                        {this.validating &&
+                                                        this.validating
+                                                            .userId ===
+                                                            champion.userId ? (
+                                                            <span>
+                                                                <i className="fa fa-spin fa-spinner fa-fw" />{" "}
+                                                                {
+                                                                    l.validatingQuest
+                                                                }{" "}
+                                                                {
+                                                                    this
+                                                                        .validating
+                                                                        .currentQuestGameName
+                                                                }{" "}
+                                                                {
+                                                                    this
+                                                                        .validating
+                                                                        .currentQuestNumber
+                                                                }/{
+                                                                    Object.keys(
+                                                                        champion.gamesWonProofs
+                                                                    ).length
+                                                                }
+                                                            </span>
+                                                        ) : (
+                                                            Object.keys(
+                                                                champion.gamesWonProofs
+                                                            ).map(
+                                                                (
+                                                                    gameName,
+                                                                    idx
+                                                                ) => (
+                                                                    <span
+                                                                        key={
+                                                                            gameName
+                                                                        }
+                                                                    >
+                                                                        {idx !==
+                                                                        0
+                                                                            ? ", "
+                                                                            : ""}
+                                                                        {champion.validatedStatus ===
+                                                                        "success" ? (
+                                                                            <a
+                                                                                href={`#/quests/${gameName}`}
+                                                                            >
+                                                                                {
+                                                                                    gameName
+                                                                                }
+                                                                            </a>
+                                                                        ) : (
+                                                                            gameName
+                                                                        )}
+                                                                    </span>
+                                                                )
+                                                            )
+                                                        )}
+                                                    </td>
+                                                </tr>
+                                            );
+                                        } catch (e) {
+                                            console.warn(`User error`, e);
+                                            return null;
+                                        }
+                                    })}
                             </tbody>
                         </table>
                     </div>

@@ -97,6 +97,13 @@ const RUS = {
     about: "О приложении",
     builtAt: "Сборка",
     linkForBugreports: "Сообщения об ошибках можно оставлять в багтрекере Github-а или на Pikabu",
+
+    validateResult: "Проверить прохождения",
+    championName: "Имя рейнджера",
+    championWonGames: "Пройдено квестов",
+    championGameNames: "Список пройденный квестов",
+    championNoName: "<Имя не задано>",
+    validatingQuest: "Проверяем прохождение",
 };
 
 export type LangTexts = typeof RUS;
@@ -197,6 +204,13 @@ const ENG: LangTexts = {
     about: "About",
     builtAt: "Built at",
     linkForBugreports: "You can add a bugreport into Github bug tracker or into Pikabu",
+
+    validateResult: "Validate game passings",
+    championName: "Ranger's name",
+    championWonGames: "Amount of passed quests",
+    championGameNames: "Список пройденный квестов",
+    championNoName: "<Name is not set>",
+    validatingQuest: "Checking passing",
 };
 
 export function getLang(lang: Lang) {
