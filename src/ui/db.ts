@@ -49,10 +49,12 @@ export interface GameWonProofs {
 export interface WonProofs {
     [gameId: string]: GameWonProofs;
 }
-interface FirebasePublic {
-    name: string;
+export interface FirebasePublic {
+    info: {
+        name: string;
+    };
     gamesWonCount: number;
-    wonProofs: WonProofs;
+    gamesWonProofs: WonProofs;
     userId: string;
 }
 

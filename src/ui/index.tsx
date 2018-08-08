@@ -46,6 +46,7 @@ import { QuestInfo } from "./questInfo";
 import { Store } from "./store";
 import { QuestPlay } from "./questPlay";
 import { AboutTabContainer } from "./about";
+import { ChampionsTabContainer } from "./champions";
 
 console.info("starting");
 
@@ -321,6 +322,12 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                     <AboutTabContainer store={store} />
                 </AppNavbar>
             );
+        } else if (tab0 === "champions") {
+            return (
+                <AppNavbar store={store}>
+                    <ChampionsTabContainer store={store} />
+                </AppNavbar>
+            );            
         } else if (tab0 === "quests") {
             if (!tab1) {
                 return <QuestList store={store} />;
