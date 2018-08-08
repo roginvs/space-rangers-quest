@@ -234,6 +234,39 @@ export async function getDb(app: firebase.app.App) {
     */
 
     let firebaseUser: firebase.User | null;
+    let firebaseDatabaseOnlineConnections = 1;
+    function firebaseGoOffline() {
+        firebaseDatabaseOnlineConnections--;
+        if (firebaseDatabaseOnlineConnections <= 0) {
+            console.info(`Firebase goes offline, no consumers`);
+            try {
+                app.database().goOffline();
+            } catch (e) {
+                console.warn(`Error with firebase`, e);
+            }
+        } else {
+            console.info(
+                `Firebase will not go offline, have ${firebaseDatabaseOnlineConnections} consumers`
+            );
+        }
+    }
+    function firebaseGoOnline() {
+        firebaseDatabaseOnlineConnections++;
+        if (firebaseDatabaseOnlineConnections === 1) {
+            console.info(
+                `We are the first firebase online consumer, going online`
+            );
+            try {
+                app.database().goOnline();
+            } catch (e) {
+                console.warn(`Error with firebase`, e);
+            }
+        } else {
+            console.info(
+                `Now firebase have ${firebaseDatabaseOnlineConnections} connections`
+            );
+        }
+    }
     try {
         app.auth().onAuthStateChanged(function(user) {
             firebaseUser = user;
@@ -250,9 +283,13 @@ export async function getDb(app: firebase.app.App) {
                 const firebaseOnline = snap && snap.val();
                 console.info(`Firebase online=${firebaseOnline}`);
             });
+
+        firebaseGoOffline();
     } catch (e) {
         console.error(`Error with firebase: `, e);
     }
+
+    /* No actions from this point, only exported functions */
 
     async function setFirebase(
         store: typeof FIREBASE_USERS_PRIVATE | typeof FIREBASE_USERS_PUBLIC,
@@ -260,7 +297,7 @@ export async function getDb(app: firebase.app.App) {
         value: any
     ) {
         try {
-            app.database().goOnline();
+            firebaseGoOnline();
             if (firebaseUser) {
                 const fullRefPath = `${store}/${firebaseUser.uid}/${userPath}`;
                 console.info(
@@ -279,7 +316,7 @@ export async function getDb(app: firebase.app.App) {
         } catch (e) {
             console.error(`Error with firebase: `, e);
         } finally {
-            app.database().goOffline();
+            firebaseGoOffline();
         }
     }
     async function getFirebase(
@@ -287,7 +324,7 @@ export async function getDb(app: firebase.app.App) {
         userPath: string
     ) {
         try {
-            app.database().goOnline();
+            firebaseGoOnline();
             const firebaseResult = await Promise.race([
                 new Promise<any | null>(
                     resolve =>
@@ -322,7 +359,7 @@ export async function getDb(app: firebase.app.App) {
             console.error(`Error with firebase: `, e);
             return null;
         } finally {
-            app.database().goOffline();
+            firebaseGoOffline();
         }
     }
 
@@ -331,7 +368,7 @@ export async function getDb(app: firebase.app.App) {
     }
 
     async function getFirebasePublicHighscores() {
-        app.database().goOnline();
+        firebaseGoOnline();
         try {
             const data = await new Promise<FirebasePublic[] | null>(
                 (resolve, reject) => {
@@ -364,7 +401,7 @@ export async function getDb(app: firebase.app.App) {
             console.warn(e);
             return null;
         } finally {
-            app.database().goOffline();
+            firebaseGoOffline();
         }
     }
 
@@ -458,49 +495,51 @@ export async function getDb(app: firebase.app.App) {
     }
 
     async function syncWithFirebase() {
-        console.info(`SyncWithFirebase started`);
+        firebaseGoOnline();
+        try {
+            console.info(`SyncWithFirebase started`);
 
-        // Config is remote-first
-        for (const key of [
-            "player",
-            "lastPlayedGame",
-            "noMusic"
-        ] as (keyof ConfigBoth)[]) {
-            const firebaseResult = await getFirebase(
-                FIREBASE_USERS_PRIVATE,
-                `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`
-            );
-            if (firebaseResult) {
-                console.info(`Taking config ${key} from firebase`);
-                await setLocal(
-                    INDEXEDDB_CONFIG_STORE_NAME,
-                    key,
-                    firebaseResult
+            // Config is remote-first
+            for (const key of [
+                "player",
+                "lastPlayedGame",
+                "noMusic"
+            ] as (keyof ConfigBoth)[]) {
+                const firebaseResult = await getFirebase(
+                    FIREBASE_USERS_PRIVATE,
+                    `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`
                 );
-            } else if (firebaseResult === null) {
-                const localResult = await getLocal(
-                    INDEXEDDB_CONFIG_STORE_NAME,
-                    key
-                );
-                if (localResult) {
-                    console.info(
-                        `Saving firebase config ${key} because there is nothing`
+                if (firebaseResult) {
+                    console.info(`Taking config ${key} from firebase`);
+                    await setLocal(
+                        INDEXEDDB_CONFIG_STORE_NAME,
+                        key,
+                        firebaseResult
                     );
-                    await setFirebase(
-                        FIREBASE_USERS_PRIVATE,
-                        `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`,
-                        localResult
+                } else if (firebaseResult === null) {
+                    const localResult = await getLocal(
+                        INDEXEDDB_CONFIG_STORE_NAME,
+                        key
                     );
-                } else {
-                    console.info(
-                        `Config key ${key} no in local, neither in firebase`
-                    );
+                    if (localResult) {
+                        console.info(
+                            `Saving firebase config ${key} because there is nothing`
+                        );
+                        await setFirebase(
+                            FIREBASE_USERS_PRIVATE,
+                            `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`,
+                            localResult
+                        );
+                    } else {
+                        console.info(
+                            `Config key ${key} no in local, neither in firebase`
+                        );
+                    }
                 }
             }
-        }
-        console.info(`Sync syncWithFirebase config done`);
+            console.info(`Sync syncWithFirebase config done`);
 
-        /*
+            /*
         // Local saving always overwrite remote
         const localSavings = await getAllLocal(INDEXEDDB_SAVED_STORE_NAME);        
         for (const gameName of Object.keys(localSavings)) {            
@@ -514,80 +553,85 @@ export async function getDb(app: firebase.app.App) {
         console.info(`Sync syncWithFirebase local savings done`);
         */
 
-        try {
-            const allLocalWons = await getAllLocal(INDEXEDDB_WON_STORE_NAME);
-            const allRemoteWons =
-                (await getFirebase(
-                    FIREBASE_USERS_PRIVATE,
-                    `${INDEXEDDB_WON_STORE_NAME}`
-                )) || {};
+            try {
+                const allLocalWons = await getAllLocal(
+                    INDEXEDDB_WON_STORE_NAME
+                );
+                const allRemoteWons =
+                    (await getFirebase(
+                        FIREBASE_USERS_PRIVATE,
+                        `${INDEXEDDB_WON_STORE_NAME}`
+                    )) || {};
 
-            const allGameNames = Object.keys({
-                ...allLocalWons,
-                ...allRemoteWons
-            });
-            for (const gameName of allGameNames) {
-                const thisGameLocalWons = allLocalWons[gameName] || {};
-                const thisGameRemoteWons = allRemoteWons[gameName] || {};
+                const allGameNames = Object.keys({
+                    ...allLocalWons,
+                    ...allRemoteWons
+                });
+                for (const gameName of allGameNames) {
+                    const thisGameLocalWons = allLocalWons[gameName] || {};
+                    const thisGameRemoteWons = allRemoteWons[gameName] || {};
 
-                for (const localSeed of Object.keys(thisGameLocalWons)) {
-                    const localProof = thisGameLocalWons[localSeed];
-                    if (!localProof) {
-                        continue;
+                    for (const localSeed of Object.keys(thisGameLocalWons)) {
+                        const localProof = thisGameLocalWons[localSeed];
+                        if (!localProof) {
+                            continue;
+                        }
+                        if (!thisGameRemoteWons[localSeed]) {
+                            console.info(
+                                `Sync with firebase: gameName=${gameName} pushing seed=${localSeed} into firebase`
+                            );
+                            await setFirebase(
+                                FIREBASE_USERS_PRIVATE,
+                                `${INDEXEDDB_WON_STORE_NAME}/${gameName}/${localSeed}`,
+                                localProof
+                            );
+                        }
                     }
-                    if (!thisGameRemoteWons[localSeed]) {
-                        console.info(
-                            `Sync with firebase: gameName=${gameName} pushing seed=${localSeed} into firebase`
-                        );
-                        await setFirebase(
-                            FIREBASE_USERS_PRIVATE,
-                            `${INDEXEDDB_WON_STORE_NAME}/${gameName}/${localSeed}`,
-                            localProof
-                        );
+
+                    for (const remoteSeed of Object.keys(thisGameRemoteWons)) {
+                        const remoteProof = thisGameRemoteWons[remoteSeed];
+                        if (!remoteProof) {
+                            continue;
+                        }
+                        if (!thisGameLocalWons[remoteSeed]) {
+                            console.info(
+                                `Sync with firebase: gameName=${gameName} fetching seed=${remoteSeed} from firebase`
+                            );
+
+                            const values = await getLocal(
+                                INDEXEDDB_WON_STORE_NAME,
+                                gameName
+                            );
+                            const newValues = {
+                                ...values,
+                                [remoteProof.aleaSeed]: remoteProof
+                            };
+                            await setLocal(
+                                INDEXEDDB_WON_STORE_NAME,
+                                gameName,
+                                newValues
+                            );
+                        }
                     }
                 }
-
-                for (const remoteSeed of Object.keys(thisGameRemoteWons)) {
-                    const remoteProof = thisGameRemoteWons[remoteSeed];
-                    if (!remoteProof) {
-                        continue;
-                    }
-                    if (!thisGameLocalWons[remoteSeed]) {
-                        console.info(
-                            `Sync with firebase: gameName=${gameName} fetching seed=${remoteSeed} from firebase`
-                        );
-
-                        const values = await getLocal(
-                            INDEXEDDB_WON_STORE_NAME,
-                            gameName
-                        );
-                        const newValues = {
-                            ...values,
-                            [remoteProof.aleaSeed]: remoteProof
-                        };
-                        await setLocal(
-                            INDEXEDDB_WON_STORE_NAME,
-                            gameName,
-                            newValues
-                        );
-                    }
-                }
+            } catch (e) {
+                console.warn(`wining state sync error`, e, e.stack);
             }
-        } catch (e) {
-            console.warn(`wining state sync error`, e, e.stack);
+            console.info(`Sync syncWithFirebase passed games done`);
+
+            await updateFirebaseOwnHighscore();
+            console.info(`Own highscores synced`);
+
+            const localName = await getConfigLocal("player");
+            if (localName) {
+                setOwnHighscoresName(localName.Ranger || "");
+            }
+            console.info(`Public ranger name synced`);
+
+            console.info(`Sync with firebase finished`);
+        } finally {
+            firebaseGoOffline();
         }
-        console.info(`Sync syncWithFirebase passed games done`);
-
-        await updateFirebaseOwnHighscore();
-        console.info(`Own highscores synced`);
-
-        const localName = await getConfigLocal("player");
-        if (localName) {
-            setOwnHighscoresName(localName.Ranger || "");
-        }
-        console.info(`Public ranger name synced`);
-
-        console.info(`Sync with firebase finished`);
     }
 
     async function isGamePassedLocal(gameName: string) {
@@ -658,9 +702,6 @@ export async function getDb(app: firebase.app.App) {
         }
     }
     */
-
-    console.info(`Asking firebase to go offline`);
-    app.database().goOffline();
 
     console.info(`Returning db instance`);
     return {
