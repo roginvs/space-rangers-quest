@@ -63,6 +63,12 @@ export class ChampionsTabContainer extends React.Component<
     champions: FirebasePublicWithInfo[] | null | undefined = undefined;
 
     @observable validating: ValidationStatus | undefined = undefined;
+    @observable validationComplete = false;
+
+    wasUnmounted = false;
+    componentWillUnmount() {
+        this.wasUnmounted = true;
+    }
 
     async validateAll() {
         if (this.validating) {
@@ -106,7 +112,17 @@ export class ChampionsTabContainer extends React.Component<
                     }
 
                     if (!gameValidated) {
-                        throw new Error(`Not validated!`);
+                        throw new Error(
+                            `User ${
+                                champion.userId
+                            } not validated game=${gameName} from ${
+                                Object.keys(wons).length
+                            } seeds!`
+                        );
+                    }
+
+                    if (this.wasUnmounted) {
+                        return;
                     }
                 }
 
@@ -117,13 +133,14 @@ export class ChampionsTabContainer extends React.Component<
             }
         }
         this.validating = undefined;
+        this.validationComplete = true;
     }
 
     render() {
         const store = this.props.store;
         const l = store.l;
         const champions = this.champions;
-        console.info(champions);
+        // console.info(champions);
         return (
             <DivFadeinCss
                 key="champions"
@@ -131,8 +148,8 @@ export class ChampionsTabContainer extends React.Component<
             >
                 {champions ? (
                     <div>
-                        {!this.validating ? (
-                            <div className="mb-3">
+                        <div className="mb-3">
+                            {!this.validating ? (
                                 <button
                                     className="btn btn-primary px-3"
                                     onClick={() => this.validateAll()}
@@ -140,9 +157,16 @@ export class ChampionsTabContainer extends React.Component<
                                     <i className="fa fa-fw fa-search" />
                                     {l.validateResult}
                                 </button>
-                            </div>
-                        ) : null}
-                        <table className="table">
+                            ) : (
+                                <h5>
+                                    {this.validationComplete
+                                        ? l.validationComplete
+                                        : l.validatingInfo}
+                                </h5>
+                            )}
+                        </div>
+
+                        <table className="table table-responsive">
                             <thead>
                                 <tr>
                                     <th>{l.championName}</th>

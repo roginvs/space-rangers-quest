@@ -99,6 +99,8 @@ const RUS = {
     linkForBugreports: "Сообщения об ошибках можно оставлять в багтрекере Github-а или на Pikabu",
 
     validateResult: "Проверить прохождения",
+    validatingInfo: "Прохождения проверяются, это займёт какое-то время",
+    validationComplete: "Проверка завершена. Показываются только проверенные результаты",
     championName: "Имя рейнджера",
     championWonGames: "Пройдено квестов",
     championGameNames: "Список пройденный квестов",
@@ -206,6 +208,8 @@ const ENG: LangTexts = {
     linkForBugreports: "You can add a bugreport into Github bug tracker or into Pikabu",
 
     validateResult: "Validate game passings",
+    validatingInfo: "Quest game passing is validating. Please be patient",
+    validationComplete: "Validation is complete. Only validated results are shown now",
     championName: "Ranger's name",
     championWonGames: "Amount of passed quests",
     championGameNames: "Список пройденный квестов",
