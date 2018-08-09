@@ -279,12 +279,12 @@ export class ChampionsTabContainer extends React.Component<
                                                                         )
                                                                     );
                                                                 return (
-                                                                    <>
+                                                                    <span key={gameInfo.gameName}>
                                                                         {comma}
                                                                         {
                                                                             gameInfoView
                                                                         }
-                                                                    </>
+                                                                    </span>
                                                                 );
                                                             }
                                                         )}
