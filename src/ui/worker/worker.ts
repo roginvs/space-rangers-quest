@@ -16,7 +16,7 @@ self.onmessage = e => {
         }
     })()
         .then(resultData => {
-            console.info(msg, resultData);
+            // console.info(msg, resultData);
             const result: WorkerMsgResponce = {
                 id: msg.id,
                 method: msg.method,
