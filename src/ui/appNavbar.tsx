@@ -56,6 +56,7 @@ export class AppNavbar extends React.Component<
                                 </NavLink>
                             </NavItem>
 
+                            {/*
                             <NavItem>
                                 <NavLink
                                     active={tab0 === "champions"}
@@ -65,6 +66,7 @@ export class AppNavbar extends React.Component<
                                     {l.topplayers}
                                 </NavLink>
                             </NavItem>
+                            */}
                             
                             <NavItem>
                                 <NavLink
