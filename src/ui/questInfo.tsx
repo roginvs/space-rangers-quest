@@ -119,7 +119,7 @@ export class QuestInfo extends React.Component<
                                                     new Date(
                                                         firstStep.dateUnix
                                                     ).getTime()) /
-                                                    (1000 * 60 * 60)
+                                                    (1000 * 60)
                                             );
                                             return {
                                                 started: firstStep.dateUnix,
@@ -146,6 +146,10 @@ export class QuestInfo extends React.Component<
                                                         ).toLocaleString()}{" "}
                                                         ({x.durationsMins}{" "}
                                                         {l.minutesShort})
+                                                        {/*
+                                                        {new Date(x.started).toLocaleString()} - {
+                                                            new Date(x.end).toLocaleString()}
+                                                        */}
                                                     </div>
                                                 ) : null
                                         );
