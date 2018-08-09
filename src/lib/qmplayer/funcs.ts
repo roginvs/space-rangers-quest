@@ -683,7 +683,8 @@ function performJumpInternal(
         state = calculateLocation(quest, state, images, random);
     } else if (state.state === "location") {
         if (!state.possibleJumps.find(x => x.id === jumpId)) {
-            throw new Error(`Jump ${jumpId} is not in list in that location`);
+            throw new Error(`Jump ${jumpId} is not in list in that location. Possible jumps=${state.possibleJumps
+            .map(x => `${x.id}(${x.active})`).join(',')}`);
         }
         const jump = quest.jumps.find(x => x.id === jumpId);
         if (!jump) {
@@ -1290,9 +1291,10 @@ export function getGameLog(state: GameState): GameLog {
 }
 
 export function validateWinningLog(quest: Quest, gameLog: GameLog) {
-    try {
+    try {        
         let state = initGame(quest, gameLog.aleaSeed);
         for (const performedJump of gameLog.performedJumps) {
+            console.info(`Validate jumping jumpId=${performedJump.jumpId}`)
             state = performJump(
                 performedJump.jumpId,
                 quest,

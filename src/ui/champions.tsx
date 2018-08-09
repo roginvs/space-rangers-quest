@@ -69,6 +69,7 @@ export class ChampionsTabContainer extends React.Component<
             .then(champions => {
                 this.champions = champions
                     ? champions
+                          // .filter(champion => champion.userId === 'aEIYhkmDZKhs2VBVkwfPotYIcOt1') // Some buggy champion
                           .filter(
                               champion =>
                                   champion.gamesWonCount > 0 &&
@@ -106,6 +107,7 @@ export class ChampionsTabContainer extends React.Component<
                     continue;
                 }
                 try {
+                    console.info(`User ${champion.userId} validating game=${questToValidate.gameName}`)
                     questToValidate.validateStatus = "inprogress";
 
                     const thisGameProofs =
