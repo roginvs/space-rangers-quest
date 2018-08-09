@@ -62,6 +62,7 @@ const RUS = {
     no: "Нет",
 
     back: "Назад",
+    backToList: "К списку квестов",
 
     installingEngine: "Установка оффлайн режима для приложения",
     installingEngineUpdate: "Идет фоновое обновление",
@@ -170,6 +171,7 @@ const ENG: LangTexts = {
     no: "No",
 
     back: "Back",
+    backToList: "Back to quests",
 
     installingEngine: "Offline application mode is being installed",
     installingEngineUpdate: "Background updating is underway",

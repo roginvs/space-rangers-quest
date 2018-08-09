@@ -230,7 +230,7 @@ export class QuestInfo extends React.Component<
                                     location.hash = `/quests`;
                                 }}
                             >
-                                <i className="fa fa-reply" /> {l.back}
+                                <i className="fa fa-reply" /> {l.backToList}
                             </button>
                         </div>
                     </div>
