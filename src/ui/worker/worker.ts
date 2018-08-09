@@ -16,12 +16,13 @@ self.onmessage = e => {
         }
     })()
         .then(resultData => {
+            console.info(msg, resultData);
             const result: WorkerMsgResponce = {
                 id: msg.id,
                 method: msg.method,
                 data: resultData
             };
-            self.postMessage(JSON.stringify(result), "*");
+            (self.postMessage as any)(JSON.stringify(result));
         })
         .catch(e => {
             const result: WorkerMsgResponce = {
@@ -30,6 +31,6 @@ self.onmessage = e => {
                 data: null,
                 errorMessage: e.message
             };
-            self.postMessage(JSON.stringify(result), "*");
+            (self.postMessage as any)(JSON.stringify(result));
         });
 };

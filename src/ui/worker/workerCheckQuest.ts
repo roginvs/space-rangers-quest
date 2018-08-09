@@ -26,8 +26,8 @@ export async function checkQuest(data: CheckQuestRequest): Promise<CheckQuestRes
     for (const proofSeed of Object.keys(data.logs)) {
         const validationResult = validateWinningLog(quest, data.logs[proofSeed]);
         if (validationResult) {
-            return true
+            return "validated"
         }
     }
-    return false
+    return "failed"
 }

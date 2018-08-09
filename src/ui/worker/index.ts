@@ -52,9 +52,9 @@ export class WorkerPromise {
             const raw: WorkerMsgRequest = {
                 id: this.id,
                 method: methodName,
-                data: JSON.stringify(data)
+                data
             };
-            this.worker.postMessage(raw);
+            this.worker.postMessage(JSON.stringify(raw));
         });
     }
 

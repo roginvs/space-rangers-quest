@@ -21,5 +21,5 @@ export interface CheckQuestRequest {
         [seed: string]: GameLog;
     }    
 }
-export type CheckQuestResponce = boolean;
+export type CheckQuestResponce = "validated" | "failed";
 

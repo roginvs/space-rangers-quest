@@ -1,0 +1,6 @@
+@keyframes champions-blinker {  
+    50% { opacity: 0.3; }
+}  
+.champions-blink {
+    animation: champions-blinker 0.5s linear infinite;
+}
