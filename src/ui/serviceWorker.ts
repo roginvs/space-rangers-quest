@@ -214,3 +214,4 @@ self.addEventListener("message", messageEvent => {
         return self.skipWaiting();
     }
 });
+
