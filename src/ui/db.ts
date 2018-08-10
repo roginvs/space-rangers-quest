@@ -658,7 +658,7 @@ export async function getDb(app: firebase.app.App) {
         await setLocal(INDEXEDDB_WON_STORE_NAME, gameName, newValues);
         await setFirebase(
             FIREBASE_USERS_PRIVATE,
-            `${gameName}/${proof.aleaSeed}`,
+            `${INDEXEDDB_WON_STORE_NAME}/${gameName}/${proof.aleaSeed}`,
             proof
         );
         await updateFirebaseOwnHighscore();
