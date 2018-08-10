@@ -1322,7 +1322,7 @@ export function _sortJumps<T extends {
 
         const minimumIndex = minimumIndexes.length === 1 ? minimumIndexes[0] :
             minimumIndexes[random(minimumIndexes.length)];
-        //console.info(`i=${i} minimumIndex=${minimumIndex} minimumIndexes=`,minimumIndexes);
+        // console.info(`i=${i} minimumIndex=${minimumIndex} minimumIndexes=`,minimumIndexes);
         const swap = output[i];
         output[i] = output[minimumIndex];
         output[minimumIndex] = swap;        
