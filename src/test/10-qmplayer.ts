@@ -1174,9 +1174,10 @@ describe('Player on test.qm', function () {
         // console.info(JSON.stringify(state2, null, 4));
         assert.equal(state2.choices.filter(x => x.active).length, 2);
         assert.equal(state2.choices.filter(x => !x.active).length, 5);
-        assert.ok(state2.choices[0].text.indexOf('p2 / 5') > -1);
-        assert.ok(state2.choices[6].text.indexOf('Видно активен по формуле') > -1);
-    })
+        
+        assert.ok(state2.choices[0].text.indexOf('p2 / 5') > -1, `Choices have p2/5`);
+        assert.ok(state2.choices[6].text.indexOf('Видно активен по формуле') > -1, "Have formula seen");
+    })  
     it(`Jumps on jumpid > 2`, () => {
         const state2 = player.getState()
 
