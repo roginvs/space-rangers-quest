@@ -80,8 +80,7 @@ export class ChampionsTabContainer extends React.Component<
             })
             .then(champions => {
                 this.champions = champions
-                    ? champions
-                          // .filter(champion => champion.userId === 'aEIYhkmDZKhs2VBVkwfPotYIcOt1') // Some buggy champion
+                    ? champions                          
                           .filter(
                               champion =>
                                   champion.gamesWonCount > 0 &&
