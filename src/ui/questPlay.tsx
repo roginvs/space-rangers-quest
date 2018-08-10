@@ -381,7 +381,7 @@ export class QuestPlay extends React.Component<
                         }
                     }}
                 >
-                    <i className="fa fa-home fa-fw" />
+                    <i className="fa fa-fast-backward fa-fw" />
                 </button>
             </>
         );
