@@ -1006,12 +1006,35 @@ function calculateLocation(
     // Если есть такие же тексты - то спорный по весам
     // Если текст один - то по вероятности
 
-    const allPossibleJumps = allJumpsFromThisLocation
-        .sort((a, b) => {
-            return a.showingOrder !== b.showingOrder
-                ? a.showingOrder - b.showingOrder
-                : random(2) * 2 - 1;
-        })
+    /* Own sorting realization to keep sorting "unstable" random, but with same random between browsers */
+    const allJumpsFromThisLocationSortered = allJumpsFromThisLocation.slice();    
+    for (let i = 0; i < allJumpsFromThisLocationSortered.length; i++) {
+        let minimumPrio: number | undefined = undefined;
+        let minimumIndexes: number[] = [];
+        for (let ii = i; ii < allJumpsFromThisLocationSortered.length; ii++) {
+            const curElement = allJumpsFromThisLocationSortered[ii];
+            if (minimumPrio === undefined || curElement.prio < minimumPrio) {
+                minimumPrio = curElement.prio;
+                minimumIndexes = [ii]
+            } else if (curElement.prio === minimumPrio) {
+                minimumIndexes.push(ii);
+            }
+        }
+
+        const minimumIndex = minimumIndexes.length === 1 ? minimumIndexes[0] :
+            minimumIndexes[random(minimumIndexes.length)];
+        //console.info(`i=${i} minimumIndex=${minimumIndex} minimumIndexes=`,minimumIndexes);
+        const swap = allJumpsFromThisLocationSortered[i];
+        allJumpsFromThisLocationSortered[i] = allJumpsFromThisLocationSortered[minimumIndex];
+        allJumpsFromThisLocationSortered[minimumIndex] = swap;        
+    }
+    console.info('==================');
+    console.info('raw', allJumpsFromThisLocation.map(x => `prio=${x.prio} id=${x.id}`).join(', '));
+    // console.info(allJumpsFromThisLocationSortered);
+    console.info('sorted', allJumpsFromThisLocationSortered.map(x => `prio=${x.prio} id=${x.id}`).join(', '));
+
+
+    const allPossibleJumps = allJumpsFromThisLocationSortered
         .map(jump => {
             return {
                 jump,
