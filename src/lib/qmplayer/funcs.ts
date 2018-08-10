@@ -683,8 +683,11 @@ function performJumpInternal(
         state = calculateLocation(quest, state, images, random);
     } else if (state.state === "location") {
         if (!state.possibleJumps.find(x => x.id === jumpId)) {
-            throw new Error(`Jump ${jumpId} is not in list in that location. Possible jumps=${state.possibleJumps
-            .map(x => `${x.id}(${x.active})`).join(',')}`);
+            throw new Error(
+                `Jump ${jumpId} is not in list in that location. Possible jumps=${state.possibleJumps
+                    .map(x => `${x.id}(${x.active})`)
+                    .join(",")}`
+            );
         }
         const jump = quest.jumps.find(x => x.id === jumpId);
         if (!jump) {
@@ -939,9 +942,71 @@ function calculateLocation(
             }
         });
 
+
+
+    function isJumpActive(jump: DeepImmutable<Jump>) {
+        for (let i = 0; i < quest.paramsCount; i++) {
+            if (quest.params[i].active) {
+                if (
+                    state.paramValues[i] > jump.paramsConditions[i].mustTo ||
+                    state.paramValues[i] < jump.paramsConditions[i].mustFrom
+                ) {
+                    return false;
+                }
+                if (jump.paramsConditions[i].mustEqualValues.length > 0) {
+                    const isEqual = jump.paramsConditions[
+                        i
+                    ].mustEqualValues.filter(x => x === state.paramValues[i]);
+                    if (
+                        jump.paramsConditions[i].mustEqualValuesEqual &&
+                        isEqual.length === 0
+                    ) {
+                        return false;
+                    }
+                    if (
+                        !jump.paramsConditions[i].mustEqualValuesEqual &&
+                        isEqual.length !== 0
+                    ) {
+                        return false;
+                    }
+                }
+                if (jump.paramsConditions[i].mustModValues.length > 0) {
+                    const isMod = jump.paramsConditions[i].mustModValues.filter(
+                        x => state.paramValues[i] % x === 0
+                    );
+                    if (
+                        jump.paramsConditions[i].mustModValuesMod &&
+                        isMod.length === 0
+                    ) {
+                        return false;
+                    }
+                    if (
+                        !jump.paramsConditions[i].mustModValuesMod &&
+                        isMod.length !== 0
+                    ) {
+                        return false;
+                    }
+                }
+            }
+        }
+        if (jump.formulaToPass) {
+            if (parse(jump.formulaToPass, state.paramValues, random) === 0) {
+                return false;
+            }
+        }
+        if (
+            jump.jumpingCountLimit &&
+            state.jumpedCount[jump.id] >= jump.jumpingCountLimit
+        ) {
+            return false;
+        }
+        return true;
+    }
+
     // Если есть такие же тексты - то спорный по весам
     // Если текст один - то по вероятности
-    const possibleJumpsFromThisLocation = allJumpsFromThisLocation
+
+    const allPossibleJumps = allJumpsFromThisLocation
         .sort((a, b) => {
             return a.showingOrder !== b.showingOrder
                 ? a.showingOrder - b.showingOrder
@@ -950,89 +1015,11 @@ function calculateLocation(
         .map(jump => {
             return {
                 jump,
-                active: (jump => {
-                    for (let i = 0; i < quest.paramsCount; i++) {
-                        if (quest.params[i].active) {
-                            if (
-                                state.paramValues[i] >
-                                    jump.paramsConditions[i].mustTo ||
-                                state.paramValues[i] <
-                                    jump.paramsConditions[i].mustFrom
-                            ) {
-                                return false;
-                            }
-                            if (
-                                jump.paramsConditions[i].mustEqualValues
-                                    .length > 0
-                            ) {
-                                const isEqual = jump.paramsConditions[
-                                    i
-                                ].mustEqualValues.filter(
-                                    x => x === state.paramValues[i]
-                                );
-                                if (
-                                    jump.paramsConditions[i]
-                                        .mustEqualValuesEqual &&
-                                    isEqual.length === 0
-                                ) {
-                                    return false;
-                                }
-                                if (
-                                    !jump.paramsConditions[i]
-                                        .mustEqualValuesEqual &&
-                                    isEqual.length !== 0
-                                ) {
-                                    return false;
-                                }
-                            }
-                            if (
-                                jump.paramsConditions[i].mustModValues.length >
-                                0
-                            ) {
-                                const isMod = jump.paramsConditions[
-                                    i
-                                ].mustModValues.filter(
-                                    x => state.paramValues[i] % x === 0
-                                );
-                                if (
-                                    jump.paramsConditions[i].mustModValuesMod &&
-                                    isMod.length === 0
-                                ) {
-                                    return false;
-                                }
-                                if (
-                                    !jump.paramsConditions[i]
-                                        .mustModValuesMod &&
-                                    isMod.length !== 0
-                                ) {
-                                    return false;
-                                }
-                            }
-                        }
-                    }
-                    if (jump.formulaToPass) {
-                        if (
-                            parse(
-                                jump.formulaToPass,
-                                state.paramValues,
-                                random
-                            ) === 0
-                        ) {
-                            return false;
-                        }
-                    }
-                    if (
-                        jump.jumpingCountLimit &&
-                        state.jumpedCount[jump.id] >= jump.jumpingCountLimit
-                    ) {
-                        return false;
-                    }
-                    return true;
-                })(jump)
+                active: isJumpActive(jump)
             };
         });
 
-    let filteredPossibleJumpsFromThisLocation: {
+    let possibleJumpsWithSameTextGrouped: {
         jump: DeepImmutable<Jump>;
         active: boolean;
     }[] = [];
@@ -1040,10 +1027,10 @@ function calculateLocation(
     let seenTexts: {
         [text: string]: boolean;
     } = {};
-    for (const j of possibleJumpsFromThisLocation) {
+    for (const j of allPossibleJumps) {
         if (!seenTexts[j.jump.text]) {
             seenTexts[j.jump.text] = true;
-            const jumpsWithSameText = possibleJumpsFromThisLocation.filter(
+            const jumpsWithSameText = allPossibleJumps.filter(
                 x => x.jump.text === j.jump.text
             );
             if (jumpsWithSameText.length === 1) {
@@ -1053,7 +1040,7 @@ function calculateLocation(
                     // console.info(`Jump ${j.jump.text} is now ${j.active} by random`)
                 }
                 if (j.active || j.jump.alwaysShow) {
-                    filteredPossibleJumpsFromThisLocation.push(j);
+                    possibleJumpsWithSameTextGrouped.push(j);
                 }
             } else {
                 const jumpsActiveWithSameText = jumpsWithSameText.filter(
@@ -1078,7 +1065,7 @@ function calculateLocation(
                             jj.jump.prio >= rnd ||
                             jj === jumpsWithNotSoLowPrio.slice(-1).pop()
                         ) {
-                            filteredPossibleJumpsFromThisLocation.push(jj);
+                            possibleJumpsWithSameTextGrouped.push(jj);
                             break;
                         } else {
                             rnd = rnd - jj.jump.prio;
@@ -1089,7 +1076,9 @@ function calculateLocation(
                         .filter(x => x.jump.alwaysShow)
                         .shift();
                     if (alLeastOneWithAlwaysShow) {
-                        filteredPossibleJumpsFromThisLocation.push(alLeastOneWithAlwaysShow);
+                        possibleJumpsWithSameTextGrouped.push(
+                            alLeastOneWithAlwaysShow
+                        );
                     }
                 }
             }
@@ -1110,8 +1099,10 @@ function calculateLocation(
             }
         })
         */
-    const newJumpsWithoutEmpty = filteredPossibleJumpsFromThisLocation.filter(x => x.jump.text);
-    const newActiveJumpsOnlyEmpty = filteredPossibleJumpsFromThisLocation.filter(
+    const newJumpsWithoutEmpty = possibleJumpsWithSameTextGrouped.filter(
+        x => x.jump.text
+    );
+    const newActiveJumpsOnlyEmpty = possibleJumpsWithSameTextGrouped.filter(
         x => x.active && !x.jump.text
     );
     const newActiveJumpsOnlyOneEmpty =
@@ -1291,10 +1282,10 @@ export function getGameLog(state: GameState): GameLog {
 }
 
 export function validateWinningLog(quest: Quest, gameLog: GameLog) {
-    try {        
+    try {
         let state = initGame(quest, gameLog.aleaSeed);
         for (const performedJump of gameLog.performedJumps) {
-            console.info(`Validate jumping jumpId=${performedJump.jumpId}`)
+            console.info(`Validate jumping jumpId=${performedJump.jumpId}`);
             state = performJump(
                 performedJump.jumpId,
                 quest,
