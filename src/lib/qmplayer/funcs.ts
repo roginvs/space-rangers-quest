@@ -894,7 +894,7 @@ function calculateLocation(
         quest.header === HEADER_QM_3 ||
         quest.header === HEADER_QM_4;
 
-    const allJumps = quest.jumps
+    const allJumpsFromThisLocation = quest.jumps
         .filter(x => x.fromLocationId === state.locationId)
         .filter(jump => {
             // Сразу выкинуть переходы в локации с превышенным лимитом
@@ -941,7 +941,7 @@ function calculateLocation(
 
     // Если есть такие же тексты - то спорный по весам
     // Если текст один - то по вероятности
-    const possibleJumps = allJumps
+    const possibleJumpsFromThisLocation = allJumpsFromThisLocation
         .sort((a, b) => {
             return a.showingOrder !== b.showingOrder
                 ? a.showingOrder - b.showingOrder
@@ -1032,7 +1032,7 @@ function calculateLocation(
             };
         });
 
-    let newJumps: {
+    let filteredPossibleJumpsFromThisLocation: {
         jump: DeepImmutable<Jump>;
         active: boolean;
     }[] = [];
@@ -1040,10 +1040,10 @@ function calculateLocation(
     let seenTexts: {
         [text: string]: boolean;
     } = {};
-    for (const j of possibleJumps) {
+    for (const j of possibleJumpsFromThisLocation) {
         if (!seenTexts[j.jump.text]) {
             seenTexts[j.jump.text] = true;
-            const jumpsWithSameText = possibleJumps.filter(
+            const jumpsWithSameText = possibleJumpsFromThisLocation.filter(
                 x => x.jump.text === j.jump.text
             );
             if (jumpsWithSameText.length === 1) {
@@ -1053,7 +1053,7 @@ function calculateLocation(
                     // console.info(`Jump ${j.jump.text} is now ${j.active} by random`)
                 }
                 if (j.active || j.jump.alwaysShow) {
-                    newJumps.push(j);
+                    filteredPossibleJumpsFromThisLocation.push(j);
                 }
             } else {
                 const jumpsActiveWithSameText = jumpsWithSameText.filter(
@@ -1078,7 +1078,7 @@ function calculateLocation(
                             jj.jump.prio >= rnd ||
                             jj === jumpsWithNotSoLowPrio.slice(-1).pop()
                         ) {
-                            newJumps.push(jj);
+                            filteredPossibleJumpsFromThisLocation.push(jj);
                             break;
                         } else {
                             rnd = rnd - jj.jump.prio;
@@ -1089,7 +1089,7 @@ function calculateLocation(
                         .filter(x => x.jump.alwaysShow)
                         .shift();
                     if (alLeastOneWithAlwaysShow) {
-                        newJumps.push(alLeastOneWithAlwaysShow);
+                        filteredPossibleJumpsFromThisLocation.push(alLeastOneWithAlwaysShow);
                     }
                 }
             }
@@ -1110,8 +1110,8 @@ function calculateLocation(
             }
         })
         */
-    const newJumpsWithoutEmpty = newJumps.filter(x => x.jump.text);
-    const newActiveJumpsOnlyEmpty = newJumps.filter(
+    const newJumpsWithoutEmpty = filteredPossibleJumpsFromThisLocation.filter(x => x.jump.text);
+    const newActiveJumpsOnlyEmpty = filteredPossibleJumpsFromThisLocation.filter(
         x => x.active && !x.jump.text
     );
     const newActiveJumpsOnlyOneEmpty =
