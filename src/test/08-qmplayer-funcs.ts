@@ -11,23 +11,23 @@ describe("Checking _sortJumps", function() {
     it(`Sorting, all prios different`, () => {
         const r = _sortJumps(
             [
-                { id: 0, prio: 5 },
-                { id: 1, prio: 6 },
-                { id: 2, prio: 2 },
-                { id: 3, prio: 3 },
-                { id: 4, prio: 9 },
-                { id: 5, prio: 0 }
+                { id: 0, showingOrder: 5 },
+                { id: 1, showingOrder: 6 },
+                { id: 2, showingOrder: 2 },
+                { id: 3, showingOrder: 3 },
+                { id: 4, showingOrder: 9 },
+                { id: 5, showingOrder: 0 }
             ],
             () => assert.fail("no random")
         );
         assert.deepEqual(
             [
-                { id: 5, prio: 0 },
-                { id: 2, prio: 2 },
-                { id: 3, prio: 3 },
-                { id: 0, prio: 5 },
-                { id: 1, prio: 6 },
-                { id: 4, prio: 9 }
+                { id: 5, showingOrder: 0 },
+                { id: 2, showingOrder: 2 },
+                { id: 3, showingOrder: 3 },
+                { id: 0, showingOrder: 5 },
+                { id: 1, showingOrder: 6 },
+                { id: 4, showingOrder: 9 }
             ],
             r
         );
@@ -53,31 +53,31 @@ describe("Checking _sortJumps", function() {
         };
         const r = _sortJumps(
             [
-                { id: 0, prio: 5 },
-                { id: 1, prio: 6 },
-                { id: 2, prio: 2 },
-                { id: 3, prio: 3 },
-                { id: 4, prio: 9 },
-                { id: 5, prio: 0 },
-                { id: 6, prio: 5 },
-                { id: 7, prio: 2 },
-                { id: 8, prio: 3 },
-                { id: 9, prio: 3 },
+                { id: 0, showingOrder: 5 },
+                { id: 1, showingOrder: 6 },
+                { id: 2, showingOrder: 2 },
+                { id: 3, showingOrder: 3 },
+                { id: 4, showingOrder: 9 },
+                { id: 5, showingOrder: 0 },
+                { id: 6, showingOrder: 5 },
+                { id: 7, showingOrder: 2 },
+                { id: 8, showingOrder: 3 },
+                { id: 9, showingOrder: 3 },
             ],
             random
         );
         assert.deepEqual(
             [
-                { id: 5, prio: 0 },
-                { id: 7, prio: 2 },
-                { id: 2, prio: 2 },                
-                { id: 3, prio: 3 },
-                { id: 8, prio: 3 },                
-                { id: 9, prio: 3 },                
-                { id: 0, prio: 5 },
-                { id: 6, prio: 5 },
-                { id: 1, prio: 6 },
-                { id: 4, prio: 9 }                
+                { id: 5, showingOrder: 0 },
+                { id: 7, showingOrder: 2 },
+                { id: 2, showingOrder: 2 },                
+                { id: 3, showingOrder: 3 },
+                { id: 8, showingOrder: 3 },                
+                { id: 9, showingOrder: 3 },                
+                { id: 0, showingOrder: 5 },
+                { id: 6, showingOrder: 5 },
+                { id: 1, showingOrder: 6 },
+                { id: 4, showingOrder: 9 }                
             ],
             r
         );

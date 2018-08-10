@@ -1009,6 +1009,12 @@ function calculateLocation(
     /* Own sorting realization to keep sorting "unstable" random, but with same random between browsers */
     const allJumpsFromThisLocationSortered = _sortJumps(allJumpsFromThisLocation, random);
     
+    /*
+    console.info('-------------');
+    console.info('all', allJumpsFromThisLocation.map(x => `id=${x.id} prio=${x.showingOrder}`).join(', '));
+    console.info('sorted', allJumpsFromThisLocationSortered.map(x => `id=${x.id} prio=${x.showingOrder}`).join(', '));
+    */
+
     const allPossibleJumps = allJumpsFromThisLocationSortered
         .map(jump => {
             return {
@@ -1304,18 +1310,18 @@ export function validateWinningLog(quest: Quest, gameLog: GameLog) {
 
 
 export function _sortJumps<T extends {
-    prio: number
+    showingOrder: number
 }>(input: T[], random: RandomFunc): T[] {
     const output = input.slice();
     for (let i = 0; i < output.length; i++) {
-        let minimumPrio: number | undefined = undefined;
+        let minumumShowingOrder: number | undefined = undefined;
         let minimumIndexes: number[] = [];
         for (let ii = i; ii < output.length; ii++) {
             const curElement = output[ii];
-            if (minimumPrio === undefined || curElement.prio < minimumPrio) {
-                minimumPrio = curElement.prio;
+            if (minumumShowingOrder === undefined || curElement.showingOrder < minumumShowingOrder) {
+                minumumShowingOrder = curElement.showingOrder;
                 minimumIndexes = [ii]
-            } else if (curElement.prio === minimumPrio) {
+            } else if (curElement.showingOrder === minumumShowingOrder) {
                 minimumIndexes.push(ii);
             }
         }
