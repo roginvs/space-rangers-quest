@@ -51,6 +51,9 @@ interface QuestPlayState {
     reallyRestart?: boolean;
 
     error?: Error;
+
+    thinkingSavingGame?: boolean;
+    thinkingSavingWin?: boolean;
 }
 
 const MOBILE_THRESHOLD = 576; // 576px 768px
@@ -148,6 +151,20 @@ export class QuestPlay extends React.Component<
             });
         }
     };
+
+    saveGame(gameState: null | GameState) {
+        this.setState({
+            thinkingSavingGame: true
+        });
+        this.props.store.db
+            .saveGame(this.props.gameName, gameState)
+            .catch(e => console.warn(e))
+            .then(() =>
+                this.setState({
+                    thinkingSavingGame: false
+                })
+            );
+    }
     render() {
         const { l, player } = this.props.store;
         const quest = this.state.quest;
@@ -224,13 +241,15 @@ export class QuestPlay extends React.Component<
                                         game.images
                                     );
 
-                                    this.props.store.db
-                                        .saveGame(this.props.gameName, newState)
-                                        .catch(e => console.warn(e));
+                                    this.saveGame(newState);
+
                                     if (
                                         getUIState(quest, newState, player)
                                             .gameState === "win"
                                     ) {
+                                        this.setState({
+                                            thinkingSavingWin: true
+                                        });
                                         this.props.store.db
                                             .setGamePassing(
                                                 this.props.gameName,
@@ -239,7 +258,12 @@ export class QuestPlay extends React.Component<
                                             .then(() =>
                                                 this.props.store.loadWinProofsFromLocal()
                                             )
-                                            .catch(e => console.warn(e));
+                                            .catch(e => console.warn(e))
+                                            .then(() =>
+                                                this.setState({
+                                                    thinkingSavingWin: false
+                                                })
+                                            );
                                     }
 
                                     this.setState({
@@ -291,7 +315,14 @@ export class QuestPlay extends React.Component<
                         location.hash = `/quests/${this.props.gameName}`;
                     }}
                 >
-                    <i className="fa fa-share-square-o fa-fw" />
+                    {/*<i className="fa fa-share-square-o fa-fw" />*/}
+                    {
+                        /* this.state.thinkingSavingGame || */
+                    this.state.thinkingSavingWin ? (
+                        <i className="fa fa-refresh fa-spin fa-fw" />
+                    ) : (
+                        <i className="fa fa-external-link fa-fw" />
+                    )}
                 </button>
 
                 <button
@@ -342,9 +373,7 @@ export class QuestPlay extends React.Component<
                             this.setState({
                                 gameState
                             });
-                            this.props.store.db
-                                .saveGame(this.props.gameName, null)
-                                .catch(e => console.warn(e));
+                            this.saveGame(null);
                         } else {
                             this.setState({
                                 reallyRestart: true
@@ -352,7 +381,7 @@ export class QuestPlay extends React.Component<
                         }
                     }}
                 >
-                    <i className="fa fa-refresh fa-fw" />
+                    <i className="fa fa-home fa-fw" />
                 </button>
             </>
         );
@@ -395,12 +424,7 @@ export class QuestPlay extends React.Component<
                                                 reallyRestart: false,
                                                 gameState
                                             });
-                                            this.props.store.db
-                                                .saveGame(
-                                                    this.props.gameName,
-                                                    null
-                                                )
-                                                .catch(e => console.warn(e));
+                                            this.saveGame(null);
                                         }}
                                     >
                                         <i className="fa fa-refresh fa-fw" />{" "}
