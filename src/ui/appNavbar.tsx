@@ -55,8 +55,7 @@ export class AppNavbar extends React.Component<
                                     {l.quests}
                                 </NavLink>
                             </NavItem>
-
-                            {/*
+                            
                             <NavItem>
                                 <NavLink
                                     active={tab0 === "champions"}
@@ -65,8 +64,7 @@ export class AppNavbar extends React.Component<
                                     <i className="fa fa-fw fa-users" />{" "}
                                     {l.topplayers}
                                 </NavLink>
-                            </NavItem>
-                            */}
+                            </NavItem>                            
                             
                             <NavItem>
                                 <NavLink
