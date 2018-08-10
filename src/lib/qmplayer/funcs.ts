@@ -1007,33 +1007,8 @@ function calculateLocation(
     // Если текст один - то по вероятности
 
     /* Own sorting realization to keep sorting "unstable" random, but with same random between browsers */
-    const allJumpsFromThisLocationSortered = allJumpsFromThisLocation.slice();    
-    for (let i = 0; i < allJumpsFromThisLocationSortered.length; i++) {
-        let minimumPrio: number | undefined = undefined;
-        let minimumIndexes: number[] = [];
-        for (let ii = i; ii < allJumpsFromThisLocationSortered.length; ii++) {
-            const curElement = allJumpsFromThisLocationSortered[ii];
-            if (minimumPrio === undefined || curElement.prio < minimumPrio) {
-                minimumPrio = curElement.prio;
-                minimumIndexes = [ii]
-            } else if (curElement.prio === minimumPrio) {
-                minimumIndexes.push(ii);
-            }
-        }
-
-        const minimumIndex = minimumIndexes.length === 1 ? minimumIndexes[0] :
-            minimumIndexes[random(minimumIndexes.length)];
-        //console.info(`i=${i} minimumIndex=${minimumIndex} minimumIndexes=`,minimumIndexes);
-        const swap = allJumpsFromThisLocationSortered[i];
-        allJumpsFromThisLocationSortered[i] = allJumpsFromThisLocationSortered[minimumIndex];
-        allJumpsFromThisLocationSortered[minimumIndex] = swap;        
-    }
-    console.info('==================');
-    console.info('raw', allJumpsFromThisLocation.map(x => `prio=${x.prio} id=${x.id}`).join(', '));
-    // console.info(allJumpsFromThisLocationSortered);
-    console.info('sorted', allJumpsFromThisLocationSortered.map(x => `prio=${x.prio} id=${x.id}`).join(', '));
-
-
+    const allJumpsFromThisLocationSortered = _sortJumps(allJumpsFromThisLocation, random);
+    
     const allPossibleJumps = allJumpsFromThisLocationSortered
         .map(jump => {
             return {
@@ -1325,4 +1300,32 @@ export function validateWinningLog(quest: Quest, gameLog: GameLog) {
         console.info(e);
         return false;
     }
+}
+
+
+export function _sortJumps<T extends {
+    prio: number
+}>(input: T[], random: RandomFunc): T[] {
+    const output = input.slice();
+    for (let i = 0; i < output.length; i++) {
+        let minimumPrio: number | undefined = undefined;
+        let minimumIndexes: number[] = [];
+        for (let ii = i; ii < output.length; ii++) {
+            const curElement = output[ii];
+            if (minimumPrio === undefined || curElement.prio < minimumPrio) {
+                minimumPrio = curElement.prio;
+                minimumIndexes = [ii]
+            } else if (curElement.prio === minimumPrio) {
+                minimumIndexes.push(ii);
+            }
+        }
+
+        const minimumIndex = minimumIndexes.length === 1 ? minimumIndexes[0] :
+            minimumIndexes[random(minimumIndexes.length)];
+        //console.info(`i=${i} minimumIndex=${minimumIndex} minimumIndexes=`,minimumIndexes);
+        const swap = output[i];
+        output[i] = output[minimumIndex];
+        output[minimumIndex] = swap;        
+    }
+    return output
 }
