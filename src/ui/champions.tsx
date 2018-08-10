@@ -46,6 +46,18 @@ export class ChampionsTabContainer extends React.Component<
             : false;
     }
 
+    @computed
+    get haveValidationFailed() {
+        return this.champions
+            ? this.champions.filter(champion => {
+                  const validateFailedQuests = champion.validatedQuests.filter(
+                      x => x.validateStatus === "failed"
+                  );
+                  return validateFailedQuests.length > 0;
+              }).length > 0
+            : false;
+    }
+
     private mounted = false;
     private worker: WorkerPromise = new WorkerPromise("worker.js");
     private onUnmount: (() => void)[] = [
@@ -144,6 +156,11 @@ export class ChampionsTabContainer extends React.Component<
             >
                 {champions ? (
                     <div>
+                        {this.haveValidationFailed ? 
+                        <div className="alert alert-primary" >
+                        {l.questValidationErrorsInfo}
+                      </div>
+                        : null }
                         <div className="mb-3">
                             {!this.validationIsInProgress ? (
                                 <h5>{l.validationComplete}</h5>
