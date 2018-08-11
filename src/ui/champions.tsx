@@ -80,7 +80,7 @@ export class ChampionsTabContainer extends React.Component<
             })
             .then(champions => {
                 this.champions = champions
-                    ? champions                          
+                    ? champions
                           .filter(
                               champion =>
                                   champion.gamesWonCount > 0 &&
@@ -118,7 +118,11 @@ export class ChampionsTabContainer extends React.Component<
                     continue;
                 }
                 try {
-                    console.info(`User ${champion.userId} validating game=${questToValidate.gameName}`)
+                    console.info(
+                        `User ${champion.userId} validating game=${
+                            questToValidate.gameName
+                        }`
+                    );
                     questToValidate.validateStatus = "inprogress";
 
                     const thisGameProofs =
@@ -155,11 +159,11 @@ export class ChampionsTabContainer extends React.Component<
             >
                 {champions ? (
                     <div>
-                        {this.haveValidationFailed ? 
-                        <div className="alert alert-primary" >
-                        {l.questValidationErrorsInfo}
-                      </div>
-                        : null }
+                        {this.haveValidationFailed ? (
+                            <div className="alert alert-primary">
+                                {l.questValidationErrorsInfo}
+                            </div>
+                        ) : null}
                         <div className="mb-3">
                             {!this.validationIsInProgress ? (
                                 <h5>{l.validationComplete}</h5>
@@ -297,7 +301,11 @@ export class ChampionsTabContainer extends React.Component<
                                                                         )
                                                                     );
                                                                 return (
-                                                                    <span key={gameInfo.gameName}>
+                                                                    <span
+                                                                        key={
+                                                                            gameInfo.gameName
+                                                                        }
+                                                                    >
                                                                         {comma}
                                                                         {
                                                                             gameInfoView
@@ -317,7 +325,9 @@ export class ChampionsTabContainer extends React.Component<
                             </tbody>
                         </table>
                         <div className="my-3 text-center">
-                        <i>{l.championsTotal}{" "}{champions.length}</i>
+                            <i>
+                                {l.championsTotal} {champions.length}
+                            </i>
                         </div>
                     </div>
                 ) : (
