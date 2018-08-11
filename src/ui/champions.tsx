@@ -331,7 +331,7 @@ export class ChampionsTabContainer extends React.Component<
                         </div>
                     </div>
                 ) : (
-                    <Loader />
+                    <Loader text={l.championsLoading}/>
                 )}
             </DivFadeinCss>
         );
