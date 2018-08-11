@@ -285,10 +285,12 @@ export class QuestPlay extends React.Component<
             </DivFadeinCss>
         );
 
+        const paramsStrings = ([] as string[])
+            .concat(...st.paramsState.map(x => x.split("<br>")));
+
         const params = (
             <>
-                {([] as string[])
-                    .concat(...st.paramsState.map(x => x.split("<br>")))
+                {removeSerialEmptyStrings(paramsStrings)
                     .map((paramText, index) => {
                         return (
                             <DivFadeinCss key={`${paramText}###${index}`}>
@@ -382,7 +384,7 @@ export class QuestPlay extends React.Component<
                     ) : (
                         <i className="fa fa-external-link fa-fw" />
                     )}
-                </button>                
+                </button>
             </>
         );
 
@@ -642,4 +644,23 @@ function initRandomGameAndDoFirstStep(quest: Quest, images: PQImages) {
         new Date().getTime()
     );
     return gameState;
+}
+
+function removeSerialEmptyStrings(input: string[]) {
+    const output: typeof input = [];
+    for (let i = 0; i < input.length; i++) {
+        if (input[i]) {
+            output.push(input[i])
+        } else {
+            if (i + 1 < input.length) {
+                 // Only add if next is not empty
+                if (input[i+1]) {
+                    output.push(input[i])
+                }
+            } else { // last element
+                output.push(input[i])
+            }
+        }
+    }
+    return output
 }
