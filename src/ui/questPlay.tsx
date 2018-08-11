@@ -312,17 +312,32 @@ export class QuestPlay extends React.Component<
                 <button
                     className="btn btn-light mr-1"
                     onClick={() => {
-                        location.hash = `/quests/${this.props.gameName}`;
+                        let gameState = this.state.gameState;
+                        const uiState = gameState
+                            ? getUIState(quest, gameState, player)
+                            : undefined;
+                        if (
+                            !uiState ||
+                            uiState.gameState === "dead" ||
+                            uiState.gameState === "fail" ||
+                            uiState.gameState === "win"
+                        ) {
+                            gameState = initRandomGameAndDoFirstStep(
+                                quest,
+                                game.images
+                            );
+                            this.setState({
+                                gameState
+                            });
+                            this.saveGame(null);
+                        } else {
+                            this.setState({
+                                reallyRestart: true
+                            });
+                        }
                     }}
                 >
-                    {/*<i className="fa fa-share-square-o fa-fw" />*/}
-                    {
-                        /* this.state.thinkingSavingGame || */
-                    this.state.thinkingSavingWin ? (
-                        <i className="fa fa-refresh fa-spin fa-fw" />
-                    ) : (
-                        <i className="fa fa-external-link fa-fw" />
-                    )}
+                    <i className="fa fa-fast-backward fa-fw" />
                 </button>
 
                 <button
@@ -356,33 +371,18 @@ export class QuestPlay extends React.Component<
                 <button
                     className="btn btn-light mr-1"
                     onClick={() => {
-                        let gameState = this.state.gameState;
-                        const uiState = gameState
-                            ? getUIState(quest, gameState, player)
-                            : undefined;
-                        if (
-                            !uiState ||
-                            uiState.gameState === "dead" ||
-                            uiState.gameState === "fail" ||
-                            uiState.gameState === "win"
-                        ) {
-                            gameState = initRandomGameAndDoFirstStep(
-                                quest,
-                                game.images
-                            );
-                            this.setState({
-                                gameState
-                            });
-                            this.saveGame(null);
-                        } else {
-                            this.setState({
-                                reallyRestart: true
-                            });
-                        }
+                        location.hash = `/quests/${this.props.gameName}`;
                     }}
                 >
-                    <i className="fa fa-fast-backward fa-fw" />
-                </button>
+                    {/*<i className="fa fa-share-square-o fa-fw" />*/}
+                    {
+                        /* this.state.thinkingSavingGame || */
+                    this.state.thinkingSavingWin ? (
+                        <i className="fa fa-refresh fa-spin fa-fw" />
+                    ) : (
+                        <i className="fa fa-external-link fa-fw" />
+                    )}
+                </button>                
             </>
         );
 
