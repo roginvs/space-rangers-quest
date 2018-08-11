@@ -316,6 +316,9 @@ export class ChampionsTabContainer extends React.Component<
                                     })}
                             </tbody>
                         </table>
+                        <div className="my-3 text-center">
+                        <i>{l.championsTotal}{" "}{champions.length}</i>
+                        </div>
                     </div>
                 ) : (
                     <Loader />

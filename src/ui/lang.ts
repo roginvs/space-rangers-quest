@@ -108,6 +108,7 @@ const RUS = {
     validatingQuest: "Проверяем прохождение",
     questValidationErrorsInfo: "Есть ошибки валидации. Это означает что " + 
         "квест был пройден на старой браузерозависимой версии движка и нужно пройти этот квест еще раз",
+    championsTotal: "Загружено чемпионов:",
 };
 
 export type LangTexts = typeof RUS;
@@ -219,6 +220,7 @@ const ENG: LangTexts = {
     validatingQuest: "Checking passing",
     questValidationErrorsInfo: "Validation errors are present. This means that " + 
         "the quest was passed using old brower-depend engine and it needs to be passed again",
+    championsTotal: "Loaded champions:",
 };
 
 export function getLang(lang: Lang) {
