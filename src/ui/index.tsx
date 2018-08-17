@@ -152,7 +152,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                     const registrationOld = await navigator.serviceWorker.getRegistration();
 
                     if (registrationOld) {
-                        console.info(`Service worker have old registration`);
+                        console.info(`Service worker have old registration`);                        
                     } else {
                         console.info(
                             `Service worker do not have old registration, will register now`
@@ -161,6 +161,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                     const reg =
                         registrationOld ||
                         (await navigator.serviceWorker.register("/sw.js"));
+                    store.serviceWorkerRegistered = true;
 
                     function updateStore() {
                         console.info(

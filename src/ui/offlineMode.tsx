@@ -37,32 +37,38 @@ class StorageUsedInfo extends React.Component<
         clearInterval(this.timer);
     }
     updateInfo = () => {
-        if (navigator.storage && navigator.storage
-            .estimate) {
+        if (navigator.storage && navigator.storage.estimate) {
             navigator.storage
                 .estimate()
                 .then(({ quota, usage }) => this.setState({ quota, usage }))
-                .catch(e => this.setState({
-                    error: e instanceof Error ? e : new Error(`${e}`)
-                }));
+                .catch(e =>
+                    this.setState({
+                        error: e instanceof Error ? e : new Error(`${e}`)
+                    })
+                );
         } else {
             this.setState({
                 error: new Error(this.props.l.storageUsageUnavailable)
-            })
+            });
         }
     };
     render() {
         const l = this.props.l;
         if (this.state.error) {
-            return <span>{this.state.error.message}</span>
+            return <span>{this.state.error.message}</span>;
         }
         if (this.state.quota === undefined || this.state.usage === undefined) {
-            return <span>{l.storageUsed} <i className="fa fa-spin fa-cog"/></span>;
+            return (
+                <span>
+                    {l.storageUsed} <i className="fa fa-spin fa-cog" />
+                </span>
+            );
         }
         return (
             <span>
-                {l.storageUsed} {Math.round(this.state.usage / 1000000)}mb{" "}
-                {l.storageUsedFrom} {Math.round(this.state.quota / 1000000)}mb
+                {l.storageUsed} {Math.round(this.state.usage / 1000000)}
+                mb {l.storageUsedFrom} {Math.round(this.state.quota / 1000000)}
+                mb
             </span>
         );
     }
@@ -83,7 +89,12 @@ export class OfflineModeTabContainer extends React.Component<
                 key="offlinemode"
                 className="text-center container my-3"
             >
-                {store.serviceWorkerController ? (
+                {!store.serviceWorkerRegistered ? (
+                    <h5 className="text-muted">
+                        <i className="fa fa-spin fa-circle-o-notch fa-fw" />
+                        {l.installEngineNotStarted}
+                    </h5>
+                ) : store.serviceWorkerController ? (
                     <>
                         <h5>
                             <i className="fa fa-check" />{" "}
@@ -140,10 +151,11 @@ export class OfflineModeTabContainer extends React.Component<
                 )}
                 <div className="">
                     <small>
-                        {store.storageIsPersisted === undefined ? 
-                        l.storePersistedIsUnknown : store.storageIsPersisted
-                            ? l.storageIsPersisted
-                            : l.storageIsNotPersisted}
+                        {store.storageIsPersisted === undefined
+                            ? l.storePersistedIsUnknown
+                            : store.storageIsPersisted
+                                ? l.storageIsPersisted
+                                : l.storageIsNotPersisted}
                     </small>
                 </div>
                 <div className="mb-4">

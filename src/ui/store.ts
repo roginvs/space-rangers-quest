@@ -97,6 +97,8 @@ export class Store {
 
     lastQuestListScroll: number = 0;
 
+    @observable serviceWorkerRegistered: boolean = false;
+
     @observable serviceWorkerController: ServiceWorkerState | null = null;
 
     @observable reloadingPage: boolean = false;

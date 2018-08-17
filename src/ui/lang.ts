@@ -64,6 +64,7 @@ const RUS = {
     back: "Назад",
     backToList: "К списку квестов",
 
+    installEngineNotStarted: "Ожидание регистрации оффлайн режима",
     installingEngine: "Установка оффлайн режима для приложения",
     installingEngineUpdate: "Идет фоновое обновление",
     installEngineError: "Приложение не установлено, оффлайн режим недоступен",
@@ -177,6 +178,7 @@ const ENG: LangTexts = {
     back: "Back",
     backToList: "Back to quests",
 
+    installEngineNotStarted: "Waiting for offline mode registration",
     installingEngine: "Offline application mode is being installed",
     installingEngineUpdate: "Background updating is underway",
     installEngineError: "The application is not installed, offline mode is unavailable",
