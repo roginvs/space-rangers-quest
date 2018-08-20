@@ -34,6 +34,45 @@ Here is firebase rules:
     }
   }
 }
+
+
+After update:
+
+{
+  "rules": {
+    "usersPublic": {
+      "$uid": {
+        "info": {
+          ".write": "$uid === auth.uid",
+        },
+        "gamesWonCount": {
+          ".write": "$uid === auth.uid",
+        },
+        "gamesWonProofs": {
+          "$gameName": {
+            "$aleaSeed": {
+              ".write": "$uid === auth.uid",
+              "started": {
+               	".validate": "newData.val() < now"               
+              }              
+            }
+          }
+        }        
+      },
+      ".read": true,
+      ".indexOn": ["gamesWonCount"]
+    },
+     
+    "usersPrivate": {
+      "$uid": {
+        ".write": "$uid === auth.uid",
+        ".read": true,
+      }
+    }
+  }
+}
+
+
 */
 const INDEXEDDB_NAME = "spaceranges2";
 const INDEXEDDB_CONFIG_STORE_NAME = "config";
@@ -68,9 +107,11 @@ export async function getDb(app: firebase.app.App) {
               idb.onerror = e =>
                   reject(
                       new Error(
-                          idb.error? `IndexedDB error: ${idb.error.name} ${
-                              idb.error.message
-                          }` : "Unknown"
+                          idb.error
+                              ? `IndexedDB error: ${idb.error.name} ${
+                                    idb.error.message
+                                }`
+                              : "Unknown"
                       )
                   );
               idb.onsuccess = (e: any) => resolve(e.target.result);
@@ -114,7 +155,11 @@ export async function getDb(app: firebase.app.App) {
                     resolve(getReq.result);
                 };
                 getReq.onerror = e =>
-                    reject(new Error(getReq.error ? getReq.error.toString() : "Unknown"));
+                    reject(
+                        new Error(
+                            getReq.error ? getReq.error.toString() : "Unknown"
+                        )
+                    );
             });
             return localResult;
         } else {
@@ -151,7 +196,13 @@ export async function getDb(app: firebase.app.App) {
                     }
                 };
                 openCursor.onerror = e => {
-                    reject(new Error(openCursor.error ? openCursor.error.toString() : "Unknown"));
+                    reject(
+                        new Error(
+                            openCursor.error
+                                ? openCursor.error.toString()
+                                : "Unknown"
+                        )
+                    );
                 };
             });
         } else {
@@ -188,9 +239,11 @@ export async function getDb(app: firebase.app.App) {
                     console.warn("Indexeddb error", req.error);
                     reject(
                         new Error(
-                            req.error ? `IndexedDB error: ${req.error.name} ${
-                                req.error.message
-                            }` : "Unknown"
+                            req.error
+                                ? `IndexedDB error: ${req.error.name} ${
+                                      req.error.message
+                                  }`
+                                : "Unknown"
                         )
                     );
                 };
@@ -483,13 +536,46 @@ export async function getDb(app: firebase.app.App) {
                 newProofs[gameName] = proofs;
                 newCount++;
             }
+
+            const allRemotePublicWons =
+                (await getFirebase(FIREBASE_USERS_PUBLIC, `gamesWonProofs`)) ||
+                {};
             console.info(`Updating public highscores newCount=${newCount}`);
             await setFirebase(FIREBASE_USERS_PUBLIC, `gamesWonCount`, newCount);
+            /*
             await setFirebase(
                 FIREBASE_USERS_PUBLIC,
                 `gamesWonProofs`,
                 newProofs
             );
+            */
+            for (const gameName of Object.keys(newProofs)) {
+                for (const aleaSeed of Object.keys(newProofs[gameName])) {
+                    if (
+                        !allRemotePublicWons[gameName] ||
+                        !allRemotePublicWons[gameName][aleaSeed]
+                    ) {
+                        const gameLog = newProofs[gameName][aleaSeed];
+                        const proofStartTime =
+                            gameLog.performedJumps[0].dateUnix ||
+                            new Date().getTime() - 1000 * 60 * 60;
+                        console.info(
+                            `Updating firebase public won game=${gameName} seed=${aleaSeed} starttime=${new Date(
+                                proofStartTime
+                            )}`
+                        );
+
+                        await setFirebase(
+                            FIREBASE_USERS_PUBLIC,
+                            `gamesWonProofs/${gameName}/${aleaSeed}`,
+                            {
+                                ...gameLog,
+                                started: proofStartTime
+                            }
+                        );
+                    }
+                }
+            }
             console.info(`Updating public highscores done`);
         } catch (e) {
             console.warn(`public wining state sync error`, e, e.stack);
