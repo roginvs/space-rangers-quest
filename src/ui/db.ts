@@ -18,28 +18,6 @@ interface ConfigBoth extends ConfigLocalOnly {
 Here is firebase rules:
 {
   "rules": {
-    FIREBASE_USERS_PUBLIC: {
-      "$uid": {
-        ".write": "$uid === auth.uid",        
-      },
-      ".read": true,
-      ".indexOn": ["gamesWonCount"]
-    },
-     
-    FIREBASE_USERS_PRIVATE: {
-      "$uid": {
-        ".write": "$uid === auth.uid",
-        ".read": true,
-      }
-    }
-  }
-}
-
-
-After update:
-
-{
-  "rules": {
     "usersPublic": {
       "$uid": {
         "info": {
@@ -52,7 +30,7 @@ After update:
           "$gameName": {
             "$aleaSeed": {
               ".write": "$uid === auth.uid",
-              ".validate": "newData.hasChild('created') && newData.child('created').val() == now",
+              ".validate": "newData.hasChild('created') && newData.child('created').val() === now",
             }
           }
         }        
