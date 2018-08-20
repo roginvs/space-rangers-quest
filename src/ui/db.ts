@@ -93,7 +93,13 @@ export interface FirebasePublic {
         name: string;
     };
     gamesWonCount: number;
-    gamesWonProofs: WonProofs;
+    gamesWonProofs: {
+        [gameId: string]: {
+            [seed: string]: GameLog & {
+                started: number
+            };
+        };
+    };
     userId: string;
 }
 
