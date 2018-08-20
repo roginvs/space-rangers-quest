@@ -52,9 +52,7 @@ After update:
           "$gameName": {
             "$aleaSeed": {
               ".write": "$uid === auth.uid",
-              "started": {
-               	".validate": "newData.val() < now"               
-              }              
+              ".validate": "newData.hasChild('started') && newData.child('started').val() < now",              
             }
           }
         }        
