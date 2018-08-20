@@ -52,7 +52,7 @@ After update:
           "$gameName": {
             "$aleaSeed": {
               ".write": "$uid === auth.uid",
-              ".validate": "newData.hasChild('started') && newData.child('started').val() < now",              
+              ".validate": "newData.hasChild('created') && newData.child('created').val() == now",
             }
           }
         }        
@@ -94,7 +94,7 @@ export interface FirebasePublic {
     gamesWonProofs: {
         [gameId: string]: {
             [seed: string]: GameLog & {
-                started: number
+                created: number
             };
         };
     };
@@ -558,16 +558,13 @@ export async function getDb(app: firebase.app.App) {
                     if (
                         !allRemotePublicWons[gameName] ||
                         !allRemotePublicWons[gameName][aleaSeed] ||
-                        !allRemotePublicWons[gameName][aleaSeed].started
+                        !allRemotePublicWons[gameName][aleaSeed].created
                     ) {
                         const gameLog = newProofs[gameName][aleaSeed];
-                        const proofStartTime =
-                            gameLog.performedJumps[0].dateUnix ||
-                            new Date().getTime() - 1000 * 60 * 60;
+                        const created = firebase.database.ServerValue.TIMESTAMP;
+                            
                         console.info(
-                            `Updating firebase public won game=${gameName} seed=${aleaSeed} starttime=${new Date(
-                                proofStartTime
-                            )}`
+                            `Updating firebase public won game=${gameName} seed=${aleaSeed}`
                         );
 
                         await setFirebase(
@@ -575,7 +572,7 @@ export async function getDb(app: firebase.app.App) {
                             `gamesWonProofs/${gameName}/${aleaSeed}`,
                             {
                                 ...gameLog,
-                                started: proofStartTime
+                                created,
                             }
                         );
                     }
