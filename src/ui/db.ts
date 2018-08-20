@@ -68,9 +68,9 @@ export async function getDb(app: firebase.app.App) {
               idb.onerror = e =>
                   reject(
                       new Error(
-                          `IndexedDB error: ${idb.error.name} ${
+                          idb.error? `IndexedDB error: ${idb.error.name} ${
                               idb.error.message
-                          }`
+                          }` : "Unknown"
                       )
                   );
               idb.onsuccess = (e: any) => resolve(e.target.result);
@@ -114,7 +114,7 @@ export async function getDb(app: firebase.app.App) {
                     resolve(getReq.result);
                 };
                 getReq.onerror = e =>
-                    reject(new Error(getReq.error.toString()));
+                    reject(new Error(getReq.error ? getReq.error.toString() : "Unknown"));
             });
             return localResult;
         } else {
@@ -151,7 +151,7 @@ export async function getDb(app: firebase.app.App) {
                     }
                 };
                 openCursor.onerror = e => {
-                    reject(new Error(openCursor.error.toString()));
+                    reject(new Error(openCursor.error ? openCursor.error.toString() : "Unknown"));
                 };
             });
         } else {
@@ -188,9 +188,9 @@ export async function getDb(app: firebase.app.App) {
                     console.warn("Indexeddb error", req.error);
                     reject(
                         new Error(
-                            `IndexedDB error: ${req.error.name} ${
+                            req.error ? `IndexedDB error: ${req.error.name} ${
                                 req.error.message
-                            }`
+                            }` : "Unknown"
                         )
                     );
                 };
