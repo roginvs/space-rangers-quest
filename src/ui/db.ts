@@ -557,7 +557,8 @@ export async function getDb(app: firebase.app.App) {
                 for (const aleaSeed of Object.keys(newProofs[gameName])) {
                     if (
                         !allRemotePublicWons[gameName] ||
-                        !allRemotePublicWons[gameName][aleaSeed]
+                        !allRemotePublicWons[gameName][aleaSeed] ||
+                        !allRemotePublicWons[gameName][aleaSeed].started
                     ) {
                         const gameLog = newProofs[gameName][aleaSeed];
                         const proofStartTime =
