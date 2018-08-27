@@ -25,7 +25,7 @@ import {
 } from "./defs";
 import { assertNever } from "../formula/calculator";
 import * as assert from "assert";
-import { Player, Lang } from "./player";
+import { Player, Lang, DEFAULT_RUS_PLAYER } from "./player";
 
 export type Quest = DeepImmutable<QM>;
 
@@ -942,8 +942,6 @@ function calculateLocation(
             }
         });
 
-
-
     function isJumpActive(jump: DeepImmutable<Jump>) {
         for (let i = 0; i < quest.paramsCount; i++) {
             if (quest.params[i].active) {
@@ -1007,21 +1005,23 @@ function calculateLocation(
     // Если текст один - то по вероятности
 
     /* Own sorting realization to keep sorting "unstable" random, but with same random between browsers */
-    const allJumpsFromThisLocationSortered = _sortJumps(allJumpsFromThisLocation, random);
-    
+    const allJumpsFromThisLocationSortered = _sortJumps(
+        allJumpsFromThisLocation,
+        random
+    );
+
     /*
     console.info('-------------');
     console.info('all', allJumpsFromThisLocation.map(x => `id=${x.id} prio=${x.showingOrder}`).join(', '));
     console.info('sorted', allJumpsFromThisLocationSortered.map(x => `id=${x.id} prio=${x.showingOrder}`).join(', '));
     */
 
-    const allPossibleJumps = allJumpsFromThisLocationSortered
-        .map(jump => {
-            return {
-                jump,
-                active: isJumpActive(jump)
-            };
-        });
+    const allPossibleJumps = allJumpsFromThisLocationSortered.map(jump => {
+        return {
+            jump,
+            active: isJumpActive(jump)
+        };
+    });
 
     let possibleJumpsWithSameTextGrouped: {
         jump: DeepImmutable<Jump>;
@@ -1254,6 +1254,7 @@ export function getAllImagesToPreload(quest: Quest, images: PQImages) {
     return Object.keys(uniq);
 }
 
+/*
 export function validateState(
     quest: Quest,
     stateOriginal: GameState,
@@ -1277,6 +1278,7 @@ export function validateState(
         return false;
     }
 }
+*/
 
 export function getGameLog(state: GameState): GameLog {
     return {
@@ -1286,9 +1288,11 @@ export function getGameLog(state: GameState): GameLog {
 }
 
 export function validateWinningLog(quest: Quest, gameLog: GameLog) {
-    try {
-        let state = initGame(quest, gameLog.aleaSeed);
-        for (const performedJump of gameLog.performedJumps) {
+    let state = initGame(quest, gameLog.aleaSeed);
+    for (const performedJump of gameLog.performedJumps) {
+        const uiState = getUIState(quest, state, DEFAULT_RUS_PLAYER);
+
+        if (uiState.choices.find(x => x.jumpId === performedJump.jumpId)) {
             console.info(`Validate jumping jumpId=${performedJump.jumpId}`);
             state = performJump(
                 performedJump.jumpId,
@@ -1297,41 +1301,55 @@ export function validateWinningLog(quest: Quest, gameLog: GameLog) {
                 [],
                 performedJump.dateUnix
             );
+        } else {
+            console.info(
+                `Validate=false jumpId=${
+                    performedJump.jumpId
+                } not found`
+            );
+            return false;
         }
-        if (state.state !== "returnedending") {
-            throw new Error("Not a winning state");
-        }
-        return true;
-    } catch (e) {
-        console.info(e);
+    }
+
+    const uiState = getUIState(quest, state, DEFAULT_RUS_PLAYER);
+    if (uiState.gameState !== "win") {
+        console.info(`Validate=false, not a win state`);
         return false;
     }
+    console.info(`Validate=true`);
+    return true;
 }
 
-
-export function _sortJumps<T extends {
-    showingOrder: number
-}>(input: T[], random: RandomFunc): T[] {
+export function _sortJumps<
+    T extends {
+        showingOrder: number;
+    }
+>(input: T[], random: RandomFunc): T[] {
     const output = input.slice();
     for (let i = 0; i < output.length; i++) {
         let minumumShowingOrder: number | undefined = undefined;
         let minimumIndexes: number[] = [];
         for (let ii = i; ii < output.length; ii++) {
             const curElement = output[ii];
-            if (minumumShowingOrder === undefined || curElement.showingOrder < minumumShowingOrder) {
+            if (
+                minumumShowingOrder === undefined ||
+                curElement.showingOrder < minumumShowingOrder
+            ) {
                 minumumShowingOrder = curElement.showingOrder;
-                minimumIndexes = [ii]
+                minimumIndexes = [ii];
             } else if (curElement.showingOrder === minumumShowingOrder) {
                 minimumIndexes.push(ii);
             }
         }
 
-        const minimumIndex = minimumIndexes.length === 1 ? minimumIndexes[0] :
-            minimumIndexes[random(minimumIndexes.length)];
+        const minimumIndex =
+            minimumIndexes.length === 1
+                ? minimumIndexes[0]
+                : minimumIndexes[random(minimumIndexes.length)];
         // console.info(`i=${i} minimumIndex=${minimumIndex} minimumIndexes=`,minimumIndexes);
         const swap = output[i];
         output[i] = output[minimumIndex];
-        output[minimumIndex] = swap;        
+        output[minimumIndex] = swap;
     }
-    return output
+    return output;
 }

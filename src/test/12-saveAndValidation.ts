@@ -8,7 +8,6 @@ import {
     GameState,
     initGame,
     performJump,
-    validateState,
     validateWinningLog,
     getGameLog,
     JUMP_I_AGREE,
@@ -52,9 +51,11 @@ describe(`Using saveAndValidaton.qm, seed 1`, function() {
         const uistate = getUIState(quest, state, DEFAULT_RUS_PLAYER);
         assert.equal(uistate.gameState, "win");
     });
+    /*
     it(`Validating state`, () => {        
         assert.ok(validateState(quest, state));
     })
+    */
     it(`Validating game log`, () => {        
         const gameLog = getGameLog(state);
         assert.ok(validateWinningLog(quest, gameLog));

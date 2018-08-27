@@ -2,7 +2,7 @@ import { QM } from '../qmreader';
 import { PQImages } from '../pqImages';
 
 export { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP } from './defs';
-export { GameState, initGame,performJump, validateState,validateWinningLog, getGameLog} from './funcs';
+export { GameState, initGame,performJump, validateWinningLog, getGameLog} from './funcs';
 
 
 import { PlayerState, GameState,  initGame, getAllImagesToPreload, getUIState, performJump} from './funcs';
