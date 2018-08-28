@@ -239,7 +239,7 @@ export function getLang(lang: Lang) {
 
 export function guessBrowserLang(): Lang {
     const browserLanguages = navigator.languages || [
-        navigator.language || (navigator as any).userLanguage || "sv"
+        navigator.language || (navigator as any).userLanguage || "ru"
     ];
     console.info(
         `languages=${
@@ -255,7 +255,7 @@ export function guessBrowserLang(): Lang {
             return "rus";
         }
     }
-    if (navigator.userAgent.indexOf('Googlebot') > -1) { // Чтобы google русский вариант индексировал
+    if ((window as any).callPhantom || (window as any)._phantom) { // Чтобы google русский вариант индексировал
         return "rus"
     }
     return "eng";
