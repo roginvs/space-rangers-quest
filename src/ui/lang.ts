@@ -255,7 +255,7 @@ export function guessBrowserLang(): Lang {
             return "rus";
         }
     }
-    if ((window as any).callPhantom || (window as any)._phantom) { // Чтобы google русский вариант индексировал
+    if (! window.indexedDB) { // Чтобы google русский вариант индексировал
         return "rus"
     }
     return "eng";
