@@ -535,8 +535,7 @@ export async function getDb(app: firebase.app.App) {
                 for (const aleaSeed of Object.keys(newProofs[gameName])) {
                     if (
                         !allRemotePublicWons[gameName] ||
-                        !allRemotePublicWons[gameName][aleaSeed] ||
-                        !allRemotePublicWons[gameName][aleaSeed].created
+                        !allRemotePublicWons[gameName][aleaSeed]
                     ) {
                         const gameLog = newProofs[gameName][aleaSeed];
                         const created = firebase.database.ServerValue.TIMESTAMP;
