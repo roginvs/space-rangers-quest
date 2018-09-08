@@ -30,7 +30,7 @@ Here is firebase rules:
           "$gameName": {
             "$aleaSeed": {
               ".write": "$uid === auth.uid",
-              ".validate": "newData.hasChild('created') && newData.child('created').val() === now",
+              ".validate": "newData.hasChild('created') && newData.child('created').val() === now && data.val() === null",
             }
           }
         }        
@@ -47,7 +47,6 @@ Here is firebase rules:
     }
   }
 }
-
 
 */
 const INDEXEDDB_NAME = "spaceranges2";
