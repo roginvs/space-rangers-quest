@@ -59,7 +59,7 @@ for (const fileName of fs.readdirSync(gameDir)) {
     );
   }
 
-  // assert.deepEqual(resavedQuest, origQuest, 'Data is the same');
+  // assert.deepStrictEqual(resavedQuest, origQuest, 'Data is the same');
 
   // const player = new QMPlayer(quest, undefined, lang, questOrigin === ORIGIN_TGE);
 }

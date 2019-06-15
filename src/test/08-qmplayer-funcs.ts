@@ -6,7 +6,7 @@ import { _sortJumps } from "../lib/qmplayer/funcs";
 describe("Checking _sortJumps", function() {
   it(`Empty list returns empty`, () => {
     const r = _sortJumps([], () => assert.fail("no random"));
-    assert.deepEqual([], r);
+    assert.deepStrictEqual([], r);
   });
   it(`Sorting, all prios different`, () => {
     const r = _sortJumps(
@@ -20,7 +20,7 @@ describe("Checking _sortJumps", function() {
       ],
       () => assert.fail("no random")
     );
-    assert.deepEqual(
+    assert.deepStrictEqual(
       [
         { id: 5, showingOrder: 0 },
         { id: 2, showingOrder: 2 },
@@ -66,7 +66,7 @@ describe("Checking _sortJumps", function() {
       ],
       random
     );
-    assert.deepEqual(
+    assert.deepStrictEqual(
       [
         { id: 5, showingOrder: 0 },
         { id: 7, showingOrder: 2 },

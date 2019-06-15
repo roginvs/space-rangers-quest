@@ -1183,7 +1183,7 @@ export function validateState(
                 performedJump.dateUnix
             );
         }
-        assert.deepEqual(stateOriginal, state);
+        assert.deepStrictEqual(stateOriginal, state);
         return true;
     } catch (e) {
         console.info(e);
