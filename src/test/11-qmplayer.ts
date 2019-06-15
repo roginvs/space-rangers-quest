@@ -46,52 +46,52 @@ describe("test11-critonlocation.qm", function() {
   });
   it("-> L2", () => {
     const st = jumpTo("L2");
-    assert.equal(
+    assert.strictEqual(
       st.choices[0].jumpId,
       JUMP_GO_BACK_TO_SHIP,
       "It is go back to ship"
     );
-    assert.equal(st.choices.length, 1, "one choice");
+    assert.strictEqual(st.choices.length, 1, "one choice");
     player.performJump(JUMP_GO_BACK_TO_SHIP);
-    assert.equal(player.getState().gameState, "win");
+    assert.strictEqual(player.getState().gameState, "win");
   });
   it("-> L4", () => {
     const st = jumpTo("L4");
     console.info(st);
-    assert.equal(st.gameState, "fail");
-    assert.equal(st.choices.length, 0, "no choice");
+    assert.strictEqual(st.gameState, "fail");
+    assert.strictEqual(st.choices.length, 0, "no choice");
   });
   it("-> L5", () => {
     const st = jumpTo("L5");
-    assert.equal(st.gameState, "dead");
-    assert.equal(st.choices.length, 0, "no choice");
+    assert.strictEqual(st.gameState, "dead");
+    assert.strictEqual(st.choices.length, 0, "no choice");
   });
 
   it("-> L6", () => {
     const st = jumpTo("L6");
-    assert.equal(st.text, "L6");
+    assert.strictEqual(st.text, "L6");
     const st2 = jumpTo("");
-    assert.equal(st2.gameState, "fail");
-    assert.equal(st2.choices.length, 0, "no choice");
+    assert.strictEqual(st2.gameState, "fail");
+    assert.strictEqual(st2.choices.length, 0, "no choice");
   });
   it("-> L7", () => {
     const st = jumpTo("L7");
-    assert.equal(st.text, "L7");
+    assert.strictEqual(st.text, "L7");
     const st2 = jumpTo("");
-    assert.equal(st2.gameState, "dead");
-    assert.equal(st2.choices.length, 0, "no choice");
+    assert.strictEqual(st2.gameState, "dead");
+    assert.strictEqual(st2.choices.length, 0, "no choice");
   });
   it("-> L8", () => {
     const st = jumpTo("L8");
     console.info(st);
-    assert.equal(st.gameState, "fail");
-    assert.equal(st.choices.length, 0, "no choice");
+    assert.strictEqual(st.gameState, "fail");
+    assert.strictEqual(st.choices.length, 0, "no choice");
   });
   it("-> L10", () => {
     const st = jumpTo("L10");
     console.info(st);
-    assert.equal(st.gameState, "fail");
-    assert.equal(st.choices.length, 0, "no choice");
+    assert.strictEqual(st.gameState, "fail");
+    assert.strictEqual(st.choices.length, 0, "no choice");
   });
 });
 
@@ -111,21 +111,21 @@ for (const ext of ["qm", "qmm"]) {
       //console.info(player.getState())
     });
     it(`1nd jump to L2`, () => {
-      assert.equal(jumpTo("-> L2").text, "L2-1");
+      assert.strictEqual(jumpTo("-> L2").text, "L2-1");
     });
     it(`1nd back to L1`, () => {
-      assert.equal(jumpTo("-> L1").text, "L1-1");
+      assert.strictEqual(jumpTo("-> L1").text, "L1-1");
     });
 
     it(`2nd jump to L2`, () => {
-      assert.equal(jumpTo("-> L2").text, "L2-2");
+      assert.strictEqual(jumpTo("-> L2").text, "L2-2");
     });
     it(`2nd back to L1`, () => {
-      assert.equal(jumpTo("-> L1").text, "L1-2");
+      assert.strictEqual(jumpTo("-> L1").text, "L1-2");
     });
 
     it(`3nd jump to L2`, () => {
-      assert.equal(jumpTo("-> L2").text, "L2-4");
+      assert.strictEqual(jumpTo("-> L2").text, "L2-4");
     });
     it(`3nd back to L1 (no text check here)`, () => {
       jumpTo("-> L1");
@@ -133,14 +133,14 @@ for (const ext of ["qm", "qmm"]) {
     });
 
     it(`4nd jump to L2`, () => {
-      assert.equal(jumpTo("-> L2").text, "L2-1");
+      assert.strictEqual(jumpTo("-> L2").text, "L2-1");
     });
     it(`4nd back to L1`, () => {
-      assert.equal(jumpTo("-> L1").text, "L1-4");
+      assert.strictEqual(jumpTo("-> L1").text, "L1-4");
     });
 
     it(`5nd jump to L2`, () => {
-      assert.equal(jumpTo("-> L2").text, "L2-2");
+      assert.strictEqual(jumpTo("-> L2").text, "L2-2");
     });
     it(`5nd back to L1`, () => {
       jumpTo("-> L1");
@@ -148,7 +148,7 @@ for (const ext of ["qm", "qmm"]) {
     });
 
     it(`6nd jump to L2`, () => {
-      assert.equal(jumpTo("-> L2").text, "L2-4");
+      assert.strictEqual(jumpTo("-> L2").text, "L2-4");
     });
     it(`6nd back to L1`, () => {
       jumpTo("-> L1");
@@ -156,7 +156,7 @@ for (const ext of ["qm", "qmm"]) {
     });
 
     it(`7nd jump to L2`, () => {
-      assert.equal(jumpTo("-> L2").text, "L2-1");
+      assert.strictEqual(jumpTo("-> L2").text, "L2-1");
     });
     it(`7nd back to L1`, () => {
       jumpTo("-> L1");
@@ -185,29 +185,29 @@ describe("Player on test10-deadly-loc.qmm", function() {
       player.loadSaving(save);
     });
     it(`Going to L5`, () => {
-      assert.equal(player.getState().choices.length, 4);
+      assert.strictEqual(player.getState().choices.length, 4);
       jumpTo("-> L5");
-      assert.equal(player.getState().choices.length, 1);
-      assert.equal(player.getState().text, "L5");
+      assert.strictEqual(player.getState().choices.length, 1);
+      assert.strictEqual(player.getState().text, "L5");
       jumpTo("");
-      assert.equal(player.getState().gameState, "win");
-      assert.equal(player.getState().choices.length, 0);
+      assert.strictEqual(player.getState().gameState, "win");
+      assert.strictEqual(player.getState().choices.length, 0);
     });
 
     it(`Going to L4`, () => {
-      assert.equal(player.getState().choices.length, 4);
+      assert.strictEqual(player.getState().choices.length, 4);
       jumpTo("-> L4");
-      assert.equal(player.getState().text, "L4fail");
-      assert.equal(player.getState().gameState, "fail");
-      assert.equal(player.getState().choices.length, 0);
+      assert.strictEqual(player.getState().text, "L4fail");
+      assert.strictEqual(player.getState().gameState, "fail");
+      assert.strictEqual(player.getState().choices.length, 0);
     });
 
     it(`Going to L2`, () => {
-      assert.equal(player.getState().choices.length, 4);
+      assert.strictEqual(player.getState().choices.length, 4);
       jumpTo("-> L2");
-      assert.equal(player.getState().text, "L2dead");
-      assert.equal(player.getState().gameState, "dead");
-      assert.equal(player.getState().choices.length, 0);
+      assert.strictEqual(player.getState().text, "L2dead");
+      assert.strictEqual(player.getState().gameState, "dead");
+      assert.strictEqual(player.getState().choices.length, 0);
     });
   });
 });
@@ -223,7 +223,7 @@ describe("Player on limitedLocation.qmm", function() {
     player.performJump(JUMP_I_AGREE);
   });
   it(`Have 3 jumps`, () => {
-    assert.equal(player.getState().choices.length, 3);
+    assert.strictEqual(player.getState().choices.length, 3);
   });
   it("Performing walking loop", () => {
     jumpTo("Start --> LimitedLocation");
@@ -232,8 +232,8 @@ describe("Player on limitedLocation.qmm", function() {
     jumpTo("LimitedLocation0 --> Start");
   });
   it(`Have 1 jump`, () => {
-    assert.equal(player.getState().choices.length, 1);
-    assert.equal(player.getState().choices[0].text, "Start -> winloc");
+    assert.strictEqual(player.getState().choices.length, 1);
+    assert.strictEqual(player.getState().choices[0].text, "Start -> winloc");
   });
 });
 
@@ -258,7 +258,7 @@ describe("Player on test4-forqmm.qm", function() {
       jumpTo("");
     });
     it("No jump here", () => {
-      assert.equal(
+      assert.strictEqual(
         player.getState().choices.length,
         0,
         "TGE 4 shows not choices here"
@@ -287,9 +287,9 @@ describe("Player on test4-forqmm.qm", function() {
       /*
             jumpTo('--> L2');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win', 'TGE 5 allows here to win')
+            assert.strictEqual(player.getState().gameState, 'win', 'TGE 5 allows here to win')
             */
-      assert.equal(
+      assert.strictEqual(
         player.getState().choices.length,
         0,
         "TGE 5.2.9 shows not choices here"
@@ -310,23 +310,23 @@ describe("Player on test8-emptyloc.qmm", function() {
       player.performJump(JUMP_I_AGREE);
     });
     it("-> L2", () => {
-      assert.equal(jumpTo("-> L2").text, "J2desc");
-      assert.equal(jumpTo("").text, "j3desc");
-      assert.equal(jumpTo("").text, "j4desc");
-      assert.equal(jumpTo("").text, "L4");
+      assert.strictEqual(jumpTo("-> L2").text, "J2desc");
+      assert.strictEqual(jumpTo("").text, "j3desc");
+      assert.strictEqual(jumpTo("").text, "j4desc");
+      assert.strictEqual(jumpTo("").text, "L4");
     });
     it("-> L5", () => {
-      assert.equal(jumpTo("-> L5").text, "J5desc");
-      assert.equal(jumpTo("").text, "L4");
+      assert.strictEqual(jumpTo("-> L5").text, "J5desc");
+      assert.strictEqual(jumpTo("").text, "L4");
     });
     it("-> L7", () => {
-      assert.equal(jumpTo("-> L7").text, "J8Desc");
-      assert.equal(jumpTo("").text, "L4");
+      assert.strictEqual(jumpTo("-> L7").text, "J8Desc");
+      assert.strictEqual(jumpTo("").text, "L4");
     });
     it("-> L9", () => {
-      assert.equal(jumpTo("-> L9").text, "J11Desc");
-      assert.equal(jumpTo("").text, "L10");
-      assert.equal(jumpTo("").text, "L4");
+      assert.strictEqual(jumpTo("-> L9").text, "J11Desc");
+      assert.strictEqual(jumpTo("").text, "L10");
+      assert.strictEqual(jumpTo("").text, "L4");
     });
   });
 });
@@ -343,19 +343,19 @@ describe("Player on test9-loop-qm.qm", function() {
   });
 
   it("L1 -> L1", () => {
-    assert.equal(jumpTo("-> L4").text, "L1");
-    assert.equal(jumpTo("-> L4").text, "L1");
-    assert.equal(jumpTo("-> L4").text, "p1_j6_crit");
-    assert.equal(jumpTo("").gameState, "win");
+    assert.strictEqual(jumpTo("-> L4").text, "L1");
+    assert.strictEqual(jumpTo("-> L4").text, "L1");
+    assert.strictEqual(jumpTo("-> L4").text, "p1_j6_crit");
+    assert.strictEqual(jumpTo("").gameState, "win");
   });
   /*    
         it('L1 -> L1', () => {
-            assert.equal(jumpTo('-> L1').text, 'L1');
-            //assert.equal(jumpTo('-> L1').text, 'L1');
+            assert.strictEqual(jumpTo('-> L1').text, 'L1');
+            //assert.strictEqual(jumpTo('-> L1').text, 'L1');
             console.info(jumpTo('-> L1'))
             console.info(jumpTo('-> L1'))
-            //assert.equal(jumpTo('-> L1').text,'j1crit');
-            assert.equal(jumpTo('').gameState, 'win');
+            //assert.strictEqual(jumpTo('-> L1').text,'j1crit');
+            assert.strictEqual(jumpTo('').gameState, 'win');
         })
         */
 });
@@ -370,16 +370,16 @@ describe("Player on test9-loop.qmm", function() {
   });
 
   it("L1 -> L1", () => {
-    assert.equal(jumpTo("-> L4").text, "L1");
-    assert.equal(jumpTo("-> L4").text, "L1");
-    assert.equal(jumpTo("-> L4").text, "p1_j6_crit");
-    assert.equal(jumpTo("").gameState, "win");
+    assert.strictEqual(jumpTo("-> L4").text, "L1");
+    assert.strictEqual(jumpTo("-> L4").text, "L1");
+    assert.strictEqual(jumpTo("-> L4").text, "p1_j6_crit");
+    assert.strictEqual(jumpTo("").gameState, "win");
   });
 
   it("L1 -> L1", () => {
-    assert.equal(jumpTo("-> L1").text, "L1");
-    assert.equal(jumpTo("-> L1").text, "L1");
-    assert.equal(jumpTo("-> L1").text, "j1crit");
-    assert.equal(jumpTo("").gameState, "win");
+    assert.strictEqual(jumpTo("-> L1").text, "L1");
+    assert.strictEqual(jumpTo("-> L1").text, "L1");
+    assert.strictEqual(jumpTo("-> L1").text, "j1crit");
+    assert.strictEqual(jumpTo("").gameState, "win");
   });
 });
