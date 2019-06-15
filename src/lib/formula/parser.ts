@@ -126,7 +126,7 @@ function parseParenExpression(tokens: Token[]) {
 }
 
 function makeFlatExpression(tokens: Token[]) {
-  let flatExpression: TokenOrExpression[] = [];
+  const flatExpression: TokenOrExpression[] = [];
   let i = 0;
   if (tokens.length === 0) {
     const exp: NumberExpression = {

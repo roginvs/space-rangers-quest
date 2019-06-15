@@ -13,7 +13,7 @@ const keywordsToKind: {
 
 export function Scanner(str: string) {
   let pos = 0;
-  let end = str.length;
+  const end = str.length;
 
   function isWhitespace(char: string) {
     return char === " " || char === "\n" || char === "\r" || char === "\t";

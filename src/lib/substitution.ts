@@ -1,7 +1,7 @@
 import { parse } from "./formula";
 // import { Lang } from './qmplayer/player';
 import { RandomFunc } from "./randomFunc";
-import { PlayerSubstitute } from "./qmplayer/funcs";
+import { PlayerSubstitute } from "./qmplayer/playerSubstitute";
 export const clr = "<clr>";
 export const clrEnd = "<clrEnd>";
 

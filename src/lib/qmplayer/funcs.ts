@@ -29,13 +29,6 @@ import { Player, Lang, DEFAULT_RUS_PLAYER } from "./player";
 
 export type Quest = DeepImmutable<QM>;
 
-export interface PlayerSubstitute extends Player {
-  // TODO: move from this file
-  Date: string; // Дата дедлайна
-  Day: string; // Кол-во дней
-  CurDate: string; // Текущая дата
-}
-
 export interface GameLogStep {
   dateUnix: number;
   jumpId: number;
