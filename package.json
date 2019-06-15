@@ -45,6 +45,7 @@
     "typescript": "^2.9.2",
     "typestrict": "0.0.9",
     "webpack": "^4.34.0",
+    "webpack-cli": "^3.3.4",
     "webpack-dev-server": "^3.7.1",
     "webpack-version-hash-plugin": "0.0.2"
   },
