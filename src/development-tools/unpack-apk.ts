@@ -56,7 +56,7 @@ for (const f of fs.readdirSync(dirToScan).sort((a, b) => (a > b ? 1 : -1))) {
     let writefname = dirToCopy + fname + ".qmm";
     let i = 0;
     while (true) {
-      writefname = dirToCopy + fname + (i ? i : "") + ".qmm";
+      writefname = dirToCopy + fname + (i ? `${i}` : "") + ".qmm";
       if (!fs.existsSync(writefname)) {
         break;
       }

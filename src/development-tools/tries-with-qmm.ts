@@ -17,7 +17,7 @@ const qmmDir =
 const qmDir =
   "c:\\R.G. Catalyst\\Space Rangers HD A War Apart\\DATA\\questsRus\\Data\\Quest\\Rus\\";
 for (const fileName of fs.readdirSync(qmmDir)) {
-  if (fileName != "Amnesia.qmm") {
+  if (fileName !== "Amnesia.qmm") {
     // continue
   }
 

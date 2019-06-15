@@ -7,7 +7,7 @@
     "tslint-react-hooks"
   ],
   "rules": {
-    "no-unused-variable": true,
+    "no-unused-variable": false,
     "no-unnecessary-type-assertion": true,
     "curly": true,
     "no-string-throw": true,

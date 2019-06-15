@@ -47,7 +47,7 @@ function argToNumber(arg: Arg, random: () => number) {
     }
 
     if (arg[0] === "[") {
-      let ranges = parseRange(arg);
+      const ranges = parseRange(arg);
       const totalValuesAmount = ranges.reduce((totalItems, range) => {
         const [low, high] = range;
         return totalItems + high - low + 1;
@@ -220,7 +220,7 @@ const operations: Operation[] = [
       if (typeof a === "number" && typeof b === "number") {
         return a === b ? 1 : 0;
       } else {
-        let [val, ranges] =
+        const [val, ranges] =
           typeof a === "string" && typeof b === "string"
             ? [argToNumber(a, random), b]
             : typeof a === "number" && typeof b === "string"
@@ -364,11 +364,11 @@ function parseRecursive(
   }
   debug(deep, `After removing covering brackets str='${str}'`);
 
-  let operands: {
+  const operands: {
     pos: number;
     operation: Operation;
   }[] = [];
-  let i = 0;
+
   for (let i = 0; i < str.length; i++) {
     const c = str[i];
     const operation = operations.filter(x => x.shortSymbol === c).shift();
@@ -389,11 +389,12 @@ function parseRecursive(
   }
   if (str[0] === "[" && str[1] === "p" && str.indexOf("]") === str.length - 1) {
     debug(deep, `String '${str}' is parameter`);
-    let pNum = parseInt(str.slice(2, str.length - 1));
+    const pNum = parseInt(str.slice(2, str.length - 1));
     if (isNaN(pNum)) {
       throw new Error(`Unknown parameter '${str}'`);
     }
     const val = params[pNum - 1];
+    // tslint:disable-next-line:strict-type-predicates
     if (val === undefined) {
       throw new Error(`Undefined param ${str}`);
     }

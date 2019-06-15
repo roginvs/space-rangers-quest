@@ -420,7 +420,7 @@ const questIdToName: { [id: string]: string } = {};
 questRawNames
   .split("\n")
   .filter(x => x)
-  .map(line => {
+  .forEach(line => {
     const id = line.split("=").shift();
     const name = line.split("\\").pop();
     if (!id || !name) {
@@ -435,7 +435,7 @@ const imagesPerQuest: {
 questRawPQI
   .split("\n")
   .filter(x => x)
-  .map(line => {
+  .forEach(line => {
     // 16,L,16,17,18,19,20,21,22,23,24=Bm.PQI.Hachball_03
     const [left, right] = line.split("=");
     const [questId, type, ...ids] = left.split(",");

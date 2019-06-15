@@ -12,7 +12,7 @@ export class Alea {
 
   constructor(args: string | AleaState) {
     if (typeof args === "string") {
-      var mash = Mash();
+      const mash = Mash();
       this.s0 = mash(" ");
       this.s1 = mash(" ");
       this.s2 = mash(" ");

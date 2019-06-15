@@ -12,6 +12,7 @@ const quest = parse(
   )
 );
 
+// tslint:disable-next-line
 let state = JSON.parse(initialStateRaw);
 
 console.info(getUIState(quest, state, DEFAULT_RUS_PLAYER));
