@@ -40,110 +40,110 @@ describe('Player on test6-empty.qm', function () {
         });
         it("failonloc_chain", function () {
             jumpTo('failonloc_chain');
-            assert.equal(player.getState().text, 'p2_at_l11');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'p2_at_l11');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("success_on_loc_jumptext", function () {
             jumpTo('success_on_loc_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_loc_msg');
+            assert.strictEqual(player.getState().text, 'success_on_loc_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_loc_no_jumptext", function () {
             jumpTo('success_on_loc_no_jumptext');
-            assert.equal(player.getState().text, 'success_on_loc_msg');
+            assert.strictEqual(player.getState().text, 'success_on_loc_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_locnotext_nojumptext", function () {
             jumpTo('success_on_locnotext_nojumptext');
-            assert.equal(player.getState().text, 'p1_at_l10');
+            assert.strictEqual(player.getState().text, 'p1_at_l10');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_locnotext_jumptext", function () {
             jumpTo('success_on_locnotext_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'p1_at_l10');
+            assert.strictEqual(player.getState().text, 'p1_at_l10');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_jump_jumptext", function () {
             jumpTo('success_on_jump_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_jump_jumptext_msg');
+            assert.strictEqual(player.getState().text, 'success_on_jump_jumptext_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_jump_nojumptext", function () {
             jumpTo('success_on_jump_nojumptext');
-            assert.equal(player.getState().text, 'success_on_jump_nojumptext_msg');
+            assert.strictEqual(player.getState().text, 'success_on_jump_nojumptext_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("fail_on_jump_jumptext", function () {
             jumpTo('fail_on_jump_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'fail_jump_msg');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_jump_msg');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("fail_on_jump_nojumptext", function () {
             jumpTo('fail_on_jump_nojumptext');
-            assert.equal(player.getState().text, 'fail_jump_text');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_jump_text');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("fail_on_loc_jumptext", function () {
             jumpTo('fail_on_loc_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'fail_loc_msg');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_loc_msg');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("fail_on_loc_nojumptext", function () {
             jumpTo('fail_on_loc_nojumptext');
-            assert.equal(player.getState().text, 'fail_loc_msg');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_loc_msg');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("fail_on_locnotext_jumptext", function () {
             jumpTo('fail_on_locnotext_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'p2_failed_on_L9');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'p2_failed_on_L9');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("fail_on_locnotext_nojumptext", function () {
             jumpTo('fail_on_locnotext_nojumptext');
-            assert.equal(player.getState().text, 'p2_failed_on_L9');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'p2_failed_on_L9');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("death_on_jump_jumptext", function () {
             jumpTo('death_on_jump_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'dead_jump_msg');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_jump_msg');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
         it("death_on_jump_nojumptext", function () {
             jumpTo('death_on_jump_nojumptext');
-            assert.equal(player.getState().text, 'dead_jump_msg');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_jump_msg');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
         it("death_on_loc_jumptext", function () {
             jumpTo('death_on_loc_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'dead_on_loc');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_on_loc');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
         it("death_on_loc_nojumptext", function () {
             jumpTo('death_on_loc_nojumptext');
-            assert.equal(player.getState().text, 'dead_on_loc');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_on_loc');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
     });
 });
@@ -163,95 +163,95 @@ describe('Player on test6.qm', function () {
         });
         it("success_on_loc_jumptext", function () {
             jumpTo('success_on_loc_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_loc');
+            assert.strictEqual(player.getState().text, 'success_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_loc_msg');
+            assert.strictEqual(player.getState().text, 'success_on_loc_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_loc_no_jumptext", function () {
             jumpTo('success_on_loc_no_jumptext');
-            assert.equal(player.getState().text, 'success_on_loc');
+            assert.strictEqual(player.getState().text, 'success_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_loc_msg');
+            assert.strictEqual(player.getState().text, 'success_on_loc_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_jump_jumptext", function () {
             jumpTo('success_on_jump_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_jump_jumptext_msg');
+            assert.strictEqual(player.getState().text, 'success_on_jump_jumptext_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_jump_nojumptext", function () {
             jumpTo('success_on_jump_nojumptext');
-            assert.equal(player.getState().text, 'success_on_jump_nojumptext_msg');
+            assert.strictEqual(player.getState().text, 'success_on_jump_nojumptext_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("fail_on_jump_jumptext", function () {
             jumpTo('fail_on_jump_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'fail_jump_msg');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_jump_msg');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("fail_on_jump_nojumptext", function () {
             jumpTo('fail_on_jump_nojumptext');
-            assert.equal(player.getState().text, 'fail_jump_text');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_jump_text');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("fail_on_loc_jumptext live-after-fail", function () {
             jumpTo('fail_on_loc_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'fail_on_loc');
+            assert.strictEqual(player.getState().text, 'fail_on_loc');
             /* Here is live-after-fail */
             jumpTo('');
-            assert.equal(player.getState().text, 'L3');
-            assert.equal(player.getState().gameState, 'running');
+            assert.strictEqual(player.getState().text, 'L3');
+            assert.strictEqual(player.getState().gameState, 'running');
         });
         it("fail_on_loc_nojumptext", function () {
             jumpTo('fail_on_loc_nojumptext');
-            assert.equal(player.getState().text, 'fail_on_loc');
+            assert.strictEqual(player.getState().text, 'fail_on_loc');
             /* Here is live-after-fail */
             jumpTo('');
-            assert.equal(player.getState().text, 'L3');
-            assert.equal(player.getState().gameState, 'running');
+            assert.strictEqual(player.getState().text, 'L3');
+            assert.strictEqual(player.getState().gameState, 'running');
         });
         it("death_on_jump_jumptext", function () {
             jumpTo('death_on_jump_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'dead_jump_msg');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_jump_msg');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
         it("death_on_jump_nojumptext", function () {
             jumpTo('death_on_jump_nojumptext');
-            assert.equal(player.getState().text, 'dead_jump_msg');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_jump_msg');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
         it("death_on_loc_jumptext", function () {
             jumpTo('death_on_loc_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'death_on_loc');
+            assert.strictEqual(player.getState().text, 'death_on_loc');
             /* Here is live-after-dead */
             jumpTo('');
-            assert.equal(player.getState().text, 'L3');
-            assert.equal(player.getState().gameState, 'running');
+            assert.strictEqual(player.getState().text, 'L3');
+            assert.strictEqual(player.getState().gameState, 'running');
         });
         it("death_on_loc_nojumptext", function () {
             jumpTo('death_on_loc_nojumptext');
-            assert.equal(player.getState().text, 'death_on_loc');
+            assert.strictEqual(player.getState().text, 'death_on_loc');
             /* Here is live-after-dead */
             jumpTo('');
-            assert.equal(player.getState().text, 'L3');
-            assert.equal(player.getState().gameState, 'running');
+            assert.strictEqual(player.getState().text, 'L3');
+            assert.strictEqual(player.getState().gameState, 'running');
         });
     });
     describe('Crit params on loc/jumps without active jump', function () {
@@ -261,91 +261,91 @@ describe('Player on test6.qm', function () {
         });
         it("success_on_loc_jumptext", function () {
             jumpTo('success_on_loc_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_loc');
+            assert.strictEqual(player.getState().text, 'success_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_loc_msg');
+            assert.strictEqual(player.getState().text, 'success_on_loc_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_loc_no_jumptext", function () {
             jumpTo('success_on_loc_no_jumptext');
-            assert.equal(player.getState().text, 'success_on_loc');
+            assert.strictEqual(player.getState().text, 'success_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_loc_msg');
+            assert.strictEqual(player.getState().text, 'success_on_loc_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_jump_jumptext", function () {
             jumpTo('success_on_jump_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_jump_jumptext_msg');
+            assert.strictEqual(player.getState().text, 'success_on_jump_jumptext_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_jump_nojumptext", function () {
             jumpTo('success_on_jump_nojumptext');
-            assert.equal(player.getState().text, 'success_on_jump_nojumptext_msg');
+            assert.strictEqual(player.getState().text, 'success_on_jump_nojumptext_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("fail_on_jump_jumptext", function () {
             jumpTo('fail_on_jump_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'fail_jump_msg');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_jump_msg');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("fail_on_jump_nojumptext", function () {
             jumpTo('fail_on_jump_nojumptext');
-            assert.equal(player.getState().text, 'fail_jump_text');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_jump_text');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("fail_on_loc_jumptext", function () {
             jumpTo('fail_on_loc_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'fail_on_loc');
+            assert.strictEqual(player.getState().text, 'fail_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'fail_loc_msg');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_loc_msg');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("fail_on_loc_nojumptext", function () {
             jumpTo('fail_on_loc_nojumptext');
-            assert.equal(player.getState().text, 'fail_on_loc');
+            assert.strictEqual(player.getState().text, 'fail_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'fail_loc_msg');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_loc_msg');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("death_on_jump_jumptext", function () {
             jumpTo('death_on_jump_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'dead_jump_msg');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_jump_msg');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
         it("death_on_jump_nojumptext", function () {
             jumpTo('death_on_jump_nojumptext');
-            assert.equal(player.getState().text, 'dead_jump_msg');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_jump_msg');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
         it("death_on_loc_jumptext", function () {
             jumpTo('death_on_loc_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'death_on_loc');
+            assert.strictEqual(player.getState().text, 'death_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'dead_on_loc');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_on_loc');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
         it("death_on_loc_nojumptext", function () {
             jumpTo('death_on_loc_nojumptext');
-            assert.equal(player.getState().text, 'death_on_loc');
+            assert.strictEqual(player.getState().text, 'death_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'dead_on_loc');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_on_loc');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
     });
 });
@@ -365,91 +365,91 @@ describe('Player on test6.qm with permitLiveAfterDeath=false', function () {
         });
         it("success_on_loc_jumptext", function () {
             jumpTo('success_on_loc_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_loc');
+            assert.strictEqual(player.getState().text, 'success_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_loc_msg');
+            assert.strictEqual(player.getState().text, 'success_on_loc_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_loc_no_jumptext", function () {
             jumpTo('success_on_loc_no_jumptext');
-            assert.equal(player.getState().text, 'success_on_loc');
+            assert.strictEqual(player.getState().text, 'success_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_loc_msg');
+            assert.strictEqual(player.getState().text, 'success_on_loc_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_jump_jumptext", function () {
             jumpTo('success_on_jump_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'success_on_jump_jumptext_msg');
+            assert.strictEqual(player.getState().text, 'success_on_jump_jumptext_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("success_on_jump_nojumptext", function () {
             jumpTo('success_on_jump_nojumptext');
-            assert.equal(player.getState().text, 'success_on_jump_nojumptext_msg');
+            assert.strictEqual(player.getState().text, 'success_on_jump_nojumptext_msg');
             jumpTo('');
-            assert.equal(player.getState().gameState, 'win');
+            assert.strictEqual(player.getState().gameState, 'win');
         });
         it("fail_on_jump_jumptext", function () {
             jumpTo('fail_on_jump_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'fail_jump_msg');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_jump_msg');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("fail_on_jump_nojumptext", function () {
             jumpTo('fail_on_jump_nojumptext');
-            assert.equal(player.getState().text, 'fail_jump_text');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_jump_text');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("fail_on_loc_jumptext", function () {
             jumpTo('fail_on_loc_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'fail_on_loc');
+            assert.strictEqual(player.getState().text, 'fail_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'fail_loc_msg');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_loc_msg');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("fail_on_loc_nojumptext", function () {
             jumpTo('fail_on_loc_nojumptext');
-            assert.equal(player.getState().text, 'fail_on_loc');
+            assert.strictEqual(player.getState().text, 'fail_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'fail_loc_msg');
-            assert.equal(player.getState().gameState, 'fail');
+            assert.strictEqual(player.getState().text, 'fail_loc_msg');
+            assert.strictEqual(player.getState().gameState, 'fail');
         });
         it("death_on_jump_jumptext", function () {
             jumpTo('death_on_jump_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'dead_jump_msg');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_jump_msg');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
         it("death_on_jump_nojumptext", function () {
             jumpTo('death_on_jump_nojumptext');
-            assert.equal(player.getState().text, 'dead_jump_msg');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_jump_msg');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
         it("death_on_loc_jumptext", function () {
             jumpTo('death_on_loc_jumptext');
-            assert.equal(player.getState().text, 'jumptext');
+            assert.strictEqual(player.getState().text, 'jumptext');
             jumpTo('');
-            assert.equal(player.getState().text, 'death_on_loc');
+            assert.strictEqual(player.getState().text, 'death_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'dead_on_loc');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_on_loc');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
         it("death_on_loc_nojumptext", function () {
             jumpTo('death_on_loc_nojumptext');
-            assert.equal(player.getState().text, 'death_on_loc');
+            assert.strictEqual(player.getState().text, 'death_on_loc');
             jumpTo('');
-            assert.equal(player.getState().text, 'dead_on_loc');
-            assert.equal(player.getState().gameState, 'dead');
+            assert.strictEqual(player.getState().text, 'dead_on_loc');
+            assert.strictEqual(player.getState().gameState, 'dead');
         });
     });
 });
@@ -462,7 +462,7 @@ describe('Player on test5.qm', function () {
     });
     it("Accept", function () { return player.performJump(qmplayer_1.JUMP_I_AGREE); });
     it("In L2", function () {
-        assert.equal(player.getState().text, 'L2');
+        assert.strictEqual(player.getState().text, 'L2');
     });
 });
 describe('Player on test5-emptystart-usingformula.qm', function () {
@@ -474,7 +474,7 @@ describe('Player on test5-emptystart-usingformula.qm', function () {
     });
     it("Accept", function () { return player.performJump(qmplayer_1.JUMP_I_AGREE); });
     it("In L2", function () {
-        assert.equal(player.getState().text, 'L2');
+        assert.strictEqual(player.getState().text, 'L2');
     });
 });
 describe('Player on test5-emptystart-usingorder.qm', function () {
@@ -487,7 +487,7 @@ describe('Player on test5-emptystart-usingorder.qm', function () {
     it("Accept", function () { return player.performJump(qmplayer_1.JUMP_I_AGREE); });
     it("have jump", function () { return jumpTo(''); });
     it("In L2", function () {
-        assert.equal(player.getState().text, 'L2');
+        assert.strictEqual(player.getState().text, 'L2');
     });
 });
 describe('Player on test5-emptyloctext-emptyloc-autojump.qm', function () {
@@ -499,7 +499,7 @@ describe('Player on test5-emptyloctext-emptyloc-autojump.qm', function () {
     });
     it("Accept", function () { return player.performJump(qmplayer_1.JUMP_I_AGREE); });
     it("In L2", function () {
-        assert.equal(player.getState().text, 'L2');
+        assert.strictEqual(player.getState().text, 'L2');
     });
 });
 describe('Player on test5-emptyloctext-emptyloc-noautojump.qm doing 1-8', function () {
@@ -512,55 +512,55 @@ describe('Player on test5-emptyloctext-emptyloc-noautojump.qm doing 1-8', functi
     });
     it("1_nojumptext_emptyloc_noloctext_jumptext", function () {
         jumpTo('1_nojumptext_emptyloc_noloctext_jumptext');
-        assert.equal(player.getState().text, '');
+        assert.strictEqual(player.getState().text, '');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("2_jumptext_emptyloc_noloctext_jumptext", function () {
         jumpTo('2_jumptext_emptyloc_noloctext_jumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("3_nojumptext_noemptyloc_noloctext_jumptext", function () {
         jumpTo('3_nojumptext_noemptyloc_noloctext_jumptext');
-        assert.equal(player.getState().text, '');
+        assert.strictEqual(player.getState().text, '');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("4_jumptext_noemptyloc_noloctext_jumptext", function () {
         jumpTo('4_jumptext_noemptyloc_noloctext_jumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, '');
+        assert.strictEqual(player.getState().text, '');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("5_nojumptext_emptyloc_loctext_jumptext", function () {
         jumpTo('5_nojumptext_emptyloc_loctext_jumptext');
-        assert.equal(player.getState().text, 'L10');
+        assert.strictEqual(player.getState().text, 'L10');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("6_jumptext_emptyloc_loctext_jumptext", function () {
         jumpTo('6_jumptext_emptyloc_loctext_jumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("7_nojumptext_noemptyloc_loctext_jumptext", function () {
         jumpTo('7_nojumptext_noemptyloc_loctext_jumptext');
-        assert.equal(player.getState().text, 'L11');
+        assert.strictEqual(player.getState().text, 'L11');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("8_jumptext_noemptyloc_loctext_jumptext", function () {
         jumpTo('8_jumptext_noemptyloc_loctext_jumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L13');
+        assert.strictEqual(player.getState().text, 'L13');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     /*
       test5-emptyloctext-emptyloc-noautojump
@@ -586,47 +586,47 @@ describe('Player on test5-emptyloctext-emptyloc-autojump.qm doing 9-16', functio
     });
     it("9_nojumptext_emptyloc_noloctext_nojumptext", function () {
         jumpTo('9_nojumptext_emptyloc_noloctext_nojumptext');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("10_jumptext_emptyloc_noloctext_nojumptext", function () {
         jumpTo('10_jumptext_emptyloc_noloctext_nojumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("11_nojumptext_noemptyloc_noloctext_nojumptext", function () {
         jumpTo('11_nojumptext_noemptyloc_noloctext_nojumptext');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("12_jumptext_noemptyloc_noloctext_nojumptext", function () {
         jumpTo('12_jumptext_noemptyloc_noloctext_nojumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("13_nojumptext_emptyloc_loctext_nojumptext", function () {
         jumpTo('13_nojumptext_emptyloc_loctext_nojumptext');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("14_jumptext_emptyloc_loctext_nojumptext", function () {
         jumpTo('14_jumptext_emptyloc_loctext_nojumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("15_nojumptext_noemptyloc_loctext_nojumptext", function () {
         jumpTo('15_nojumptext_noemptyloc_loctext_nojumptext');
-        assert.equal(player.getState().text, 'L11');
+        assert.strictEqual(player.getState().text, 'L11');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("16_jumptext_noemptyloc_loctext_nojumptext", function () {
         jumpTo('16_jumptext_noemptyloc_loctext_nojumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L13');
+        assert.strictEqual(player.getState().text, 'L13');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
 });
 describe('Player on test5-emptyloctext-emptyloc-noautojump.qmm', function () {
@@ -638,9 +638,9 @@ describe('Player on test5-emptyloctext-emptyloc-noautojump.qmm', function () {
         player.performJump(qmplayer_1.JUMP_I_AGREE);
     });
     it.skip('Location is empty, but have text, so it is shown', function () {
-        assert.equal(player.getState().text, 'Empry loc with text');
+        assert.strictEqual(player.getState().text, 'Empry loc with text');
         jumpTo('');
-        assert.equal(player.getState().text, 'L2');
+        assert.strictEqual(player.getState().text, 'L2');
     });
 });
 describe.skip('Player on test5-emptyloctext-emptyloc-noautojump.qmm doing 1-8', function () {
@@ -654,55 +654,55 @@ describe.skip('Player on test5-emptyloctext-emptyloc-noautojump.qmm doing 1-8', 
     });
     it("1_nojumptext_emptyloc_noloctext_jumptext", function () {
         jumpTo('1_nojumptext_emptyloc_noloctext_jumptext');
-        assert.equal(player.getState().text, ''); // L2 here in TGE 5.2.9
+        assert.strictEqual(player.getState().text, ''); // L2 here in TGE 5.2.9
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("2_jumptext_emptyloc_noloctext_jumptext", function () {
         jumpTo('2_jumptext_emptyloc_noloctext_jumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("3_nojumptext_noemptyloc_noloctext_jumptext", function () {
         jumpTo('3_nojumptext_noemptyloc_noloctext_jumptext');
-        assert.equal(player.getState().text, ''); // L2 here in TGE 5.2.9
+        assert.strictEqual(player.getState().text, ''); // L2 here in TGE 5.2.9
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("4_jumptext_noemptyloc_noloctext_jumptext", function () {
         jumpTo('4_jumptext_noemptyloc_noloctext_jumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, ''); // jumptext here in TGE 5.2.9
+        assert.strictEqual(player.getState().text, ''); // jumptext here in TGE 5.2.9
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("5_nojumptext_emptyloc_loctext_jumptext", function () {
         jumpTo('5_nojumptext_emptyloc_loctext_jumptext');
-        assert.equal(player.getState().text, 'L10');
+        assert.strictEqual(player.getState().text, 'L10');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("6_jumptext_emptyloc_loctext_jumptext", function () {
         jumpTo('6_jumptext_emptyloc_loctext_jumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("7_nojumptext_noemptyloc_loctext_jumptext", function () {
         jumpTo('7_nojumptext_noemptyloc_loctext_jumptext');
-        assert.equal(player.getState().text, 'L11');
+        assert.strictEqual(player.getState().text, 'L11');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("8_jumptext_noemptyloc_loctext_jumptext", function () {
         jumpTo('8_jumptext_noemptyloc_loctext_jumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L13');
+        assert.strictEqual(player.getState().text, 'L13');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     /*
       test5-emptyloctext-emptyloc-noautojump
@@ -729,49 +729,49 @@ describe.skip('Player on test5-emptyloctext-emptyloc-autojump.qmm doing 9-16', f
     });
     it("9_nojumptext_emptyloc_noloctext_nojumptext", function () {
         jumpTo('9_nojumptext_emptyloc_noloctext_nojumptext');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("10_jumptext_emptyloc_noloctext_nojumptext", function () {
         jumpTo('10_jumptext_emptyloc_noloctext_nojumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("11_nojumptext_noemptyloc_noloctext_nojumptext", function () {
         jumpTo('11_nojumptext_noemptyloc_noloctext_nojumptext');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("12_jumptext_noemptyloc_noloctext_nojumptext", function () {
         jumpTo('12_jumptext_noemptyloc_noloctext_nojumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("13_nojumptext_emptyloc_loctext_nojumptext", function () {
         jumpTo('13_nojumptext_emptyloc_loctext_nojumptext');
-        assert.equal(player.getState().text, 'L10'); // Here is difference between tge4 and tge5
+        assert.strictEqual(player.getState().text, 'L10'); // Here is difference between tge4 and tge5
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("14_jumptext_emptyloc_loctext_nojumptext", function () {
         jumpTo('14_jumptext_emptyloc_loctext_nojumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("15_nojumptext_noemptyloc_loctext_nojumptext", function () {
         jumpTo('15_nojumptext_noemptyloc_loctext_nojumptext');
-        assert.equal(player.getState().text, 'L11');
+        assert.strictEqual(player.getState().text, 'L11');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
     it("16_jumptext_noemptyloc_loctext_nojumptext", function () {
         jumpTo('16_jumptext_noemptyloc_loctext_nojumptext');
-        assert.equal(player.getState().text, 'jumptext');
+        assert.strictEqual(player.getState().text, 'jumptext');
         jumpTo('');
-        assert.equal(player.getState().text, 'L13');
+        assert.strictEqual(player.getState().text, 'L13');
         jumpTo('');
-        assert.equal(player.getState().text, 'L6');
+        assert.strictEqual(player.getState().text, 'L6');
     });
 });
 describe('Player on test4.qm', function () {
@@ -787,58 +787,58 @@ describe('Player on test4.qm', function () {
     describe("Available jumps", function () {
         it("2 jumps available, going first loop", function () {
             jumpTo('-> L1');
-            assert.equal(player.getState().choices.length, 3, 'Three jump available ' +
+            assert.strictEqual(player.getState().choices.length, 3, 'Three jump available ' +
                 JSON.stringify(player.getState()));
             save = player.getSaving();
             jumpTo('-> L8');
             jumpTo('-> L9');
             jumpTo('-> Start');
             jumpTo('-> L8');
-            assert.equal(player.getState().choices.length, 0, 'Dead end here');
+            assert.strictEqual(player.getState().choices.length, 0, 'Dead end here');
             player.loadSaving(save);
         });
         it("2 jumps available, going second loop", function () {
-            assert.equal(player.getState().choices.length, 3, 'Three jump available');
+            assert.strictEqual(player.getState().choices.length, 3, 'Three jump available');
             jumpTo('-> L2');
             jumpTo('-> L3');
             jumpTo('-> Start');
-            assert.equal(player.getState().choices.length, 2, 'Two jumps left');
+            assert.strictEqual(player.getState().choices.length, 2, 'Two jumps left');
         });
         it("2 jumps available, going third loop", function () {
             jumpTo('-> L4');
             jumpTo('-> L6');
             jumpTo('-> L7');
             jumpTo('-> L4');
-            assert.equal(player.getState().text, 'L4');
-            assert.equal(player.getState().choices.length, 1);
+            assert.strictEqual(player.getState().text, 'L4');
+            assert.strictEqual(player.getState().choices.length, 1);
             jumpTo('');
         });
         it("L5", function () {
-            assert.equal(player.getState().text, 'L5');
+            assert.strictEqual(player.getState().text, 'L5');
             jumpTo('-> L10');
             jumpTo('-> L11');
             jumpTo('-> L5');
             jumpTo('-> L10');
             jumpTo('-> L11');
             jumpTo('-> L5');
-            assert.equal(player.getState().choices.length, 1);
+            assert.strictEqual(player.getState().choices.length, 1);
             jumpTo('-> L13');
         });
         it("L13", function () {
-            assert.equal(player.getState().text, 'L13');
-            assert.equal(player.getState().choices.length, 4);
+            assert.strictEqual(player.getState().text, 'L13');
+            assert.strictEqual(player.getState().choices.length, 4);
             save = player.getSaving();
             jumpTo('-> L16');
-            assert.equal(player.getState().choices.length, 0, 'L16 is dead end');
+            assert.strictEqual(player.getState().choices.length, 0, 'L16 is dead end');
             player.loadSaving(save);
             jumpTo('-> L18');
-            assert.equal(player.getState().choices.filter(function (x) { return x.active; }).length, 0, 'L18 is dead end');
+            assert.strictEqual(player.getState().choices.filter(function (x) { return x.active; }).length, 0, 'L18 is dead end');
             player.loadSaving(save);
             jumpTo('-> L14');
             jumpTo('-> L13');
             jumpTo('-> L14');
             jumpTo('-> L13');
-            assert.equal(player.getState().choices.length, 3);
+            assert.strictEqual(player.getState().choices.length, 3);
         });
     });
 });
@@ -862,55 +862,55 @@ describe('Player on test3.qm', function () {
         });
         it("loc0text_0empty_jump0text_param=0", function () {
             jumpTo('loc0text_0empty_jump0text_param=0');
-            assert.equal(player.getState().text, 'Main menu', 'Wants main menu');
+            assert.strictEqual(player.getState().text, 'Main menu', 'Wants main menu');
         });
         it("loc0text_0empty_jump0text_param=1", function () {
             var st = jumpTo("loc0text_0empty_jump0text_param=1");
-            assert.equal(player.getState().choices.length, 1);
-            assert.equal(player.getState().text, '');
-            assert.equal(jumpTo('2win').text, 'Win');
+            assert.strictEqual(player.getState().choices.length, 1);
+            assert.strictEqual(player.getState().text, '');
+            assert.strictEqual(jumpTo('2win').text, 'Win');
         });
         it("loc1text_0empty_jump0text_param=0", function () {
             assert.ok(jumpTo('loc1text_0empty_jump0text_param=0').text, 'Text');
-            assert.equal(player.getState().choices.length, 1, 'One choise');
+            assert.strictEqual(player.getState().choices.length, 1, 'One choise');
         });
         it("loc1text_0empty_jump0text_param=1", function () {
             assert.ok(jumpTo('loc1text_0empty_jump0text_param=1').text, 'Text');
-            assert.equal(player.getState().choices.length, 1);
-            assert.equal(jumpTo('2win').text, 'Win');
+            assert.strictEqual(player.getState().choices.length, 1);
+            assert.strictEqual(jumpTo('2win').text, 'Win');
         });
         it("loc0text_1empty_jump0text_param=0", function () {
-            assert.equal(jumpTo('loc0text_1empty_jump0text_param=0').text, 'Main menu');
+            assert.strictEqual(jumpTo('loc0text_1empty_jump0text_param=0').text, 'Main menu');
         });
         it("loc0loctext1text_1empty_jump0text_param=0", function () {
-            assert.equal(jumpTo('loc0loctext1text_1empty_jump0text_param=0').text, 'Main menu');
+            assert.strictEqual(jumpTo('loc0loctext1text_1empty_jump0text_param=0').text, 'Main menu');
         });
         it("loc1loctext1text_1empty_jump0text_param=0", function () {
-            assert.equal(jumpTo('loc1loctext1text_1empty_jump0text_param=0').text, 'some_text_l23');
-            assert.equal(jumpTo('').text, 'Main menu');
+            assert.strictEqual(jumpTo('loc1loctext1text_1empty_jump0text_param=0').text, 'some_text_l23');
+            assert.strictEqual(jumpTo('').text, 'Main menu');
         });
         it("loc0loctext1jumptext1text_1empty_jump0text_param=0", function () {
-            assert.equal(jumpTo('loc0loctext1jumptext1text_1empty_jump0text_param=0').text, 'jump52text');
-            assert.equal(jumpTo('').text, 'Main menu');
+            assert.strictEqual(jumpTo('loc0loctext1jumptext1text_1empty_jump0text_param=0').text, 'jump52text');
+            assert.strictEqual(jumpTo('').text, 'Main menu');
         });
         it("loc1loctext1jumptext1text_1empty_jump0text_param=0", function () {
-            assert.equal(jumpTo('loc1loctext1jumptext1text_1empty_jump0text_param=0').text, 'jump53text');
-            assert.equal(jumpTo('').text, 'some_text_l23');
-            assert.equal(jumpTo('').text, 'Main menu');
+            assert.strictEqual(jumpTo('loc1loctext1jumptext1text_1empty_jump0text_param=0').text, 'jump53text');
+            assert.strictEqual(jumpTo('').text, 'some_text_l23');
+            assert.strictEqual(jumpTo('').text, 'Main menu');
         });
         it("loc0text_1empty_jump0text_param=1", function () {
             jumpTo("loc0text_1empty_jump0text_param=1");
-            assert.equal(player.getState().choices.length, 1);
-            assert.equal(jumpTo('2win').text, 'Win');
+            assert.strictEqual(player.getState().choices.length, 1);
+            assert.strictEqual(jumpTo('2win').text, 'Win');
         });
         it("loc0text_1empty_jump1text_locparam=0", function () {
-            assert.equal(jumpTo('loc0text_1empty_jump1text_locparam=0').text, 'jumpTextX');
-            assert.equal(jumpTo('').text, 'Main menu');
+            assert.strictEqual(jumpTo('loc0text_1empty_jump1text_locparam=0').text, 'jumpTextX');
+            assert.strictEqual(jumpTo('').text, 'Main menu');
         });
         it("loc0text_1empty_jump1text_locparam=1", function () {
-            assert.equal(jumpTo('loc0text_1empty_jump1text_locparam=1').text, 'jumpText');
-            assert.equal(player.getState().choices.length, 1);
-            assert.equal(jumpTo('2win').text, 'Win');
+            assert.strictEqual(jumpTo('loc0text_1empty_jump1text_locparam=1').text, 'jumpText');
+            assert.strictEqual(player.getState().choices.length, 1);
+            assert.strictEqual(jumpTo('2win').text, 'Win');
         });
     });
     /* TODO
@@ -947,19 +947,19 @@ describe('Player on test2.qm', function () {
         player.start();
     });
     it("Accept", function () { return player.performJump(qmplayer_1.JUMP_I_AGREE); });
-    it("Main menu", function () { return assert.equal(jumpTo('mainmenu').text, 'Main menu'); });
-    it("To equal", function () { return assert.equal(jumpTo('To equal').text, 'Here should be 1 jump'); });
+    it("Main menu", function () { return assert.strictEqual(jumpTo('mainmenu').text, 'Main menu'); });
+    it("To equal", function () { return assert.strictEqual(jumpTo('To equal').text, 'Here should be 1 jump'); });
     it("Next", function () {
-        assert.equal(player.getState().choices.length, 1);
+        assert.strictEqual(player.getState().choices.length, 1);
         jumpTo('next').text;
-        assert.equal(player.getState().text, 'Text2');
+        assert.strictEqual(player.getState().text, 'Text2');
     });
     it("Next", function () {
-        assert.equal(player.getState().choices.length, 1);
+        assert.strictEqual(player.getState().choices.length, 1);
         jumpTo('next').text;
-        assert.equal(player.getState().text, 'Text3');
+        assert.strictEqual(player.getState().text, 'Text3');
     });
-    it("Main menu", function () { return assert.equal(jumpTo('mainmenu').text, 'Main menu'); });
+    it("Main menu", function () { return assert.strictEqual(jumpTo('mainmenu').text, 'Main menu'); });
     it("Save in main menu", function () {
         save = player.getSaving();
     });
@@ -990,14 +990,14 @@ describe('Player on test2.qm', function () {
         });
         it("zombie0", function () {
             var st = jumpTo('zombie0');
-            assert.equal(st.gameState, 'dead');
-            assert.equal(st.text, 'Zombie');
+            assert.strictEqual(st.gameState, 'dead');
+            assert.strictEqual(st.text, 'Zombie');
         });
         it("zombie1", function () {
             assert.ok(jumpTo('zombie1').text === 'text');
             var st = jumpTo('');
-            assert.equal(st.gameState, 'dead');
-            assert.equal(st.text, 'Zombie');
+            assert.strictEqual(st.gameState, 'dead');
+            assert.strictEqual(st.text, 'Zombie');
         });
     });
     describe("Locations with crit params in update", function () {
@@ -1013,7 +1013,7 @@ describe('Player on test2.qm', function () {
             jumpTo('failZombie');
             var st = jumpTo();
             assert.ok(st.text === 'Zombie');
-            assert.equal(st.choices.length, 0);
+            assert.strictEqual(st.choices.length, 0);
         });
     });
     describe("Empty locations/jumps", function () {
@@ -1022,48 +1022,48 @@ describe('Player on test2.qm', function () {
             jumpTo('empty_loc_empty_jump');
         });
         it("loc0text_0empty_jump0text_param=0", function () {
-            assert.equal(jumpTo('loc0text_0empty_jump0text_param=0').text, '');
-            assert.equal(player.getState().choices.length, 1, 'One choise');
-            assert.equal(player.getState().choices.filter(function (x) { return x.active; }).length, 0, 'But inactive');
-            assert.equal(player.getState().choices[0].text, 'neverActive');
+            assert.strictEqual(jumpTo('loc0text_0empty_jump0text_param=0').text, '');
+            assert.strictEqual(player.getState().choices.length, 1, 'One choise');
+            assert.strictEqual(player.getState().choices.filter(function (x) { return x.active; }).length, 0, 'But inactive');
+            assert.strictEqual(player.getState().choices[0].text, 'neverActive');
         });
         it("loc0text_0empty_jump0text_param=1", function () {
             var st = jumpTo("loc0text_0empty_jump0text_param=1");
-            assert.equal(player.getState().choices.length, 2);
-            assert.equal(jumpTo('2win').text, 'Win');
+            assert.strictEqual(player.getState().choices.length, 2);
+            assert.strictEqual(jumpTo('2win').text, 'Win');
         });
         it("loc1text_0empty_jump0text_param=0", function () {
             assert.ok(jumpTo('loc1text_0empty_jump0text_param=0').text, 'Text');
-            assert.equal(player.getState().choices.length, 1, 'One choise');
-            assert.equal(player.getState().choices.filter(function (x) { return x.active; }).length, 0, 'But inactive');
-            assert.equal(player.getState().choices[0].text, 'neverActive');
+            assert.strictEqual(player.getState().choices.length, 1, 'One choise');
+            assert.strictEqual(player.getState().choices.filter(function (x) { return x.active; }).length, 0, 'But inactive');
+            assert.strictEqual(player.getState().choices[0].text, 'neverActive');
         });
         it("loc1text_0empty_jump0text_param=1", function () {
             assert.ok(jumpTo('loc1text_0empty_jump0text_param=1').text, 'Text');
-            assert.equal(player.getState().choices.length, 2);
-            assert.equal(jumpTo('2win').text, 'Win');
+            assert.strictEqual(player.getState().choices.length, 2);
+            assert.strictEqual(jumpTo('2win').text, 'Win');
         });
         it("loc0text_1empty_jump0text_param=0", function () {
-            assert.equal(jumpTo('loc0text_1empty_jump0text_param=0').text, '');
-            assert.equal(player.getState().choices.length, 1, 'One choise');
-            assert.equal(player.getState().choices.filter(function (x) { return x.active; }).length, 0, 'But inactive');
-            assert.equal(player.getState().choices[0].text, 'neverActive');
+            assert.strictEqual(jumpTo('loc0text_1empty_jump0text_param=0').text, '');
+            assert.strictEqual(player.getState().choices.length, 1, 'One choise');
+            assert.strictEqual(player.getState().choices.filter(function (x) { return x.active; }).length, 0, 'But inactive');
+            assert.strictEqual(player.getState().choices[0].text, 'neverActive');
         });
         it("loc0text_1empty_jump0text_param=1", function () {
             jumpTo("loc0text_1empty_jump0text_param=1");
-            assert.equal(player.getState().choices.length, 2);
-            assert.equal(jumpTo('2win').text, 'Win');
+            assert.strictEqual(player.getState().choices.length, 2);
+            assert.strictEqual(jumpTo('2win').text, 'Win');
         });
         it("loc0text_1empty_jump1text_locparam=0", function () {
-            assert.equal(jumpTo('loc0text_1empty_jump1text_locparam=0').text, 'jumpTextX');
-            assert.equal(player.getState().choices.length, 1, 'One choise');
-            assert.equal(player.getState().choices.filter(function (x) { return x.active; }).length, 0, 'But inactive');
-            assert.equal(player.getState().choices[0].text, 'neverActive');
+            assert.strictEqual(jumpTo('loc0text_1empty_jump1text_locparam=0').text, 'jumpTextX');
+            assert.strictEqual(player.getState().choices.length, 1, 'One choise');
+            assert.strictEqual(player.getState().choices.filter(function (x) { return x.active; }).length, 0, 'But inactive');
+            assert.strictEqual(player.getState().choices[0].text, 'neverActive');
         });
         it("loc0text_1empty_jump1text_locparam=1", function () {
-            assert.equal(jumpTo('loc0text_1empty_jump1text_locparam=1').text, 'jumpText');
-            assert.equal(player.getState().choices.length, 2);
-            assert.equal(jumpTo('2win').text, 'Win');
+            assert.strictEqual(jumpTo('loc0text_1empty_jump1text_locparam=1').text, 'jumpText');
+            assert.strictEqual(player.getState().choices.length, 2);
+            assert.strictEqual(jumpTo('2win').text, 'Win');
         });
     });
     /* TODO
@@ -1109,8 +1109,8 @@ describe('Player on test.qm', function () {
     it("Starting location jumps count", function () {
         var state2 = player.getState();
         // console.info(JSON.stringify(state2, null, 4));
-        assert.equal(state2.choices.filter(function (x) { return x.active; }).length, 2);
-        assert.equal(state2.choices.filter(function (x) { return !x.active; }).length, 5);
+        assert.strictEqual(state2.choices.filter(function (x) { return x.active; }).length, 2);
+        assert.strictEqual(state2.choices.filter(function (x) { return !x.active; }).length, 5);
         assert.ok(state2.choices[0].text.indexOf('p2 / 5') > -1);
         assert.ok(state2.choices[6].text.indexOf('Видно активен по формуле') > -1);
     });
@@ -1126,75 +1126,75 @@ describe('Player on test.qm', function () {
         var state4 = player.getState();
         assert.ok(state4.paramsState[5].indexOf('hideme') < 0);
         //console.info(JSON.stringify(state4, null, 4));
-        assert.equal(state4.text, 'Текст на переходе');
+        assert.strictEqual(state4.text, 'Текст на переходе');
         player.performJump(state4.choices.shift().jumpId);
         var state5 = player.getState();
         //console.info(JSON.stringify(state5, null, 4));
         assert.ok(state5.paramsState[5].indexOf('hideme') > -1);
     });
-    it("\u041F\u0443\u0441\u0442\u0430\u044F1", function () { return assert.equal(jumpTo('Пустая1').text, 'Пустая1'); });
+    it("\u041F\u0443\u0441\u0442\u0430\u044F1", function () { return assert.strictEqual(jumpTo('Пустая1').text, 'Пустая1'); });
     it("\u041F\u0443\u0441\u0442\u0430\u044F 2", function () {
         var st7 = jumpTo('Пустая 2');
-        assert.equal(st7.text, 'Пустая 2 замещенный');
-        assert.equal(st7.choices.length, 4);
+        assert.strictEqual(st7.text, 'Пустая 2 замещенный');
+        assert.strictEqual(st7.choices.length, 4);
     });
     it("\u041F\u0443\u0441\u0442\u043E\u0439 \u043F\u0440\u043E\u0432\u0435\u0440\u043A\u0430", function () {
         var save = player.getSaving();
         var st8 = jumpTo('пустой проверка');
-        assert.equal(st8.text, 'HangsHere');
-        assert.equal(st8.choices.length, 1, 'One choice');
-        assert.equal(st8.choices.filter(function (x) { return x.active; }).length, 0, 'Inactive');
+        assert.strictEqual(st8.text, 'HangsHere');
+        assert.strictEqual(st8.choices.length, 1, 'One choice');
+        assert.strictEqual(st8.choices.filter(function (x) { return x.active; }).length, 0, 'Inactive');
         player.loadSaving(save);
     });
     it("EmptyJumps", function () {
         jumpTo('EmptyJumps');
         jumpTo('');
         jumpTo('');
-        assert.equal(player.getState().text, 'Пустая 2');
+        assert.strictEqual(player.getState().text, 'Пустая 2');
     });
     it("\u041D\u0430 \u0442\u0435\u0441\u0442 \u043A\u0440\u0438\u0442\u0438\u0447\u043D\u044B\u0445", function () {
         jumpTo('тест');
-        assert.equal(player.getState().text, 'Тест критичных параметров');
+        assert.strictEqual(player.getState().text, 'Тест критичных параметров');
     });
     it("\u0414\u0435\u043B\u0430\u0435\u043C \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D\u0438\u0435", function () {
         save1 = player.getSaving();
     });
     it("OnJumpWithoutDescription", function () {
         jumpTo('OnJumpWithoutDescription');
-        assert.equal(player.getState().text, 'CritInJump');
+        assert.strictEqual(player.getState().text, 'CritInJump');
         jumpTo('');
         //console.info(player.getState());
-        assert.equal(player.getState().gameState, 'win');
+        assert.strictEqual(player.getState().gameState, 'win');
         player.loadSaving(save1);
     });
     // console.info('After load\n\n', player.getState(), 'saved state itself\n\n', save1);
     it("win", function () {
         jumpTo('win');
-        assert.equal(player.getState().text, 'YouAreWinner');
+        assert.strictEqual(player.getState().text, 'YouAreWinner');
         jumpTo('');
-        assert.equal(player.getState().gameState, 'win');
+        assert.strictEqual(player.getState().gameState, 'win');
         player.loadSaving(save1);
     });
     it("fail", function () {
         jumpTo('fail');
-        assert.equal(player.getState().text, 'You failed');
-        assert.equal(player.getState().gameState, 'fail');
+        assert.strictEqual(player.getState().text, 'You failed');
+        assert.strictEqual(player.getState().gameState, 'fail');
         player.loadSaving(save1);
     });
     it("dead", function () {
         jumpTo('dead');
-        assert.equal(player.getState().text, 'You are dead');
-        assert.equal(player.getState().gameState, 'dead');
+        assert.strictEqual(player.getState().text, 'You are dead');
+        assert.strictEqual(player.getState().gameState, 'dead');
         player.loadSaving(save1);
     });
     it("OnJumpWithDescription", function () {
         jumpTo('OnJumpWithDescription');
-        assert.equal(player.getState().text, 'Blablabla');
+        assert.strictEqual(player.getState().text, 'Blablabla');
         //console.info(`State = ${player.getSaving().state}`)
         jumpTo('');
         //console.info(`State = ${player.getSaving().state}`)
         jumpTo('');
-        assert.equal(player.getState().gameState, 'win');
+        assert.strictEqual(player.getState().gameState, 'win');
         player.loadSaving(save1);
     });
     it("\u0421\u043F\u043E\u0440\u043D\u044B\u0435 \u0438 \u043B\u0438\u043C\u0438\u0442 \u043F\u0435\u0440\u0435\u0445\u043E\u0434\u043E\u0432", function () {
@@ -1209,11 +1209,11 @@ describe('Player on test.qm', function () {
         var randomJumpCount = 0;
         for (var i = 0; i < 700; i++) {
             // console.info(`i=${i}, f=${((i+2) % 3) + 1} val=${parseInt(player.getState().text)}`);
-            assert.equal(((i + 2) % 3) + 1, parseInt(player.getState().text), "X1"); // + JSON.stringify(player.getSaving(), null, 4));
+            assert.strictEqual(((i + 2) % 3) + 1, parseInt(player.getState().text), "X1"); // + JSON.stringify(player.getSaving(), null, 4));
             randomJumpCount += player.getState().choices.filter(function (x) { return x.text.indexOf('random') > -1; }).length;
             jumpTo('oooo');
             // console.info(`~~~~~~~~~~~~~~~~~~~~~~~~~~ i=${i} f=${((i) % 6) + 3} state=${parseInt(player.getState().text)}`)
-            assert.equal(((i) % 6) + 3, parseInt(player.getState().text), "X2");
+            assert.strictEqual(((i) % 6) + 3, parseInt(player.getState().text), "X2");
             jumpTo('back');
         }
         var st10 = player.getState();
@@ -1229,26 +1229,26 @@ describe('Player on test.qm', function () {
     it("LocationCritOnEmpty -> ToLocationWhichSetsCritParam-WithoutDesc", function () {
         jumpTo('LocationCritOnEmpty');
         jumpTo('ToLocationWhichSetsCritParam-WithoutDesc');
-        assert.equal(player.getState().text, 'That location have crit param');
-        assert.equal(player.getState().choices.length, 1);
+        assert.strictEqual(player.getState().text, 'That location have crit param');
+        assert.strictEqual(player.getState().choices.length, 1);
         jumpTo('');
-        assert.equal(player.getState().text, 'CritLocationMessage');
+        assert.strictEqual(player.getState().text, 'CritLocationMessage');
         jumpTo('');
-        assert.equal(player.getState().gameState, 'win');
+        assert.strictEqual(player.getState().gameState, 'win');
         player.loadSaving(save1);
     });
     it("LocationCritOnEmpty -> ToLocationWhichSetsCritParam-WithDesc", function () {
         jumpTo('LocationCritOnEmpty');
         jumpTo('ToLocationWhichSetsCritParam-WithDesc');
-        assert.equal(player.getState().text, 'Description');
-        assert.equal(player.getState().choices.length, 1);
+        assert.strictEqual(player.getState().text, 'Description');
+        assert.strictEqual(player.getState().choices.length, 1);
         jumpTo('');
-        assert.equal(player.getState().text, 'That location have crit param');
-        assert.equal(player.getState().choices.length, 1);
+        assert.strictEqual(player.getState().text, 'That location have crit param');
+        assert.strictEqual(player.getState().choices.length, 1);
         jumpTo('');
-        assert.equal(player.getState().text, 'CritLocationMessage');
+        assert.strictEqual(player.getState().text, 'CritLocationMessage');
         jumpTo('');
-        assert.equal(player.getState().gameState, 'win');
+        assert.strictEqual(player.getState().gameState, 'win');
         player.loadSaving(save1);
     });
     it("LocationCritOnEmpty -> ToEmptyLocationWhichSetsCritParam-WithoutDesc", function () {
@@ -1256,19 +1256,19 @@ describe('Player on test.qm', function () {
         // console.info(`State === ` + player.getSaving().state);
         jumpTo('ToEmptyLocationWhichSetsCritParam-WithoutDesc');
         // console.info(`State === ` + player.getSaving().state);;
-        assert.equal(player.getState().text, 'CritEmptyLocationMessage');
+        assert.strictEqual(player.getState().text, 'CritEmptyLocationMessage');
         jumpTo('');
-        assert.equal(player.getState().gameState, 'win');
+        assert.strictEqual(player.getState().gameState, 'win');
         player.loadSaving(save1);
     });
     it("LocationCritOnEmpty -> ToEmptyLocationWhichSetsCritParam-WithDesc", function () {
         jumpTo('LocationCritOnEmpty');
         jumpTo('ToEmptyLocationWhichSetsCritParam-WithDesc');
-        assert.equal(player.getState().text, 'Description');
-        assert.equal(player.getState().choices.length, 1);
+        assert.strictEqual(player.getState().text, 'Description');
+        assert.strictEqual(player.getState().choices.length, 1);
         jumpTo('');
         jumpTo('');
-        assert.equal(player.getState().gameState, 'win');
+        assert.strictEqual(player.getState().gameState, 'win');
         player.loadSaving(save1);
     });
 });

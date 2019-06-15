@@ -37,7 +37,7 @@ describe("Using saveAndValidaton.qm, seed 1", function () {
     });
     it("That seed have 2 jumps", function () {
         state = qmplayer_1.performJump(qmplayer_1.JUMP_I_AGREE, quest, state, images, date1);
-        assert.equal(state.possibleJumps.length, 2);
+        assert.strictEqual(state.possibleJumps.length, 2);
     });
     it("Jumping", function () {
         state = qmplayer_1.performJump(2, quest, state, images, date1);
@@ -45,9 +45,9 @@ describe("Using saveAndValidaton.qm, seed 1", function () {
         state = qmplayer_1.performJump(6, quest, state, images, date1);
         assert.deepEqual(state.paramValues.slice(0, 3), [5, 5, 2]);
         state = qmplayer_1.performJump(qmplayer_1.JUMP_GO_BACK_TO_SHIP, quest, state, images, date1);
-        assert.equal(state.state, "returnedending");
+        assert.strictEqual(state.state, "returnedending");
         var uistate = funcs_1.getUIState(quest, state, funcs_1.DEFAULT_RUS_PLAYER);
-        assert.equal(uistate.gameState, "win");
+        assert.strictEqual(uistate.gameState, "win");
     });
     it("Validating state", function () {
         assert.ok(qmplayer_1.validateState(quest, state));
@@ -71,6 +71,6 @@ describe("Using saveAndValidaton.qm, seed 2", function () {
     });
     it("That seed have 1 jump", function () {
         state = qmplayer_1.performJump(qmplayer_1.JUMP_I_AGREE, quest, state, images, date1);
-        assert.equal(state.possibleJumps.length, 1);
+        assert.strictEqual(state.possibleJumps.length, 1);
     });
 });
