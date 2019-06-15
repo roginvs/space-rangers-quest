@@ -155,7 +155,7 @@ export async function getDb(app: firebase.app.App) {
         } = {};
         const openCursor = objectStore.openCursor();
         openCursor.onsuccess = function(event: any) {
-          var cursor = event.target.result;
+          const cursor = event.target.result;
           if (cursor) {
             if (cursor.value) {
               data[cursor.key] = cursor.value;
@@ -176,7 +176,7 @@ export async function getDb(app: firebase.app.App) {
       });
     } else {
       const prefix = `RANGERS-${storeName}-`;
-      let r: {
+      const r: {
         [key: string]: any;
       } = {};
       for (const lsFullKey of Object.keys(localStorage)) {

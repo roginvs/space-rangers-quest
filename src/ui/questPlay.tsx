@@ -101,7 +101,7 @@ export class QuestPlay extends React.Component<
 
     const questArrayBuffer = await new Promise<ArrayBuffer>(
       (resolv, reject) => {
-        var xhr = new XMLHttpRequest();
+        const xhr = new XMLHttpRequest();
         const url = DATA_DIR + game.filename;
         xhr.open("GET", url);
 

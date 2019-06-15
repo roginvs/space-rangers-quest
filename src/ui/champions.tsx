@@ -56,8 +56,8 @@ export class ChampionsTabContainer extends React.Component<
   }
 
   private mounted = false;
-  private worker: WorkerPromise = new WorkerPromise("worker.js");
-  private onUnmount: (() => void)[] = [
+  private readonly worker: WorkerPromise = new WorkerPromise("worker.js");
+  private readonly onUnmount: (() => void)[] = [
     () => (this.mounted = false),
     () => this.worker.destroy()
   ];

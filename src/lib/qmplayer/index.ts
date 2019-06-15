@@ -21,13 +21,13 @@ import {
 import { DEFAULT_RUS_PLAYER, DEFAULT_ENG_PLAYER } from "./player";
 
 export class QMPlayer {
-  private player =
+  private readonly player =
     this.lang === "rus" ? DEFAULT_RUS_PLAYER : DEFAULT_ENG_PLAYER;
   private state: GameState;
   constructor(
-    private quest: QM,
-    private images: PQImages = [],
-    private lang: "rus" | "eng"
+    private readonly quest: QM,
+    private readonly images: PQImages = [],
+    private readonly lang: "rus" | "eng"
   ) {
     this.state = initGame(this.quest, Math.random().toString(36));
   }

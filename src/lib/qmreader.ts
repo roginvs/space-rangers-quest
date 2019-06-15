@@ -2,7 +2,7 @@ export const LOCATION_TEXTS = 10;
 
 class Reader {
   private i = 0;
-  constructor(private data: Buffer) {}
+  constructor(private readonly data: Buffer) {}
   int32() {
     const result = this.data.readInt32LE(this.i);
     /*

@@ -7,9 +7,9 @@ import {
 } from "./defs";
 
 export class WorkerPromise {
-  private worker = new Worker(this.workerUrl);
+  private readonly worker = new Worker(this.workerUrl);
   private id = 0;
-  constructor(private workerUrl: string) {
+  constructor(private readonly workerUrl: string) {
     this.worker.addEventListener("error", e => {
       const msg = `${e.message} at ${e.lineno}:${e.colno}`;
       const err = new Error(msg);
@@ -36,7 +36,7 @@ export class WorkerPromise {
     this.worker.terminate();
   }
 
-  private waiters = new Map<
+  private readonly waiters = new Map<
     number,
     {
       resolve: (data: any) => void;

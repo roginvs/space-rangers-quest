@@ -49,7 +49,7 @@ export function QuestReplaceTags(props: { str: string }) {
     cloneStr = cloneStr.replace(textToReplace, newText);
   }
 
-  let s =
+  const s =
     "&nbsp" +
     cloneStr
       .replace(/\r\n/g, "<br/>&nbsp")

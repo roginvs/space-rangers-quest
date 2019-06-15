@@ -177,7 +177,7 @@ function replace(
       Day: `${DEFAULT_DAYS_TO_PASS_QUEST - state.daysPassed}`,
       Date: SRDateToString(DEFAULT_DAYS_TO_PASS_QUEST, lang),
       CurDate: SRDateToString(state.daysPassed, lang),
-      lang: lang,
+      lang,
       ...player
     },
     state.paramValues,
@@ -200,7 +200,7 @@ function getParamsState(
       if (val !== 0 || param.showWhenZero) {
         for (const range of param.showingInfo) {
           if (val >= range.from && val <= range.to) {
-            let str = replace(range.str, state, player, i, random);
+            const str = replace(range.str, state, player, i, random);
             paramsState.push(str);
             break;
           }
@@ -493,10 +493,10 @@ function calculateParamsUpdate(
   random: RandomFunc,
   paramsChanges: ReadonlyArray<ParameterChange>
 ) {
-  let critParamsTriggered: number[] = [];
+  const critParamsTriggered: number[] = [];
   let state = stateOriginal;
-  let oldValues = state.paramValues.slice(0, quest.paramsCount);
-  let newValues = state.paramValues.slice(0, quest.paramsCount);
+  const oldValues = state.paramValues.slice(0, quest.paramsCount);
+  const newValues = state.paramValues.slice(0, quest.paramsCount);
 
   for (let i = 0; i < quest.paramsCount; i++) {
     const change = paramsChanges[i];
@@ -955,12 +955,12 @@ function calculateLocation(
     };
   });
 
-  let possibleJumpsWithSameTextGrouped: {
+  const possibleJumpsWithSameTextGrouped: {
     jump: DeepImmutable<Jump>;
     active: boolean;
   }[] = [];
 
-  let seenTexts: {
+  const seenTexts: {
     [text: string]: boolean;
   } = {};
   for (const j of allPossibleJumps) {
@@ -1159,7 +1159,7 @@ export function getAllImagesToPreload(quest: Quest, images: PQImages) {
   const imagesQmm = getImagesListFromQmm(quest as QM).map(
     x => x.toLowerCase() + ".jpg"
   );
-  let uniq: { [name: string]: boolean } = {};
+  const uniq: { [name: string]: boolean } = {};
   for (const img of [...imagesPQI, ...imagesQmm]) {
     uniq[img] = true;
   }

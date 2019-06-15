@@ -107,7 +107,7 @@ describe("Formula parser test", function() {
     "0.05*100": 5,
     "100*0.05": 5
   };
-  let params = [0, 1, 2, 4, 8, 16, 32, 64, 100];
+  const params = [0, 1, 2, 4, 8, 16, 32, 64, 100];
   for (let i = 0; i < 100; i++) {
     params.push(i * 2);
   }
@@ -175,7 +175,7 @@ describe("Formula parser test", function() {
     });
 
     it(`Check randomness distribution`, () => {
-      let values: { [val: number]: number } = {};
+      const values: { [val: number]: number } = {};
       for (let i = 0; i < 10000; i++) {
         const random = parse("3 + [1;3;6..9] - 3", [], randomFromMathRandom);
         assert.ok(

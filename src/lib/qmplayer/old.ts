@@ -78,10 +78,10 @@ class QMPlayer {
   //    private locationsIds = this.quest.locations.map(x => x.id);
   //    private jumpsIds = this.quest.jumps.map(x => x.id);
   constructor(
-    private quest: QM,
-    private images: PQImages = [],
-    private lang: "rus" | "eng",
-    private oldTgeBehaviour: boolean
+    private readonly quest: QM,
+    private readonly images: PQImages = [],
+    private readonly lang: "rus" | "eng",
+    private readonly oldTgeBehaviour: boolean
   ) {
     for (let i = 0; i < this.quest.paramsCount; i++) {
       if (this.quest.params[i].isMoney) {
@@ -96,7 +96,7 @@ class QMPlayer {
     this.start();
   }
 
-  private texts =
+  private readonly texts =
     this.lang === "rus"
       ? {
           iAgree: "Я берусь за это задание",
@@ -164,7 +164,7 @@ class QMPlayer {
         if (val !== 0 || param.showWhenZero) {
           for (const range of param.showingInfo) {
             if (val >= range.from && val <= range.to) {
-              let str = this.replace(range.str, i);
+              const str = this.replace(range.str, i);
               paramsState.push(str);
               break;
             }
@@ -179,7 +179,7 @@ class QMPlayer {
     const imagesQmm = getImagesListFromQmm(this.quest).map(
       x => x.toLowerCase() + ".jpg"
     );
-    let uniq: { [name: string]: boolean } = {};
+    const uniq: { [name: string]: boolean } = {};
     for (const img of [...imagesPQI, ...imagesQmm]) {
       uniq[img] = true;
     }
@@ -399,9 +399,9 @@ class QMPlayer {
   }
 
   private calculateParamsUpdate(paramsChanges: ParameterChange[]) {
-    let critParamsTriggered: number[] = [];
-    let oldValues = this.state.paramValues.slice(0, this.quest.paramsCount);
-    let newValues = this.state.paramValues.slice(0, this.quest.paramsCount);
+    const critParamsTriggered: number[] = [];
+    const oldValues = this.state.paramValues.slice(0, this.quest.paramsCount);
+    const newValues = this.state.paramValues.slice(0, this.quest.paramsCount);
 
     for (let i = 0; i < this.quest.paramsCount; i++) {
       const change = paramsChanges[i];
@@ -800,12 +800,12 @@ class QMPlayer {
         };
       });
 
-    let newJumps: {
+    const newJumps: {
       jump: Jump;
       active: boolean;
     }[] = [];
 
-    let seenTexts: {
+    const seenTexts: {
       [text: string]: boolean;
     } = {};
     for (const j of possibleJumps) {

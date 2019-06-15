@@ -18,7 +18,7 @@ describe(`Checking all quests for formulas and params substitution`, function() 
       describe(`Checking quest ${fullname}`, () => {
         let quest: QM;
         let params: number[];
-        let player: PlayerSubstitute = {
+        const player: PlayerSubstitute = {
           Ranger: "Ranger",
           Player: "Player",
           FromPlanet: "FromPlanet",

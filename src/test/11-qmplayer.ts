@@ -213,7 +213,6 @@ describe("Player on test10-deadly-loc.qmm", function() {
 });
 
 describe("Player on limitedLocation.qmm", function() {
-  let save: GameState;
   it(`Reads and parses quest`, () => {
     const data = fs.readFileSync(
       __dirname + "/../../src/test/limitedLocation.qmm"

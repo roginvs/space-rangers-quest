@@ -50,7 +50,7 @@ export interface Index {
   };
 }
 
-let warns: string[] = [];
+const warns: string[] = [];
 
 const dataSrcPath = __dirname + "/../borrowed";
 const dataDstPath = __dirname + "/../built-web/data";
@@ -58,7 +58,7 @@ const dataDstPath = __dirname + "/../built-web/data";
 const resultJsonFile = dataDstPath + "/index.json";
 
 function readPqi(filename: string) {
-  let result: {
+  const result: {
     [name: string]: PQImages;
   } = {};
 
@@ -106,9 +106,9 @@ function readPqi(filename: string) {
       [indexesNames]: indexes
     });
   }
-  let newResult: typeof result = {};
+  const newResult: typeof result = {};
   for (const k of Object.keys(result)) {
-    let allImages: { [name: string]: boolean } = {};
+    const allImages: { [name: string]: boolean } = {};
     for (const x of result[k]) {
       allImages[x.filename] = true;
     }
@@ -138,7 +138,7 @@ function readPqi(filename: string) {
 }
 
 function areThereAnyQmmImages(qmmQuest: QM) {
-  let images: {
+  const images: {
     [imageName: string]: string[];
   } = {};
   let tracks: (string | undefined)[] = [];
@@ -204,7 +204,7 @@ for (const d of ["img", "qm", "music"]) {
   }
 }
 
-let index: Index = {
+const index: Index = {
   quests: [],
   dir: {
     quests: { files: [], totalSize: 0 },
@@ -265,7 +265,7 @@ console.info(`Found ${Object.keys(pqiSR2Parsed).length} quests in PQI.txt`);
 //let pqiFound: string[] = [];
 
 console.info(`Scanning quests`);
-let seenQuests: string[] = [];
+const seenQuests: string[] = [];
 for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
   console.info(`\n\nScanning origin ${origin}`);
   const qmDir = dataSrcPath + "/qm/" + origin + "/";
