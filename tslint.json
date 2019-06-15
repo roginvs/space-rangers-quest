@@ -1,7 +1,25 @@
 {
-    "extends": "typestrict",
-    "defaultSeverity": "warning",
-    "rules": {
-      "no-unused-variable": false
-    }    
+  "extends": [
+    "typestrict",
+    "tslint-config-prettier",
+    "tslint-no-circular-imports",
+    "tslint-etc",
+    "tslint-react-hooks"
+  ],
+  "rules": {
+    "no-unused-variable": true,
+    "no-unnecessary-type-assertion": true,
+    "curly": true,
+    "no-string-throw": true,
+    "triple-equals": true,
+    "deprecation": true,
+    "prefer-readonly": true,
+    "no-conditional-assignment": true,
+    "no-implicit-dependencies": [true, "dev"],
+    "strict-type-predicates": true,
+    "no-unused-expression": [true],
+    "no-use-before-declare": true,
+    "object-literal-shorthand": true,
+    "prefer-const": true
   }
+}
