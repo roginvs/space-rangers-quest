@@ -6,7 +6,7 @@ import { QMPlayer, GameState } from "../lib/qmplayer";
 import { parse, QM } from "../lib/qmreader";
 import { substitute } from "../lib/substitution";
 import * as formula from "../lib/formula";
-import { PlayerSubstitute } from "../lib/qmplayer/funcs";
+import { PlayerSubstitute } from "../lib/qmplayer/playerSubstitute";
 import { randomFromMathRandom } from "../lib/randomFunc";
 
 const srcDir = __dirname + `/../../borrowed/qm/`;

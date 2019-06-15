@@ -201,7 +201,7 @@ export async function getDb(app: firebase.app.App) {
 
       const req = value ? objectStore.put(value, key) : objectStore.delete(key);
       await new Promise<void>((resolve, reject) => {
-        req.onsuccess = e => resolve(req.result);
+        req.onsuccess = e => resolve();
         req.onerror = e => {
           console.warn("Indexeddb error", req.error);
           reject(

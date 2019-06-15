@@ -7,16 +7,6 @@ import { observer } from "mobx-react";
 import { Store } from "./store";
 import { SKIP_WAITING_MESSAGE_DATA } from "./consts";
 
-declare global {
-  interface Navigator {
-    storage?: {
-      estimate: () => Promise<{ quota: number; usage: number }>;
-      persisted: () => Promise<boolean>;
-      persist: () => Promise<boolean>;
-    };
-  }
-}
-
 interface StorageUsedInfoState {
   error?: Error;
   quota?: number;

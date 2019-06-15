@@ -62,16 +62,6 @@ const config = {
 const app = firebase.initializeApp(config);
 // const app = firebase.initializeApp({} as typeof config);
 
-declare global {
-  interface Navigator {
-    storage?: {
-      estimate: () => Promise<{ quota: number; usage: number }>;
-      persisted: () => Promise<boolean>;
-      persist: () => Promise<boolean>;
-    };
-  }
-}
-
 interface MainLoaderState {
   store?: Store;
   loadingStage?: "db" | "index";

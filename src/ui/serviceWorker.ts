@@ -172,6 +172,7 @@ self.addEventListener("fetch", event => {
             `${new Date()} Cache audio hit for ${event.request.url}`
           );
           const arrayBuffer = await cacheHit.arrayBuffer();
+
           return new Response(arrayBuffer.slice(pos), {
             status: 206,
             statusText: "Partial Content",
@@ -184,7 +185,7 @@ self.addEventListener("fetch", event => {
                 }`
               ]
             ]
-          });
+          }) /* hack for serviceWorker typings */ as any;
         }
       }
 

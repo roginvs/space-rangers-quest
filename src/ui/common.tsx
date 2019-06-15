@@ -5,7 +5,7 @@ import "./common.css";
 export class DivFadeinCss extends React.Component<
   {
     className?: string;
-    tagName?: string;
+    tagName?: "div";
   },
   {
     entered: boolean;

@@ -116,7 +116,7 @@ export class QuestPlay extends React.Component<
         };
 
         xhr.onerror = e => {
-          reject(new Error(e.message));
+          reject(new Error(`${xhr.statusText}`));
         };
 
         xhr.onprogress = e => {

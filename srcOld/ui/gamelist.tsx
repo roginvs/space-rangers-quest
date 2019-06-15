@@ -38,18 +38,6 @@ const SHOW_ALLOWED_QUESTS = 500;
 const PASSED_QUESTS = 'SpaceRangersPassedQuests';
 const LANG = 'SpaceRangersLang';
 
-declare global {
-    interface Navigator {
-        storage?: {
-            estimate: () => Promise<{quota: number, usage: number}>,
-            persisted: () => Promise<boolean>,
-            persist: () => Promise<boolean>,            
-        },
-        webkitTemporaryStorage?: {
-            queryUsageAndQuota: (f: (used: number, remaining: number) => void) => void
-        }
-    }
-}
 
 
 async function loadGame(game: Game) {
