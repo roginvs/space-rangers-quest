@@ -50,7 +50,7 @@ var _loop_1 = function (fileName) {
     else {
         console.info("Skipping check: resavedParams=" + resavedQuest.paramsCount + " originalParams=" + origQuest.paramsCount);
     }
-    // assert.deepEqual(resavedQuest, origQuest, 'Data is the same');
+    // assert.deepStrictEqual(resavedQuest, origQuest, 'Data is the same');
     // const player = new QMPlayer(quest, undefined, lang, questOrigin === ORIGIN_TGE);
 };
 for (var _i = 0, _a = fs.readdirSync(gameDir); _i < _a.length; _i++) {

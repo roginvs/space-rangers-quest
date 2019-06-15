@@ -50,7 +50,7 @@ for (const fileName of fs.readdirSync(gameDir)) {
         console.info(`Skipping check: resavedParams=${resavedQuest.paramsCount} originalParams=${origQuest.paramsCount}`)
     }
 
-    // assert.deepEqual(resavedQuest, origQuest, 'Data is the same');
+    // assert.deepStrictEqual(resavedQuest, origQuest, 'Data is the same');
 
 
     // const player = new QMPlayer(quest, undefined, lang, questOrigin === ORIGIN_TGE);

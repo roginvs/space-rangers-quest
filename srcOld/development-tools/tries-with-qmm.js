@@ -72,6 +72,6 @@ for (var _i = 0, _a = fs.readdirSync(qmmDir); _i < _a.length; _i++) {
 // } else {
 //     console.info(`Skipping check: resavedParams=${resavedQuest.paramsCount} originalParams=${origQuest.paramsCount}`)
 // }
-// assert.deepEqual(resavedQuest, origQuest, 'Data is the same');
+// assert.deepStrictEqual(resavedQuest, origQuest, 'Data is the same');
 // const player = new QMPlayer(quest, undefined, lang, questOrigin === ORIGIN_TGE);
 //}

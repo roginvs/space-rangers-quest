@@ -846,7 +846,7 @@ function validateState(quest, stateOriginal, images) {
             state = performJump(performedJump.jumpId, quest, state, images, performedJump.date);
         }
         ;
-        assert.deepEqual(stateOriginal, state);
+        assert.deepStrictEqual(stateOriginal, state);
         return true;
     }
     catch (e) {

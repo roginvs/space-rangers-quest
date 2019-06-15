@@ -43,7 +43,7 @@ describe("Using saveAndValidaton.qm, seed 1", function () {
         state = qmplayer_1.performJump(2, quest, state, images, date1);
         state = qmplayer_1.performJump(4, quest, state, images, date1);
         state = qmplayer_1.performJump(6, quest, state, images, date1);
-        assert.deepEqual(state.paramValues.slice(0, 3), [5, 5, 2]);
+        assert.deepStrictEqual(state.paramValues.slice(0, 3), [5, 5, 2]);
         state = qmplayer_1.performJump(qmplayer_1.JUMP_GO_BACK_TO_SHIP, quest, state, images, date1);
         assert.strictEqual(state.state, "returnedending");
         var uistate = funcs_1.getUIState(quest, state, funcs_1.DEFAULT_RUS_PLAYER);

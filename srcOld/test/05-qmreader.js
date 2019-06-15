@@ -322,22 +322,22 @@ var _loop_1 = function (ext) {
                     });
                     it('Param 10 values list', function () {
                         var param = jump.paramsConditions[9];
-                        assert.deepEqual(param.mustEqualValues, [56, 58, 81]);
+                        assert.deepStrictEqual(param.mustEqualValues, [56, 58, 81]);
                         assert.strictEqual(param.mustEqualValuesEqual, true);
                     });
                     it('Param 11 values list', function () {
                         var param = jump.paramsConditions[10];
-                        assert.deepEqual(param.mustEqualValues, [66, 69]);
+                        assert.deepStrictEqual(param.mustEqualValues, [66, 69]);
                         assert.strictEqual(param.mustEqualValuesEqual, false);
                     });
                     it('Param 12 values list', function () {
                         var param = jump.paramsConditions[11];
-                        assert.deepEqual(param.mustModValues, [44]);
+                        assert.deepStrictEqual(param.mustModValues, [44]);
                         assert.strictEqual(param.mustModValuesMod, true);
                     });
                     it('Param 13 values list', function () {
                         var param = jump.paramsConditions[12];
-                        assert.deepEqual(param.mustModValues, [45, 46]);
+                        assert.deepStrictEqual(param.mustModValues, [45, 46]);
                         assert.strictEqual(param.mustModValuesMod, false);
                     });
                 });
