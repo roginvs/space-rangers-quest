@@ -1,5 +1,5 @@
-import { PQImages } from '../lib/pqImages';
-import * as fs from 'fs';
+import { PQImages } from "../lib/pqImages";
+import * as fs from "fs";
 
 const questRawNames = `
 0=cfg\\Rus\\PlanetQuest\\Bank.qm
@@ -29,7 +29,7 @@ const questRawNames = `
 9=cfg\\Rus\\PlanetQuest\\Murder.qm
 Prison=cfg\\Rus\\PlanetQuest\\Prison.qm
 `;
-const questRawPQI=`
+const questRawPQI = `
 0,L,1,68,70,72,75,80,81,82=Bm.PQI.Newflora_01
 0,L,101=Bm.PQI.Bank_02
 0,L,15,17,18=Bm.PQI.Examen_01
@@ -416,53 +416,67 @@ Prison,P,55=Bm.PQI.Galaxy_02
 Prison,P,87,89=Bm.PQI.Bank_09
 `;
 
-const questIdToName:{ [id: string]: string} = {};
-questRawNames.split('\n').filter(x => x).map(line => {
-    const id = line.split('=').shift(); 
-    const name = line.split('\\').pop();
+const questIdToName: { [id: string]: string } = {};
+questRawNames
+  .split("\n")
+  .filter(x => x)
+  .map(line => {
+    const id = line.split("=").shift();
+    const name = line.split("\\").pop();
     if (!id || !name) {
-        throw new Error();
+      throw new Error();
     }
     questIdToName[id] = name;
-})
+  });
 
 const imagesPerQuest: {
-    [questId: string]: PQImages
+  [questId: string]: PQImages;
 } = {};
-questRawPQI.split('\n').filter(x => x).map(line => {
+questRawPQI
+  .split("\n")
+  .filter(x => x)
+  .map(line => {
     // 16,L,16,17,18,19,20,21,22,23,24=Bm.PQI.Hachball_03
-    const [left, right] = line.split('=');
-    const [questId, type, ...ids] = left.split(',');
-    
-    const imageName = right.slice('Bm.PQI.'.length);
-    if (!right.startsWith('Bm.PQI.')) {
-        throw new Error();
+    const [left, right] = line.split("=");
+    const [questId, type, ...ids] = left.split(",");
+
+    const imageName = right.slice("Bm.PQI.".length);
+    if (!right.startsWith("Bm.PQI.")) {
+      throw new Error();
     }
-        
-    const questFileName = (questIdToName[questId] !== 'Prison.qm' ? questIdToName[questId] : 'Prison1.qm')
-    const questName = questFileName.slice(0,-3)
-    if (!questFileName.endsWith('.qm')) {
-        throw new Error();
+
+    const questFileName =
+      questIdToName[questId] !== "Prison.qm"
+        ? questIdToName[questId]
+        : "Prison1.qm";
+    const questName = questFileName.slice(0, -3);
+    if (!questFileName.endsWith(".qm")) {
+      throw new Error();
     }
 
     if (!imagesPerQuest[questName]) {
-        imagesPerQuest[questName] = [];
+      imagesPerQuest[questName] = [];
     }
     imagesPerQuest[questName].push({
-        filename: imageName.toLowerCase() + '.jpg',
-        ...(type === 'L' ? {
+      filename: imageName.toLowerCase() + ".jpg",
+      ...(type === "L"
+        ? {
             locationIds: ids.map(x => parseInt(x))
-        } : undefined),
-        ...(type === 'P' ? {
+          }
+        : undefined),
+      ...(type === "P"
+        ? {
             jumpIds: ids.map(x => parseInt(x))
-        } : undefined),
-        ...(type === 'PAR' ? {
+          }
+        : undefined),
+      ...(type === "PAR"
+        ? {
             critParams: ids.map(x => parseInt(x))
-        } : undefined),
-    })
-})
+          }
+        : undefined)
+    });
+  });
 
-const jsonFileName = __dirname + '/../../src/sr1-pqi.json';
-fs.writeFileSync(jsonFileName,
-    JSON.stringify(imagesPerQuest, null, 4));    
-console.info(`Data is written into ${jsonFileName}`)
+const jsonFileName = __dirname + "/../../src/sr1-pqi.json";
+fs.writeFileSync(jsonFileName, JSON.stringify(imagesPerQuest, null, 4));
+console.info(`Data is written into ${jsonFileName}`);

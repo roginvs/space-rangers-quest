@@ -3,31 +3,32 @@ import { CheckQuestRequest, CheckQuestResponce } from "./defs";
 import { parse } from "../../lib/qmreader";
 import * as pako from "pako";
 import {
-    GameState,
-    initGame,
-    performJump,
-    Quest,
-    getUIState,
-    getAllImagesToPreload,
-    getGameLog,
-    GameLog,
-    validateWinningLog
+  GameState,
+  initGame,
+  performJump,
+  Quest,
+  getUIState,
+  getAllImagesToPreload,
+  getGameLog,
+  GameLog,
+  validateWinningLog
 } from "../../lib/qmplayer/funcs";
 
-export async function checkQuest(data: CheckQuestRequest): Promise<CheckQuestResponce> {
-    const questArrayBuffer = await fetch(
-        data.questUrl
-    ).then(x => x.arrayBuffer());
-    const quest = parse(
-        new Buffer(pako.ungzip(new Buffer(questArrayBuffer)))
-    ) as Quest;
+export async function checkQuest(
+  data: CheckQuestRequest
+): Promise<CheckQuestResponce> {
+  const questArrayBuffer = await fetch(data.questUrl).then(x =>
+    x.arrayBuffer()
+  );
+  const quest = parse(
+    new Buffer(pako.ungzip(new Buffer(questArrayBuffer)))
+  ) as Quest;
 
-
-    for (const proofSeed of Object.keys(data.logs)) {
-        const validationResult = validateWinningLog(quest, data.logs[proofSeed]);
-        if (validationResult) {
-            return "validated"
-        }
+  for (const proofSeed of Object.keys(data.logs)) {
+    const validationResult = validateWinningLog(quest, data.logs[proofSeed]);
+    if (validationResult) {
+      return "validated";
     }
-    return "failed"
+  }
+  return "failed";
 }
