@@ -1,8 +1,9 @@
-image: node:8.11.3
+image: node:10
 pages:
   stage: deploy
   script:
   - rm -R built-web || true
+  - npx prettier --list-different "src/**/*.ts*(x)"
   - npm install
   - mkdir built-web
   - npm run tsc
