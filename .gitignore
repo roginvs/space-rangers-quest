@@ -2,3 +2,4 @@ built-node/*
 built-web/*
 coverage/*
 .nyc_output/*
+node_modules

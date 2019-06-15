@@ -3,9 +3,7 @@ pages:
   stage: deploy
   script:
   - rm -R built-web || true
-#  - rm -R node_modules
-#  - npm install
-  - chmod a+x node_modules/.bin/*
+  - npm install
   - mkdir built-web
   - npm run tsc
   - npm run test
