@@ -16,6 +16,7 @@ interface ConfigBoth extends ConfigLocalOnly {
 
 /*
 Here is firebase rules:
+
 {
   "rules": {
     "usersPublic": {
