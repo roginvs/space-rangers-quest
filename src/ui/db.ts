@@ -57,6 +57,10 @@ const INDEXEDDB_WON_STORE_NAME = "wongames";
 const FIREBASE_USERS_PRIVATE = `usersPrivate`;
 const FIREBASE_USERS_PUBLIC = `usersPublic`;
 
+export interface GameLogDatabase extends GameLog {
+  created: number;
+  validatedAt: number;
+}
 export interface GameWonProofs {
   [seed: string]: GameLog;
 }
@@ -68,13 +72,7 @@ export interface FirebasePublic {
     name: string;
   };
   gamesWonCount: number;
-  gamesWonProofs: {
-    [gameId: string]: {
-      [seed: string]: GameLog & {
-        created: number;
-      };
-    };
-  };
+  gamesWonProofs: WonProofs;
   userId: string;
 }
 
