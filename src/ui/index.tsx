@@ -264,12 +264,12 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
 
     if (!store) {
       const l = getLang(guessBrowserLang()); // Not from store because obviously store if not ready yet
-      if (this.state.loadingStage === "index") {
+      if (this.state.loadingStage === undefined) {
+        return <Loader text={l.loading} />;
+      } else if (this.state.loadingStage === "index") {
         return <Loader text={l.loadingIndex} />;
       } else if (this.state.loadingStage === "db") {
         return <Loader text={l.loadingLocalDatabase} />;
-      } else if (this.state.loadingStage === undefined) {
-        return <Loader text={l.loading} />;
       } else {
         return assertNever(this.state.loadingStage);
       }

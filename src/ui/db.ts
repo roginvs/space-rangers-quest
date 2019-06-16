@@ -641,7 +641,7 @@ export async function getDb(app: firebase.app.App) {
 
       const localName = await getConfigLocal("player");
       if (localName) {
-        setOwnHighscoresName(localName.Ranger || "");
+        await setOwnHighscoresName(localName.Ranger || "");
       }
       console.info(`Public ranger name synced`);
 

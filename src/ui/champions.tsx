@@ -81,6 +81,7 @@ export class ChampionsTabContainer extends React.Component<
               .filter(
                 champion =>
                   champion.gamesWonCount > 0 &&
+                  // tslint:disable-next-line:strict-type-predicates
                   typeof champion.gamesWonProofs === "object"
               )
               .map(champion => ({
@@ -94,7 +95,8 @@ export class ChampionsTabContainer extends React.Component<
               }))
           : null;
         this.validateAll().catch(e => console.warn(e));
-      });
+      })
+      .catch(e => console.error(e));
   }
 
   async validateAll() {

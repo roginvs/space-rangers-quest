@@ -28,7 +28,7 @@ export class AuthTabContainer extends React.Component<
   {}
 > {
   render() {
-    const { l, firebaseLoggedIn, app } = this.props.store;
+    const { l, firebaseLoggedIn } = this.props.store;
     const userGoogleAuth =
       firebaseLoggedIn &&
       firebaseLoggedIn.providerData.find(
@@ -63,7 +63,9 @@ export class AuthTabContainer extends React.Component<
                 const provider = new firebase.auth.GoogleAuthProvider();
                 firebaseLoggedIn
                   .linkWithPopup(provider)
-                  .then(() => this.forceUpdate());
+                  .then(() => this.forceUpdate())
+                  // TODO: What should happen if it failed?
+                  .catch(e => console.error(e));
               }}
             >
               <i className="fa fa-google fa-fw" />
@@ -85,7 +87,9 @@ export class AuthTabContainer extends React.Component<
                 const provider = new firebase.auth.GithubAuthProvider();
                 firebaseLoggedIn
                   .linkWithPopup(provider)
-                  .then(() => this.forceUpdate());
+                  .then(() => this.forceUpdate())
+                  // TODO: What should happen if it failed?
+                  .catch(e => console.error(e));
               }}
             >
               <i className="fa fa-github fa-fw" />
