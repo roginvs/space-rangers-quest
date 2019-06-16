@@ -98,6 +98,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
 
       const lastLocation = await db.getConfigLocal("lastLocation");
       const store = new Store(index, app, db, player);
+      (window as any).store = store;
       autorun(() => {
         db.setConfigLocal("lastLocation", store.hash).catch(e =>
           console.warn(e)

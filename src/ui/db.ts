@@ -53,7 +53,8 @@ Here is firebase rules:
         ".validate": "data.val() == null",
         ".read": true,
       },
-      ".indexOn": ["userId", "gameName", "aleaSeed"]
+      ".indexOn": ["userId", "gameName", "aleaSeed"],
+       ".read": true,
     }
   }
 }
@@ -66,10 +67,11 @@ const INDEXEDDB_WON_STORE_NAME = "wongames";
 
 const FIREBASE_USERS_PRIVATE = `usersPrivate`;
 const FIREBASE_USERS_PUBLIC = `usersPublic`;
+const FIREBASE_PUBLIC_WON_PROOF = "wonProofs";
 
-export interface GameLogDatabase extends GameLog {
-  created: number;
-}
+// export interface GameLogDatabase extends GameLog {
+//   created: number;
+// }
 export interface GameWonProofs {
   [seed: string]: GameLog;
 }
@@ -85,7 +87,7 @@ export interface FirebasePublic {
   userId: string;
 }
 
-export interface FlagWons {
+export interface WonProofTableRow {
   userId: string;
   createdAt: number;
   gameName: string;
@@ -322,7 +324,10 @@ export async function getDb(app: firebase.app.App) {
   /* No actions from this point, only exported functions */
 
   async function setFirebase(
-    store: typeof FIREBASE_USERS_PRIVATE | typeof FIREBASE_USERS_PUBLIC,
+    store:
+      | typeof FIREBASE_USERS_PRIVATE
+      | typeof FIREBASE_USERS_PUBLIC
+      | typeof FIREBASE_PUBLIC_WON_PROOF,
     userPath: string,
     value: any
   ) {
@@ -350,7 +355,10 @@ export async function getDb(app: firebase.app.App) {
     }
   }
   async function getFirebase(
-    store: typeof FIREBASE_USERS_PRIVATE | typeof FIREBASE_USERS_PUBLIC,
+    store:
+      | typeof FIREBASE_USERS_PRIVATE
+      | typeof FIREBASE_USERS_PUBLIC
+      | typeof FIREBASE_PUBLIC_WON_PROOF,
     userPath: string
   ) {
     try {
@@ -481,6 +489,28 @@ export async function getDb(app: firebase.app.App) {
     key: T
   ): Promise<ConfigBoth[T] | null> {
     return getLocal(INDEXEDDB_CONFIG_STORE_NAME, key);
+  }
+
+  async function getOwnRemotePassings() {
+    firebaseGoOnline();
+    try {
+      if (!firebaseUser) {
+        return null;
+      }
+      const data = (await app
+        .database()
+        .ref(FIREBASE_PUBLIC_WON_PROOF)
+        .equalTo("userId", firebaseUser.uid)
+        .once("value")).val() as Record<string, WonProofTableRow> | null;
+      // Data can be null
+      // console.info("Data is", data);
+      return data;
+    } catch (e) {
+      console.warn(e);
+      return null;
+    } finally {
+      firebaseGoOffline();
+    }
   }
 
   async function updateFirebaseOwnHighscore() {
@@ -649,6 +679,24 @@ export async function getDb(app: firebase.app.App) {
       }
       console.info(`Sync syncWithFirebase passed games done`);
 
+      try {
+        const allLocalWons = (await getAllLocal(
+          INDEXEDDB_WON_STORE_NAME
+        )) as WonProofs;
+        const allRemoteWons = (await getOwnRemotePassings()) || {};
+
+        /*
+          TODO: 
+          - Make local db flat view
+          - Sync with firebase (both directions)
+          - Write a method for writing passed game and add it into "gamePassed"
+
+        */
+      } catch (e) {
+        console.warn(`wining state sync error`, e, e.stack);
+      }
+      console.info(`Sync syncWithFirebase passed games done`);
+
       await updateFirebaseOwnHighscore();
       console.info(`Own highscores synced`);
 
@@ -750,7 +798,9 @@ export async function getDb(app: firebase.app.App) {
 
     syncWithFirebase,
 
-    setOwnHighscoresName
+    setOwnHighscoresName,
+
+    getOwnRemotePassings
   };
 }
 
