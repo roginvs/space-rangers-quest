@@ -9,6 +9,8 @@ import * as formula from "../lib/formula";
 import { PlayerSubstitute } from "../lib/qmplayer/playerSubstitute";
 import { randomFromMathRandom } from "../lib/randomFunc";
 
+// tslint:disable:no-invalid-this
+
 const srcDir = __dirname + `/../../borrowed/qm/`;
 describe(`Checking all quests for formulas and params substitution`, function() {
   this.timeout(60 * 1000);
@@ -103,7 +105,7 @@ describe(`Checking all quests for formulas and params substitution`, function() 
           check(quest.successText, "success");
         });
         it(`Locations texts and formulas`, () => {
-          quest.locations.map(loc => {
+          quest.locations.forEach(loc => {
             if (
               (f === "Doomino.qm" && loc.id === 28) ||
               (f === "Kiberrazum.qm" && loc.id === 134)
@@ -112,9 +114,9 @@ describe(`Checking all quests for formulas and params substitution`, function() 
               // Kiberrazum: просто локация без переходов в неё
               // Вообще-то это можно и автоматически фильтровать
             } else {
-              loc.texts.map(x => x && check(x, `Loc ${loc.id}`));
+              loc.texts.forEach(x => x && check(x, `Loc ${loc.id}`));
             }
-            loc.paramsChanges.map((p, i) => {
+            loc.paramsChanges.forEach((p, i) => {
               if (p.critText !== quest.params[i].critValueString) {
                 check(p.critText, `Loc ${loc.id} crit param ${i}`);
               }
@@ -135,10 +137,14 @@ describe(`Checking all quests for formulas and params substitution`, function() 
           });
         });
         it(`Jumps texts and formulas`, () => {
-          quest.jumps.map(jump => {
-            jump.text && check(jump.text, `Jump ${jump.id} text`);
-            jump.description && check(jump.description, `Jump ${jump.id} decr`);
-            jump.paramsChanges.map((p, i) => {
+          quest.jumps.forEach(jump => {
+            if (jump.text) {
+              check(jump.text, `Jump ${jump.id} text`);
+            }
+            if (jump.description) {
+              check(jump.description, `Jump ${jump.id} decr`);
+            }
+            jump.paramsChanges.forEach((p, i) => {
               if (p.critText !== quest.params[i].critValueString) {
                 check(p.critText, `Jump ${jump.id} crit param ${i}`);
               }
@@ -162,8 +168,8 @@ describe(`Checking all quests for formulas and params substitution`, function() 
           });
         });
         it(`Params ranges`, () => {
-          quest.params.map((p, i) => {
-            p.showingInfo.map(range => {
+          quest.params.forEach((p, i) => {
+            p.showingInfo.forEach(range => {
               check(range.str, `Param ${i} range`, true);
             });
           });

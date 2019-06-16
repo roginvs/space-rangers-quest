@@ -18,7 +18,7 @@ let player: QMPlayer;
 
 function jumpTo(text: string = "") {
   const state = player.getState();
-  const saving = player.getSaving();
+  // const saving = player.getSaving();
   //console.info(`jumpto='${text}' state=${saving.state} locId=${saving.locationId} jumps=${saving.possibleJumps
   //    .map(j =>`id=${j.id}${j.active}`).join(', ')} locs=`,saving.locationVisitCount);
   const jump = state.choices
@@ -26,7 +26,7 @@ function jumpTo(text: string = "") {
     .shift();
   //console.info(`jump=${jump ? jump.jumpId : "!"}`);
   if (!jump) {
-    const saving = player.getSaving();
+    // const saving = player.getSaving();
     throw new Error(
       `OLOLO: No jump '${text}' in ` + JSON.stringify(state, null, 4)
     );
