@@ -4,6 +4,8 @@ import * as fs from "fs";
 import * as assert from "assert";
 import "mocha";
 
+// tslint:disable:no-invalid-this
+
 import {
   QMPlayer,
   GameState,

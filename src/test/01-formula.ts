@@ -1,3 +1,5 @@
+// tslint:disable:no-invalid-this
+
 import "mocha";
 import * as assert from "assert";
 import { parse, MAX_NUMBER } from "../lib/formula";

@@ -788,6 +788,7 @@ function calculateLocation(
     locationVisitCount: {
       ...state.locationVisitCount,
       [state.locationId]:
+        // tslint:disable-next-line:strict-type-predicates
         state.locationVisitCount[state.locationId] !== undefined
           ? state.locationVisitCount[state.locationId] + 1
           : 0 // TODO : change to 1

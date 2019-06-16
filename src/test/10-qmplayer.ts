@@ -6,6 +6,8 @@ import "mocha";
 
 import { QMPlayer, GameState, JUMP_I_AGREE } from "../lib/qmplayer";
 
+// tslint:disable:no-invalid-this
+
 let player: QMPlayer;
 
 function jumpTo(text: string = "") {
@@ -73,13 +75,19 @@ describe("Player on test6-empty.qm", function() {
       jumpTo("success_on_jump_jumptext");
       assert.strictEqual(player.getState().text, "jumptext");
       jumpTo("");
-      assert.strictEqual(player.getState().text, "success_on_jump_jumptext_msg");
+      assert.strictEqual(
+        player.getState().text,
+        "success_on_jump_jumptext_msg"
+      );
       jumpTo("");
       assert.strictEqual(player.getState().gameState, "win");
     });
     it(`success_on_jump_nojumptext`, () => {
       jumpTo("success_on_jump_nojumptext");
-      assert.strictEqual(player.getState().text, "success_on_jump_nojumptext_msg");
+      assert.strictEqual(
+        player.getState().text,
+        "success_on_jump_nojumptext_msg"
+      );
       jumpTo("");
       assert.strictEqual(player.getState().gameState, "win");
     });
@@ -184,13 +192,19 @@ describe("Player on test6.qm", function() {
       jumpTo("success_on_jump_jumptext");
       assert.strictEqual(player.getState().text, "jumptext");
       jumpTo("");
-      assert.strictEqual(player.getState().text, "success_on_jump_jumptext_msg");
+      assert.strictEqual(
+        player.getState().text,
+        "success_on_jump_jumptext_msg"
+      );
       jumpTo("");
       assert.strictEqual(player.getState().gameState, "win");
     });
     it(`success_on_jump_nojumptext`, () => {
       jumpTo("success_on_jump_nojumptext");
-      assert.strictEqual(player.getState().text, "success_on_jump_nojumptext_msg");
+      assert.strictEqual(
+        player.getState().text,
+        "success_on_jump_nojumptext_msg"
+      );
       jumpTo("");
       assert.strictEqual(player.getState().gameState, "win");
     });
@@ -284,13 +298,19 @@ describe("Player on test6.qm", function() {
       jumpTo("success_on_jump_jumptext");
       assert.strictEqual(player.getState().text, "jumptext");
       jumpTo("");
-      assert.strictEqual(player.getState().text, "success_on_jump_jumptext_msg");
+      assert.strictEqual(
+        player.getState().text,
+        "success_on_jump_jumptext_msg"
+      );
       jumpTo("");
       assert.strictEqual(player.getState().gameState, "win");
     });
     it(`success_on_jump_nojumptext`, () => {
       jumpTo("success_on_jump_nojumptext");
-      assert.strictEqual(player.getState().text, "success_on_jump_nojumptext_msg");
+      assert.strictEqual(
+        player.getState().text,
+        "success_on_jump_nojumptext_msg"
+      );
       jumpTo("");
       assert.strictEqual(player.getState().gameState, "win");
     });
@@ -391,13 +411,19 @@ describe("Player on test6.qm with permitLiveAfterDeath=false", function() {
       jumpTo("success_on_jump_jumptext");
       assert.strictEqual(player.getState().text, "jumptext");
       jumpTo("");
-      assert.strictEqual(player.getState().text, "success_on_jump_jumptext_msg");
+      assert.strictEqual(
+        player.getState().text,
+        "success_on_jump_jumptext_msg"
+      );
       jumpTo("");
       assert.strictEqual(player.getState().gameState, "win");
     });
     it(`success_on_jump_nojumptext`, () => {
       jumpTo("success_on_jump_nojumptext");
-      assert.strictEqual(player.getState().text, "success_on_jump_nojumptext_msg");
+      assert.strictEqual(
+        player.getState().text,
+        "success_on_jump_nojumptext_msg"
+      );
       jumpTo("");
       assert.strictEqual(player.getState().gameState, "win");
     });
@@ -847,7 +873,11 @@ describe("Player on test4.qm", function() {
       player.loadSaving(save);
     });
     it(`2 jumps available, going second loop`, () => {
-      assert.strictEqual(player.getState().choices.length, 3, "Three jump available");
+      assert.strictEqual(
+        player.getState().choices.length,
+        3,
+        "Three jump available"
+      );
       jumpTo("-> L2");
       jumpTo("-> L3");
       jumpTo("-> Start");
@@ -878,7 +908,11 @@ describe("Player on test4.qm", function() {
       assert.strictEqual(player.getState().choices.length, 4);
       save = player.getSaving();
       jumpTo("-> L16");
-      assert.strictEqual(player.getState().choices.length, 0, "L16 is dead end");
+      assert.strictEqual(
+        player.getState().choices.length,
+        0,
+        "L16 is dead end"
+      );
       player.loadSaving(save);
       jumpTo("-> L18");
       assert.strictEqual(
@@ -918,10 +952,14 @@ describe("Player on test3.qm", function() {
     });
     it(`loc0text_0empty_jump0text_param=0`, () => {
       jumpTo("loc0text_0empty_jump0text_param=0");
-      assert.strictEqual(player.getState().text, "Main menu", "Wants main menu");
+      assert.strictEqual(
+        player.getState().text,
+        "Main menu",
+        "Wants main menu"
+      );
     });
     it(`loc0text_0empty_jump0text_param=1`, () => {
-      const st = jumpTo(`loc0text_0empty_jump0text_param=1`);
+      //      const st = jumpTo(`loc0text_0empty_jump0text_param=1`);
       assert.strictEqual(player.getState().choices.length, 1);
       assert.strictEqual(player.getState().text, "");
       assert.strictEqual(jumpTo("2win").text, "Win");
@@ -1033,20 +1071,22 @@ describe("Player on test2.qm", function() {
     player.start();
   });
   it(`Accept`, () => player.performJump(JUMP_I_AGREE));
-  it(`Main menu`, () => assert.strictEqual(jumpTo("mainmenu").text, "Main menu"));
+  it(`Main menu`, () =>
+    assert.strictEqual(jumpTo("mainmenu").text, "Main menu"));
   it(`To equal`, () =>
     assert.strictEqual(jumpTo("To equal").text, "Here should be 1 jump"));
   it(`Next`, () => {
     assert.strictEqual(player.getState().choices.length, 1);
-    jumpTo("next").text;
+    jumpTo("next");
     assert.strictEqual(player.getState().text, "Text2");
   });
   it(`Next`, () => {
     assert.strictEqual(player.getState().choices.length, 1);
-    jumpTo("next").text;
+    jumpTo("next");
     assert.strictEqual(player.getState().text, "Text3");
   });
-  it(`Main menu`, () => assert.strictEqual(jumpTo("mainmenu").text, "Main menu"));
+  it(`Main menu`, () =>
+    assert.strictEqual(jumpTo("mainmenu").text, "Main menu"));
   it(`Save in main menu`, () => {
     save = player.getSaving();
   });
@@ -1122,7 +1162,7 @@ describe("Player on test2.qm", function() {
       assert.strictEqual(player.getState().choices[0].text, "neverActive");
     });
     it(`loc0text_0empty_jump0text_param=1`, () => {
-      const st = jumpTo(`loc0text_0empty_jump0text_param=1`);
+      //      const st = jumpTo(`loc0text_0empty_jump0text_param=1`);
       assert.strictEqual(player.getState().choices.length, 2);
       assert.strictEqual(jumpTo("2win").text, "Win");
     });
@@ -1345,7 +1385,11 @@ describe("Player on test.qm", function() {
     let randomJumpCount = 0;
     for (let i = 0; i < 700; i++) {
       // console.info(`i=${i}, f=${((i+2) % 3) + 1} val=${parseInt(player.getState().text)}`);
-      assert.strictEqual(((i + 2) % 3) + 1, parseInt(player.getState().text), "X1"); // + JSON.stringify(player.getSaving(), null, 4));
+      assert.strictEqual(
+        ((i + 2) % 3) + 1,
+        parseInt(player.getState().text),
+        "X1"
+      ); // + JSON.stringify(player.getSaving(), null, 4));
       randomJumpCount += player
         .getState()
         .choices.filter(x => x.text.indexOf("random") > -1).length;

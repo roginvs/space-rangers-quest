@@ -302,7 +302,7 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
     );
     const randomImages = probablyThisQuestImages.map((filename, fileIndex) => {
       return {
-        filename: filename,
+        filename,
         locationIds: quest.locations
           .map(loc => loc.id)
           .filter(id => (id - 1) % probablyThisQuestImages.length === fileIndex)
