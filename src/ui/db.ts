@@ -59,7 +59,6 @@ const FIREBASE_USERS_PUBLIC = `usersPublic`;
 
 export interface GameLogDatabase extends GameLog {
   created: number;
-  validatedAt: number;
 }
 export interface GameWonProofs {
   [seed: string]: GameLog;
