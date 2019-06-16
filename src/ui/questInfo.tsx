@@ -95,6 +95,7 @@ export class QuestInfo extends React.Component<
 
                   if (
                     passedQuest === null ||
+                    // tslint:disable-next-line:strict-type-predicates
                     typeof passedQuest !== "object" ||
                     Object.keys(passedQuest).length < 1
                   ) {
@@ -156,6 +157,7 @@ export class QuestInfo extends React.Component<
                 },
                 [],
                 n =>
+                  // tslint:disable-next-line:strict-type-predicates
                   n !== undefined
                     ? Math.floor(Math.random() * n)
                     : Math.random()

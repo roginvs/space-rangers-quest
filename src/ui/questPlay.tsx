@@ -128,7 +128,7 @@ export class QuestPlay extends React.Component<
       }
     );
     const quest = parse(
-      new Buffer(pako.ungzip(new Buffer(questArrayBuffer)))
+      Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))
     ) as Quest;
 
     let gameState = await this.props.store.db.getLocalSaving(
@@ -163,7 +163,8 @@ export class QuestPlay extends React.Component<
         this.setState({
           thinkingSavingGame: false
         })
-      );
+      )
+      .catch(e => console.error(e));
   }
   render() {
     const { l, player } = this.props.store;
@@ -249,7 +250,8 @@ export class QuestPlay extends React.Component<
                         this.setState({
                           thinkingSavingWin: false
                         })
-                      );
+                      )
+                      .catch(e => console.warn(e));
                   }
 
                   this.setState({

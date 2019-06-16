@@ -21,7 +21,7 @@ export async function checkQuest(
     x.arrayBuffer()
   );
   const quest = parse(
-    new Buffer(pako.ungzip(new Buffer(questArrayBuffer)))
+    Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))
   ) as Quest;
 
   for (const proofSeed of Object.keys(data.logs)) {
