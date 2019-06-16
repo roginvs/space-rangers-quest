@@ -214,7 +214,8 @@ function getParamsState(
 function calculateLocationShowingTextId(
   location: DeepImmutable<Location>,
   state: GameState,
-  random: RandomFunc
+  random: RandomFunc,
+  showDebug: boolean
 ) {
   const locationTextsWithText = location.texts
     .map((text, i) => {
@@ -229,15 +230,19 @@ function calculateLocationShowingTextId(
       if (location.texts[id]) {
         return id;
       } else {
-        console.warn(
-          `Location id=${location.id} formula result textid=${id}, but no text`
-        );
+        if (showDebug) {
+          console.warn(
+            `Location id=${location.id} formula result textid=${id}, but no text`
+          );
+        }
         return 0; // Tge 4 and 5 shows different here. We will show location text 0
       }
     } else {
-      console.warn(
-        `Location id=${location.id} text by formula is set, but no formula`
-      );
+      if (showDebug) {
+        console.warn(
+          `Location id=${location.id} text by formula is set, but no formula`
+        );
+      }
       const textNum = random(locationTextsWithText.length);
 
       return (
@@ -259,7 +264,8 @@ function calculateLocationShowingTextId(
 export function getUIState(
   quest: Quest,
   state: GameState,
-  player: Player
+  player: Player,
+  showDebug = false
 ): PlayerState {
   const alea = new Alea(state.aleaState.slice());
   const random = alea.random;
@@ -315,7 +321,12 @@ export function getUIState(
       throw new Error(`Internal error: no state loc id=${state.locationId}`);
     }
 
-    const locTextId = calculateLocationShowingTextId(location, state, random);
+    const locTextId = calculateLocationShowingTextId(
+      location,
+      state,
+      random,
+      showDebug
+    );
     const locationOwnText = location.texts[locTextId] || "";
 
     const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
@@ -558,7 +569,8 @@ export function performJump(
   quest: Quest,
   stateOriginal: GameState,
   images: PQImages = [],
-  dateUnix = new Date().getTime()
+  dateUnix = new Date().getTime(),
+  showDebug = true
 ): GameState {
   const alea = new Alea(stateOriginal.aleaState.slice());
   const random = alea.random;
@@ -574,7 +586,7 @@ export function performJump(
     performedJumps
   };
 
-  state = performJumpInternal(jumpId, quest, state, images, random);
+  state = performJumpInternal(jumpId, quest, state, images, random, showDebug);
   return {
     ...state,
     aleaState: alea.exportState()
@@ -585,7 +597,8 @@ function performJumpInternal(
   quest: Quest,
   stateOriginal: GameState,
   images: PQImages = [],
-  random: RandomFunc
+  random: RandomFunc,
+  showDebug: boolean
 ): GameState {
   if (jumpId === JUMP_GO_BACK_TO_SHIP) {
     return {
@@ -615,7 +628,7 @@ function performJumpInternal(
       ...state,
       state: "location"
     };
-    state = calculateLocation(quest, state, images, random);
+    state = calculateLocation(quest, state, images, random, showDebug);
   } else if (state.state === "jump") {
     const jump = quest.jumps.find(x => x.id === state.lastJumpId);
     if (!jump) {
@@ -626,7 +639,7 @@ function performJumpInternal(
       locationId: jump.toLocationId,
       state: "location"
     };
-    state = calculateLocation(quest, state, images, random);
+    state = calculateLocation(quest, state, images, random, showDebug);
   } else if (state.state === "location") {
     if (!state.possibleJumps.find(x => x.id === jumpId)) {
       throw new Error(
@@ -708,7 +721,7 @@ function performJumpInternal(
           locationId: nextLocation.id,
           state: "location"
         };
-        state = calculateLocation(quest, state, images, random);
+        state = calculateLocation(quest, state, images, random, showDebug);
       }
     } else {
       if (critParamsTriggered.length > 0) {
@@ -723,7 +736,7 @@ function performJumpInternal(
           locationId: nextLocation.id,
           state: "location"
         };
-        state = calculateLocation(quest, state, images, random);
+        state = calculateLocation(quest, state, images, random, showDebug);
       } else {
         state = {
           ...state,
@@ -776,7 +789,8 @@ function calculateLocation(
   quest: Quest,
   stateOriginal: GameState,
   images: PQImages,
-  random: RandomFunc
+  random: RandomFunc,
+  showDebug: boolean
 ): GameState {
   if (stateOriginal.state !== "location") {
     throw new Error(`Internal error: expecting "location" state`);
@@ -800,7 +814,12 @@ function calculateLocation(
     throw new Error(`Internal error: no state location ${state.locationId}`);
   }
 
-  const locImgId = calculateLocationShowingTextId(location, state, random);
+  const locImgId = calculateLocationShowingTextId(
+    location,
+    state,
+    random,
+    showDebug
+  );
   const imageFromQmm = location.media[locImgId] && location.media[locImgId].img;
   const imageFromPQI = images.find(
     x => !!x.locationIds && x.locationIds.indexOf(state.locationId) > -1
@@ -1107,7 +1126,12 @@ function calculateLocation(
     }
     const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
 
-    const locTextId = calculateLocationShowingTextId(location, state, random);
+    const locTextId = calculateLocationShowingTextId(
+      location,
+      state,
+      random,
+      showDebug
+    );
     const locationOwnText = location.texts[locTextId] || "";
 
     //console.info(
@@ -1123,21 +1147,29 @@ function calculateLocation(
           : true
         : !locationOwnText);
     if (needAutoJump) {
-      console.info(
-        `Performinig autojump from loc=${state.locationId} via jump=${lonenyCurrentJump.id}`
-      );
+      if (showDebug) {
+        console.info(
+          `Performinig autojump from loc=${state.locationId} via jump=${lonenyCurrentJump.id}`
+        );
+      }
       state = performJumpInternal(
         lonenyCurrentJump.id,
         quest,
         state,
         images,
-        random
+        random,
+        showDebug
       );
     }
   } else if (state.state === "critonlocation") {
     // Little bit copy-paste from branch above
     const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
-    const locTextId = calculateLocationShowingTextId(location, state, random);
+    const locTextId = calculateLocationShowingTextId(
+      location,
+      state,
+      random,
+      showDebug
+    );
     const locationOwnText = location.texts[locTextId] || "";
     const locationDoNotHaveText = location.isEmpty
       ? lastJump
@@ -1200,32 +1232,45 @@ export function getGameLog(state: GameState): GameLog {
   };
 }
 
-export function validateWinningLog(quest: Quest, gameLog: GameLog) {
+export function validateWinningLog(
+  quest: Quest,
+  gameLog: GameLog,
+  showDebug = true
+) {
   let state = initGame(quest, gameLog.aleaSeed);
   for (const performedJump of gameLog.performedJumps) {
-    const uiState = getUIState(quest, state, DEFAULT_RUS_PLAYER);
+    const uiState = getUIState(quest, state, DEFAULT_RUS_PLAYER, showDebug);
 
     if (uiState.choices.find(x => x.jumpId === performedJump.jumpId)) {
-      console.info(`Validate jumping jumpId=${performedJump.jumpId}`);
+      if (showDebug) {
+        console.info(`Validate jumping jumpId=${performedJump.jumpId}`);
+      }
       state = performJump(
         performedJump.jumpId,
         quest,
         state,
         [],
-        performedJump.dateUnix
+        performedJump.dateUnix,
+        showDebug
       );
     } else {
-      console.info(`Validate=false jumpId=${performedJump.jumpId} not found`);
+      if (showDebug) {
+        console.info(`Validate=false jumpId=${performedJump.jumpId} not found`);
+      }
       return false;
     }
   }
 
   const uiState = getUIState(quest, state, DEFAULT_RUS_PLAYER);
   if (uiState.gameState !== "win") {
-    console.info(`Validate=false, not a win state`);
+    if (showDebug) {
+      console.info(`Validate=false, not a win state`);
+    }
     return false;
   }
-  console.info(`Validate=true`);
+  if (showDebug) {
+    console.info(`Validate=true`);
+  }
   return true;
 }
 
