@@ -8,6 +8,7 @@ pages:
   - mkdir built-web
   - npm run tsc
   - npm run test
+  - npm run lint
   - mv coverage built-web
   - node built-node/packGameData.js
   - npm run build
