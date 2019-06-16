@@ -44,6 +44,15 @@ Here is firebase rules:
         ".write": "$uid === auth.uid",
         ".read": true,
       }
+    },
+
+    "wonProofs": {
+      "$proofId": {
+        ".write": "newData.hasChild('userId') && newData.child('userId').val() === auth.uid && newData.hasChild('createdAt') && newData.child('createdAt').val() === now && ! newData.hasChild('validated')",
+        ".validate": "data.val() == null",
+        ".read": true,
+      },
+      ".indexOn": ["userId", "gameName", "aleaSeed"]
     }
   }
 }
@@ -75,6 +84,12 @@ export interface FirebasePublic {
   userId: string;
 }
 
+export interface FlagWons {
+  userId: string;
+  createdAt: number;
+  gameName: string;
+  aleaSeed: string;
+}
 export async function getDb(app: firebase.app.App) {
   console.info("Starting to get db");
 
