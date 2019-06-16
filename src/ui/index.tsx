@@ -47,19 +47,11 @@ import { Store } from "./store";
 import { QuestPlay } from "./questPlay";
 import { AboutTabContainer } from "./about";
 import { ChampionsTabContainer } from "./champions";
+import { firebaseConfig } from "./firebaseConfig";
 
 console.info("starting");
 
-const config = {
-  apiKey: "AIzaSyBWnLHRm15oXB0cbFwU57dGPeR731Zmisg",
-  authDomain: "test-project-5f054.firebaseapp.com",
-  databaseURL: "https://test-project-5f054.firebaseio.com",
-  projectId: "test-project-5f054",
-  storageBucket: "test-project-5f054.appspot.com",
-  messagingSenderId: "188260954291"
-};
-
-const app = firebase.initializeApp(config);
+const app = firebase.initializeApp(firebaseConfig);
 // const app = firebase.initializeApp({} as typeof config);
 
 interface MainLoaderState {
