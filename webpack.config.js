@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const ServiceWorkerWebpackPlugin = require("serviceworker-webpack-plugin");
 // const WebpackVersionHashPlugin = require("webpack-version-hash-plugin");
+const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 const devServer /*: webpackDevServer.Configuration */ = {
   contentBase: "./built-web",
@@ -12,78 +13,103 @@ const devServer /*: webpackDevServer.Configuration */ = {
   // inline: false, // for serviceWorker development tests
 };
 
-const config /*: webpack.Configuration */ = {
-  entry: {
-    index: "./src/ui/index.tsx",
-    worker: "./src/ui/worker/worker.ts",
-    serviceWorker: "./src/ui/serviceWorker.ts"
-  },
+const config = (env, argv) => {
+  const MODE_DEVELOPMENT = argv.mode === "development";
 
-  output: {
-    filename: "[name].js",
-    chunkFilename: "[id].js",
-    path: __dirname + "/built-web"
-  },
+  const developmentModePlugins = MODE_DEVELOPMENT
+    ? [
+        new webpack.HotModuleReplacementPlugin(),
 
-  plugins: [
-    new CopyWebpackPlugin([
-      {
-        from: "src/webstatic"
-      }
-    ]),
-    new MiniCssExtractPlugin({
-      // Options similar to the same options in webpackOptions.output
-      // both options are optional
-      filename: "[name].css",
-      chunkFilename: "[id].css"
-    }),
-    //new WebpackVersionHashPlugin({
-    //    filename: 'version.json',
-    //    include_date: true
-    //}),
-    new webpack.DefinePlugin({
-      __VERSION__: JSON.stringify(new Date().toISOString())
-    }),
-    new ServiceWorkerWebpackPlugin({
-      entry: "./src/ui/serviceWorker.ts",
-      filename: "sw.js"
-    })
-  ],
+        new ForkTsCheckerWebpackPlugin({
+          tslint: true,
+          memoryLimit: 4096 // 2048 is default and this is not enough?
+        })
+      ]
+    : [];
 
-  module: {
-    rules: [
-      {
-        enforce: "pre",
-        test: /\.(js|ts|tsx)$/,
-        loader: "source-map-loader",
-        exclude: /node_modules/
-      },
-      {
-        test: /\.tsx?$/,
-        loader: "ts-loader",
-        exclude: /node_modules/
-      },
+  return {
+    entry: {
+      index: "./src/ui/index.tsx",
+      worker: "./src/ui/worker/worker.ts",
+      serviceWorker: "./src/ui/serviceWorker.ts"
+    },
 
-      {
-        test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, "css-loader"]
-      },
+    output: {
+      filename: "[name].js",
+      chunkFilename: "[id].js",
+      path: __dirname + "/built-web"
+    },
 
-      {
-        test: /\.(png|svg|jpg|gif)$/,
-        use: ["file-loader?name=img/[hash].[ext]"]
-      },
-      {
-        test: /\.(woff|woff2|eot|ttf|otf)$/,
-        use: ["file-loader?name=fonts/[hash].[ext]"]
-      }
-    ]
-  },
-  resolve: {
-    extensions: [".ts", ".tsx", ".js", ".json"]
-  },
+    plugins: [
+      ...developmentModePlugins,
+      new CopyWebpackPlugin([
+        {
+          from: "src/webstatic"
+        }
+      ]),
+      new MiniCssExtractPlugin({
+        // Options similar to the same options in webpackOptions.output
+        // both options are optional
+        filename: "[name].css",
+        chunkFilename: "[id].css"
+      }),
+      //new WebpackVersionHashPlugin({
+      //    filename: 'version.json',
+      //    include_date: true
+      //}),
+      new webpack.DefinePlugin({
+        __VERSION__: JSON.stringify(new Date().toISOString())
+      }),
+      new ServiceWorkerWebpackPlugin({
+        entry: "./src/ui/serviceWorker.ts",
+        filename: "sw.js"
+      })
+    ],
 
-  devServer
+    module: {
+      rules: [
+        {
+          enforce: "pre",
+          test: /\.(js|ts|tsx)$/,
+          loader: "source-map-loader",
+          exclude: /node_modules/
+        },
+        {
+          test: /\.tsx?$/,
+          loader: "ts-loader",
+          options: {
+            transpileOnly: true, // IMPORTANT! use transpileOnly mode to speed-up compilation
+            compilerOptions: MODE_DEVELOPMENT
+              ? {
+                  target: "ES2018",
+                  downlevelIteration: false
+                }
+              : {}
+          },
+          exclude: /node_modules/
+        },
+
+        {
+          test: /\.css$/,
+          use: [MiniCssExtractPlugin.loader, "css-loader"]
+        },
+
+        {
+          test: /\.(png|svg|jpg|gif)$/,
+          use: ["file-loader?name=img/[hash].[ext]"]
+        },
+        {
+          test: /\.(woff|woff2|eot|ttf|otf)$/,
+          use: ["file-loader?name=fonts/[hash].[ext]"]
+        }
+      ]
+    },
+    resolve: {
+      extensions: [".ts", ".tsx", ".js", ".json"]
+    },
+
+    devServer
+  };
 };
 
 module.exports = config;
