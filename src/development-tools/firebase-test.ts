@@ -19,19 +19,22 @@ admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as any),
   databaseURL: "https://test-project-5f054.firebaseio.com"
 });
-var db = admin.database();
-var ref = db.ref("usersPublic");
+const db = admin.database();
 
 (async () => {
   console.info("Fetching all data");
-  const val = (await ref.once("value")).val() as {
+  const usersPublic = (await db.ref("usersPublic").once("value")).val() as {
     [userId: string]: FirebasePublic;
   };
-  for (const userId of Object.keys(val)) {
-    if (userId !== "xsH8u164u5TeElSAYoM0pwpDkSI2") {
+  if (!fs.existsSync("backup.json")) {
+    console.info("Creating backup file");
+    fs.writeFileSync("backup.json", JSON.stringify(usersPublic));
+  }
+  for (const userId of Object.keys(usersPublic)) {
+    if (userId !== "8xXMRqtqB5f9o0G17dMhpYh5wcf1") {
       // continue;
     }
-    const userData = val[userId];
+    const userData = usersPublic[userId];
     console.info(
       `Checking user id=${userId} name=${userData.info && userData.info.name}`
     );
@@ -72,9 +75,22 @@ var ref = db.ref("usersPublic");
       }
     }
 
+    const gamesWonCount = Object.keys(checkedProofs).length;
+    const updatedUserData = {
+      ...userData,
+      gamesWonCount,
+      gamesWonProofs: checkedProofs
+    };
+    console.info(
+      `Updating data in firebase oldCount=${userData.gamesWonCount} new=${gamesWonCount}`
+    );
+    await db.ref(`usersPublic/${userId}`).set(updatedUserData);
+
+    //
     // console.info(userData.gamesWonProofs, checkedProofs);
-    //process.exit(0);
+    // process.exit(0);
   }
 
   console.info("Done");
+  process.exit(0);
 })();
