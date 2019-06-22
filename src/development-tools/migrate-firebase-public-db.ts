@@ -1,12 +1,20 @@
 import admin from "firebase-admin";
 import * as fs from "fs";
 
+import { FirebasePublic } from "../ui/db/defs";
 import * as pako from "pako";
 import { Index } from "../packGameData";
 import { parse } from "../lib/qmreader";
 import { Quest, validateWinningLog } from "../lib/qmplayer/funcs";
-import { FirebasePublic } from "../ui/db/defs";
 //const acc = require("~/space-rangers-firebase-root-key.json");
+const FIREBASE_PUBLIC_WON_PROOF = "wonProofs";
+
+export interface WonProofTableRow {
+  userId: string;
+  createdAt: number;
+  gameName: string;
+  aleaSeed: string;
+}
 
 const serviceAccount = JSON.parse(
   fs.readFileSync("../../../space-rangers-firebase-root-key.json").toString()
@@ -21,6 +29,10 @@ admin.initializeApp({
 });
 const db = admin.database();
 
+async function createRow(row: WonProofTableRow) {
+  await db.ref(FIREBASE_PUBLIC_WON_PROOF + "/" + row.aleaSeed).set(row);
+}
+
 (async () => {
   console.info("Fetching all data");
   const usersPublic = (await db.ref("usersPublic").once("value")).val() as {
@@ -30,9 +42,10 @@ const db = admin.database();
     console.info("Creating backup file");
     fs.writeFileSync("backup.json", JSON.stringify(usersPublic));
   }
+
   for (const userId of Object.keys(usersPublic)) {
     if (userId !== "8xXMRqtqB5f9o0G17dMhpYh5wcf1") {
-      // continue;
+      continue;
     }
     const userData = usersPublic[userId];
     console.info(
@@ -65,26 +78,17 @@ const db = admin.database();
           false
         );
         if (validationResult) {
-          if (!checkedProofs[gameName]) {
-            checkedProofs[gameName] = {};
-          }
-          checkedProofs[gameName][proofSeed] = gameProofs[proofSeed];
+          await createRow({
+            aleaSeed: proofSeed,
+            createdAt: admin.database.ServerValue.TIMESTAMP,
+            gameName,
+            userId
+          });
         } else {
           console.info("======= Not validated ======== ");
         }
       }
     }
-
-    const gamesWonCount = Object.keys(checkedProofs).length;
-    const updatedUserData = {
-      ...userData,
-      gamesWonCount,
-      gamesWonProofs: checkedProofs
-    };
-    console.info(
-      `Updating data in firebase oldCount=${userData.gamesWonCount} new=${gamesWonCount}`
-    );
-    await db.ref(`usersPublic/${userId}`).set(updatedUserData);
 
     //
     // console.info(userData.gamesWonProofs, checkedProofs);
@@ -93,4 +97,7 @@ const db = admin.database();
 
   console.info("Done");
   process.exit(0);
-})();
+})().catch(e => {
+  console.error(e);
+  process.exit(1);
+});

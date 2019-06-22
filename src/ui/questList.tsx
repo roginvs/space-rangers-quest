@@ -1,7 +1,7 @@
 import * as React from "react";
 import { Loader, DivFadeinCss } from "./common";
 import { LangTexts } from "./lang";
-import { DB, WonProofs } from "./db";
+import { WonProofs } from "./db/defs";
 import { Player, Lang } from "../lib/qmplayer/player";
 import { Index, Game } from "../packGameData";
 import {

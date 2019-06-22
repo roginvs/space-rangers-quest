@@ -1,6 +1,7 @@
 import { observable, computed, action } from "mobx";
 import { Index } from "../packGameData";
-import { DB, GameWonProofs } from "./db";
+import { DB } from "./db/db";
+import { GameWonProofs } from "./db/defs";
 import { Player } from "../lib/qmplayer/player";
 import { getLang } from "./lang";
 import { CACHE_MUSIC_NAME_MP3, DATA_DIR, CACHE_IMAGES_NAME } from "./consts";

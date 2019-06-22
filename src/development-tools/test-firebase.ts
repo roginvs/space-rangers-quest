@@ -1,7 +1,7 @@
 import admin from "firebase-admin";
 import * as fs from "fs";
 
-import { FirebasePublic } from "../ui/db.js";
+import { FirebasePublic } from "../ui/db/defs";
 import * as pako from "pako";
 import { Index } from "../packGameData";
 import { parse } from "../lib/qmreader";

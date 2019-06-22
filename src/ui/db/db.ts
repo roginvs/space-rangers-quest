@@ -1,18 +1,19 @@
 import firebase from "firebase/app";
 import "firebase/database";
 
-import { Player } from "../lib/qmplayer/player";
-import { GameLog, GameState } from "../lib/qmplayer/funcs";
+import { Player } from "../../lib/qmplayer/player";
+import { GameLog, GameState } from "../../lib/qmplayer/funcs";
 import { resolve } from "path";
-
-interface ConfigLocalOnly {
-  lastLocation: string;
-}
-
-interface ConfigBoth extends ConfigLocalOnly {
-  player: Player;
-  noMusic: boolean;
-}
+import {
+  ConfigBoth,
+  FIREBASE_PUBLIC_WON_PROOF,
+  FIREBASE_USERS_PRIVATE,
+  WonProofs,
+  FIREBASE_USERS_PUBLIC,
+  FirebasePublic,
+  ConfigLocalOnly
+} from "./defs";
+import { WonProofTableRow } from "../../development-tools/migrate-firebase-public-db";
 
 /*
 Here is firebase rules:
@@ -65,34 +66,10 @@ const INDEXEDDB_CONFIG_STORE_NAME = "config";
 const INDEXEDDB_SAVED_STORE_NAME = "savedgames";
 const INDEXEDDB_WON_STORE_NAME = "wongames";
 
-const FIREBASE_USERS_PRIVATE = `usersPrivate`;
-const FIREBASE_USERS_PUBLIC = `usersPublic`;
-const FIREBASE_PUBLIC_WON_PROOF = "wonProofs";
-
 // export interface GameLogDatabase extends GameLog {
 //   created: number;
 // }
-export interface GameWonProofs {
-  [seed: string]: GameLog;
-}
-export interface WonProofs {
-  [gameId: string]: GameWonProofs;
-}
-export interface FirebasePublic {
-  info: {
-    name: string;
-  };
-  gamesWonCount: number;
-  gamesWonProofs: WonProofs;
-  userId: string;
-}
 
-export interface WonProofTableRow {
-  userId: string;
-  createdAt: number;
-  gameName: string;
-  aleaSeed: string;
-}
 export async function getDb(app: firebase.app.App) {
   console.info("Starting to get db");
 

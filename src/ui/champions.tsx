@@ -6,7 +6,7 @@ import { Progress } from "reactstrap";
 import { observer } from "mobx-react";
 import { observable, computed } from "mobx";
 import { Store } from "./store";
-import { FirebasePublic } from "./db";
+import { FirebasePublic } from "./db/defs";
 import { DATA_DIR } from "./consts";
 import { WorkerPromise } from "./worker";
 import { assertNever } from "../lib/formula/calculator";

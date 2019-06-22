@@ -12,7 +12,7 @@ import "firebase/database";
 
 import { Index, Game } from "../packGameData";
 
-import { getDb, DB } from "./db";
+import { getDb, DB } from "./db/db";
 import {
   DEFAULT_RUS_PLAYER,
   Player,
