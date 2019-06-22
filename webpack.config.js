@@ -18,7 +18,7 @@ const config = (env, argv) => {
 
   const developmentModePlugins = MODE_DEVELOPMENT
     ? [
-        new webpack.HotModuleReplacementPlugin(),
+        // new webpack.HotModuleReplacementPlugin(),
 
         new ForkTsCheckerWebpackPlugin({
           tslint: true,
