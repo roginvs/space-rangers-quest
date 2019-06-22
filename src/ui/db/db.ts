@@ -570,7 +570,7 @@ orderByChild('createdAt').once("value")).val();
   async function syncWithFirebase() {
     const userId = firebaseUser ? firebaseUser.uid : undefined;
     if (!userId) {
-      throw new Error("Not logged in into firebase");
+      return;
     }
     firebaseGoOnline();
     try {
@@ -778,6 +778,18 @@ orderByChild('createdAt').once("value")).val();
       `${INDEXEDDB_WON_STORE_NAME}/${gameName}/${proof.aleaSeed}`,
       proof
     );
+    const localConfig = await getConfigLocal("player");
+    const rangerName = localConfig ? localConfig.Ranger : "";
+    const userId = firebaseUser ? firebaseUser.uid : undefined;
+    if (userId) {
+      await setRemoteWon(proof.aleaSeed, {
+        rangerName,
+        createdAt: (firebase.database.ServerValue.TIMESTAMP as any) as number,
+        gameName,
+        proof,
+        userId
+      });
+    }
     await updateFirebaseOwnHighscore();
   }
 
