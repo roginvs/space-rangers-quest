@@ -468,7 +468,7 @@ export async function getDb(app: firebase.app.App) {
     return getLocal(INDEXEDDB_CONFIG_STORE_NAME, key);
   }
 
-  async function inOnlineFirebase<T>(f: () => Promise<T>) {
+  async function firebaseOnline<T>(f: () => Promise<T>) {
     firebaseGoOnline();
     try {
       return await f();
@@ -477,13 +477,8 @@ export async function getDb(app: firebase.app.App) {
     }
   }
 
-  async function getOwnRemotePassings() {
-    firebaseGoOnline();
-    try {
-      if (!firebaseUser) {
-        return null;
-      }
-      /*
+  async function getRemotePassings(userId?: string) {
+    /*
 
 store.app.database().goOnline();
 const firebaseUser = store.app.auth().currentUser;
@@ -493,25 +488,19 @@ const FIREBASE_PUBLIC_WON_PROOF = 'wonProofs';
 orderByChild('createdAt').once("value")).val();
 
       */
-      const data = (await app
-        .database()
-        .ref(FIREBASE_PUBLIC_WON_PROOF)
-        .orderByChild("userId")
-        .equalTo(firebaseUser.uid)
-        .once("value")).val() as Record<string, WonProofTableRow> | null;
-      // Data can be null
-      // console.info("Data is", data);
+    return await firebaseOnline(async () => {
+      const ref = app.database().ref(FIREBASE_PUBLIC_WON_PROOF);
+      const query = userId ? ref.orderByChild("userId").equalTo(userId) : ref;
+      const data = (await ref.once("value")).val() as Record<
+        string,
+        WonProofTableRow
+      > | null;
       return data;
-    } catch (e) {
-      console.warn(e);
-      return null;
-    } finally {
-      firebaseGoOffline();
-    }
+    });
   }
 
   function setRemoteWon(key: string, row: WonProofTableRow) {
-    return inOnlineFirebase(() =>
+    return firebaseOnline(() =>
       app
         .database()
         .ref(FIREBASE_PUBLIC_WON_PROOF + "/" + key)
@@ -641,7 +630,7 @@ orderByChild('createdAt').once("value")).val();
         const allLocalWons = (await getAllLocal(
           INDEXEDDB_WON_STORE_NAME
         )) as WonProofs;
-        const allRemoteWons = (await getOwnRemotePassings()) || {};
+        const allRemoteWons = (await getRemotePassings(userId)) || {};
 
         for (const gameName of Object.keys(allLocalWons)) {
           const proofs = allLocalWons[gameName];
@@ -794,7 +783,7 @@ orderByChild('createdAt').once("value")).val();
 
     setOwnHighscoresName,
 
-    getOwnRemotePassings
+    getRemotePassings
   };
 }
 
