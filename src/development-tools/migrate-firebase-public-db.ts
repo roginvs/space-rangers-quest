@@ -17,7 +17,7 @@ const questIndex = JSON.parse(
 ) as Index;
 
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as any),
+  credential: admin.credential.cert(serviceAccount),
   databaseURL: "https://test-project-5f054.firebaseio.com"
 });
 const db = admin.database();
