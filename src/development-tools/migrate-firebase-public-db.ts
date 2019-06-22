@@ -31,14 +31,15 @@ async function createRow(key: string, row: WonProofTableRow) {
   const usersPublic = (await db.ref("usersPublic").once("value")).val() as {
     [userId: string]: FirebasePublic;
   };
-  if (!fs.existsSync("backup/usersPublic.json")) {
-    console.info("Creating backup file");
-    fs.writeFileSync("backup/usersPublic.json", JSON.stringify(usersPublic));
-  }
+  console.info("Creating backup file");
+  fs.writeFileSync(
+    `backup/usersPublic-${new Date().getTime()}.json`,
+    JSON.stringify(usersPublic, null, 4)
+  );
 
   for (const userId of Object.keys(usersPublic)) {
     if (userId !== "8xXMRqtqB5f9o0G17dMhpYh5wcf1") {
-      continue;
+      // continue;
     }
     const userData = usersPublic[userId];
     console.info(
