@@ -27,7 +27,7 @@ async function createRow(key: string, row: WonProofTableRow) {
 }
 
 (async () => {
-  if (1 + 1 === 2) {
+  if (1 + 1 === 22) {
     console.info("Dropping all data from wonProofs");
     await db.ref(FIREBASE_PUBLIC_WON_PROOF).set({});
     process.exit(0);
