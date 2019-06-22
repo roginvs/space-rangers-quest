@@ -678,7 +678,7 @@ orderByChild('createdAt').once("value")).val();
       }
       console.info(`Sync old syncWithFirebase passed games done`);
 
-      console.info(`Sync syncWithFirebase passed games started`);
+      console.info(`Sync flat syncWithFirebase passed games started`);
 
       const localConfig = await getConfigLocal("player");
       const rangerName = localConfig ? localConfig.Ranger : "";
@@ -736,7 +736,7 @@ orderByChild('createdAt').once("value")).val();
       } catch (e) {
         console.warn(`wining state sync error`, e, e.stack);
       }
-      console.info(`Sync syncWithFirebase passed games done`);
+      console.info(`Sync flat syncWithFirebase passed games done`);
 
       await updateFirebaseOwnHighscore();
       console.info(`Own highscores synced`);
