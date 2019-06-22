@@ -31,9 +31,9 @@ async function createRow(key: string, row: WonProofTableRow) {
   const usersPublic = (await db.ref("usersPublic").once("value")).val() as {
     [userId: string]: FirebasePublic;
   };
-  if (!fs.existsSync("backup.json")) {
+  if (!fs.existsSync("backup/usersPublic.json")) {
     console.info("Creating backup file");
-    fs.writeFileSync("backup.json", JSON.stringify(usersPublic));
+    fs.writeFileSync("backup/usersPublic.json", JSON.stringify(usersPublic));
   }
 
   for (const userId of Object.keys(usersPublic)) {
