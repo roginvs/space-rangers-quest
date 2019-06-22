@@ -632,62 +632,7 @@ orderByChild('createdAt').once("value")).val();
         console.info(`Sync syncWithFirebase local savings done`);
         */
 
-      try {
-        const allLocalWons = await getAllLocal(INDEXEDDB_WON_STORE_NAME);
-        const allRemoteWons =
-          (await getFirebase(
-            FIREBASE_USERS_PRIVATE,
-            `${INDEXEDDB_WON_STORE_NAME}`
-          )) || {};
-
-        const allGameNames = Object.keys({
-          ...allLocalWons,
-          ...allRemoteWons
-        });
-        for (const gameName of allGameNames) {
-          const thisGameLocalWons = allLocalWons[gameName] || {};
-          const thisGameRemoteWons = allRemoteWons[gameName] || {};
-
-          for (const localSeed of Object.keys(thisGameLocalWons)) {
-            const localProof = thisGameLocalWons[localSeed];
-            if (!localProof) {
-              continue;
-            }
-            if (!thisGameRemoteWons[localSeed]) {
-              console.info(
-                `Sync with firebase: gameName=${gameName} pushing seed=${localSeed} into firebase`
-              );
-              await setFirebase(
-                FIREBASE_USERS_PRIVATE,
-                `${INDEXEDDB_WON_STORE_NAME}/${gameName}/${localSeed}`,
-                localProof
-              );
-            }
-          }
-
-          for (const remoteSeed of Object.keys(thisGameRemoteWons)) {
-            const remoteProof = thisGameRemoteWons[remoteSeed];
-            if (!remoteProof) {
-              continue;
-            }
-            if (!thisGameLocalWons[remoteSeed]) {
-              console.info(
-                `Sync with firebase: gameName=${gameName} fetching seed=${remoteSeed} from firebase`
-              );
-
-              const values = await getLocal(INDEXEDDB_WON_STORE_NAME, gameName);
-              const newValues = {
-                ...values,
-                [remoteProof.aleaSeed]: remoteProof
-              };
-              await setLocal(INDEXEDDB_WON_STORE_NAME, gameName, newValues);
-            }
-          }
-        }
-      } catch (e) {
-        console.warn(`wining state sync error`, e, e.stack);
-      }
-      console.info(`Sync syncWithFirebase passed games done`);
+      console.info(`Sync syncWithFirebase passed games started`);
 
       const localConfig = await getConfigLocal("player");
       const rangerName = localConfig ? localConfig.Ranger : "";
@@ -723,7 +668,8 @@ orderByChild('createdAt').once("value")).val();
             );
           }
           const gameName = row.gameName;
-          const values = await getLocal(INDEXEDDB_WON_STORE_NAME, gameName);
+          const values =
+            (await getLocal(INDEXEDDB_WON_STORE_NAME, gameName)) || {};
           if (!values[aleaSeed]) {
             console.info(`Polling ${aleaSeed} from remote wons`);
             const newValues = {
