@@ -33,8 +33,14 @@ export class ChampionsTabContainerNew extends React.Component<
     this.props.store.db
       .getRemotePassings()
       .then(champions => {
-        console.info(champions);
-        this.champions.set(champions);
+        if (champions) {
+          const orderedKeysByDate = Object.keys(champions).sort((a, b) => {
+            return champions[a].createdAt - champions[b].createdAt > 0 ? -1 : 1;
+          });
+          this.champions.set({ champions, orderedKeysByDate });
+        } else {
+          this.champions.set(null);
+        }
       })
       .catch(e => {
         this.champions.set(`${e.message || "Error"}`);
@@ -42,7 +48,13 @@ export class ChampionsTabContainerNew extends React.Component<
   }
 
   champions = observable.box<
-    undefined | null | string | Record<string, WonProofTableRow>
+    | undefined
+    | null
+    | string
+    | {
+        champions: Record<string, WonProofTableRow>;
+        orderedKeysByDate: string[];
+      }
   >(undefined);
 
   render() {
@@ -59,7 +71,29 @@ export class ChampionsTabContainerNew extends React.Component<
         ) : typeof champions === "string" ? (
           <ErrorInfo error={champions} />
         ) : (
-          <div>ready</div>
+          <div>
+            <table className="table table-responsive">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Ranger</th>
+                  <th>Game</th>
+                </tr>
+              </thead>
+              <tbody>
+                {champions.orderedKeysByDate.map(k => {
+                  const row = champions.champions[k];
+                  return (
+                    <tr key={k}>
+                      <td>{new Date(row.createdAt).toLocaleString()}</td>
+                      <td>{row.rangerName}</td>
+                      <td>{row.gameName}</td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
         )}
       </DivFadeinCss>
     );

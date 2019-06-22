@@ -22,7 +22,6 @@ import {
   DropdownToggle,
   DropdownItem
 } from "reactstrap";
-import moment from "moment";
 import { QuestReplaceTags } from "./questReplaceTags";
 import { substitute } from "../lib/substitution";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";

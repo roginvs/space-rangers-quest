@@ -640,7 +640,8 @@ orderByChild('createdAt').once("value")).val();
               console.info(`Pushing ${aleaSeed} into remote wons`);
               await setRemoteWon(aleaSeed, {
                 rangerName,
-                createdAt: firebase.database.ServerValue.TIMESTAMP,
+                createdAt: (firebase.database.ServerValue
+                  .TIMESTAMP as any) as number,
                 gameName,
                 proof,
                 userId

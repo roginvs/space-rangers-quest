@@ -6,7 +6,6 @@
   "dependencies": {
     "@types/classnames": "^2.2.6",
     "@types/mocha": "^5.2.5",
-    "@types/moment": "^2.13.0",
     "@types/node": "^10.5.2",
     "@types/pako": "^1.0.0",
     "@types/react": "^16.8.20",
@@ -21,7 +20,6 @@
     "mobx": "^5.10.1",
     "mobx-react": "^6.0.3",
     "mocha": "^5.2.0",
-    "moment": "^2.22.2",
     "pako": "^1.0.6",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",

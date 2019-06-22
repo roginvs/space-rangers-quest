@@ -34,7 +34,7 @@ export interface FirebasePublic {
 export interface WonProofTableRow {
   rangerName: string;
   userId: string;
-  createdAt: number | object;
+  createdAt: number;
   gameName: string;
   proof: GameLog;
 }
