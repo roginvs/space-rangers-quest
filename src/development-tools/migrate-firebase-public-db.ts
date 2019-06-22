@@ -82,7 +82,8 @@ async function createRow(key: string, row: WonProofTableRow) {
               admin.database.ServerValue.TIMESTAMP,
             gameName,
             userId,
-            proof: gameProofs[proofSeed]
+            proof: gameProofs[proofSeed],
+            rangerName: userData.info ? userData.info.name : ""
           });
         } else {
           console.info("======= Not validated ======== ");

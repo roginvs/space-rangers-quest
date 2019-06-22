@@ -689,6 +689,9 @@ orderByChild('createdAt').once("value")).val();
       }
       console.info(`Sync syncWithFirebase passed games done`);
 
+      const localConfig = await getConfigLocal("player");
+      const rangerName = localConfig ? localConfig.Ranger : "";
+
       try {
         const allLocalWons = (await getAllLocal(
           INDEXEDDB_WON_STORE_NAME
@@ -702,6 +705,7 @@ orderByChild('createdAt').once("value")).val();
             if (!allRemoteWons[aleaSeed]) {
               console.info(`Pushing ${aleaSeed} into remote wons`);
               await setRemoteWon(aleaSeed, {
+                rangerName,
                 createdAt: firebase.database.ServerValue.TIMESTAMP,
                 gameName,
                 proof,
