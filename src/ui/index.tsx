@@ -48,6 +48,7 @@ import { QuestPlay } from "./questPlay";
 import { AboutTabContainer } from "./about";
 import { ChampionsTabContainer } from "./champions";
 import { firebaseConfig } from "./firebaseConfig";
+import { ChampionsTabContainerNew } from "./champions.new";
 
 console.info("starting");
 
@@ -300,6 +301,12 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
       return (
         <AppNavbar store={store}>
           <ChampionsTabContainer store={store} />
+        </AppNavbar>
+      );
+    } else if (tab0 === "logs") {
+      return (
+        <AppNavbar store={store}>
+          <ChampionsTabContainerNew store={store} />
         </AppNavbar>
       );
     } else if (tab0 === "quests") {
