@@ -491,7 +491,7 @@ orderByChild('createdAt').once("value")).val();
     return await firebaseOnline(async () => {
       const ref = app.database().ref(FIREBASE_PUBLIC_WON_PROOF);
       const query = userId ? ref.orderByChild("userId").equalTo(userId) : ref;
-      const data = (await ref.once("value")).val() as Record<
+      const data = (await query.once("value")).val() as Record<
         string,
         WonProofTableRow
       > | null;
