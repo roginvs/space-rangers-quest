@@ -13,7 +13,7 @@ import {
   FirebasePublic,
   ConfigLocalOnly
 } from "./defs";
-import { WonProofTableRow } from "../../development-tools/migrate-firebase-public-db";
+import { WonProofTableRow } from "./defs";
 
 /*
 Here is firebase rules:

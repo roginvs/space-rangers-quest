@@ -33,5 +33,5 @@ export interface WonProofTableRow {
   userId: string;
   createdAt: number;
   gameName: string;
-  aleaSeed: string;
+  proof: GameLog;
 }

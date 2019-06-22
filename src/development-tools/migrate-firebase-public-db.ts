@@ -1,20 +1,13 @@
 import admin from "firebase-admin";
 import * as fs from "fs";
 
-import { FirebasePublic } from "../ui/db/defs";
+import { FirebasePublic, WonProofTableRow } from "../ui/db/defs";
 import * as pako from "pako";
 import { Index } from "../packGameData";
 import { parse } from "../lib/qmreader";
 import { Quest, validateWinningLog } from "../lib/qmplayer/funcs";
 //const acc = require("~/space-rangers-firebase-root-key.json");
 const FIREBASE_PUBLIC_WON_PROOF = "wonProofs";
-
-export interface WonProofTableRow {
-  userId: string;
-  createdAt: number;
-  gameName: string;
-  aleaSeed: string;
-}
 
 const serviceAccount = JSON.parse(
   fs.readFileSync("../../../space-rangers-firebase-root-key.json").toString()
@@ -29,8 +22,8 @@ admin.initializeApp({
 });
 const db = admin.database();
 
-async function createRow(row: WonProofTableRow) {
-  await db.ref(FIREBASE_PUBLIC_WON_PROOF + "/" + row.aleaSeed).set(row);
+async function createRow(key: string, row: WonProofTableRow) {
+  await db.ref(FIREBASE_PUBLIC_WON_PROOF + "/" + key).set(row);
 }
 
 (async () => {
@@ -78,11 +71,11 @@ async function createRow(row: WonProofTableRow) {
           false
         );
         if (validationResult) {
-          await createRow({
-            aleaSeed: proofSeed,
+          await createRow(proofSeed, {
             createdAt: admin.database.ServerValue.TIMESTAMP,
             gameName,
-            userId
+            userId,
+            proof: gameProofs[proofSeed]
           });
         } else {
           console.info("======= Not validated ======== ");
