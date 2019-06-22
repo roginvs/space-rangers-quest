@@ -15,7 +15,9 @@ export interface ConfigBoth extends ConfigLocalOnly {
 }
 
 export interface GameWonProofs {
-  [seed: string]: GameLog;
+  [seed: string]: GameLog & {
+    created: number;
+  };
 }
 export interface WonProofs {
   [gameId: string]: GameWonProofs;
@@ -31,7 +33,7 @@ export interface FirebasePublic {
 
 export interface WonProofTableRow {
   userId: string;
-  createdAt: number;
+  createdAt: number | object;
   gameName: string;
   proof: GameLog;
 }

@@ -27,6 +27,12 @@ async function createRow(key: string, row: WonProofTableRow) {
 }
 
 (async () => {
+  if (1 + 1 === 2) {
+    console.info("Dropping all data from wonProofs");
+    await db.ref(FIREBASE_PUBLIC_WON_PROOF).set({});
+    process.exit(0);
+  }
+
   console.info("Fetching all data");
   const usersPublic = (await db.ref("usersPublic").once("value")).val() as {
     [userId: string]: FirebasePublic;
@@ -45,8 +51,6 @@ async function createRow(key: string, row: WonProofTableRow) {
     console.info(
       `Checking user id=${userId} name=${userData.info && userData.info.name}`
     );
-
-    const checkedProofs: FirebasePublic["gamesWonProofs"] = {};
 
     for (const gameName of Object.keys(userData.gamesWonProofs || {})) {
       const gameProofs = userData.gamesWonProofs[gameName];
@@ -73,7 +77,9 @@ async function createRow(key: string, row: WonProofTableRow) {
         );
         if (validationResult) {
           await createRow(proofSeed, {
-            createdAt: admin.database.ServerValue.TIMESTAMP,
+            createdAt:
+              gameProofs[proofSeed].created ||
+              admin.database.ServerValue.TIMESTAMP,
             gameName,
             userId,
             proof: gameProofs[proofSeed]

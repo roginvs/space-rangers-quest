@@ -54,8 +54,8 @@ Here is firebase rules:
         ".validate": "data.val() == null",
         ".read": true,
       },
-      ".indexOn": ["userId", "gameName", "aleaSeed"],
-       ".read": true,
+      ".indexOn": ["userId", "gameName", "createdAt"],
+      ".read": true,
     }
   }
 }
@@ -468,16 +468,36 @@ export async function getDb(app: firebase.app.App) {
     return getLocal(INDEXEDDB_CONFIG_STORE_NAME, key);
   }
 
+  async function inOnlineFirebase<T>(f: () => Promise<T>) {
+    firebaseGoOnline();
+    try {
+      return await f();
+    } finally {
+      firebaseGoOffline();
+    }
+  }
+
   async function getOwnRemotePassings() {
     firebaseGoOnline();
     try {
       if (!firebaseUser) {
         return null;
       }
+      /*
+
+store.app.database().goOnline();
+const firebaseUser = store.app.auth().currentUser;
+const FIREBASE_PUBLIC_WON_PROOF = 'wonProofs';
+
+(await store.app.database().ref("wonProofs").
+orderByChild('createdAt').once("value")).val();
+
+      */
       const data = (await app
         .database()
         .ref(FIREBASE_PUBLIC_WON_PROOF)
-        .equalTo("userId", firebaseUser.uid)
+        .orderByChild("userId")
+        .equalTo(firebaseUser.uid)
         .once("value")).val() as Record<string, WonProofTableRow> | null;
       // Data can be null
       // console.info("Data is", data);
@@ -488,6 +508,15 @@ export async function getDb(app: firebase.app.App) {
     } finally {
       firebaseGoOffline();
     }
+  }
+
+  function setRemoteWon(key: string, row: WonProofTableRow) {
+    return inOnlineFirebase(() =>
+      app
+        .database()
+        .ref(FIREBASE_PUBLIC_WON_PROOF + "/" + key)
+        .set(row)
+    );
   }
 
   async function updateFirebaseOwnHighscore() {
@@ -550,6 +579,10 @@ export async function getDb(app: firebase.app.App) {
   }
 
   async function syncWithFirebase() {
+    const userId = firebaseUser ? firebaseUser.uid : undefined;
+    if (!userId) {
+      throw new Error("Not logged in into firebase");
+    }
     firebaseGoOnline();
     try {
       console.info(`SyncWithFirebase started`);
@@ -662,6 +695,40 @@ export async function getDb(app: firebase.app.App) {
         )) as WonProofs;
         const allRemoteWons = (await getOwnRemotePassings()) || {};
 
+        for (const gameName of Object.keys(allLocalWons)) {
+          const proofs = allLocalWons[gameName];
+          for (const aleaSeed of Object.keys(proofs)) {
+            const proof = proofs[aleaSeed];
+            if (!allRemoteWons[aleaSeed]) {
+              console.info(`Pushing ${aleaSeed} into remote wons`);
+              await setRemoteWon(aleaSeed, {
+                createdAt: firebase.database.ServerValue.TIMESTAMP,
+                gameName,
+                proof,
+                userId
+              });
+            }
+          }
+        }
+
+        for (const aleaSeed of Object.keys(allRemoteWons)) {
+          const row = allRemoteWons[aleaSeed];
+          if (row.userId !== userId) {
+            throw new Error(
+              `Unexpected userId ${row.userId}, expected ${userId}`
+            );
+          }
+          const gameName = row.gameName;
+          const values = await getLocal(INDEXEDDB_WON_STORE_NAME, gameName);
+          if (!values[aleaSeed]) {
+            console.info(`Polling ${aleaSeed} from remote wons`);
+            const newValues = {
+              ...values,
+              [aleaSeed]: row.proof
+            };
+            await setLocal(INDEXEDDB_WON_STORE_NAME, gameName, newValues);
+          }
+        }
         /*
           TODO: 
           - Make local db flat view
