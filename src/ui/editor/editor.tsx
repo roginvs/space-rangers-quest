@@ -45,21 +45,17 @@ class InfoPopup extends React.Component<{
 }> {
   render() {
     const target = this.props.target;
-    const popperOptions: Modifiers = {
+    const modifiers: Modifiers = {
       flip: {
         enabled: true,
       },
       preventOverflow: {
         enabled: true,
-        boundariesElement: "window",
+        boundariesElement: "viewport",
       },
     };
     return (
-      <Popper
-        open={true}
-        anchorEl={addPaddingToPopper(this.props.anchorEl)}
-        popperOptions={popperOptions}
-      >
+      <Popper open={true} anchorEl={addPaddingToPopper(this.props.anchorEl)} modifiers={modifiers}>
         <div className="popover" style={{ position: "static" }}>
           <div className="popover-header">
             Header
