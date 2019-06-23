@@ -104,9 +104,38 @@ class JumpArrow extends React.Component<{
   @observable
   hovered = false;
 
+  @observable
+  ref: SVGPathElement | null = null;
+
   render() {
     const { store, quest, jump } = this.props;
-    return null;
+    const startLoc = quest.locations.find(x => x.id === jump.fromLocationId);
+    const endLoc = quest.locations.find(x => x.id === jump.toLocationId);
+    if (!startLoc || !endLoc) {
+      console.error(`Jump id=${jump.id} unable to find locations`);
+      return null;
+    }
+    const myIndex = quest.jumps
+      .filter(x => x.fromLocationId === jump.fromLocationId && x.toLocationId === jump.toLocationId)
+      .findIndex(x => x.id === jump.id);
+    const controlPointX = endLoc.locX;
+    const controlPointY = endLoc.locY;
+    return (
+      <path
+        d={[
+          "M",
+          startLoc.locX,
+          startLoc.locY,
+          "Q",
+          controlPointX,
+          controlPointY,
+          endLoc.locX,
+          endLoc.locY,
+        ].join(" ")}
+        stroke="black"
+        fill="transparent"
+      />
+    );
   }
 }
 
