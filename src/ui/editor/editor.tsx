@@ -176,7 +176,7 @@ class JumpPopupBody extends React.Component<{
 
           {paramsInfo.length > 0 ? (
             <>
-              <Divider />
+              {jump.text || jump.description ? <Divider /> : null}
               {paramsInfo}
             </>
           ) : null}
