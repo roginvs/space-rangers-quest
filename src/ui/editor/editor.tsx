@@ -76,10 +76,10 @@ function getSummaryForParamsChangeAndConditions(
       const changeString = change.isChangeValue
         ? `:=${change.change}`
         : change.isChangePercentage
-        ? change.change > 100
-          ? `+${change.change - 100}%`
-          : change.change < 100
-          ? `-${change.change}`
+        ? change.change > 0
+          ? `+${change.change}%`
+          : change.change < 0
+          ? `${change.change}%x`
           : ""
         : change.isChangeFormula
         ? `:='${change.changingFormula}'`
@@ -130,9 +130,41 @@ class LocationPopupBody extends React.Component<{
   location: Location;
 }> {
   render() {
+    const location = this.props.location;
+    const texts = location.texts.filter(x => x);
+    const shortInfo = location.isStarting
+      ? "Стартовая локация"
+      : location.isSuccess
+      ? "Победная локация"
+      : location.isFailyDeadly
+      ? "Смертельная локация"
+      : location.isFaily
+      ? "Провальная локация"
+      : location.isEmpty
+      ? "Пустая локация (флаг)"
+      : texts.length === 0
+      ? "Пустая локация"
+      : "Промежуточная локация";
+    const paramsInfo = getSummaryForParamsChangeAndConditions(this.props.store, location);
+
+    const firstText = texts.shift();
     return (
       <div className="popover" style={{ position: "static" }}>
-        todo
+        <div className="popover-header" style={{ textAlign: "center" }}>
+          <div>
+            id={location.id} {shortInfo}
+          </div>
+        </div>
+        <div className="popover-body">
+          {firstText ? <div className="text-center text-primary">{firstText}</div> : null}
+
+          {paramsInfo.length > 0 ? (
+            <>
+              {firstText ? <Divider /> : null}
+              {paramsInfo}
+            </>
+          ) : null}
+        </div>
       </div>
     );
   }
@@ -213,7 +245,14 @@ class InfoPopup extends React.Component<{
       },
     };
     return (
-      <Popper open={true} anchorEl={addPaddingToPopper(this.props.anchorEl)} modifiers={modifiers}>
+      <Popper
+        open={true}
+        anchorEl={addPaddingToPopper(this.props.anchorEl)}
+        popperOptions={{
+          placement: "right",
+        }}
+        modifiers={modifiers}
+      >
         {this.props.children}
       </Popper>
     );
@@ -236,8 +275,14 @@ class LocationPoint extends React.Component<{
     return (
       <>
         <circle
-          onMouseEnter={() => (this.hovered = true)}
-          onMouseLeave={() => (this.hovered = false)}
+          onMouseEnter={() => {
+            // console.info(`Enter location=${location.id}`);
+            this.hovered = true;
+          }}
+          onMouseLeave={() => {
+            // console.info(`Leave location=${location.id}`);
+            this.hovered = false;
+          }}
           cx={location.locX}
           cy={location.locY}
           fill={
