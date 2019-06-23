@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
+    "@material-ui/core": "^4.1.2",
     "@types/classnames": "^2.2.6",
     "@types/mocha": "^5.2.5",
     "@types/node": "^10.5.2",

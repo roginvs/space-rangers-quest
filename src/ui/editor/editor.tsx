@@ -3,6 +3,7 @@ import { Store } from "../store";
 import { QM, Location, Jump } from "../../lib/qmreader";
 import { observer } from "mobx-react";
 import { observable } from "mobx";
+import Popper from "@material-ui/core/Popper";
 
 const colors = {
   background: "#aaaaaa",
@@ -24,32 +25,63 @@ class LocationPoint extends React.Component<{
   @observable
   hovered = false;
 
+  @observable
+  ref: SVGCircleElement | null = null;
+
   render() {
     const { store, quest, location } = this.props;
     return (
-      <circle
-        key={location.id}
-        onMouseEnter={() => (this.hovered = true)}
-        onMouseLeave={() => (this.hovered = false)}
-        cx={location.locX}
-        cy={location.locY}
-        fill={
-          location.isStarting
-            ? colors.location.starting
-            : location.isEmpty
-            ? colors.location.empty
-            : location.isSuccess
-            ? colors.location.final
-            : location.isFaily || location.isFailyDeadly
-            ? colors.location.fail
-            : colors.location.intermediate
-        }
-        stroke={this.hovered ? "black" : undefined}
-        r={7}
-        style={{
-          cursor: "pointer",
-        }}
-      />
+      <>
+        <circle
+          key={location.id}
+          onMouseEnter={() => (this.hovered = true)}
+          onMouseLeave={() => (this.hovered = false)}
+          cx={location.locX}
+          cy={location.locY}
+          fill={
+            location.isStarting
+              ? colors.location.starting
+              : location.isEmpty
+              ? colors.location.empty
+              : location.isSuccess
+              ? colors.location.final
+              : location.isFaily || location.isFailyDeadly
+              ? colors.location.fail
+              : colors.location.intermediate
+          }
+          stroke={this.hovered ? "black" : undefined}
+          r={7}
+          style={{
+            cursor: "pointer",
+          }}
+          ref={e => {
+            if (!this.ref) {
+              this.ref = e;
+            }
+          }}
+        />
+        {this.hovered ? (
+          <Popper open={true} anchorEl={this.ref} popperOptions={{}}>
+            <div className="popover" style={{ position: "static", margin: 10 }}>
+              <div className="popover-header">Header id={location.id}</div>
+              <div className="popover-body">
+                The content of the Popper
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                <br />
+                XXX .
+              </div>
+            </div>
+          </Popper>
+        ) : (
+          undefined
+        )}
+      </>
     );
   }
 }
