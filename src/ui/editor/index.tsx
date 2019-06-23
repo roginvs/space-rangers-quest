@@ -7,13 +7,14 @@ import pako from "pako";
 import { DATA_DIR } from "../consts";
 import { Editor } from "./editor";
 import { observer } from "mobx-react";
+import { EditorStore } from "./store";
 
 @observer
 export class EditorContainer extends React.Component<{
   store: Store;
 }> {
   @observable
-  quest?: QM;
+  store?: EditorStore;
 
   componentDidMount() {
     const questInfo = this.props.store.index.quests.find(x => x.gameName === "Park");
@@ -24,7 +25,7 @@ export class EditorContainer extends React.Component<{
       .then(x => x.arrayBuffer())
       .then(questArrayBuffer => {
         const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer))));
-        this.quest = quest;
+        this.store = new EditorStore(quest);
       })
       .catch(e => {
         console.error("Lol");
@@ -32,9 +33,9 @@ export class EditorContainer extends React.Component<{
   }
 
   render() {
-    if (!this.quest) {
+    if (!this.store) {
       return <div>Loading</div>;
     }
-    return <Editor store={this.props.store} quest={this.quest} />;
+    return <Editor store={this.store} />;
   }
 }
