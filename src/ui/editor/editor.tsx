@@ -2,7 +2,7 @@ import * as React from "react";
 import { Store } from "../store";
 import { QM, Location, Jump } from "../../lib/qmreader";
 import { observer } from "mobx-react";
-import { observable } from "mobx";
+import { observable, computed } from "mobx";
 import Popper from "@material-ui/core/Popper";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 
@@ -300,14 +300,23 @@ export class Editor extends React.Component<{
   store: Store;
   quest: QM;
 }> {
+  @computed
+  get svgWidth() {
+    return Math.max(...this.props.quest.locations.map(l => l.locX)) + 100;
+  }
+  @computed
+  get svgHeight() {
+    return Math.max(...this.props.quest.locations.map(l => l.locY)) + 100;
+  }
+
   render() {
     const store = this.props.store;
     const quest = this.props.quest;
     return (
       <svg
         style={{
-          width: "100%",
-          height: "1000px" /*TODO*/,
+          width: this.svgWidth,
+          height: this.svgHeight,
           position: "relative",
           backgroundColor: colors.background,
         }}
