@@ -172,11 +172,11 @@ class LocationPopupBody extends React.Component<{
             </>
           ) : null}
 
-          {location.dayPassed || !location.maxVisits ? (
+          {location.dayPassed || location.maxVisits ? (
             <>
               {" "}
               <Divider />
-              {!location.maxVisits ? (
+              {location.maxVisits ? (
                 <div className="text-center">Не более {location.maxVisits} раз</div>
               ) : (
                 ""
