@@ -1,7 +1,8 @@
 import * as React from "react";
 import { Store } from "../store";
-import { QM } from "../../lib/qmreader";
+import { QM, Location } from "../../lib/qmreader";
 import { observer } from "mobx-react";
+import { observable } from "mobx";
 
 const colors = {
   background: "#aaaaaa",
@@ -14,12 +15,49 @@ const colors = {
   }
 } as const;
 
+class LocationPoint extends React.Component<{
+  store: Store;
+  quest: QM;
+  location: Location;
+}> {
+  @observable
+  hovered = false;
+
+  render() {
+    const { store, quest, location } = this.props;
+    return (
+      <div
+        key={location.id}
+        onMouseEnter={() => (this.hovered = true)}
+        onMouseLeave={() => (this.hovered = false)}
+        style={{
+          position: "absolute",
+          left: location.locX,
+          top: location.locY,
+          borderRadius: "100%",
+          width: 10,
+          height: 10,
+          backgroundColor: location.isStarting
+            ? colors.location.starting
+            : location.isEmpty
+            ? colors.location.empty
+            : location.isSuccess
+            ? colors.location.final
+            : location.isFaily || location.isFailyDeadly
+            ? colors.location.fail
+            : colors.location.intermediate
+        }}
+      ></div>
+    );
+  }
+}
 @observer
 export class Editor extends React.Component<{
   store: Store;
   quest: QM;
 }> {
   render() {
+    const store = this.props.store;
     const quest = this.props.quest;
     return (
       <div
@@ -31,26 +69,7 @@ export class Editor extends React.Component<{
         }}
       >
         {quest.locations.map(l => (
-          <div
-            key={l.id}
-            style={{
-              position: "absolute",
-              left: l.locX,
-              top: l.locY,
-              borderRadius: "100%",
-              width: 10,
-              height: 10,
-              backgroundColor: l.isStarting
-                ? colors.location.starting
-                : l.isEmpty
-                ? colors.location.empty
-                : l.isSuccess
-                ? colors.location.final
-                : l.isFaily || l.isFailyDeadly
-                ? colors.location.fail
-                : colors.location.intermediate
-            }}
-          ></div>
+          <LocationPoint quest={quest} store={store} location={l} />
         ))}
       </div>
     );
