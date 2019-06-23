@@ -233,11 +233,6 @@ interface QMParamShowInfo {
   to: number;
   str: string;
 }
-interface Media {
-  img: string | undefined;
-  sound: string | undefined;
-  track: string | undefined;
-}
 export interface QMParam extends Media {
   min: number;
   max: number;
@@ -460,9 +455,34 @@ export enum LocationType {
   Deadly = 0x05,
 }
 
+interface Media {
+  img: string | undefined;
+  sound: string | undefined;
+  track: string | undefined;
+}
+
+export type LocationId = number & { readonly __nominal: unique symbol };
+export type JumpId = number & { readonly __nominal: unique symbol };
+
+export interface Jump extends Media {
+  prio: number;
+  dayPassed: boolean;
+  id: JumpId;
+  fromLocationId: LocationId;
+  toLocationId: LocationId;
+  alwaysShow: boolean;
+  jumpingCountLimit: number;
+  showingOrder: number;
+  paramsChanges: ParameterChange[];
+  paramsConditions: JumpParameterCondition[];
+  formulaToPass: string;
+  text: string;
+  description: string;
+}
+
 export interface Location {
   dayPassed: boolean;
-  id: number;
+  id: LocationId;
   isStarting: boolean;
   isSuccess: boolean;
   isFaily: boolean;
@@ -481,7 +501,7 @@ export interface Location {
 function parseLocation(r: Reader, paramsCount: number): Location {
   const dayPassed = !!r.int32();
   r.seek(8);
-  const id = r.int32();
+  const id = r.int32() as LocationId;
   const isStarting = !!r.byte();
   const isSuccess = !!r.byte();
   const isFaily = !!r.byte();
@@ -551,7 +571,7 @@ function parseLocationQmm(r: Reader, paramsCount: number): Location {
   const locX = r.int32(); /* In pixels */
   const locY = r.int32(); /* In pixels */
 
-  const id = r.int32();
+  const id = r.int32() as LocationId;
   const maxVisits = r.int32();
 
   const type = r.byte() as LocationType;
@@ -649,28 +669,13 @@ interface JumpParameterCondition {
   mustModValues: number[];
   mustModValuesMod: boolean;
 }
-export interface Jump extends Media {
-  prio: number;
-  dayPassed: boolean;
-  id: number;
-  fromLocationId: number;
-  toLocationId: number;
-  alwaysShow: boolean;
-  jumpingCountLimit: number;
-  showingOrder: number;
-  paramsChanges: ParameterChange[];
-  paramsConditions: JumpParameterCondition[];
-  formulaToPass: string;
-  text: string;
-  description: string;
-}
 
 function parseJump(r: Reader, paramsCount: number): Jump {
   const prio = r.float64();
   const dayPassed = !!r.int32();
-  const id = r.int32();
-  const fromLocationId = r.int32();
-  const toLocationId = r.int32();
+  const id = r.int32() as JumpId;
+  const fromLocationId = r.int32() as LocationId;
+  const toLocationId = r.int32() as LocationId;
   r.seek(1);
   const alwaysShow = !!r.byte();
   const jumpingCountLimit = r.int32();
@@ -761,9 +766,9 @@ function parseJumpQmm(r: Reader, paramsCount: number, questParams: QMParam[]): J
   //r.debugShowHex()
   const prio = r.float64();
   const dayPassed = !!r.int32();
-  const id = r.int32();
-  const fromLocationId = r.int32();
-  const toLocationId = r.int32();
+  const id = r.int32() as JumpId;
+  const fromLocationId = r.int32() as LocationId;
+  const toLocationId = r.int32() as LocationId;
 
   const alwaysShow = !!r.byte();
   const jumpingCountLimit = r.int32();
