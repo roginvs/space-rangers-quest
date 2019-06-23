@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Store } from "../store";
-import { QM, Location } from "../../lib/qmreader";
+import { QM, Location, Jump } from "../../lib/qmreader";
 import { observer } from "mobx-react";
 import { observable } from "mobx";
 
@@ -27,18 +27,14 @@ class LocationPoint extends React.Component<{
   render() {
     const { store, quest, location } = this.props;
     return (
-      <div
+      <circle
         key={location.id}
         onMouseEnter={() => (this.hovered = true)}
         onMouseLeave={() => (this.hovered = false)}
-        style={{
-          position: "absolute",
-          left: location.locX,
-          top: location.locY,
-          borderRadius: "100%",
-          width: 10,
-          height: 10,
-          backgroundColor: location.isStarting
+        cx={location.locX}
+        cy={location.locY}
+        fill={
+          location.isStarting
             ? colors.location.starting
             : location.isEmpty
             ? colors.location.empty
@@ -46,14 +42,33 @@ class LocationPoint extends React.Component<{
             ? colors.location.final
             : location.isFaily || location.isFailyDeadly
             ? colors.location.fail
-            : colors.location.intermediate,
-          border: this.hovered ? "3px solid black" : undefined,
+            : colors.location.intermediate
+        }
+        stroke={this.hovered ? "black" : undefined}
+        r={7}
+        style={{
           cursor: "pointer",
         }}
-      ></div>
+      />
     );
   }
 }
+
+@observer
+class JumpArrow extends React.Component<{
+  store: Store;
+  quest: QM;
+  jump: Jump;
+}> {
+  @observable
+  hovered = false;
+
+  render() {
+    const { store, quest, jump } = this.props;
+    return null;
+  }
+}
+
 @observer
 export class Editor extends React.Component<{
   store: Store;
@@ -63,7 +78,7 @@ export class Editor extends React.Component<{
     const store = this.props.store;
     const quest = this.props.quest;
     return (
-      <div
+      <svg
         style={{
           width: "100%",
           height: "1000px" /*TODO*/,
@@ -72,9 +87,12 @@ export class Editor extends React.Component<{
         }}
       >
         {quest.locations.map(l => (
-          <LocationPoint quest={quest} store={store} location={l} />
+          <LocationPoint quest={quest} store={store} location={l} key={l.id} />
         ))}
-      </div>
+        {quest.jumps.map(j => (
+          <JumpArrow quest={quest} store={store} jump={j} key={j.id} />
+        ))}
+      </svg>
     );
   }
 }
