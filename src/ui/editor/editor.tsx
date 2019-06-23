@@ -193,7 +193,6 @@ class JumpPopupBody extends React.Component<{
           )}
           {jump.alwaysShow ? <div className="text-center">Всегда показывать</div> : ""}
           {jump.dayPassed ? <div className="text-center">Прошел один день</div> : ""}
-          order={jump.showingOrder}
         </div>
       </div>
     );
@@ -318,7 +317,8 @@ class JumpArrow extends React.Component<{
       console.error(`Wrong index for jump id=${jump.id}`);
       return null;
     }
-    const allJumpsEvenCount = allJumpFromThisLocations.length % 2 === 0;
+
+    const allJumpsCount = allJumpFromThisLocations.length;
     const middleVectorX =
       (Math.max(endLoc.locX, startLoc.locX) - Math.min(endLoc.locX, startLoc.locX)) / 2;
     const middleVectorY =
@@ -334,16 +334,13 @@ class JumpArrow extends React.Component<{
     const offsetVectorX = (offsetVectorUnnormalizedX / offsetVectorLength) * 30;
     const offsetVectorY = (offsetVectorUnnormalizedY / offsetVectorLength) * 30;
 
-    const offsetVectorCount = Math.floor((myIndex + 1) / 2);
-    const offsetVectorSign = myIndex % 2 === 0 ? 1 : -1;
+    const offsetVectorCount = myIndex;
+
+    const shiftMultiplier = allJumpsCount > 1 ? (allJumpsCount - 1) / 2 : 0;
     const controlPointX =
-      middleX +
-      offsetVectorX * offsetVectorCount * offsetVectorSign +
-      (allJumpsEvenCount ? offsetVectorX * 0.5 : 0);
+      middleX + offsetVectorX * offsetVectorCount - offsetVectorX * shiftMultiplier;
     const controlPointY =
-      middleY +
-      offsetVectorY * offsetVectorCount * offsetVectorSign +
-      (allJumpsEvenCount ? offsetVectorY * 0.5 : 0);
+      middleY + offsetVectorY * offsetVectorCount - offsetVectorY * shiftMultiplier;
 
     const paddedStart = this.lineRef ? this.lineRef.getPointAtLength(10) : undefined;
     const paddedEnd = this.lineRef
