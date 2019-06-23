@@ -49,6 +49,7 @@ import { AboutTabContainer } from "./about";
 import { ChampionsTabContainer } from "./champions";
 import { firebaseConfig } from "./firebaseConfig";
 import { ChampionsTabContainerNew } from "./champions.new";
+import { EditorTabContainer } from "./editor";
 
 console.info("starting");
 
@@ -307,6 +308,12 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
       return (
         <AppNavbar store={store}>
           <ChampionsTabContainerNew store={store} />
+        </AppNavbar>
+      );
+    } else if (tab0 === "editor") {
+      return (
+        <AppNavbar store={store}>
+          <EditorTabContainer store={store} />
         </AppNavbar>
       );
     } else if (tab0 === "quests") {
