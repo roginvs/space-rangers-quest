@@ -52,9 +52,9 @@ function addPaddingToPopper(e: ReferenceObject | null): ReferenceObject | null {
 function range(n: number) {
   return new Array(n).fill(0).map((zero, index) => index);
 }
-class JustParamsPopupInfo extends React.Component<{
+class SummaryForParamsChangeAndConditions extends React.Component<{
   store: EditorStore;
-  jump: {
+  target: {
     paramsConditions?: JumpParameterCondition[];
     paramsChanges: ParameterChange[];
   };
@@ -65,7 +65,7 @@ class JustParamsPopupInfo extends React.Component<{
     return (
       <div>
         {range(quest.paramsCount).map(paramId => {
-          const change = this.props.jump.paramsChanges[paramId];
+          const change = this.props.target.paramsChanges[paramId];
           const showHideString =
             change.showingType === ParameterShowingType.НеТрогать
               ? ""
@@ -91,7 +91,7 @@ class JustParamsPopupInfo extends React.Component<{
             : "";
           let conditionString = "";
           const param = quest.params[paramId];
-          const paramsConditions = this.props.jump.paramsConditions;
+          const paramsConditions = this.props.target.paramsConditions;
           if (paramsConditions) {
             const conditions = paramsConditions[paramId];
             if (conditions.mustFrom > param.min) {
@@ -115,7 +115,7 @@ class JustParamsPopupInfo extends React.Component<{
             return null;
           }
           return (
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex" }} key={`changeandcondition-${paramId}`}>
               <span>
                 [p{paramId + 1}] ({param.name}){showHideString} {conditionString}
               </span>
@@ -148,7 +148,7 @@ class JumpPopupBody extends React.Component<{
       <div className="popover" style={{ position: "static", minWidth: 250 }}>
         <div className="popover-header">Header</div>
         <div className="popover-body">
-          <JustParamsPopupInfo store={this.props.store} jump={this.props.jump} />
+          <SummaryForParamsChangeAndConditions store={this.props.store} target={this.props.jump} />
         </div>
       </div>
     );
