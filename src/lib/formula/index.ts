@@ -26,21 +26,13 @@ export function parse(str: string, params: Params = [], random: RandomFunc) {
   for (const sanityCheckToken of tokensAndWhitespace) {
     assert.strictEqual(
       sanityCheckToken.text,
-      strNoWhitespaces.slice(sanityCheckToken.start, sanityCheckToken.end)
+      strNoWhitespaces.slice(sanityCheckToken.start, sanityCheckToken.end),
     );
-    assert.strictEqual(
-      sanityCheckToken.text.length,
-      sanityCheckToken.end - sanityCheckToken.start
-    );
+    assert.strictEqual(sanityCheckToken.text.length, sanityCheckToken.end - sanityCheckToken.start);
   }
 
-  assert.strictEqual(
-    strNoWhitespaces,
-    tokensAndWhitespace.map(x => x.text).join("")
-  );
-  const tokens = tokensAndWhitespace.filter(
-    x => x.kind !== "white space token"
-  );
+  assert.strictEqual(strNoWhitespaces, tokensAndWhitespace.map(x => x.text).join(""));
+  const tokens = tokensAndWhitespace.filter(x => x.kind !== "white space token");
 
   const ast = parseExpression(tokens);
   // console.info(JSON.stringify(ast, null, 4));

@@ -11,8 +11,8 @@ const colors = {
     final: "#00ff00",
     intermediate: "#ffffff",
     empty: "#004101",
-    fail: "#d10201"
-  }
+    fail: "#d10201",
+  },
 } as const;
 
 class LocationPoint extends React.Component<{
@@ -45,7 +45,7 @@ class LocationPoint extends React.Component<{
             ? colors.location.final
             : location.isFaily || location.isFailyDeadly
             ? colors.location.fail
-            : colors.location.intermediate
+            : colors.location.intermediate,
         }}
       ></div>
     );
@@ -65,7 +65,7 @@ export class Editor extends React.Component<{
           width: "100%",
           height: "1000px" /*TODO*/,
           position: "relative",
-          backgroundColor: colors.background
+          backgroundColor: colors.background,
         }}
       >
         {quest.locations.map(l => (

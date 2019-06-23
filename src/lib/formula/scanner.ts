@@ -8,7 +8,7 @@ const keywordsToKind: {
   to: "to keyword",
   in: "in keyword",
   and: "and keyword",
-  or: "or keyword"
+  or: "or keyword",
 };
 
 export function Scanner(str: string) {
@@ -27,7 +27,7 @@ export function Scanner(str: string) {
       kind: "white space token",
       start,
       end: pos,
-      text: str.slice(start, pos)
+      text: str.slice(start, pos),
     };
     return token;
   }
@@ -69,29 +69,24 @@ export function Scanner(str: string) {
     let keywordKind: SyntaxKind | undefined = undefined;
     while (
       pos < end &&
-      "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM01234567890_".indexOf(
-        str[pos]
-      ) > -1
+      "qwertyuiopasdfghjklzxcvbnmQWERTYUIOPASDFGHJKLZXCVBNM01234567890_".indexOf(str[pos]) > -1
     ) {
       pos++;
       text = str.slice(start, pos);
       keywordKind =
-        text in keywordsToKind
-          ? keywordsToKind[text as keyof typeof keywordsToKind]
-          : undefined;
+        text in keywordsToKind ? keywordsToKind[text as keyof typeof keywordsToKind] : undefined;
       if (keywordKind) {
         // Some quests have "[p1] mod1000" (without spaces)
         break;
       }
     }
 
-    const kind: SyntaxKind =
-      keywordKind !== undefined ? keywordKind : "identifier";
+    const kind: SyntaxKind = keywordKind !== undefined ? keywordKind : "identifier";
     return {
       kind,
       start,
       end: pos,
-      text
+      text,
     };
   }
 
@@ -125,7 +120,7 @@ export function Scanner(str: string) {
       kind: "numeric literal",
       start,
       end: pos,
-      text: str.slice(start, pos)
+      text: str.slice(start, pos),
     };
     return token;
   }
@@ -145,7 +140,7 @@ export function Scanner(str: string) {
         kind: "dotdot token",
         start: pos,
         end: pos + 2,
-        text: char + lookAheadChar
+        text: char + lookAheadChar,
       };
       pos += 2;
       return token;
@@ -156,7 +151,7 @@ export function Scanner(str: string) {
         kind: "not equals token",
         start: pos,
         end: pos + 2,
-        text: char + lookAheadChar
+        text: char + lookAheadChar,
       };
       pos += 2;
       return token;
@@ -166,7 +161,7 @@ export function Scanner(str: string) {
         kind: "greater than eq token",
         start: pos,
         end: pos + 2,
-        text: char + lookAheadChar
+        text: char + lookAheadChar,
       };
       pos += 2;
       return token;
@@ -176,7 +171,7 @@ export function Scanner(str: string) {
         kind: "less than eq token",
         start: pos,
         end: pos + 2,
-        text: char + lookAheadChar
+        text: char + lookAheadChar,
       };
       pos += 2;
       return token;
@@ -187,7 +182,7 @@ export function Scanner(str: string) {
         kind: "greater than token",
         start: pos,
         end: pos + 1,
-        text: char
+        text: char,
       };
       pos++;
       return token;
@@ -198,7 +193,7 @@ export function Scanner(str: string) {
         kind: "less than token",
         start: pos,
         end: pos + 1,
-        text: char
+        text: char,
       };
       pos++;
       return token;
@@ -216,7 +211,7 @@ export function Scanner(str: string) {
         kind: oneCharKind,
         start: pos,
         end: pos + 1,
-        text: char
+        text: char,
       };
       pos++;
       return token;

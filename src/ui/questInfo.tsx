@@ -11,17 +11,12 @@ import {
   getUIState,
   getAllImagesToPreload,
   getGameLog,
-  GameLog
+  GameLog,
 } from "../lib/qmplayer/funcs";
 import { JUMP_I_AGREE } from "../lib/qmplayer/defs";
 import { Index, Game } from "../packGameData";
 import { AppNavbar } from "./appNavbar";
-import {
-  ButtonDropdown,
-  DropdownMenu,
-  DropdownToggle,
-  DropdownItem
-} from "reactstrap";
+import { ButtonDropdown, DropdownMenu, DropdownToggle, DropdownItem } from "reactstrap";
 import { QuestReplaceTags } from "./questReplaceTags";
 import { substitute } from "../lib/substitution";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
@@ -56,8 +51,8 @@ export class QuestInfo extends React.Component<
       .catch(e => null)
       .then(lastSavedGameState =>
         this.setState({
-          lastSavedGameState
-        })
+          lastSavedGameState,
+        }),
       )
       .catch(e => console.warn(e));
     window.scrollTo(0, 0);
@@ -87,9 +82,7 @@ export class QuestInfo extends React.Component<
                 {(() => {
                   // copy-paste from questList
                   if (passedQuest === undefined) {
-                    return (
-                      <i className="text-muted fa fa-spin circle-o-notch" />
-                    );
+                    return <i className="text-muted fa fa-spin circle-o-notch" />;
                   }
 
                   if (
@@ -111,13 +104,13 @@ export class QuestInfo extends React.Component<
                       const durationsMins = Math.ceil(
                         (new Date(lastStep.dateUnix).getTime() -
                           new Date(firstStep.dateUnix).getTime()) /
-                          (1000 * 60)
+                          (1000 * 60),
                       );
                       return {
                         started: firstStep.dateUnix,
                         end: lastStep.dateUnix,
                         durationsMins,
-                        k
+                        k,
                       };
                     })
                     .filter(x => x)
@@ -131,14 +124,14 @@ export class QuestInfo extends React.Component<
                     .map(x =>
                       x ? (
                         <div key={x.k}>
-                          {l.passed} {new Date(x.end).toLocaleString()} (
-                          {x.durationsMins} {l.minutesShort})
+                          {l.passed} {new Date(x.end).toLocaleString()} ({x.durationsMins}{" "}
+                          {l.minutesShort})
                           {/*
                                                         {new Date(x.started).toLocaleString()} - {
                                                             new Date(x.end).toLocaleString()}
                                                         */}
                         </div>
-                      ) : null
+                      ) : null,
                     );
                 })()}
               </small>
@@ -152,14 +145,12 @@ export class QuestInfo extends React.Component<
                   ...player,
                   Day: `${DEFAULT_DAYS_TO_PASS_QUEST}`,
                   Date: SRDateToString(DEFAULT_DAYS_TO_PASS_QUEST, player.lang),
-                  CurDate: SRDateToString(0, player.lang)
+                  CurDate: SRDateToString(0, player.lang),
                 },
                 [],
                 n =>
                   // tslint:disable-next-line:strict-type-predicates
-                  n !== undefined
-                    ? Math.floor(Math.random() * n)
-                    : Math.random()
+                  n !== undefined ? Math.floor(Math.random() * n) : Math.random(),
               )}
             />
           </div>
@@ -167,7 +158,7 @@ export class QuestInfo extends React.Component<
             <div className="col-md-4">
               <button
                 className={classnames("btn btn-block mb-2", {
-                  "btn-primary": !this.state.lastSavedGameState
+                  "btn-primary": !this.state.lastSavedGameState,
                 })}
                 onClick={async () => {
                   await this.props.store.db.saveGame(this.props.gameName, null);
@@ -181,7 +172,7 @@ export class QuestInfo extends React.Component<
               <button
                 className={classnames("btn btn-block mb-2", {
                   "btn-primary": !!this.state.lastSavedGameState,
-                  disabled: !this.state.lastSavedGameState
+                  disabled: !this.state.lastSavedGameState,
                 })}
                 onClick={async () => {
                   location.hash = `/quests/${gameName}/play`;

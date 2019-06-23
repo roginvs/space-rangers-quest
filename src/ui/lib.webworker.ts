@@ -589,18 +589,13 @@ interface EventListener {
 
 /** The ANGLE_instanced_arrays extension is part of the WebGL API and allows to draw the same object, or groups of similar objects multiple times, if they share the same vertex data, primitive count and type. */
 interface ANGLE_instanced_arrays {
-  drawArraysInstancedANGLE(
-    mode: GLenum,
-    first: GLint,
-    count: GLsizei,
-    primcount: GLsizei
-  ): void;
+  drawArraysInstancedANGLE(mode: GLenum, first: GLint, count: GLsizei, primcount: GLsizei): void;
   drawElementsInstancedANGLE(
     mode: GLenum,
     count: GLsizei,
     type: GLenum,
     offset: GLintptr,
-    primcount: GLsizei
+    primcount: GLsizei,
   ): void;
   vertexAttribDivisorANGLE(index: GLuint, divisor: GLuint): void;
   readonly VERTEX_ATTRIB_ARRAY_DIVISOR_ANGLE: GLenum;
@@ -639,22 +634,22 @@ interface AbortSignal extends EventTarget {
   addEventListener<K extends keyof AbortSignalEventMap>(
     type: K,
     listener: (this: AbortSignal, ev: AbortSignalEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof AbortSignalEventMap>(
     type: K,
     listener: (this: AbortSignal, ev: AbortSignalEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -672,22 +667,22 @@ interface AbstractWorker {
   addEventListener<K extends keyof AbstractWorkerEventMap>(
     type: K,
     listener: (this: AbstractWorker, ev: AbstractWorkerEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof AbstractWorkerEventMap>(
     type: K,
     listener: (this: AbstractWorker, ev: AbstractWorkerEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -755,22 +750,22 @@ interface BroadcastChannel extends EventTarget {
   addEventListener<K extends keyof BroadcastChannelEventMap>(
     type: K,
     listener: (this: BroadcastChannel, ev: BroadcastChannelEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof BroadcastChannelEventMap>(
     type: K,
     listener: (this: BroadcastChannel, ev: BroadcastChannelEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -795,18 +790,9 @@ interface Cache {
   add(request: RequestInfo): Promise<void>;
   addAll(requests: RequestInfo[]): Promise<void>;
   delete(request: RequestInfo, options?: CacheQueryOptions): Promise<boolean>;
-  keys(
-    request?: RequestInfo,
-    options?: CacheQueryOptions
-  ): Promise<ReadonlyArray<Request>>;
-  match(
-    request: RequestInfo,
-    options?: CacheQueryOptions
-  ): Promise<Response | undefined>;
-  matchAll(
-    request?: RequestInfo,
-    options?: CacheQueryOptions
-  ): Promise<ReadonlyArray<Response>>;
+  keys(request?: RequestInfo, options?: CacheQueryOptions): Promise<ReadonlyArray<Request>>;
+  match(request: RequestInfo, options?: CacheQueryOptions): Promise<Response | undefined>;
+  matchAll(request?: RequestInfo, options?: CacheQueryOptions): Promise<ReadonlyArray<Response>>;
   put(request: RequestInfo, response: Response): Promise<void>;
 }
 
@@ -820,10 +806,7 @@ interface CacheStorage {
   delete(cacheName: string): Promise<boolean>;
   has(cacheName: string): Promise<boolean>;
   keys(): Promise<string[]>;
-  match(
-    request: RequestInfo,
-    options?: CacheQueryOptions
-  ): Promise<Response | undefined>;
+  match(request: RequestInfo, options?: CacheQueryOptions): Promise<Response | undefined>;
   open(cacheName: string): Promise<Cache>;
 }
 
@@ -839,13 +822,7 @@ interface CanvasCompositing {
 
 interface CanvasDrawImage {
   drawImage(image: CanvasImageSource, dx: number, dy: number): void;
-  drawImage(
-    image: CanvasImageSource,
-    dx: number,
-    dy: number,
-    dw: number,
-    dh: number
-  ): void;
+  drawImage(image: CanvasImageSource, dx: number, dy: number, dw: number, dh: number): void;
   drawImage(
     image: CanvasImageSource,
     sx: number,
@@ -855,7 +832,7 @@ interface CanvasDrawImage {
     dx: number,
     dy: number,
     dw: number,
-    dh: number
+    dh: number,
   ): void;
 }
 
@@ -866,12 +843,7 @@ interface CanvasDrawPath {
   fill(fillRule?: CanvasFillRule): void;
   fill(path: Path2D, fillRule?: CanvasFillRule): void;
   isPointInPath(x: number, y: number, fillRule?: CanvasFillRule): boolean;
-  isPointInPath(
-    path: Path2D,
-    x: number,
-    y: number,
-    fillRule?: CanvasFillRule
-  ): boolean;
+  isPointInPath(path: Path2D, x: number, y: number, fillRule?: CanvasFillRule): boolean;
   isPointInStroke(x: number, y: number): boolean;
   isPointInStroke(path: Path2D, x: number, y: number): boolean;
   stroke(): void;
@@ -881,23 +853,15 @@ interface CanvasDrawPath {
 interface CanvasFillStrokeStyles {
   fillStyle: string | CanvasGradient | CanvasPattern;
   strokeStyle: string | CanvasGradient | CanvasPattern;
-  createLinearGradient(
-    x0: number,
-    y0: number,
-    x1: number,
-    y1: number
-  ): CanvasGradient;
-  createPattern(
-    image: CanvasImageSource,
-    repetition: string
-  ): CanvasPattern | null;
+  createLinearGradient(x0: number, y0: number, x1: number, y1: number): CanvasGradient;
+  createPattern(image: CanvasImageSource, repetition: string): CanvasPattern | null;
   createRadialGradient(
     x0: number,
     y0: number,
     r0: number,
     x1: number,
     y1: number,
-    r1: number
+    r1: number,
   ): CanvasGradient;
 }
 
@@ -934,7 +898,7 @@ interface CanvasImageData {
     dirtyX: number,
     dirtyY: number,
     dirtyWidth: number,
-    dirtyHeight: number
+    dirtyHeight: number,
   ): void;
 }
 
@@ -950,17 +914,10 @@ interface CanvasPath {
     radius: number,
     startAngle: number,
     endAngle: number,
-    anticlockwise?: boolean
+    anticlockwise?: boolean,
   ): void;
   arcTo(x1: number, y1: number, x2: number, y2: number, radius: number): void;
-  bezierCurveTo(
-    cp1x: number,
-    cp1y: number,
-    cp2x: number,
-    cp2y: number,
-    x: number,
-    y: number
-  ): void;
+  bezierCurveTo(cp1x: number, cp1y: number, cp2x: number, cp2y: number, x: number, y: number): void;
   closePath(): void;
   ellipse(
     x: number,
@@ -970,7 +927,7 @@ interface CanvasPath {
     rotation: number,
     startAngle: number,
     endAngle: number,
-    anticlockwise?: boolean
+    anticlockwise?: boolean,
   ): void;
   lineTo(x: number, y: number): void;
   moveTo(x: number, y: number): void;
@@ -1038,23 +995,9 @@ interface CanvasTransform {
   resetTransform(): void;
   rotate(angle: number): void;
   scale(x: number, y: number): void;
-  setTransform(
-    a: number,
-    b: number,
-    c: number,
-    d: number,
-    e: number,
-    f: number
-  ): void;
+  setTransform(a: number, b: number, c: number, d: number, e: number, f: number): void;
   setTransform(transform?: DOMMatrix2DInit): void;
-  transform(
-    a: number,
-    b: number,
-    c: number,
-    d: number,
-    e: number,
-    f: number
-  ): void;
+  transform(a: number, b: number, c: number, d: number, e: number, f: number): void;
   translate(x: number, y: number): void;
 }
 
@@ -1097,7 +1040,7 @@ interface CloseEvent extends Event {
     cancelableArg: boolean,
     wasCleanArg: boolean,
     codeArg: number,
-    reasonArg: string
+    reasonArg: string,
   ): void;
 }
 
@@ -1177,7 +1120,7 @@ interface Crypto {
       | DataView
       | null
   >(
-    array: T
+    array: T,
   ): T;
 }
 
@@ -1209,7 +1152,7 @@ interface CustomEvent<T = any> extends Event {
     typeArg: string,
     canBubbleArg: boolean,
     cancelableArg: boolean,
-    detailArg: T
+    detailArg: T,
   ): void;
 }
 
@@ -1306,27 +1249,17 @@ interface DOMMatrix extends DOMMatrixReadOnly {
   invertSelf(): DOMMatrix;
   multiplySelf(other?: DOMMatrixInit): DOMMatrix;
   preMultiplySelf(other?: DOMMatrixInit): DOMMatrix;
-  rotateAxisAngleSelf(
-    x?: number,
-    y?: number,
-    z?: number,
-    angle?: number
-  ): DOMMatrix;
+  rotateAxisAngleSelf(x?: number, y?: number, z?: number, angle?: number): DOMMatrix;
   rotateFromVectorSelf(x?: number, y?: number): DOMMatrix;
   rotateSelf(rotX?: number, rotY?: number, rotZ?: number): DOMMatrix;
-  scale3dSelf(
-    scale?: number,
-    originX?: number,
-    originY?: number,
-    originZ?: number
-  ): DOMMatrix;
+  scale3dSelf(scale?: number, originX?: number, originY?: number, originZ?: number): DOMMatrix;
   scaleSelf(
     scaleX?: number,
     scaleY?: number,
     scaleZ?: number,
     originX?: number,
     originY?: number,
-    originZ?: number
+    originZ?: number,
   ): DOMMatrix;
   skewXSelf(sx?: number): DOMMatrix;
   skewYSelf(sy?: number): DOMMatrix;
@@ -1371,12 +1304,7 @@ interface DOMMatrixReadOnly {
   inverse(): DOMMatrix;
   multiply(other?: DOMMatrixInit): DOMMatrix;
   rotate(rotX?: number, rotY?: number, rotZ?: number): DOMMatrix;
-  rotateAxisAngle(
-    x?: number,
-    y?: number,
-    z?: number,
-    angle?: number
-  ): DOMMatrix;
+  rotateAxisAngle(x?: number, y?: number, z?: number, angle?: number): DOMMatrix;
   rotateFromVector(x?: number, y?: number): DOMMatrix;
   scale(
     scaleX?: number,
@@ -1384,14 +1312,9 @@ interface DOMMatrixReadOnly {
     scaleZ?: number,
     originX?: number,
     originY?: number,
-    originZ?: number
+    originZ?: number,
   ): DOMMatrix;
-  scale3d(
-    scale?: number,
-    originX?: number,
-    originY?: number,
-    originZ?: number
-  ): DOMMatrix;
+  scale3d(scale?: number, originX?: number, originY?: number, originZ?: number): DOMMatrix;
   /** @deprecated */
   scaleNonUniform(scaleX?: number, scaleY?: number): DOMMatrix;
   skewX(sx?: number): DOMMatrix;
@@ -1450,12 +1373,7 @@ interface DOMQuad {
 
 declare var DOMQuad: {
   prototype: DOMQuad;
-  new (
-    p1?: DOMPointInit,
-    p2?: DOMPointInit,
-    p3?: DOMPointInit,
-    p4?: DOMPointInit
-  ): DOMQuad;
+  new (p1?: DOMPointInit, p2?: DOMPointInit, p3?: DOMPointInit, p4?: DOMPointInit): DOMQuad;
   fromQuad(other?: DOMQuadInit): DOMQuad;
   fromRect(other?: DOMRectInit): DOMQuad;
 };
@@ -1487,12 +1405,7 @@ interface DOMRectReadOnly {
 
 declare var DOMRectReadOnly: {
   prototype: DOMRectReadOnly;
-  new (
-    x?: number,
-    y?: number,
-    width?: number,
-    height?: number
-  ): DOMRectReadOnly;
+  new (x?: number, y?: number, width?: number, height?: number): DOMRectReadOnly;
   fromRect(other?: DOMRectInit): DOMRectReadOnly;
 };
 
@@ -1525,37 +1438,29 @@ interface DedicatedWorkerGlobalScopeEventMap extends WorkerGlobalScopeEventMap {
 
 /** (the Worker global scope) is accessible through the self keyword. Some additional global functions, namespaces objects, and constructors, not typically associated with the worker global scope, but available on it, are listed in the JavaScript Reference. See also: Functions available to workers. */
 interface DedicatedWorkerGlobalScope extends WorkerGlobalScope {
-  onmessage:
-    | ((this: DedicatedWorkerGlobalScope, ev: MessageEvent) => any)
-    | null;
+  onmessage: ((this: DedicatedWorkerGlobalScope, ev: MessageEvent) => any) | null;
   close(): void;
   postMessage(message: any, transfer: Transferable[]): void;
   postMessage(message: any, options?: PostMessageOptions): void;
   addEventListener<K extends keyof DedicatedWorkerGlobalScopeEventMap>(
     type: K,
-    listener: (
-      this: DedicatedWorkerGlobalScope,
-      ev: DedicatedWorkerGlobalScopeEventMap[K]
-    ) => any,
-    options?: boolean | AddEventListenerOptions
+    listener: (this: DedicatedWorkerGlobalScope, ev: DedicatedWorkerGlobalScopeEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof DedicatedWorkerGlobalScopeEventMap>(
     type: K,
-    listener: (
-      this: DedicatedWorkerGlobalScope,
-      ev: DedicatedWorkerGlobalScopeEventMap[K]
-    ) => any,
-    options?: boolean | EventListenerOptions
+    listener: (this: DedicatedWorkerGlobalScope, ev: DedicatedWorkerGlobalScopeEventMap[K]) => any,
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -1726,22 +1631,22 @@ interface EventSource extends EventTarget {
   addEventListener<K extends keyof EventSourceEventMap>(
     type: K,
     listener: (this: EventSource, ev: EventSourceEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof EventSourceEventMap>(
     type: K,
     listener: (this: EventSource, ev: EventSourceEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -1768,7 +1673,7 @@ interface EventTarget {
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject | null,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   /**
    * Dispatches a synthetic event event to target and returns true
@@ -1781,7 +1686,7 @@ interface EventTarget {
   removeEventListener(
     type: string,
     callback: EventListenerOrEventListenerObject | null,
-    options?: EventListenerOptions | boolean
+    options?: EventListenerOptions | boolean,
   ): void;
 }
 
@@ -1811,10 +1716,7 @@ interface ExtendableMessageEvent extends ExtendableEvent {
 
 declare var ExtendableMessageEvent: {
   prototype: ExtendableMessageEvent;
-  new (
-    type: string,
-    eventInitDict?: ExtendableMessageEventInit
-  ): ExtendableMessageEvent;
+  new (type: string, eventInitDict?: ExtendableMessageEventInit): ExtendableMessageEvent;
 };
 
 /** This is the event type for fetch events dispatched on the service worker global scope. It contains information about the fetch, including the request and how the receiver will treat the response. It provides the event.respondWith() method, which allows us to provide a response to this fetch. */
@@ -1886,22 +1788,22 @@ interface FileReader extends EventTarget {
   addEventListener<K extends keyof FileReaderEventMap>(
     type: K,
     listener: (this: FileReader, ev: FileReaderEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof FileReaderEventMap>(
     type: K,
     listener: (this: FileReader, ev: FileReaderEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -1935,12 +1837,8 @@ interface FormData {
   has(name: string): boolean;
   set(name: string, value: string | Blob, fileName?: string): void;
   forEach(
-    callbackfn: (
-      value: FormDataEntryValue,
-      key: string,
-      parent: FormData
-    ) => void,
-    thisArg?: any
+    callbackfn: (value: FormDataEntryValue, key: string, parent: FormData) => void,
+    thisArg?: any,
   ): void;
 }
 
@@ -1972,10 +1870,7 @@ interface Headers {
   get(name: string): string | null;
   has(name: string): boolean;
   set(name: string, value: string): void;
-  forEach(
-    callbackfn: (value: string, key: string, parent: Headers) => void,
-    thisArg?: any
-  ): void;
+  forEach(callbackfn: (value: string, key: string, parent: Headers) => void, thisArg?: any): void;
 }
 
 declare var Headers: {
@@ -2100,9 +1995,7 @@ interface IDBDatabase extends EventTarget {
   onabort: ((this: IDBDatabase, ev: Event) => any) | null;
   onclose: ((this: IDBDatabase, ev: Event) => any) | null;
   onerror: ((this: IDBDatabase, ev: Event) => any) | null;
-  onversionchange:
-    | ((this: IDBDatabase, ev: IDBVersionChangeEvent) => any)
-    | null;
+  onversionchange: ((this: IDBDatabase, ev: IDBVersionChangeEvent) => any) | null;
   /**
    * Returns the version of the database.
    */
@@ -2115,10 +2008,7 @@ interface IDBDatabase extends EventTarget {
    * Creates a new object store with the given name and options and returns a new IDBObjectStore.
    * Throws a "InvalidStateError" DOMException if not called within an upgrade transaction.
    */
-  createObjectStore(
-    name: string,
-    optionalParameters?: IDBObjectStoreParameters
-  ): IDBObjectStore;
+  createObjectStore(name: string, optionalParameters?: IDBObjectStoreParameters): IDBObjectStore;
   /**
    * Deletes the object store with the given name.
    * Throws a "InvalidStateError" DOMException if not called within an upgrade transaction.
@@ -2128,29 +2018,26 @@ interface IDBDatabase extends EventTarget {
    * Returns a new transaction with the given mode ("readonly" or "readwrite")
    * and scope which can be a single object store name or an array of names.
    */
-  transaction(
-    storeNames: string | string[],
-    mode?: IDBTransactionMode
-  ): IDBTransaction;
+  transaction(storeNames: string | string[], mode?: IDBTransactionMode): IDBTransaction;
   addEventListener<K extends keyof IDBDatabaseEventMap>(
     type: K,
     listener: (this: IDBDatabase, ev: IDBDatabaseEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof IDBDatabaseEventMap>(
     type: K,
     listener: (this: IDBDatabase, ev: IDBDatabaseEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -2225,10 +2112,7 @@ interface IDBIndex {
    * Retrieves the keys of records matching the given key or key range in query (up to count if given).
    * If successful, request's result will be an Array of the keys.
    */
-  getAllKeys(
-    query?: IDBValidKey | IDBKeyRange,
-    count?: number
-  ): IDBRequest<IDBValidKey[]>;
+  getAllKeys(query?: IDBValidKey | IDBKeyRange, count?: number): IDBRequest<IDBValidKey[]>;
   /**
    * Retrieves the key of the first record matching the
    * given key or key range in query.
@@ -2242,7 +2126,7 @@ interface IDBIndex {
    */
   openCursor(
     range?: IDBValidKey | IDBKeyRange,
-    direction?: IDBCursorDirection
+    direction?: IDBCursorDirection,
   ): IDBRequest<IDBCursorWithValue | null>;
   /**
    * Opens a cursor with key only flag set over the records matching query, ordered by direction. If query is null, all records in index are matched.
@@ -2250,7 +2134,7 @@ interface IDBIndex {
    */
   openKeyCursor(
     range?: IDBValidKey | IDBKeyRange,
-    direction?: IDBCursorDirection
+    direction?: IDBCursorDirection,
   ): IDBRequest<IDBCursor | null>;
 }
 
@@ -2291,12 +2175,7 @@ declare var IDBKeyRange: {
    * If lowerOpen is true, lower is not included in the range.
    * If upperOpen is true, upper is not included in the range.
    */
-  bound(
-    lower: any,
-    upper: any,
-    lowerOpen?: boolean,
-    upperOpen?: boolean
-  ): IDBKeyRange;
+  bound(lower: any, upper: any, lowerOpen?: boolean, upperOpen?: boolean): IDBKeyRange;
   /**
    * Returns a new IDBKeyRange starting at key with no
    * upper bound. If open is true, key is not included in the
@@ -2358,11 +2237,7 @@ interface IDBObjectStore {
    * Throws an "InvalidStateError" DOMException if not called within an upgrade
    * transaction.
    */
-  createIndex(
-    name: string,
-    keyPath: string | string[],
-    options?: IDBIndexParameters
-  ): IDBIndex;
+  createIndex(name: string, keyPath: string | string[], options?: IDBIndexParameters): IDBIndex;
   /**
    * Deletes records in store with the given key or in the given key range in query.
    * If successful, request's result will
@@ -2394,10 +2269,7 @@ interface IDBObjectStore {
    * If successful, request's result will
    * be an Array of the keys.
    */
-  getAllKeys(
-    query?: IDBValidKey | IDBKeyRange,
-    count?: number
-  ): IDBRequest<IDBValidKey[]>;
+  getAllKeys(query?: IDBValidKey | IDBKeyRange, count?: number): IDBRequest<IDBValidKey[]>;
   /**
    * Retrieves the key of the first record matching the
    * given key or key range in query.
@@ -2412,7 +2284,7 @@ interface IDBObjectStore {
    */
   openCursor(
     range?: IDBValidKey | IDBKeyRange,
-    direction?: IDBCursorDirection
+    direction?: IDBCursorDirection,
   ): IDBRequest<IDBCursorWithValue | null>;
   /**
    * Opens a cursor with key only flag set over the records matching query, ordered by direction. If query is null, all records in store are matched.
@@ -2421,7 +2293,7 @@ interface IDBObjectStore {
    */
   openKeyCursor(
     query?: IDBValidKey | IDBKeyRange,
-    direction?: IDBCursorDirection
+    direction?: IDBCursorDirection,
   ): IDBRequest<IDBCursor | null>;
   put(value: any, key?: IDBValidKey): IDBRequest<IDBValidKey>;
 }
@@ -2439,28 +2311,26 @@ interface IDBOpenDBRequestEventMap extends IDBRequestEventMap {
 /** Also inherits methods from its parents IDBRequest and EventTarget. */
 interface IDBOpenDBRequest extends IDBRequest<IDBDatabase> {
   onblocked: ((this: IDBOpenDBRequest, ev: Event) => any) | null;
-  onupgradeneeded:
-    | ((this: IDBOpenDBRequest, ev: IDBVersionChangeEvent) => any)
-    | null;
+  onupgradeneeded: ((this: IDBOpenDBRequest, ev: IDBVersionChangeEvent) => any) | null;
   addEventListener<K extends keyof IDBOpenDBRequestEventMap>(
     type: K,
     listener: (this: IDBOpenDBRequest, ev: IDBOpenDBRequestEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof IDBOpenDBRequestEventMap>(
     type: K,
     listener: (this: IDBOpenDBRequest, ev: IDBOpenDBRequestEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -2507,22 +2377,22 @@ interface IDBRequest<T = any> extends EventTarget {
   addEventListener<K extends keyof IDBRequestEventMap>(
     type: K,
     listener: (this: IDBRequest<T>, ev: IDBRequestEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof IDBRequestEventMap>(
     type: K,
     listener: (this: IDBRequest<T>, ev: IDBRequestEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -2574,22 +2444,22 @@ interface IDBTransaction extends EventTarget {
   addEventListener<K extends keyof IDBTransactionEventMap>(
     type: K,
     listener: (this: IDBTransaction, ev: IDBTransactionEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof IDBTransactionEventMap>(
     type: K,
     listener: (this: IDBTransaction, ev: IDBTransactionEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -2606,10 +2476,7 @@ interface IDBVersionChangeEvent extends Event {
 
 declare var IDBVersionChangeEvent: {
   prototype: IDBVersionChangeEvent;
-  new (
-    type: string,
-    eventInitDict?: IDBVersionChangeEventInit
-  ): IDBVersionChangeEvent;
+  new (type: string, eventInitDict?: IDBVersionChangeEventInit): IDBVersionChangeEvent;
 };
 
 interface ImageBitmap {
@@ -2731,22 +2598,22 @@ interface MessagePort extends EventTarget {
   addEventListener<K extends keyof MessagePortEventMap>(
     type: K,
     listener: (this: MessagePort, ev: MessagePortEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof MessagePortEventMap>(
     type: K,
     listener: (this: MessagePort, ev: MessagePortEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -2785,7 +2652,7 @@ interface NavigatorBeacon {
       | ArrayBuffer
       | FormData
       | string
-      | null
+      | null,
   ): boolean;
 }
 
@@ -2845,22 +2712,22 @@ interface Notification extends EventTarget {
   addEventListener<K extends keyof NotificationEventMap>(
     type: K,
     listener: (this: Notification, ev: NotificationEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof NotificationEventMap>(
     type: K,
     listener: (this: Notification, ev: NotificationEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -2946,7 +2813,7 @@ interface OffscreenCanvas extends EventTarget {
    */
   getContext(
     contextId: OffscreenRenderingContextId,
-    options?: any
+    options?: any,
   ): OffscreenRenderingContext | null;
   /**
    * Returns a newly created ImageBitmap object with the image in the
@@ -3018,22 +2885,22 @@ interface Performance extends EventTarget {
   addEventListener<K extends keyof PerformanceEventMap>(
     type: K,
     listener: (this: Performance, ev: PerformanceEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof PerformanceEventMap>(
     type: K,
     listener: (this: Performance, ev: PerformanceEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -3132,22 +2999,22 @@ interface PermissionStatus extends EventTarget {
   addEventListener<K extends keyof PermissionStatusEventMap>(
     type: K,
     listener: (this: PermissionStatus, ev: PermissionStatusEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof PermissionStatusEventMap>(
     type: K,
     listener: (this: PermissionStatus, ev: PermissionStatusEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -3162,7 +3029,7 @@ interface Permissions {
       | PermissionDescriptor
       | DevicePermissionDescriptor
       | MidiPermissionDescriptor
-      | PushPermissionDescriptor
+      | PushPermissionDescriptor,
   ): Promise<PermissionStatus>;
 }
 
@@ -3190,10 +3057,7 @@ interface PromiseRejectionEvent extends Event {
 
 declare var PromiseRejectionEvent: {
   prototype: PromiseRejectionEvent;
-  new (
-    type: string,
-    eventInitDict: PromiseRejectionEventInit
-  ): PromiseRejectionEvent;
+  new (type: string, eventInitDict: PromiseRejectionEventInit): PromiseRejectionEvent;
 };
 
 /** An interface of the Push API represents a push message that has been received. This event is sent to the global scope of a ServiceWorker. It contains the information sent from an application server to a PushSubscription. */
@@ -3209,9 +3073,7 @@ declare var PushEvent: {
 /** An interface of the Push API provides a way to receive notifications from third-party servers as well as request URLs for push notifications. */
 interface PushManager {
   getSubscription(): Promise<PushSubscription | null>;
-  permissionState(
-    options?: PushSubscriptionOptionsInit
-  ): Promise<PushPermissionState>;
+  permissionState(options?: PushSubscriptionOptionsInit): Promise<PushPermissionState>;
   subscribe(options?: PushSubscriptionOptionsInit): Promise<PushSubscription>;
 }
 
@@ -3256,10 +3118,7 @@ interface PushSubscriptionChangeEvent extends ExtendableEvent {
 
 declare var PushSubscriptionChangeEvent: {
   prototype: PushSubscriptionChangeEvent;
-  new (
-    type: string,
-    eventInitDict?: PushSubscriptionChangeInit
-  ): PushSubscriptionChangeEvent;
+  new (type: string, eventInitDict?: PushSubscriptionChangeInit): PushSubscriptionChangeEvent;
 };
 
 interface PushSubscriptionOptions {
@@ -3287,11 +3146,8 @@ interface ReadableStream<R = any> {
   getReader(options: { mode: "byob" }): ReadableStreamBYOBReader;
   getReader(): ReadableStreamDefaultReader<R>;
   pipeThrough<T>(
-    {
-      writable,
-      readable
-    }: { writable: WritableStream<R>; readable: ReadableStream<T> },
-    options?: PipeOptions
+    { writable, readable }: { writable: WritableStream<R>; readable: ReadableStream<T> },
+    options?: PipeOptions,
   ): ReadableStream<T>;
   pipeTo(dest: WritableStream<R>, options?: PipeOptions): Promise<void>;
   tee(): [ReadableStream<R>, ReadableStream<R>];
@@ -3301,20 +3157,18 @@ declare var ReadableStream: {
   prototype: ReadableStream;
   new (
     underlyingSource: UnderlyingByteSource,
-    strategy?: { highWaterMark?: number; size?: undefined }
+    strategy?: { highWaterMark?: number; size?: undefined },
   ): ReadableStream<Uint8Array>;
   new <R = any>(
     underlyingSource?: UnderlyingSource<R>,
-    strategy?: QueuingStrategy<R>
+    strategy?: QueuingStrategy<R>,
   ): ReadableStream<R>;
 };
 
 interface ReadableStreamBYOBReader {
   readonly closed: Promise<void>;
   cancel(reason?: any): Promise<void>;
-  read<T extends ArrayBufferView>(
-    view: T
-  ): Promise<ReadableStreamReadResult<T>>;
+  read<T extends ArrayBufferView>(view: T): Promise<ReadableStreamReadResult<T>>;
   releaseLock(): void;
 }
 
@@ -3474,22 +3328,22 @@ interface ServiceWorker extends EventTarget, AbstractWorker {
   addEventListener<K extends keyof ServiceWorkerEventMap>(
     type: K,
     listener: (this: ServiceWorker, ev: ServiceWorkerEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof ServiceWorkerEventMap>(
     type: K,
     listener: (this: ServiceWorker, ev: ServiceWorkerEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -3509,44 +3363,31 @@ interface ServiceWorkerContainer extends EventTarget {
   readonly controller: ServiceWorker | null;
   oncontrollerchange: ((this: ServiceWorkerContainer, ev: Event) => any) | null;
   onmessage: ((this: ServiceWorkerContainer, ev: MessageEvent) => any) | null;
-  onmessageerror:
-    | ((this: ServiceWorkerContainer, ev: MessageEvent) => any)
-    | null;
+  onmessageerror: ((this: ServiceWorkerContainer, ev: MessageEvent) => any) | null;
   readonly ready: Promise<ServiceWorkerRegistration>;
-  getRegistration(
-    clientURL?: string
-  ): Promise<ServiceWorkerRegistration | undefined>;
+  getRegistration(clientURL?: string): Promise<ServiceWorkerRegistration | undefined>;
   getRegistrations(): Promise<ReadonlyArray<ServiceWorkerRegistration>>;
-  register(
-    scriptURL: string,
-    options?: RegistrationOptions
-  ): Promise<ServiceWorkerRegistration>;
+  register(scriptURL: string, options?: RegistrationOptions): Promise<ServiceWorkerRegistration>;
   startMessages(): void;
   addEventListener<K extends keyof ServiceWorkerContainerEventMap>(
     type: K,
-    listener: (
-      this: ServiceWorkerContainer,
-      ev: ServiceWorkerContainerEventMap[K]
-    ) => any,
-    options?: boolean | AddEventListenerOptions
+    listener: (this: ServiceWorkerContainer, ev: ServiceWorkerContainerEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof ServiceWorkerContainerEventMap>(
     type: K,
-    listener: (
-      this: ServiceWorkerContainer,
-      ev: ServiceWorkerContainerEventMap[K]
-    ) => any,
-    options?: boolean | EventListenerOptions
+    listener: (this: ServiceWorkerContainer, ev: ServiceWorkerContainerEventMap[K]) => any,
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -3555,8 +3396,7 @@ declare var ServiceWorkerContainer: {
   new (): ServiceWorkerContainer;
 };
 
-export interface ServiceWorkerGlobalScopeEventMap
-  extends WorkerGlobalScopeEventMap {
+export interface ServiceWorkerGlobalScopeEventMap extends WorkerGlobalScopeEventMap {
   activate: ExtendableEvent;
   fetch: FetchEvent;
   install: ExtendableEvent;
@@ -3572,25 +3412,13 @@ export interface ServiceWorkerGlobalScopeEventMap
 /** An interface of the ServiceWorker API represents the global execution context of a service worker. */
 export interface ServiceWorkerGlobalScope extends WorkerGlobalScope {
   readonly clients: Clients;
-  onactivate:
-    | ((this: ServiceWorkerGlobalScope, ev: ExtendableEvent) => any)
-    | null;
+  onactivate: ((this: ServiceWorkerGlobalScope, ev: ExtendableEvent) => any) | null;
   onfetch: ((this: ServiceWorkerGlobalScope, ev: FetchEvent) => any) | null;
-  oninstall:
-    | ((this: ServiceWorkerGlobalScope, ev: ExtendableEvent) => any)
-    | null;
-  onmessage:
-    | ((this: ServiceWorkerGlobalScope, ev: ExtendableMessageEvent) => any)
-    | null;
-  onmessageerror:
-    | ((this: ServiceWorkerGlobalScope, ev: MessageEvent) => any)
-    | null;
-  onnotificationclick:
-    | ((this: ServiceWorkerGlobalScope, ev: NotificationEvent) => any)
-    | null;
-  onnotificationclose:
-    | ((this: ServiceWorkerGlobalScope, ev: NotificationEvent) => any)
-    | null;
+  oninstall: ((this: ServiceWorkerGlobalScope, ev: ExtendableEvent) => any) | null;
+  onmessage: ((this: ServiceWorkerGlobalScope, ev: ExtendableMessageEvent) => any) | null;
+  onmessageerror: ((this: ServiceWorkerGlobalScope, ev: MessageEvent) => any) | null;
+  onnotificationclick: ((this: ServiceWorkerGlobalScope, ev: NotificationEvent) => any) | null;
+  onnotificationclose: ((this: ServiceWorkerGlobalScope, ev: NotificationEvent) => any) | null;
   onpush: ((this: ServiceWorkerGlobalScope, ev: PushEvent) => any) | null;
   onpushsubscriptionchange:
     | ((this: ServiceWorkerGlobalScope, ev: PushSubscriptionChangeEvent) => any)
@@ -3600,29 +3428,23 @@ export interface ServiceWorkerGlobalScope extends WorkerGlobalScope {
   skipWaiting(): Promise<void>;
   addEventListener<K extends keyof ServiceWorkerGlobalScopeEventMap>(
     type: K,
-    listener: (
-      this: ServiceWorkerGlobalScope,
-      ev: ServiceWorkerGlobalScopeEventMap[K]
-    ) => any,
-    options?: boolean | AddEventListenerOptions
+    listener: (this: ServiceWorkerGlobalScope, ev: ServiceWorkerGlobalScopeEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof ServiceWorkerGlobalScopeEventMap>(
     type: K,
-    listener: (
-      this: ServiceWorkerGlobalScope,
-      ev: ServiceWorkerGlobalScopeEventMap[K]
-    ) => any,
-    options?: boolean | EventListenerOptions
+    listener: (this: ServiceWorkerGlobalScope, ev: ServiceWorkerGlobalScopeEventMap[K]) => any,
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -3652,29 +3474,23 @@ interface ServiceWorkerRegistration extends EventTarget {
   update(): Promise<void>;
   addEventListener<K extends keyof ServiceWorkerRegistrationEventMap>(
     type: K,
-    listener: (
-      this: ServiceWorkerRegistration,
-      ev: ServiceWorkerRegistrationEventMap[K]
-    ) => any,
-    options?: boolean | AddEventListenerOptions
+    listener: (this: ServiceWorkerRegistration, ev: ServiceWorkerRegistrationEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof ServiceWorkerRegistrationEventMap>(
     type: K,
-    listener: (
-      this: ServiceWorkerRegistration,
-      ev: ServiceWorkerRegistrationEventMap[K]
-    ) => any,
-    options?: boolean | EventListenerOptions
+    listener: (this: ServiceWorkerRegistration, ev: ServiceWorkerRegistrationEventMap[K]) => any,
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -3716,7 +3532,7 @@ interface SubtleCrypto {
       | Float32Array
       | Float64Array
       | DataView
-      | ArrayBuffer
+      | ArrayBuffer,
   ): PromiseLike<ArrayBuffer>;
   deriveBits(
     algorithm:
@@ -3727,7 +3543,7 @@ interface SubtleCrypto {
       | HkdfCtrParams
       | Pbkdf2Params,
     baseKey: CryptoKey,
-    length: number
+    length: number,
   ): PromiseLike<ArrayBuffer>;
   deriveKey(
     algorithm:
@@ -3746,7 +3562,7 @@ interface SubtleCrypto {
       | HkdfCtrParams
       | Pbkdf2Params,
     extractable: boolean,
-    keyUsages: string[]
+    keyUsages: string[],
   ): PromiseLike<CryptoKey>;
   digest(
     algorithm: string | Algorithm,
@@ -3761,7 +3577,7 @@ interface SubtleCrypto {
       | Float32Array
       | Float64Array
       | DataView
-      | ArrayBuffer
+      | ArrayBuffer,
   ): PromiseLike<ArrayBuffer>;
   encrypt(
     algorithm:
@@ -3784,31 +3600,25 @@ interface SubtleCrypto {
       | Float32Array
       | Float64Array
       | DataView
-      | ArrayBuffer
+      | ArrayBuffer,
   ): PromiseLike<ArrayBuffer>;
   exportKey(format: "jwk", key: CryptoKey): PromiseLike<JsonWebKey>;
-  exportKey(
-    format: "raw" | "pkcs8" | "spki",
-    key: CryptoKey
-  ): PromiseLike<ArrayBuffer>;
-  exportKey(
-    format: string,
-    key: CryptoKey
-  ): PromiseLike<JsonWebKey | ArrayBuffer>;
+  exportKey(format: "raw" | "pkcs8" | "spki", key: CryptoKey): PromiseLike<ArrayBuffer>;
+  exportKey(format: string, key: CryptoKey): PromiseLike<JsonWebKey | ArrayBuffer>;
   generateKey(
     algorithm: string,
     extractable: boolean,
-    keyUsages: string[]
+    keyUsages: string[],
   ): PromiseLike<CryptoKeyPair | CryptoKey>;
   generateKey(
     algorithm: RsaHashedKeyGenParams | EcKeyGenParams | DhKeyGenParams,
     extractable: boolean,
-    keyUsages: string[]
+    keyUsages: string[],
   ): PromiseLike<CryptoKeyPair>;
   generateKey(
     algorithm: AesKeyGenParams | HmacKeyGenParams | Pbkdf2Params,
     extractable: boolean,
-    keyUsages: string[]
+    keyUsages: string[],
   ): PromiseLike<CryptoKey>;
   importKey(
     format: "jwk",
@@ -3821,7 +3631,7 @@ interface SubtleCrypto {
       | DhImportKeyParams
       | AesKeyAlgorithm,
     extractable: boolean,
-    keyUsages: string[]
+    keyUsages: string[],
   ): PromiseLike<CryptoKey>;
   importKey(
     format: "raw" | "pkcs8" | "spki",
@@ -3845,7 +3655,7 @@ interface SubtleCrypto {
       | DhImportKeyParams
       | AesKeyAlgorithm,
     extractable: boolean,
-    keyUsages: string[]
+    keyUsages: string[],
   ): PromiseLike<CryptoKey>;
   importKey(
     format: string,
@@ -3870,7 +3680,7 @@ interface SubtleCrypto {
       | DhImportKeyParams
       | AesKeyAlgorithm,
     extractable: boolean,
-    keyUsages: string[]
+    keyUsages: string[],
   ): PromiseLike<CryptoKey>;
   sign(
     algorithm: string | RsaPssParams | EcdsaParams | AesCmacParams,
@@ -3886,7 +3696,7 @@ interface SubtleCrypto {
       | Float32Array
       | Float64Array
       | DataView
-      | ArrayBuffer
+      | ArrayBuffer,
   ): PromiseLike<ArrayBuffer>;
   unwrapKey(
     format: string,
@@ -3906,7 +3716,7 @@ interface SubtleCrypto {
     unwrapAlgorithm: string | Algorithm,
     unwrappedKeyAlgorithm: string | Algorithm,
     extractable: boolean,
-    keyUsages: string[]
+    keyUsages: string[],
   ): PromiseLike<CryptoKey>;
   verify(
     algorithm: string | RsaPssParams | EcdsaParams | AesCmacParams,
@@ -3934,13 +3744,13 @@ interface SubtleCrypto {
       | Float32Array
       | Float64Array
       | DataView
-      | ArrayBuffer
+      | ArrayBuffer,
   ): PromiseLike<boolean>;
   wrapKey(
     format: string,
     key: CryptoKey,
     wrappingKey: CryptoKey,
-    wrapAlgorithm: string | Algorithm
+    wrapAlgorithm: string | Algorithm,
   ): PromiseLike<ArrayBuffer>;
 }
 
@@ -4016,10 +3826,7 @@ interface TextEncoder extends TextEncoderCommon {
   /**
    * Runs the UTF-8 encoder on source, stores the result of that operation into destination, and returns the progress made as a dictionary whereby read is the number of converted code units of source and written is the number of bytes modified in destination.
    */
-  encodeInto(
-    source: string,
-    destination: Uint8Array
-  ): TextEncoderEncodeIntoResult;
+  encodeInto(source: string, destination: Uint8Array): TextEncoderEncodeIntoResult;
 }
 
 declare var TextEncoder: {
@@ -4072,7 +3879,7 @@ declare var TransformStream: {
   new <I = any, O = any>(
     transformer?: Transformer<I, O>,
     writableStrategy?: QueuingStrategy<I>,
-    readableStrategy?: QueuingStrategy<O>
+    readableStrategy?: QueuingStrategy<O>,
   ): TransformStream<I, O>;
 };
 
@@ -4135,15 +3942,13 @@ interface URLSearchParams {
   sort(): void;
   forEach(
     callbackfn: (value: string, key: string, parent: URLSearchParams) => void,
-    thisArg?: any
+    thisArg?: any,
   ): void;
 }
 
 declare var URLSearchParams: {
   prototype: URLSearchParams;
-  new (
-    init?: string[][] | Record<string, string> | string | URLSearchParams
-  ): URLSearchParams;
+  new (init?: string[][] | Record<string, string> | string | URLSearchParams): URLSearchParams;
 };
 
 interface WEBGL_color_buffer_float {
@@ -4630,45 +4435,22 @@ interface WebGLRenderingContextBase {
   bindAttribLocation(program: WebGLProgram, index: GLuint, name: string): void;
   bindBuffer(target: GLenum, buffer: WebGLBuffer | null): void;
   bindFramebuffer(target: GLenum, framebuffer: WebGLFramebuffer | null): void;
-  bindRenderbuffer(
-    target: GLenum,
-    renderbuffer: WebGLRenderbuffer | null
-  ): void;
+  bindRenderbuffer(target: GLenum, renderbuffer: WebGLRenderbuffer | null): void;
   bindTexture(target: GLenum, texture: WebGLTexture | null): void;
-  blendColor(
-    red: GLclampf,
-    green: GLclampf,
-    blue: GLclampf,
-    alpha: GLclampf
-  ): void;
+  blendColor(red: GLclampf, green: GLclampf, blue: GLclampf, alpha: GLclampf): void;
   blendEquation(mode: GLenum): void;
   blendEquationSeparate(modeRGB: GLenum, modeAlpha: GLenum): void;
   blendFunc(sfactor: GLenum, dfactor: GLenum): void;
-  blendFuncSeparate(
-    srcRGB: GLenum,
-    dstRGB: GLenum,
-    srcAlpha: GLenum,
-    dstAlpha: GLenum
-  ): void;
+  blendFuncSeparate(srcRGB: GLenum, dstRGB: GLenum, srcAlpha: GLenum, dstAlpha: GLenum): void;
   bufferData(target: GLenum, size: GLsizeiptr, usage: GLenum): void;
   bufferData(target: GLenum, data: BufferSource | null, usage: GLenum): void;
   bufferSubData(target: GLenum, offset: GLintptr, data: BufferSource): void;
   checkFramebufferStatus(target: GLenum): GLenum;
   clear(mask: GLbitfield): void;
-  clearColor(
-    red: GLclampf,
-    green: GLclampf,
-    blue: GLclampf,
-    alpha: GLclampf
-  ): void;
+  clearColor(red: GLclampf, green: GLclampf, blue: GLclampf, alpha: GLclampf): void;
   clearDepth(depth: GLclampf): void;
   clearStencil(s: GLint): void;
-  colorMask(
-    red: GLboolean,
-    green: GLboolean,
-    blue: GLboolean,
-    alpha: GLboolean
-  ): void;
+  colorMask(red: GLboolean, green: GLboolean, blue: GLboolean, alpha: GLboolean): void;
   compileShader(shader: WebGLShader): void;
   compressedTexImage2D(
     target: GLenum,
@@ -4677,7 +4459,7 @@ interface WebGLRenderingContextBase {
     width: GLsizei,
     height: GLsizei,
     border: GLint,
-    data: ArrayBufferView
+    data: ArrayBufferView,
   ): void;
   compressedTexSubImage2D(
     target: GLenum,
@@ -4687,7 +4469,7 @@ interface WebGLRenderingContextBase {
     width: GLsizei,
     height: GLsizei,
     format: GLenum,
-    data: ArrayBufferView
+    data: ArrayBufferView,
   ): void;
   copyTexImage2D(
     target: GLenum,
@@ -4697,7 +4479,7 @@ interface WebGLRenderingContextBase {
     y: GLint,
     width: GLsizei,
     height: GLsizei,
-    border: GLint
+    border: GLint,
   ): void;
   copyTexSubImage2D(
     target: GLenum,
@@ -4707,7 +4489,7 @@ interface WebGLRenderingContextBase {
     x: GLint,
     y: GLint,
     width: GLsizei,
-    height: GLsizei
+    height: GLsizei,
   ): void;
   createBuffer(): WebGLBuffer | null;
   createFramebuffer(): WebGLFramebuffer | null;
@@ -4729,12 +4511,7 @@ interface WebGLRenderingContextBase {
   disable(cap: GLenum): void;
   disableVertexAttribArray(index: GLuint): void;
   drawArrays(mode: GLenum, first: GLint, count: GLsizei): void;
-  drawElements(
-    mode: GLenum,
-    count: GLsizei,
-    type: GLenum,
-    offset: GLintptr
-  ): void;
+  drawElements(mode: GLenum, count: GLsizei, type: GLenum, offset: GLintptr): void;
   enable(cap: GLenum): void;
   enableVertexAttribArray(index: GLuint): void;
   finish(): void;
@@ -4743,22 +4520,19 @@ interface WebGLRenderingContextBase {
     target: GLenum,
     attachment: GLenum,
     renderbuffertarget: GLenum,
-    renderbuffer: WebGLRenderbuffer | null
+    renderbuffer: WebGLRenderbuffer | null,
   ): void;
   framebufferTexture2D(
     target: GLenum,
     attachment: GLenum,
     textarget: GLenum,
     texture: WebGLTexture | null,
-    level: GLint
+    level: GLint,
   ): void;
   frontFace(mode: GLenum): void;
   generateMipmap(target: GLenum): void;
   getActiveAttrib(program: WebGLProgram, index: GLuint): WebGLActiveInfo | null;
-  getActiveUniform(
-    program: WebGLProgram,
-    index: GLuint
-  ): WebGLActiveInfo | null;
+  getActiveUniform(program: WebGLProgram, index: GLuint): WebGLActiveInfo | null;
   getAttachedShaders(program: WebGLProgram): WebGLShader[] | null;
   getAttribLocation(program: WebGLProgram, name: string): GLint;
   getBufferParameter(target: GLenum, pname: GLenum): any;
@@ -4766,64 +4540,38 @@ interface WebGLRenderingContextBase {
   getError(): GLenum;
   getExtension(extensionName: "EXT_blend_minmax"): EXT_blend_minmax | null;
   getExtension(
-    extensionName: "EXT_texture_filter_anisotropic"
+    extensionName: "EXT_texture_filter_anisotropic",
   ): EXT_texture_filter_anisotropic | null;
   getExtension(extensionName: "EXT_frag_depth"): EXT_frag_depth | null;
-  getExtension(
-    extensionName: "EXT_shader_texture_lod"
-  ): EXT_shader_texture_lod | null;
+  getExtension(extensionName: "EXT_shader_texture_lod"): EXT_shader_texture_lod | null;
   getExtension(extensionName: "EXT_sRGB"): EXT_sRGB | null;
+  getExtension(extensionName: "OES_vertex_array_object"): OES_vertex_array_object | null;
+  getExtension(extensionName: "WEBGL_color_buffer_float"): WEBGL_color_buffer_float | null;
   getExtension(
-    extensionName: "OES_vertex_array_object"
-  ): OES_vertex_array_object | null;
-  getExtension(
-    extensionName: "WEBGL_color_buffer_float"
-  ): WEBGL_color_buffer_float | null;
-  getExtension(
-    extensionName: "WEBGL_compressed_texture_astc"
+    extensionName: "WEBGL_compressed_texture_astc",
   ): WEBGL_compressed_texture_astc | null;
   getExtension(
-    extensionName: "WEBGL_compressed_texture_s3tc_srgb"
+    extensionName: "WEBGL_compressed_texture_s3tc_srgb",
   ): WEBGL_compressed_texture_s3tc_srgb | null;
-  getExtension(
-    extensionName: "WEBGL_debug_shaders"
-  ): WEBGL_debug_shaders | null;
+  getExtension(extensionName: "WEBGL_debug_shaders"): WEBGL_debug_shaders | null;
   getExtension(extensionName: "WEBGL_draw_buffers"): WEBGL_draw_buffers | null;
   getExtension(extensionName: "WEBGL_lose_context"): WEBGL_lose_context | null;
+  getExtension(extensionName: "WEBGL_depth_texture"): WEBGL_depth_texture | null;
+  getExtension(extensionName: "WEBGL_debug_renderer_info"): WEBGL_debug_renderer_info | null;
   getExtension(
-    extensionName: "WEBGL_depth_texture"
-  ): WEBGL_depth_texture | null;
-  getExtension(
-    extensionName: "WEBGL_debug_renderer_info"
-  ): WEBGL_debug_renderer_info | null;
-  getExtension(
-    extensionName: "WEBGL_compressed_texture_s3tc"
+    extensionName: "WEBGL_compressed_texture_s3tc",
   ): WEBGL_compressed_texture_s3tc | null;
   getExtension(
-    extensionName: "OES_texture_half_float_linear"
+    extensionName: "OES_texture_half_float_linear",
   ): OES_texture_half_float_linear | null;
-  getExtension(
-    extensionName: "OES_texture_half_float"
-  ): OES_texture_half_float | null;
-  getExtension(
-    extensionName: "OES_texture_float_linear"
-  ): OES_texture_float_linear | null;
+  getExtension(extensionName: "OES_texture_half_float"): OES_texture_half_float | null;
+  getExtension(extensionName: "OES_texture_float_linear"): OES_texture_float_linear | null;
   getExtension(extensionName: "OES_texture_float"): OES_texture_float | null;
-  getExtension(
-    extensionName: "OES_standard_derivatives"
-  ): OES_standard_derivatives | null;
-  getExtension(
-    extensionName: "OES_element_index_uint"
-  ): OES_element_index_uint | null;
-  getExtension(
-    extensionName: "ANGLE_instanced_arrays"
-  ): ANGLE_instanced_arrays | null;
+  getExtension(extensionName: "OES_standard_derivatives"): OES_standard_derivatives | null;
+  getExtension(extensionName: "OES_element_index_uint"): OES_element_index_uint | null;
+  getExtension(extensionName: "ANGLE_instanced_arrays"): ANGLE_instanced_arrays | null;
   getExtension(extensionName: string): any;
-  getFramebufferAttachmentParameter(
-    target: GLenum,
-    attachment: GLenum,
-    pname: GLenum
-  ): any;
+  getFramebufferAttachmentParameter(target: GLenum, attachment: GLenum, pname: GLenum): any;
   getParameter(pname: GLenum): any;
   getProgramInfoLog(program: WebGLProgram): string | null;
   getProgramParameter(program: WebGLProgram, pname: GLenum): any;
@@ -4832,16 +4580,13 @@ interface WebGLRenderingContextBase {
   getShaderParameter(shader: WebGLShader, pname: GLenum): any;
   getShaderPrecisionFormat(
     shadertype: GLenum,
-    precisiontype: GLenum
+    precisiontype: GLenum,
   ): WebGLShaderPrecisionFormat | null;
   getShaderSource(shader: WebGLShader): string | null;
   getSupportedExtensions(): string[] | null;
   getTexParameter(target: GLenum, pname: GLenum): any;
   getUniform(program: WebGLProgram, location: WebGLUniformLocation): any;
-  getUniformLocation(
-    program: WebGLProgram,
-    name: string
-  ): WebGLUniformLocation | null;
+  getUniformLocation(program: WebGLProgram, name: string): WebGLUniformLocation | null;
   getVertexAttrib(index: GLuint, pname: GLenum): any;
   getVertexAttribOffset(index: GLuint, pname: GLenum): GLintptr;
   hint(target: GLenum, mode: GLenum): void;
@@ -4864,33 +4609,23 @@ interface WebGLRenderingContextBase {
     height: GLsizei,
     format: GLenum,
     type: GLenum,
-    pixels: ArrayBufferView | null
+    pixels: ArrayBufferView | null,
   ): void;
   renderbufferStorage(
     target: GLenum,
     internalformat: GLenum,
     width: GLsizei,
-    height: GLsizei
+    height: GLsizei,
   ): void;
   sampleCoverage(value: GLclampf, invert: GLboolean): void;
   scissor(x: GLint, y: GLint, width: GLsizei, height: GLsizei): void;
   shaderSource(shader: WebGLShader, source: string): void;
   stencilFunc(func: GLenum, ref: GLint, mask: GLuint): void;
-  stencilFuncSeparate(
-    face: GLenum,
-    func: GLenum,
-    ref: GLint,
-    mask: GLuint
-  ): void;
+  stencilFuncSeparate(face: GLenum, func: GLenum, ref: GLint, mask: GLuint): void;
   stencilMask(mask: GLuint): void;
   stencilMaskSeparate(face: GLenum, mask: GLuint): void;
   stencilOp(fail: GLenum, zfail: GLenum, zpass: GLenum): void;
-  stencilOpSeparate(
-    face: GLenum,
-    fail: GLenum,
-    zfail: GLenum,
-    zpass: GLenum
-  ): void;
+  stencilOpSeparate(face: GLenum, fail: GLenum, zfail: GLenum, zpass: GLenum): void;
   texImage2D(
     target: GLenum,
     level: GLint,
@@ -4900,7 +4635,7 @@ interface WebGLRenderingContextBase {
     border: GLint,
     format: GLenum,
     type: GLenum,
-    pixels: ArrayBufferView | null
+    pixels: ArrayBufferView | null,
   ): void;
   texImage2D(
     target: GLenum,
@@ -4908,7 +4643,7 @@ interface WebGLRenderingContextBase {
     internalformat: GLint,
     format: GLenum,
     type: GLenum,
-    source: TexImageSource
+    source: TexImageSource,
   ): void;
   texParameterf(target: GLenum, pname: GLenum, param: GLfloat): void;
   texParameteri(target: GLenum, pname: GLenum, param: GLint): void;
@@ -4921,7 +4656,7 @@ interface WebGLRenderingContextBase {
     height: GLsizei,
     format: GLenum,
     type: GLenum,
-    pixels: ArrayBufferView | null
+    pixels: ArrayBufferView | null,
   ): void;
   texSubImage2D(
     target: GLenum,
@@ -4930,64 +4665,44 @@ interface WebGLRenderingContextBase {
     yoffset: GLint,
     format: GLenum,
     type: GLenum,
-    source: TexImageSource
+    source: TexImageSource,
   ): void;
   uniform1f(location: WebGLUniformLocation | null, x: GLfloat): void;
   uniform1fv(location: WebGLUniformLocation | null, v: Float32List): void;
   uniform1i(location: WebGLUniformLocation | null, x: GLint): void;
   uniform1iv(location: WebGLUniformLocation | null, v: Int32List): void;
-  uniform2f(
-    location: WebGLUniformLocation | null,
-    x: GLfloat,
-    y: GLfloat
-  ): void;
+  uniform2f(location: WebGLUniformLocation | null, x: GLfloat, y: GLfloat): void;
   uniform2fv(location: WebGLUniformLocation | null, v: Float32List): void;
   uniform2i(location: WebGLUniformLocation | null, x: GLint, y: GLint): void;
   uniform2iv(location: WebGLUniformLocation | null, v: Int32List): void;
-  uniform3f(
-    location: WebGLUniformLocation | null,
-    x: GLfloat,
-    y: GLfloat,
-    z: GLfloat
-  ): void;
+  uniform3f(location: WebGLUniformLocation | null, x: GLfloat, y: GLfloat, z: GLfloat): void;
   uniform3fv(location: WebGLUniformLocation | null, v: Float32List): void;
-  uniform3i(
-    location: WebGLUniformLocation | null,
-    x: GLint,
-    y: GLint,
-    z: GLint
-  ): void;
+  uniform3i(location: WebGLUniformLocation | null, x: GLint, y: GLint, z: GLint): void;
   uniform3iv(location: WebGLUniformLocation | null, v: Int32List): void;
   uniform4f(
     location: WebGLUniformLocation | null,
     x: GLfloat,
     y: GLfloat,
     z: GLfloat,
-    w: GLfloat
+    w: GLfloat,
   ): void;
   uniform4fv(location: WebGLUniformLocation | null, v: Float32List): void;
-  uniform4i(
-    location: WebGLUniformLocation | null,
-    x: GLint,
-    y: GLint,
-    z: GLint,
-    w: GLint
-  ): void;
+  uniform4i(location: WebGLUniformLocation | null, x: GLint, y: GLint, z: GLint, w: GLint): void;
   uniform4iv(location: WebGLUniformLocation | null, v: Int32List): void;
   uniformMatrix2fv(
     location: WebGLUniformLocation | null,
     transpose: GLboolean,
-    value: Float32List
+    value: Float32List,
   ): void;
   uniformMatrix3fv(
     location: WebGLUniformLocation | null,
     transpose: GLboolean,
-    value: Float32List
+    value: Float32List,
   ): void;
   uniformMatrix4fv(
     location: WebGLUniformLocation | null,
     transpose: GLboolean,
-    value: Float32List
+    value: Float32List,
   ): void;
   useProgram(program: WebGLProgram | null): void;
   validateProgram(program: WebGLProgram): void;
@@ -4997,13 +4712,7 @@ interface WebGLRenderingContextBase {
   vertexAttrib2fv(index: GLuint, values: Float32List): void;
   vertexAttrib3f(index: GLuint, x: GLfloat, y: GLfloat, z: GLfloat): void;
   vertexAttrib3fv(index: GLuint, values: Float32List): void;
-  vertexAttrib4f(
-    index: GLuint,
-    x: GLfloat,
-    y: GLfloat,
-    z: GLfloat,
-    w: GLfloat
-  ): void;
+  vertexAttrib4f(index: GLuint, x: GLfloat, y: GLfloat, z: GLfloat, w: GLfloat): void;
   vertexAttrib4fv(index: GLuint, values: Float32List): void;
   vertexAttribPointer(
     index: GLuint,
@@ -5011,7 +4720,7 @@ interface WebGLRenderingContextBase {
     type: GLenum,
     normalized: GLboolean,
     stride: GLsizei,
-    offset: GLintptr
+    offset: GLintptr,
   ): void;
   viewport(x: GLint, y: GLint, width: GLsizei, height: GLsizei): void;
   readonly ACTIVE_ATTRIBUTES: GLenum;
@@ -5378,22 +5087,22 @@ interface WebSocket extends EventTarget {
   addEventListener<K extends keyof WebSocketEventMap>(
     type: K,
     listener: (this: WebSocket, ev: WebSocketEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof WebSocketEventMap>(
     type: K,
     listener: (this: WebSocket, ev: WebSocketEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -5445,18 +5154,18 @@ interface WindowOrWorkerGlobalScope {
     sx: number,
     sy: number,
     sw: number,
-    sh: number
+    sh: number,
   ): Promise<ImageBitmap>;
   fetch(input: RequestInfo, init?: RequestInit): Promise<Response>;
   queueMicrotask(callback: Function): void;
   setInterval(
     handler: TimerHandler,
-    timeout?: number
+    timeout?: number,
   ): // ...arguments: any[]
   number;
   setTimeout(
     handler: TimerHandler,
-    timeout?: number
+    timeout?: number,
   ): // ...arguments: any[]
   number;
 }
@@ -5474,22 +5183,22 @@ interface Worker extends EventTarget, AbstractWorker {
   addEventListener<K extends keyof WorkerEventMap>(
     type: K,
     listener: (this: Worker, ev: WorkerEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof WorkerEventMap>(
     type: K,
     listener: (this: Worker, ev: WorkerEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -5518,29 +5227,23 @@ interface WorkerGlobalScope
   msWriteProfilerMark(profilerMarkName: string): void;
   addEventListener<K extends keyof WorkerGlobalScopeEventMap>(
     type: K,
-    listener: (
-      this: WorkerGlobalScope,
-      ev: WorkerGlobalScopeEventMap[K]
-    ) => any,
-    options?: boolean | AddEventListenerOptions
+    listener: (this: WorkerGlobalScope, ev: WorkerGlobalScopeEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof WorkerGlobalScopeEventMap>(
     type: K,
-    listener: (
-      this: WorkerGlobalScope,
-      ev: WorkerGlobalScopeEventMap[K]
-    ) => any,
-    options?: boolean | EventListenerOptions
+    listener: (this: WorkerGlobalScope, ev: WorkerGlobalScopeEventMap[K]) => any,
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -5600,10 +5303,9 @@ interface WritableStream<W = any> {
 
 declare var WritableStream: {
   prototype: WritableStream;
-  new <W = any>(
-    underlyingSink?: UnderlyingSink<W>,
-    strategy?: QueuingStrategy<W>
-  ): WritableStream<W>;
+  new <W = any>(underlyingSink?: UnderlyingSink<W>, strategy?: QueuingStrategy<W>): WritableStream<
+    W
+  >;
 };
 
 /** An interface of the Streams API represents a controller allowing control of a WritableStream's state. When constructing a WritableStream, the underlying sink is given a corresponding WritableStreamDefaultController instance to manipulate. */
@@ -5698,7 +5400,7 @@ interface XMLHttpRequest extends XMLHttpRequestEventTarget {
     url: string,
     async: boolean,
     username?: string | null,
-    password?: string | null
+    password?: string | null,
   ): void;
   /**
    * Acts as if the `Content-Type` header value for response is mime.
@@ -5727,22 +5429,22 @@ interface XMLHttpRequest extends XMLHttpRequestEventTarget {
   addEventListener<K extends keyof XMLHttpRequestEventMap>(
     type: K,
     listener: (this: XMLHttpRequest, ev: XMLHttpRequestEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof XMLHttpRequestEventMap>(
     type: K,
     listener: (this: XMLHttpRequest, ev: XMLHttpRequestEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -5776,29 +5478,23 @@ interface XMLHttpRequestEventTarget extends EventTarget {
   ontimeout: ((this: XMLHttpRequest, ev: ProgressEvent) => any) | null;
   addEventListener<K extends keyof XMLHttpRequestEventTargetEventMap>(
     type: K,
-    listener: (
-      this: XMLHttpRequestEventTarget,
-      ev: XMLHttpRequestEventTargetEventMap[K]
-    ) => any,
-    options?: boolean | AddEventListenerOptions
+    listener: (this: XMLHttpRequestEventTarget, ev: XMLHttpRequestEventTargetEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof XMLHttpRequestEventTargetEventMap>(
     type: K,
-    listener: (
-      this: XMLHttpRequestEventTarget,
-      ev: XMLHttpRequestEventTargetEventMap[K]
-    ) => any,
-    options?: boolean | EventListenerOptions
+    listener: (this: XMLHttpRequestEventTarget, ev: XMLHttpRequestEventTargetEventMap[K]) => any,
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -5810,29 +5506,23 @@ declare var XMLHttpRequestEventTarget: {
 interface XMLHttpRequestUpload extends XMLHttpRequestEventTarget {
   addEventListener<K extends keyof XMLHttpRequestEventTargetEventMap>(
     type: K,
-    listener: (
-      this: XMLHttpRequestUpload,
-      ev: XMLHttpRequestEventTargetEventMap[K]
-    ) => any,
-    options?: boolean | AddEventListenerOptions
+    listener: (this: XMLHttpRequestUpload, ev: XMLHttpRequestEventTargetEventMap[K]) => any,
+    options?: boolean | AddEventListenerOptions,
   ): void;
   addEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
+    options?: boolean | AddEventListenerOptions,
   ): void;
   removeEventListener<K extends keyof XMLHttpRequestEventTargetEventMap>(
     type: K,
-    listener: (
-      this: XMLHttpRequestUpload,
-      ev: XMLHttpRequestEventTargetEventMap[K]
-    ) => any,
-    options?: boolean | EventListenerOptions
+    listener: (this: XMLHttpRequestUpload, ev: XMLHttpRequestEventTargetEventMap[K]) => any,
+    options?: boolean | EventListenerOptions,
   ): void;
   removeEventListener(
     type: string,
     listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
+    options?: boolean | EventListenerOptions,
   ): void;
 }
 
@@ -5841,9 +5531,7 @@ declare var XMLHttpRequestUpload: {
   new (): XMLHttpRequestUpload;
 };
 
-declare type EventListenerOrEventListenerObject =
-  | EventListener
-  | EventListenerObject;
+declare type EventListenerOrEventListenerObject = EventListener | EventListenerObject;
 
 declare namespace WebAssembly {
   interface Global {
@@ -5934,12 +5622,9 @@ declare namespace WebAssembly {
   function compile(bytes: BufferSource): Promise<Module>;
   function instantiate(
     bytes: BufferSource,
-    importObject?: any
+    importObject?: any,
   ): Promise<WebAssemblyInstantiatedSource>;
-  function instantiate(
-    moduleObject: Module,
-    importObject?: any
-  ): Promise<Instance>;
+  function instantiate(moduleObject: Module, importObject?: any): Promise<Instance>;
   function validate(bytes: BufferSource): boolean;
 }
 
@@ -5972,10 +5657,7 @@ interface TransformStreamDefaultControllerCallback<O> {
 }
 
 interface TransformStreamDefaultControllerTransformCallback<I, O> {
-  (
-    chunk: I,
-    controller: TransformStreamDefaultController<O>
-  ): void | PromiseLike<void>;
+  (chunk: I, controller: TransformStreamDefaultController<O>): void | PromiseLike<void>;
 }
 
 interface WritableStreamDefaultControllerCloseCallback {
@@ -5987,18 +5669,14 @@ interface WritableStreamDefaultControllerStartCallback {
 }
 
 interface WritableStreamDefaultControllerWriteCallback<W> {
-  (chunk: W, controller: WritableStreamDefaultController): void | PromiseLike<
-    void
-  >;
+  (chunk: W, controller: WritableStreamDefaultController): void | PromiseLike<void>;
 }
 
 interface WritableStreamErrorCallback {
   (reason: any): void | PromiseLike<void>;
 }
 
-declare var onmessage:
-  | ((this: DedicatedWorkerGlobalScope, ev: MessageEvent) => any)
-  | null;
+declare var onmessage: ((this: DedicatedWorkerGlobalScope, ev: MessageEvent) => any) | null;
 declare function close(): void;
 declare function postMessage(message: any, transfer: Transferable[]): void;
 declare function postMessage(message: any, options?: PostMessageOptions): void;
@@ -6010,9 +5688,7 @@ declare function dispatchEvent(event: Event): boolean;
 declare var caches: CacheStorage;
 declare var isSecureContext: boolean;
 declare var location: WorkerLocation;
-declare var onerror:
-  | ((this: DedicatedWorkerGlobalScope, ev: ErrorEvent) => any)
-  | null;
+declare var onerror: ((this: DedicatedWorkerGlobalScope, ev: ErrorEvent) => any) | null;
 declare var performance: Performance;
 declare var self: WorkerGlobalScope;
 declare function msWriteProfilerMark(profilerMarkName: string): void;
@@ -6028,10 +5704,7 @@ declare function importScripts(...urls: string[]): void;
 declare function atob(encodedString: string): string;
 declare function btoa(rawString: string): string;
 declare var console: Console;
-declare function fetch(
-  input: RequestInfo,
-  init?: RequestInit
-): Promise<Response>;
+declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response>;
 declare var caches: CacheStorage;
 declare var crypto: Crypto;
 declare var indexedDB: IDBFactory;
@@ -6041,60 +5714,37 @@ declare function atob(data: string): string;
 declare function btoa(data: string): string;
 declare function clearInterval(handle?: number): void;
 declare function clearTimeout(handle?: number): void;
-declare function createImageBitmap(
-  image: ImageBitmapSource
-): Promise<ImageBitmap>;
+declare function createImageBitmap(image: ImageBitmapSource): Promise<ImageBitmap>;
 declare function createImageBitmap(
   image: ImageBitmapSource,
   sx: number,
   sy: number,
   sw: number,
-  sh: number
+  sh: number,
 ): Promise<ImageBitmap>;
-declare function fetch(
-  input: RequestInfo,
-  init?: RequestInit
-): Promise<Response>;
+declare function fetch(input: RequestInfo, init?: RequestInit): Promise<Response>;
 declare function queueMicrotask(callback: Function): void;
-declare function setInterval(
-  handler: TimerHandler,
-  timeout?: number,
-  ...arguments: any[]
-): number;
-declare function setTimeout(
-  handler: TimerHandler,
-  timeout?: number,
-  ...arguments: any[]
-): number;
-declare function addEventListener<
-  K extends keyof DedicatedWorkerGlobalScopeEventMap
->(
+declare function setInterval(handler: TimerHandler, timeout?: number, ...arguments: any[]): number;
+declare function setTimeout(handler: TimerHandler, timeout?: number, ...arguments: any[]): number;
+declare function addEventListener<K extends keyof DedicatedWorkerGlobalScopeEventMap>(
   type: K,
-  listener: (
-    this: DedicatedWorkerGlobalScope,
-    ev: DedicatedWorkerGlobalScopeEventMap[K]
-  ) => any,
-  options?: boolean | AddEventListenerOptions
+  listener: (this: DedicatedWorkerGlobalScope, ev: DedicatedWorkerGlobalScopeEventMap[K]) => any,
+  options?: boolean | AddEventListenerOptions,
 ): void;
 declare function addEventListener(
   type: string,
   listener: EventListenerOrEventListenerObject,
-  options?: boolean | AddEventListenerOptions
+  options?: boolean | AddEventListenerOptions,
 ): void;
-declare function removeEventListener<
-  K extends keyof DedicatedWorkerGlobalScopeEventMap
->(
+declare function removeEventListener<K extends keyof DedicatedWorkerGlobalScopeEventMap>(
   type: K,
-  listener: (
-    this: DedicatedWorkerGlobalScope,
-    ev: DedicatedWorkerGlobalScopeEventMap[K]
-  ) => any,
-  options?: boolean | EventListenerOptions
+  listener: (this: DedicatedWorkerGlobalScope, ev: DedicatedWorkerGlobalScopeEventMap[K]) => any,
+  options?: boolean | EventListenerOptions,
 ): void;
 declare function removeEventListener(
   type: string,
   listener: EventListenerOrEventListenerObject,
-  options?: boolean | EventListenerOptions
+  options?: boolean | EventListenerOptions,
 ): void;
 type BlobPart = BufferSource | Blob | string;
 type HeadersInit = Headers | string[][] | Record<string, string>;
@@ -6108,9 +5758,7 @@ type BodyInit =
 type RequestInfo = Request | string;
 type DOMHighResTimeStamp = number;
 type CanvasImageSource = ImageBitmap | OffscreenCanvas;
-type OffscreenRenderingContext =
-  | OffscreenCanvasRenderingContext2D
-  | WebGLRenderingContext;
+type OffscreenRenderingContext = OffscreenCanvasRenderingContext2D | WebGLRenderingContext;
 type MessageEventSource = MessagePort | ServiceWorker;
 type ImageBitmapSource = CanvasImageSource | Blob | ImageData;
 type TimerHandler = string | Function;
@@ -6145,13 +5793,7 @@ type CanvasFillRule = "nonzero" | "evenodd";
 type CanvasLineCap = "butt" | "round" | "square";
 type CanvasLineJoin = "round" | "bevel" | "miter";
 type CanvasTextAlign = "start" | "end" | "left" | "right" | "center";
-type CanvasTextBaseline =
-  | "top"
-  | "hanging"
-  | "middle"
-  | "alphabetic"
-  | "ideographic"
-  | "bottom";
+type CanvasTextBaseline = "top" | "hanging" | "middle" | "alphabetic" | "ideographic" | "bottom";
 type ClientTypes = "window" | "worker" | "sharedworker" | "all";
 type EndingType = "transparent" | "native";
 type FrameType = "auxiliary" | "top-level" | "nested" | "none";
@@ -6232,27 +5874,10 @@ type RequestDestination =
   | "xslt";
 type RequestMode = "navigate" | "same-origin" | "no-cors" | "cors";
 type RequestRedirect = "follow" | "error" | "manual";
-type ResponseType =
-  | "basic"
-  | "cors"
-  | "default"
-  | "error"
-  | "opaque"
-  | "opaqueredirect";
-type ServiceWorkerState =
-  | "installing"
-  | "installed"
-  | "activating"
-  | "activated"
-  | "redundant";
+type ResponseType = "basic" | "cors" | "default" | "error" | "opaque" | "opaqueredirect";
+type ServiceWorkerState = "installing" | "installed" | "activating" | "activated" | "redundant";
 type ServiceWorkerUpdateViaCache = "imports" | "all" | "none";
 type VisibilityState = "hidden" | "visible" | "prerender";
 type WebGLPowerPreference = "default" | "low-power" | "high-performance";
 type WorkerType = "classic" | "module";
-type XMLHttpRequestResponseType =
-  | ""
-  | "arraybuffer"
-  | "blob"
-  | "document"
-  | "json"
-  | "text";
+type XMLHttpRequestResponseType = "" | "arraybuffer" | "blob" | "document" | "json" | "text";

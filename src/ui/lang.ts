@@ -70,10 +70,8 @@ const RUS = {
   installEngineError: "Приложение не установлено, оффлайн режим недоступен",
   engineInstalledNeedReload:
     "Приложение установлено, нажмите здесь для перезапуска в оффлайн режиме",
-  engineUpdatedNeedReload:
-    "Обновление установлено, нажмите здесь для перезапуска",
-  engineInstalledAndInOfflineMode:
-    "Приложение установлено и работает в оффлайн режиме",
+  engineUpdatedNeedReload: "Обновление установлено, нажмите здесь для перезапуска",
+  engineInstalledAndInOfflineMode: "Приложение установлено и работает в оффлайн режиме",
   storageIsPersisted: "Хранилище устойчивое, браузер не удалит",
   storageIsNotPersisted:
     "Хранилище неустойчивое, браузер может удалить. " +
@@ -98,8 +96,7 @@ const RUS = {
 
   about: "О приложении",
   builtAt: "Сборка",
-  linkForBugreports:
-    "Сообщения об ошибках можно оставлять в багтрекере Github-а или на Pikabu",
+  linkForBugreports: "Сообщения об ошибках можно оставлять в багтрекере Github-а или на Pikabu",
 
   validatingInfo: "Прохождения проверяются, это займёт какое-то время",
   validationComplete: "Проверка завершена. Показываются проверенные результаты",
@@ -112,7 +109,7 @@ const RUS = {
     "Есть ошибки валидации. Это означает что " +
     "квест был пройден на старой браузерозависимой версии движка и нужно пройти этот квест еще раз",
   championsTotal: "Загружено чемпионов:",
-  championsLoading: "Загрузка списка чемпионов"
+  championsLoading: "Загрузка списка чемпионов",
 };
 
 export type LangTexts = typeof RUS;
@@ -161,8 +158,7 @@ const ENG: LangTexts = {
   own: "Uploaded",
   search: "Search",
   nothingFound: "Nothing is found",
-  startRandomUnpassed:
-    "Choose a randome quest from those you have not completed",
+  startRandomUnpassed: "Choose a randome quest from those you have not completed",
   passed: "Complete",
   startFromTheStart: "Start over",
   startFromLastSave: "Start saving",
@@ -184,13 +180,10 @@ const ENG: LangTexts = {
   installEngineNotStarted: "Waiting for offline mode registration",
   installingEngine: "Offline application mode is being installed",
   installingEngineUpdate: "Background updating is underway",
-  installEngineError:
-    "The application is not installed, offline mode is unavailable",
-  engineInstalledNeedReload:
-    "The application is installed, click here to reload offline mode",
+  installEngineError: "The application is not installed, offline mode is unavailable",
+  engineInstalledNeedReload: "The application is installed, click here to reload offline mode",
   engineUpdatedNeedReload: "The update is installed, click here to reload",
-  engineInstalledAndInOfflineMode:
-    "The application is installed and working in an offline mode",
+  engineInstalledAndInOfflineMode: "The application is installed and working in an offline mode",
   storageIsPersisted: "The storage is persisted, browser won't delete this",
   storageIsNotPersisted:
     "The storage is not persisted, browser may delete this. " +
@@ -215,12 +208,10 @@ const ENG: LangTexts = {
 
   about: "About",
   builtAt: "Built at",
-  linkForBugreports:
-    "You can add a bugreport into Github bug tracker or into Pikabu",
+  linkForBugreports: "You can add a bugreport into Github bug tracker or into Pikabu",
 
   validatingInfo: "Quest game passing is validating. Please be patient",
-  validationComplete:
-    "Validation is complete. Only validated results are shown now",
+  validationComplete: "Validation is complete. Only validated results are shown now",
   championName: "Ranger's name",
   championWonGames: "Amount of passed quests",
   championGameNames: "Список пройденный квестов",
@@ -230,7 +221,7 @@ const ENG: LangTexts = {
     "Validation errors are present. This means that " +
     "the quest was passed using old brower-depend engine and it needs to be passed again",
   championsTotal: "Loaded champions:",
-  championsLoading: "Loading list of champions"
+  championsLoading: "Loading list of champions",
 };
 
 export function getLang(lang: Lang) {
@@ -245,16 +236,14 @@ export function getLang(lang: Lang) {
 
 export function guessBrowserLang(): Lang {
   const browserLanguages = navigator.languages || [
-    navigator.language || (navigator as any).userLanguage || "ru"
+    navigator.language || (navigator as any).userLanguage || "ru",
   ];
   console.info(
-    `languages=${
-      navigator.languages ? navigator.languages.join(",") : "null"
-    } ` +
+    `languages=${navigator.languages ? navigator.languages.join(",") : "null"} ` +
       `language=${navigator.language} ` +
-      `userLanguage=${
-        (navigator as any).userLanguage
-      } browserLanguages=${browserLanguages.join(",")}`
+      `userLanguage=${(navigator as any).userLanguage} browserLanguages=${browserLanguages.join(
+        ",",
+      )}`,
   );
   for (const browserLang of browserLanguages) {
     if (browserLang.indexOf("ru") === 0) {

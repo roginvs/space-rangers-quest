@@ -1,10 +1,4 @@
-import {
-  parse,
-  QM,
-  ParamType,
-  ParamCritType,
-  getImagesListFromQmm
-} from "./lib/qmreader";
+import { parse, QM, ParamType, ParamCritType, getImagesListFromQmm } from "./lib/qmreader";
 
 import * as pako from "pako";
 import * as fs from "fs";
@@ -13,9 +7,7 @@ import { QMPlayer } from "./lib/qmplayer";
 import { PQImages } from "./lib/pqImages";
 import { Lang } from "./lib/qmplayer/player";
 
-const pqiSR1Parsed = JSON.parse(
-  fs.readFileSync(__dirname + "/../src/sr1-pqi.json").toString()
-) as {
+const pqiSR1Parsed = JSON.parse(fs.readFileSync(__dirname + "/../src/sr1-pqi.json").toString()) as {
   [questName: string]: PQImages;
 };
 
@@ -63,9 +55,7 @@ function readPqi(filename: string) {
   } = {};
 
   if (!fs.existsSync(filename)) {
-    warns.push(
-      `==========\nPQI file ${filename} not found, will process without\n======`
-    );
+    warns.push(`==========\nPQI file ${filename} not found, will process without\n======`);
     return result;
   }
   const content = fs.readFileSync(filename).toString();
@@ -84,26 +74,21 @@ function readPqi(filename: string) {
     const [data1, data2] = line.split("=");
     const filename = data2.replace(/.*\./g, "").toLowerCase() + ".jpg";
     if (!fs.existsSync(dataDstPath + "/img/" + filename)) {
-      warns.push(
-        `File '${filename}' (${dataSrcPath + "/img/" + filename}) not found`
-      );
+      warns.push(`File '${filename}' (${dataSrcPath + "/img/" + filename}) not found`);
       continue;
     }
     const d = data1.split(",");
     d.shift();
     const type = d.shift() as "L" | "P" | "PAR";
-    const indexes = d
-      .map(x => parseInt(x))
-      .map(x => (type === "PAR" ? x - 1 : x));
+    const indexes = d.map(x => parseInt(x)).map(x => (type === "PAR" ? x - 1 : x));
     if (!result[currentName]) {
       result[currentName] = [];
     }
-    const indexesNames =
-      type === "L" ? "locationIds" : type === "P" ? "jumpIds" : "critParams";
+    const indexesNames = type === "L" ? "locationIds" : type === "P" ? "jumpIds" : "critParams";
 
     result[currentName].push({
       filename,
-      [indexesNames]: indexes
+      [indexesNames]: indexes,
     });
   }
   const newResult: typeof result = {};
@@ -117,20 +102,14 @@ function readPqi(filename: string) {
       newResult[k].push({
         filename: image,
         critParams: ([] as number[]).concat(
-          ...result[k]
-            .filter(x => x.filename === image)
-            .map(x => x.critParams || [])
+          ...result[k].filter(x => x.filename === image).map(x => x.critParams || []),
         ),
         locationIds: ([] as number[]).concat(
-          ...result[k]
-            .filter(x => x.filename === image)
-            .map(x => x.locationIds || [])
+          ...result[k].filter(x => x.filename === image).map(x => x.locationIds || []),
         ),
         jumpIds: ([] as number[]).concat(
-          ...result[k]
-            .filter(x => x.filename === image)
-            .map(x => x.jumpIds || [])
-        )
+          ...result[k].filter(x => x.filename === image).map(x => x.jumpIds || []),
+        ),
       });
     }
   }
@@ -167,9 +146,7 @@ function areThereAnyQmmImages(qmmQuest: QM) {
     sounds = sounds.concat(...l.media.map(x => x.sound));
 
     l.paramsChanges.forEach((p, pid) => {
-      l.media
-        .map(x => x.img)
-        .forEach(x => addImg(x, `Loc ${l.id} p${pid + 1}`));
+      l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id} p${pid + 1}`));
       tracks.push(p.track);
       sounds.push(p.sound);
     });
@@ -209,8 +186,8 @@ const index: Index = {
   dir: {
     quests: { files: [], totalSize: 0 },
     images: { files: [], totalSize: 0 },
-    music: { files: [], totalSize: 0 }
-  }
+    music: { files: [], totalSize: 0 },
+  },
 };
 
 const DEBUG_SPEEDUP_SKIP_COPING = false;
@@ -224,7 +201,7 @@ const allImages = fs
     if (!DEBUG_SPEEDUP_SKIP_COPING) {
       fs.writeFileSync(
         dataDstPath + "/" + filePath,
-        fs.readFileSync(dataSrcPath + "/img/" + imgShortName)
+        fs.readFileSync(dataSrcPath + "/img/" + imgShortName),
       );
     }
     const fileSize = fs.statSync(dataSrcPath + "/img/" + imgShortName).size;
@@ -241,17 +218,13 @@ const music = fs
     const fullName = dataSrcPath + "/music/" + x;
     return (
       fs.statSync(fullName).isFile &&
-      (fullName.toLowerCase().endsWith(".ogg") ||
-        fullName.toLowerCase().endsWith(".mp3"))
+      (fullName.toLowerCase().endsWith(".ogg") || fullName.toLowerCase().endsWith(".mp3"))
     );
   })
   .map(x => {
     const name = `music/${x}`;
     if (!DEBUG_SPEEDUP_SKIP_COPING) {
-      fs.writeFileSync(
-        dataDstPath + "/" + name,
-        fs.readFileSync(dataSrcPath + "/" + name)
-      );
+      fs.writeFileSync(dataDstPath + "/" + name, fs.readFileSync(dataSrcPath + "/" + name));
     }
     const fileSize = fs.statSync(dataDstPath + "/" + name).size;
     index.dir.music.files.push({ path: name, size: fileSize });
@@ -280,17 +253,12 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
     const oldTge = qmShortName.endsWith(".qm") && lang !== "eng"; //origin.startsWith('Tge');
     const gameName = qmShortName.replace(/(\.qm|\.qmm)$/, "");
     // .replace(/_eng$/, '');
-    console.info(
-      `Reading ${srcQmName} (${lang}, oldTge=${oldTge}) gameName=${gameName}`
-    );
+    console.info(`Reading ${srcQmName} (${lang}, oldTge=${oldTge}) gameName=${gameName}`);
 
     const data = fs.readFileSync(srcQmName);
 
     if (!DEBUG_SPEEDUP_SKIP_COPING) {
-      fs.writeFileSync(
-        dataDstPath + "/qm/" + qmShortName + ".gz",
-        Buffer.from(pako.gzip(data))
-      );
+      fs.writeFileSync(dataDstPath + "/qm/" + qmShortName + ".gz", Buffer.from(pako.gzip(data)));
     }
 
     const quest = parse(data);
@@ -298,14 +266,14 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
     player.start();
 
     const probablyThisQuestImages = allImages.filter(x =>
-      x.toLowerCase().startsWith(gameName.toLowerCase())
+      x.toLowerCase().startsWith(gameName.toLowerCase()),
     );
     const randomImages = probablyThisQuestImages.map((filename, fileIndex) => {
       return {
         filename,
         locationIds: quest.locations
           .map(loc => loc.id)
-          .filter(id => (id - 1) % probablyThisQuestImages.length === fileIndex)
+          .filter(id => (id - 1) % probablyThisQuestImages.length === fileIndex),
       };
     });
 
@@ -313,8 +281,7 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
 
     const pqi2Images = pqiSR2Parsed[gameName.toLowerCase()];
     const pqi1Images = pqiSR1Parsed[gameName];
-    const images =
-      qmmImagesList.length > 0 ? [] : pqi2Images || pqi1Images || randomImages;
+    const images = qmmImagesList.length > 0 ? [] : pqi2Images || pqi1Images || randomImages;
     if (images === randomImages) {
       warns.push(`No images for ${qmShortName}, using random`);
     }
@@ -329,7 +296,7 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
       if (allImages.indexOf(pqiImage.filename.toLowerCase()) < 0) {
         warns.push(
           `Image ${pqiImage.filename} is from PQI for ${qmShortName}, ` +
-            `but not found in img dir`
+            `but not found in img dir`,
         );
       }
     }
@@ -347,23 +314,22 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
       hardness: quest.hardness,
       questOrigin: origin,
       // oldTgeBehaviour: oldTge,
-      lang
+      lang,
     };
 
     index.quests.push(game);
 
-    const gzFileSize = fs.statSync(dataDstPath + "/qm/" + qmShortName + ".gz")
-      .size;
+    const gzFileSize = fs.statSync(dataDstPath + "/qm/" + qmShortName + ".gz").size;
     index.dir.quests.files.push({
       path: gameFilePath,
-      size: gzFileSize
+      size: gzFileSize,
     });
     index.dir.quests.totalSize += gzFileSize;
   }
 }
 
 index.quests = index.quests.sort(
-  (a, b) => a.hardness - b.hardness || (a.gameName > b.gameName ? 1 : -1)
+  (a, b) => a.hardness - b.hardness || (a.gameName > b.gameName ? 1 : -1),
 );
 console.info(`Done read, writing result into ${resultJsonFile}`);
 // fs.writeFileSync(resultJsonFile, new Buffer(pako.gzip(JSON.stringify(index, null, 4))));

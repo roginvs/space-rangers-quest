@@ -4,8 +4,7 @@ import { parse, ParamType, ParamCritType } from "../lib/qmreader";
 
 import * as assert from "assert";
 
-const unpackedDir =
-  "c:\\Users\\vasilii\\Downloads\\Space_Rangers_Quest_v1.0.5_Mod\\";
+const unpackedDir = "c:\\Users\\vasilii\\Downloads\\Space_Rangers_Quest_v1.0.5_Mod\\";
 const dirToScan = unpackedDir + "assets/bin/Data";
 
 const dirToCopy = unpackedDir + "tmp\\";
@@ -38,9 +37,7 @@ for (const f of fs.readdirSync(dirToScan).sort((a, b) => (a > b ? 1 : -1))) {
 
   const dataStartsFrom = 0x1000 + 4 + fnamelen + 4;
   const dataStartsFromShifted =
-    dataStartsFrom % 4 === 0
-      ? dataStartsFrom
-      : dataStartsFrom - (dataStartsFrom % 4) + 4;
+    dataStartsFrom % 4 === 0 ? dataStartsFrom : dataStartsFrom - (dataStartsFrom % 4) + 4;
 
   const dataLen = data.readUInt32LE(dataStartsFromShifted - 4);
 
@@ -48,8 +45,7 @@ for (const f of fs.readdirSync(dirToScan).sort((a, b) => (a > b ? 1 : -1))) {
   const headerBE = data.readUInt32BE(dataStartsFromShifted);
   if (header === 0x423a35d6 || header === 0x423a35d7) {
     console.info(
-      `${f} : ${fname} dataLen=${dataLen} dataleft=${data.length -
-        dataStartsFromShifted}`
+      `${f} : ${fname} dataLen=${dataLen} dataleft=${data.length - dataStartsFromShifted}`,
     );
     questCount++;
 
@@ -64,21 +60,16 @@ for (const f of fs.readdirSync(dirToScan).sort((a, b) => (a > b ? 1 : -1))) {
     }
     fs.writeFileSync(
       writefname,
-      data.slice(dataStartsFromShifted, dataStartsFromShifted + dataLen)
+      data.slice(dataStartsFromShifted, dataStartsFromShifted + dataLen),
     );
   } else if (header === 0x423a35d5 || header === 0x423a35d8) {
     console.info(`${f} : ${fname} have unknown header ${header}`);
   } else {
     const lookAhead = 64;
     const lookAheadTo =
-      dataStartsFrom + lookAhead < data.length
-        ? dataStartsFrom + lookAhead
-        : data.length;
+      dataStartsFrom + lookAhead < data.length ? dataStartsFrom + lookAhead : data.length;
     const someNextData = data.slice(dataStartsFrom, lookAheadTo);
-    if (
-      someNextData.indexOf(0x423a35d6) > -1 ||
-      someNextData.indexOf(0x423a35d7) > -1
-    ) {
+    if (someNextData.indexOf(0x423a35d6) > -1 || someNextData.indexOf(0x423a35d7) > -1) {
       //  console.info(`${f} : ${fname} (len=${fnamelen}), dataSize=${dataSize} ${lookAheadTo}`);//${someNextData.toString('hex')}`);
       //questCount++;
     }

@@ -16,9 +16,9 @@ describe("Checking _sortJumps", function() {
         { id: 2, showingOrder: 2 },
         { id: 3, showingOrder: 3 },
         { id: 4, showingOrder: 9 },
-        { id: 5, showingOrder: 0 }
+        { id: 5, showingOrder: 0 },
       ],
-      () => assert.fail("no random")
+      () => assert.fail("no random"),
     );
     assert.deepStrictEqual(
       [
@@ -27,9 +27,9 @@ describe("Checking _sortJumps", function() {
         { id: 3, showingOrder: 3 },
         { id: 0, showingOrder: 5 },
         { id: 1, showingOrder: 6 },
-        { id: 4, showingOrder: 9 }
+        { id: 4, showingOrder: 9 },
       ],
-      r
+      r,
     );
   });
 
@@ -62,9 +62,9 @@ describe("Checking _sortJumps", function() {
         { id: 6, showingOrder: 5 },
         { id: 7, showingOrder: 2 },
         { id: 8, showingOrder: 3 },
-        { id: 9, showingOrder: 3 }
+        { id: 9, showingOrder: 3 },
       ],
-      random
+      random,
     );
     assert.deepStrictEqual(
       [
@@ -77,9 +77,9 @@ describe("Checking _sortJumps", function() {
         { id: 0, showingOrder: 5 },
         { id: 6, showingOrder: 5 },
         { id: 1, showingOrder: 6 },
-        { id: 4, showingOrder: 9 }
+        { id: 4, showingOrder: 9 },
       ],
-      r
+      r,
     );
   });
 });

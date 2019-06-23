@@ -12,9 +12,7 @@ export function QuestReplaceTags(props: { str: string }) {
   let cloneStr = props.str.slice();
 
   while (true) {
-    const m = cloneStr.match(
-      /\<format=(left|right|center),(\d+)\>(.*?)\<\/format\>/
-    );
+    const m = cloneStr.match(/\<format=(left|right|center),(\d+)\>(.*?)\<\/format\>/);
     if (!m) {
       break;
     }
@@ -22,12 +20,7 @@ export function QuestReplaceTags(props: { str: string }) {
     const howManyPad = parseInt(howManyPadStr);
 
     if (
-      !(
-        howManyPad &&
-        (whereToPad === "left" ||
-          whereToPad === "right" ||
-          whereToPad === "center")
-      )
+      !(howManyPad && (whereToPad === "left" || whereToPad === "right" || whereToPad === "center"))
     ) {
       cloneStr = cloneStr.replace(textToReplace, textInTags);
       continue;
@@ -66,7 +59,7 @@ export function QuestReplaceTags(props: { str: string }) {
   return (
     <span
       dangerouslySetInnerHTML={{
-        __html: s
+        __html: s,
       }}
     />
   );

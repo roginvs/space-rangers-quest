@@ -17,8 +17,7 @@ export type DeepImmutable<T> = T extends Primitive
   : DeepImmutableObject<T>;
 
 interface DeepImmutableArray<T> extends ReadonlyArray<DeepImmutable<T>> {}
-interface DeepImmutableMap<K, V>
-  extends ReadonlyMap<DeepImmutable<K>, DeepImmutable<V>> {}
+interface DeepImmutableMap<K, V> extends ReadonlyMap<DeepImmutable<K>, DeepImmutable<V>> {}
 type DeepImmutableObject<T> = {
   readonly [K in keyof T]: DeepImmutable<T[K]>;
 };

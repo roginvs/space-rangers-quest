@@ -3,7 +3,7 @@ import {
   WorkerMsgResponce,
   CheckQuestRequest,
   CheckQuestResponce,
-  METHOD_CHECK_QUEST
+  METHOD_CHECK_QUEST,
 } from "./defs";
 
 export class WorkerPromise {
@@ -52,7 +52,7 @@ export class WorkerPromise {
       const raw: WorkerMsgRequest = {
         id: this.id,
         method: methodName,
-        data
+        data,
       };
       this.worker.postMessage(JSON.stringify(raw));
     });

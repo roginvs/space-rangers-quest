@@ -13,11 +13,7 @@ import "firebase/database";
 import { Index, Game } from "../packGameData";
 
 import { getDb, DB } from "./db/db";
-import {
-  DEFAULT_RUS_PLAYER,
-  Player,
-  DEFAULT_ENG_PLAYER
-} from "../lib/qmplayer/player";
+import { DEFAULT_RUS_PLAYER, Player, DEFAULT_ENG_PLAYER } from "../lib/qmplayer/player";
 import { initGame } from "../lib/qmplayer";
 import { getUIState, performJump } from "../lib/qmplayer/funcs";
 import { Loader, DivFadeinCss, Redirect, ErrorInfo } from "./common";
@@ -31,7 +27,7 @@ import {
   Nav,
   NavItem,
   NavLink,
-  Container
+  Container,
 } from "reactstrap";
 import { INDEX_JSON } from "./consts";
 import { getLang, guessBrowserLang, LangTexts } from "./lang";
@@ -77,12 +73,12 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
 
     (async () => {
       this.setState({
-        loadingStage: "index"
+        loadingStage: "index",
       });
       const index = await fetch(INDEX_JSON).then(x => x.json());
 
       this.setState({
-        loadingStage: "db"
+        loadingStage: "db",
       });
       const db = await getDb(app);
       let player = await db.getConfigLocal("player");
@@ -102,9 +98,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
       const store = new Store(index, app, db, player);
       (window as any).store = store;
       autorun(() => {
-        db.setConfigLocal("lastLocation", store.hash).catch(e =>
-          console.warn(e)
-        );
+        db.setConfigLocal("lastLocation", store.hash).catch(e => console.warn(e));
       });
       if (lastLocation) {
         /* Disabled this feature
@@ -136,33 +130,21 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
           if (registrationOld) {
             console.info(`Service worker have old registration`);
           } else {
-            console.info(
-              `Service worker do not have old registration, will register now`
-            );
+            console.info(`Service worker do not have old registration, will register now`);
           }
-          const reg =
-            registrationOld ||
-            (await navigator.serviceWorker.register("/sw.js"));
+          const reg = registrationOld || (await navigator.serviceWorker.register("/sw.js"));
           store.serviceWorkerRegistered = true;
 
           function updateStore() {
             console.info(
-              `serviceWorker installing=${
-                reg.installing ? reg.installing.state : "null"
-              } ` +
+              `serviceWorker installing=${reg.installing ? reg.installing.state : "null"} ` +
                 `waiting=${reg.waiting ? reg.waiting.state : "null"} ` +
-                `active=${reg.active ? reg.active.state : "null"} `
+                `active=${reg.active ? reg.active.state : "null"} `,
             );
-            store.installingServiceWorkerState = reg.installing
-              ? reg.installing.state
-              : null;
-            store.waitingServiceWorkerState = reg.waiting
-              ? reg.waiting.state
-              : null;
+            store.installingServiceWorkerState = reg.installing ? reg.installing.state : null;
+            store.waitingServiceWorkerState = reg.waiting ? reg.waiting.state : null;
             store.waitingServiceWorker = reg.waiting;
-            store.activeServiceWorkerState = reg.active
-              ? reg.active.state
-              : null;
+            store.activeServiceWorkerState = reg.active ? reg.active.state : null;
             if (reg.installing) {
               reg.installing.onstatechange = updateStore;
             }
@@ -179,10 +161,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
             updateStore();
           });
 
-          setInterval(
-            () => reg.update().catch(e => console.warn(e)),
-            1000 * 60 * 60
-          );
+          setInterval(() => reg.update().catch(e => console.warn(e)), 1000 * 60 * 60);
         })().catch(e => console.warn(e));
 
         navigator.serviceWorker.addEventListener("controllerchange", e => {
@@ -196,10 +175,7 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
                           - if there is a controller: serviceWorkers "activate" state was
                             triggered by sendMessage from the page, i.e. from user click
                         */
-          if (
-            store.serviceWorkerController &&
-            navigator.serviceWorker.controller
-          ) {
+          if (store.serviceWorkerController && navigator.serviceWorker.controller) {
             if (!store.reloadingPage) {
               store.reloadingPage = true;
               window.location.reload(); // Call to "reload" does not stop the page!
@@ -215,10 +191,8 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
           : null;
         console.info(
           `serviceWorker controller=${
-            navigator.serviceWorker.controller
-              ? navigator.serviceWorker.controller.state
-              : "null"
-          }`
+            navigator.serviceWorker.controller ? navigator.serviceWorker.controller.state : "null"
+          }`,
         );
       }
 
@@ -228,27 +202,21 @@ class MainLoader extends React.Component<{}, MainLoaderState> {
           console.info(`Storage current persist status=${alreadyPersisted}`);
           store.storageIsPersisted = alreadyPersisted;
 
-          if (
-            !alreadyPersisted &&
-            navigator.serviceWorker &&
-            navigator.serviceWorker.controller
-          ) {
+          if (!alreadyPersisted && navigator.serviceWorker && navigator.serviceWorker.controller) {
             const requestedPersist = await navigator.storage.persist();
-            console.info(
-              `Storage requested persist status=${requestedPersist}`
-            );
+            console.info(`Storage requested persist status=${requestedPersist}`);
             store.storageIsPersisted = requestedPersist;
           }
         }
       })().catch(e => console.warn(e));
       this.setState({
         store,
-        loadingStage: undefined
+        loadingStage: undefined,
       });
     })().catch(e =>
       this.setState({
-        error: e
-      })
+        error: e,
+      }),
     );
   }
   render() {
@@ -349,7 +317,7 @@ if (
     <div className="p-1 text-center">
       Redirecting to <a href={newLocation}>{newLocation}</a>
     </div>,
-    root
+    root,
   );
   document.location.href = newLocation;
 }

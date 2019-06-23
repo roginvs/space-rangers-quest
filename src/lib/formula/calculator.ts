@@ -46,19 +46,15 @@ function pickRandomForRanges(ranges: RangeCalculated[], random: RandomFunc) {
       JSON.stringify(
         {
           ranges,
-          rnd
+          rnd,
         },
         null,
-        4
-      )
+        4,
+      ),
   );
 }
 
-export function calculateAst(
-  ast: Expression,
-  params: Params = [],
-  random: RandomFunc
-): number {
+export function calculateAst(ast: Expression, params: Params = [], random: RandomFunc): number {
   function transformToIntoRanges(node: Expression): RangeCalculated[] {
     if (node.type !== "binary" || node.operator !== "to keyword") {
       throw new Error("Wrong usage");
@@ -66,8 +62,8 @@ export function calculateAst(
     const valToRanges = (val: number) => [
       {
         from: val,
-        to: val
-      }
+        to: val,
+      },
     ];
 
     const left = node.left;
@@ -92,8 +88,8 @@ export function calculateAst(
     const newRanges = [
       {
         from: newRangeMin,
-        to: newRangeMax
-      }
+        to: newRangeMax,
+      },
     ];
     return newRanges;
   }
@@ -103,13 +99,11 @@ export function calculateAst(
     }
     return node.ranges.map(range => {
       const from = floorCeil(calculateAst(range.from, params, random));
-      const to = range.to
-        ? floorCeil(calculateAst(range.to, params, random))
-        : from;
+      const to = range.to ? floorCeil(calculateAst(range.to, params, random)) : from;
       const reversed = from > to;
       return {
         from: reversed ? to : from,
-        to: reversed ? from : to
+        to: reversed ? from : to,
       };
     });
   }

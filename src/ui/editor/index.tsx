@@ -16,18 +16,14 @@ export class EditorContainer extends React.Component<{
   quest?: QM;
 
   componentDidMount() {
-    const questInfo = this.props.store.index.quests.find(
-      x => x.gameName === "Park"
-    );
+    const questInfo = this.props.store.index.quests.find(x => x.gameName === "Park");
     if (!questInfo) {
       throw new Error("TODO");
     }
     fetch(DATA_DIR + questInfo.filename)
       .then(x => x.arrayBuffer())
       .then(questArrayBuffer => {
-        const quest = parse(
-          Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))
-        ) as QM;
+        const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))) as QM;
         this.quest = quest;
       })
       .catch(e => {

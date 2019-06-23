@@ -33,12 +33,12 @@ class StorageUsedInfo extends React.Component<
         .then(({ quota, usage }) => this.setState({ quota, usage }))
         .catch(e =>
           this.setState({
-            error: e instanceof Error ? e : new Error(`${e}`)
-          })
+            error: e instanceof Error ? e : new Error(`${e}`),
+          }),
         );
     } else {
       this.setState({
-        error: new Error(this.props.l.storageUsageUnavailable)
+        error: new Error(this.props.l.storageUsageUnavailable),
       });
     }
   };
@@ -88,20 +88,16 @@ export class OfflineModeTabContainer extends React.Component<
             </h5>
             {store.installingServiceWorkerState ? (
               <h6>
-                <i className="fa fa-spin fa-circle-o-notch" />{" "}
-                {l.installingEngineUpdate}
+                <i className="fa fa-spin fa-circle-o-notch" /> {l.installingEngineUpdate}
               </h6>
-            ) : store.waitingServiceWorkerState &&
-              store.waitingServiceWorker ? (
+            ) : store.waitingServiceWorkerState && store.waitingServiceWorker ? (
               <h6>
                 <a
                   href="#"
                   onClick={e => {
                     e.preventDefault();
                     if (store.waitingServiceWorker) {
-                      store.waitingServiceWorker.postMessage(
-                        SKIP_WAITING_MESSAGE_DATA
-                      );
+                      store.waitingServiceWorker.postMessage(SKIP_WAITING_MESSAGE_DATA);
                     }
                   }}
                 >
@@ -114,8 +110,7 @@ export class OfflineModeTabContainer extends React.Component<
           <h5>
             <i className="fa fa-spin fa-circle-o-notch" /> {l.installingEngine}
           </h5>
-        ) : store.waitingServiceWorkerState ||
-          store.activeServiceWorkerState ? (
+        ) : store.waitingServiceWorkerState || store.activeServiceWorkerState ? (
           <h5>
             <a
               href="#"
@@ -170,20 +165,14 @@ export class OfflineModeTabContainer extends React.Component<
               ) : store.imagesCache === "yes" ? (
                 <>
                   <p className="card-text">{l.installed}</p>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => store.removeImagesCache()}
-                  >
+                  <button className="btn btn-danger" onClick={() => store.removeImagesCache()}>
                     {l.uninstall}
                   </button>
                 </>
               ) : store.imagesCache === "no" ? (
                 <>
                   <p className="card-text">{l.notInstalled}</p>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => store.installImagesCache()}
-                  >
+                  <button className="btn btn-primary" onClick={() => store.installImagesCache()}>
                     {l.install}
                   </button>
                 </>
@@ -212,20 +201,14 @@ export class OfflineModeTabContainer extends React.Component<
               ) : store.musicCache === "yes" ? (
                 <>
                   <p className="card-text">{l.installed}</p>
-                  <button
-                    className="btn btn-danger"
-                    onClick={() => store.removeMusicCache()}
-                  >
+                  <button className="btn btn-danger" onClick={() => store.removeMusicCache()}>
                     {l.uninstall}
                   </button>
                 </>
               ) : store.musicCache === "no" ? (
                 <>
                   <p className="card-text">{l.notInstalled}</p>
-                  <button
-                    className="btn btn-primary"
-                    onClick={() => store.installMusicCache()}
-                  >
+                  <button className="btn btn-primary" onClick={() => store.installMusicCache()}>
                     {l.install}
                   </button>
                 </>

@@ -9,7 +9,7 @@ import {
   UnaryExpression,
   RangeExpression,
   NumberExpression,
-  SyntaxKindBinary
+  SyntaxKindBinary,
 } from "./types";
 
 type TokenOrExpression = Token | Expression;
@@ -54,21 +54,17 @@ function parseParenExpression(tokens: Token[]) {
   const firstToken = tokens[0];
   if (firstToken.kind === "identifier") {
     if (tokens.length > 1) {
-      throw new Error(
-        `Unknown token ${tokens[1].text} at ${tokens[1].start} for paren`
-      );
+      throw new Error(`Unknown token ${tokens[1].text} at ${tokens[1].start} for paren`);
     }
     const pConst = firstToken.text.slice(0, 1);
     const pNumber = firstToken.text.slice(1);
     const pId = parseInt(pNumber) - 1;
     if (pConst !== "p" || isNaN(pId)) {
-      throw new Error(
-        `Unknown indentified ${firstToken.text} at ${firstToken.start}`
-      );
+      throw new Error(`Unknown indentified ${firstToken.text} at ${firstToken.start}`);
     }
     const exp: ParameterExpression = {
       type: "parameter",
-      parameterId: pId
+      parameterId: pId,
     };
     return exp;
   } else {
@@ -91,16 +87,13 @@ function parseParenExpression(tokens: Token[]) {
 
       let rangeLeftI = rangePartStart;
       const rangeLeftStart = rangeLeftI;
-      while (
-        rangeLeftI < rangePartEnd &&
-        tokens[rangeLeftI].kind !== "dotdot token"
-      ) {
+      while (rangeLeftI < rangePartEnd && tokens[rangeLeftI].kind !== "dotdot token") {
         rangeLeftI++;
       }
       const rangeLeftEnd = rangeLeftI;
       if (rangeLeftEnd === rangePartEnd) {
         ranges.push({
-          from: parseExpression(tokens.slice(rangeLeftStart, rangeLeftEnd))
+          from: parseExpression(tokens.slice(rangeLeftStart, rangeLeftEnd)),
         });
       } else {
         if (tokens[rangeLeftEnd].kind !== "dotdot token") {
@@ -113,13 +106,13 @@ function parseParenExpression(tokens: Token[]) {
         }
         ranges.push({
           from: parseExpression(tokens.slice(rangeLeftStart, rangeLeftEnd)),
-          to: parseExpression(tokens.slice(rangeRightStart, rangeRightEnd))
+          to: parseExpression(tokens.slice(rangeRightStart, rangeRightEnd)),
         });
       }
     }
     const exp: RangeExpression = {
       type: "range",
-      ranges
+      ranges,
     };
     return exp;
   }
@@ -131,7 +124,7 @@ function makeFlatExpression(tokens: Token[]) {
   if (tokens.length === 0) {
     const exp: NumberExpression = {
       type: "number",
-      value: 0
+      value: 0,
     };
     return [exp];
   }
@@ -142,7 +135,7 @@ function makeFlatExpression(tokens: Token[]) {
     } else if (token.kind === "numeric literal") {
       const exp: NumberExpression = {
         type: "number",
-        value: parseFloat(token.text.replace(",", "."))
+        value: parseFloat(token.text.replace(",", ".")),
       };
       flatExpression.push(exp);
     } else if (token.kind === "open brace token") {
@@ -173,9 +166,7 @@ function makeFlatExpression(tokens: Token[]) {
         parenCount += movedToken.kind === "close paren token" ? -1 : 0;
       }
       if (parenCount !== 0) {
-        throw new Error(
-          `Unable to find closing paren bracked at pos=${token.start}`
-        );
+        throw new Error(`Unable to find closing paren bracked at pos=${token.start}`);
       }
       const parenEndPos = i;
       const insideParens = tokens.slice(parenStartPos + 1, parenEndPos);
@@ -185,9 +176,7 @@ function makeFlatExpression(tokens: Token[]) {
       const exp = parseParenExpression(insideParens);
       flatExpression.push(exp);
     } else {
-      throw new Error(
-        `Unknown token ${token.text} at ${token.start} kind='${token.kind}'`
-      );
+      throw new Error(`Unknown token ${token.text} at ${token.start} kind='${token.kind}'`);
     }
 
     i++;
@@ -205,9 +194,7 @@ export function parseExpression(tokensInput: Token[]): Expression {
       if ("type" in exp) {
         return exp;
       } else {
-        throw new Error(
-          `Unknown token '${exp.text}' at ${exp.start} for flat exp`
-        );
+        throw new Error(`Unknown token '${exp.text}' at ${exp.start} for flat exp`);
       }
     } else if (exps.length === 2) {
       const exp1 = exps[0];
@@ -216,7 +203,7 @@ export function parseExpression(tokensInput: Token[]): Expression {
         const rexp: UnaryExpression = {
           type: "unary",
           expression: exp2,
-          operator: "minus token"
+          operator: "minus token",
         };
         return rexp;
       } else {
@@ -241,16 +228,14 @@ export function parseExpression(tokensInput: Token[]): Expression {
         if ("type" in left && "type" in right && "kind" in middle) {
           const middleKind = middle.kind;
           if (!isTokenBinary(middleKind)) {
-            throw new Error(
-              `Now a binary operator '${middle.text}' at ${middle.start}`
-            );
+            throw new Error(`Now a binary operator '${middle.text}' at ${middle.start}`);
           }
           const prio = getBinaryTokenPrecedence(middleKind);
           if (!lowest || lowest.prio >= prio) {
             lowest = {
               idx: i,
               prio,
-              oper: middleKind
+              oper: middleKind,
             };
           }
         }
@@ -266,7 +251,7 @@ export function parseExpression(tokensInput: Token[]): Expression {
         type: "binary",
         left: parseFlatExpression(left),
         right: parseFlatExpression(right),
-        operator: lowest.oper
+        operator: lowest.oper,
       };
       return exp;
     }

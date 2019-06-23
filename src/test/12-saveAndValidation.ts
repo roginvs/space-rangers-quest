@@ -11,7 +11,7 @@ import {
   validateWinningLog,
   getGameLog,
   JUMP_I_AGREE,
-  JUMP_GO_BACK_TO_SHIP
+  JUMP_GO_BACK_TO_SHIP,
 } from "../lib/qmplayer";
 import { PQImages } from "../lib/pqImages";
 import { getUIState } from "../lib/qmplayer/funcs";
@@ -29,9 +29,7 @@ const date4 = new Date("2018-07-22T22:30:36.761Z").getTime();
 
 describe(`Using saveAndValidaton.qm, seed 1`, function() {
   const images: PQImages = [];
-  const data = fs.readFileSync(
-    __dirname + `/../../src/test/saveAndValidation.qm`
-  );
+  const data = fs.readFileSync(__dirname + `/../../src/test/saveAndValidation.qm`);
   const quest = parse(data);
 
   before(`Reads and parses quest`, () => {
@@ -64,7 +62,7 @@ describe(`Using saveAndValidaton.qm, seed 1`, function() {
     const gameLog = getGameLog(state);
     const partialGameLog: typeof gameLog = {
       ...gameLog,
-      performedJumps: gameLog.performedJumps.slice(0, 3)
+      performedJumps: gameLog.performedJumps.slice(0, 3),
     };
     assert.ok(!validateWinningLog(quest, partialGameLog));
   });
@@ -72,9 +70,7 @@ describe(`Using saveAndValidaton.qm, seed 1`, function() {
 
 describe(`Using saveAndValidaton.qm, seed 2`, function() {
   const images: PQImages = [];
-  const data = fs.readFileSync(
-    __dirname + `/../../src/test/saveAndValidation.qm`
-  );
+  const data = fs.readFileSync(__dirname + `/../../src/test/saveAndValidation.qm`);
   const quest = parse(data);
 
   before(`Reads and parses quest`, () => {

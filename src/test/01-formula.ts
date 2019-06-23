@@ -107,28 +107,20 @@ describe("Formula parser test", function() {
     "[-3;-3;-3..-3]": -3,
 
     "0.05*100": 5,
-    "100*0.05": 5
+    "100*0.05": 5,
   };
   const params = [0, 1, 2, 4, 8, 16, 32, 64, 100];
   for (let i = 0; i < 100; i++) {
     params.push(i * 2);
   }
 
-  for (const eq of Object.keys(
-    testEquations
-  ) as (keyof typeof testEquations)[]) {
+  for (const eq of Object.keys(testEquations) as (keyof typeof testEquations)[]) {
     it(`Calculates '${eq}' into ${testEquations[eq]}`, () => {
-      assert.strictEqual(
-        parse(eq, params, randomFromMathRandom),
-        testEquations[eq]
-      );
+      assert.strictEqual(parse(eq, params, randomFromMathRandom), testEquations[eq]);
     });
   }
 
-  for (const withRandom of [
-    "[p48]+[0..1]*[0..1]*[-1..1]+([p48]=0)*[1..8]",
-    "[1..0]"
-  ]) {
+  for (const withRandom of ["[p48]+[0..1]*[0..1]*[-1..1]+([p48]=0)*[1..8]", "[1..0]"]) {
     it(`Calculates '${withRandom}'`, () => {
       parse(withRandom, params, randomFromMathRandom);
     });
@@ -143,9 +135,9 @@ describe("Formula parser test", function() {
             (([p4] div 100) mod 10)*100*(([p1] div 10)=2)-
             (([p4] div 10) mod 10)*10*(([p1] div 10)=3)-(([p4] div 1) mod 10)*1*(([p1] div 10)=4))`,
         [44, 4631, 7584, 3152, 8270, 72],
-        randomFromMathRandom
+        randomFromMathRandom,
       ),
-      -2
+      -2,
     );
   });
 
@@ -154,9 +146,7 @@ describe("Formula parser test", function() {
     it(`Check randomness of ranges`, () => {
       for (let i = 0; i < 10000; i++) {
         const random = parse("3 + [4;9;  10..20]", [], randomFromMathRandom);
-        assert.ok(
-          random === 7 || random === 12 || (random >= 13 && random <= 23)
-        );
+        assert.ok(random === 7 || random === 12 || (random >= 13 && random <= 23));
       }
     });
     it(`Check randomness of ranges with negative values`, () => {
@@ -167,11 +157,7 @@ describe("Formula parser test", function() {
     });
     it(`Check randomness of ranges with negative and reversed values`, () => {
       for (let i = 0; i < 10000; i++) {
-        const random = parse(
-          "3 + [ -10 ..  -12; -3]",
-          [],
-          randomFromMathRandom
-        );
+        const random = parse("3 + [ -10 ..  -12; -3]", [], randomFromMathRandom);
         assert.ok(random === 0 || (random >= -12 + 3 && random <= -10 + 3));
       }
     });
@@ -182,7 +168,7 @@ describe("Formula parser test", function() {
         const random = parse("3 + [1;3;6..9] - 3", [], randomFromMathRandom);
         assert.ok(
           random === 1 || random === 3 || (random >= 6 && random <= 9),
-          `Random value=${random}`
+          `Random value=${random}`,
         );
         if (random in values) {
           values[random]++;
@@ -191,14 +177,8 @@ describe("Formula parser test", function() {
         }
       }
       for (const x of Object.keys(values).map(x => parseInt(x))) {
-        assert.ok(
-          values[x] > (10000 / 6) * 0.9,
-          `Values=${JSON.stringify(values, null, 4)}`
-        );
-        assert.ok(
-          values[x] < (10000 / 6) * 1.1,
-          `Values=${JSON.stringify(values, null, 4)}`
-        );
+        assert.ok(values[x] > (10000 / 6) * 0.9, `Values=${JSON.stringify(values, null, 4)}`);
+        assert.ok(values[x] < (10000 / 6) * 1.1, `Values=${JSON.stringify(values, null, 4)}`);
       }
     });
   });

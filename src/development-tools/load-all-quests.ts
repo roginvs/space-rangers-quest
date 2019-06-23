@@ -1,10 +1,4 @@
-import {
-  parse,
-  QM,
-  ParamType,
-  ParamCritType,
-  getImagesListFromQmm
-} from "../lib/qmreader";
+import { parse, QM, ParamType, ParamCritType, getImagesListFromQmm } from "../lib/qmreader";
 import * as fs from "fs";
 
 import { QMPlayer } from "../lib/qmplayer";
@@ -18,12 +12,8 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
     const srcQmName = qmDir + qmShortName;
     const lang = origin.endsWith("eng") ? "eng" : "rus";
     const oldTge = origin.startsWith("Tge");
-    const gameName = qmShortName
-      .replace(/(\.qm|\.qmm)$/, "")
-      .replace(/_eng$/, "");
-    console.info(
-      `Reading ${srcQmName} (${lang}, oldTge=${oldTge}) gameName=${gameName}`
-    );
+    const gameName = qmShortName.replace(/(\.qm|\.qmm)$/, "").replace(/_eng$/, "");
+    console.info(`Reading ${srcQmName} (${lang}, oldTge=${oldTge}) gameName=${gameName}`);
 
     const data = fs.readFileSync(srcQmName);
 

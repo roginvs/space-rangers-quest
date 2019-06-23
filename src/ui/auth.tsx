@@ -13,7 +13,7 @@ import {
   Nav,
   NavItem,
   NavLink,
-  Container
+  Container,
 } from "reactstrap";
 import { AppNavbar } from "./appNavbar";
 import { Loader, DivFadeinCss } from "./common";
@@ -32,14 +32,12 @@ export class AuthTabContainer extends React.Component<
     const userGoogleAuth =
       firebaseLoggedIn &&
       firebaseLoggedIn.providerData.find(
-        x =>
-          !!x && x.providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID
+        x => !!x && x.providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID,
       );
     const userGithubAuth =
       firebaseLoggedIn &&
       firebaseLoggedIn.providerData.find(
-        x =>
-          !!x && x.providerId === firebase.auth.GithubAuthProvider.PROVIDER_ID
+        x => !!x && x.providerId === firebase.auth.GithubAuthProvider.PROVIDER_ID,
       );
 
     return firebaseLoggedIn === undefined ? (
@@ -104,14 +102,11 @@ export class AuthTabContainer extends React.Component<
               <i className="fa fa-spin fa-spinner" /> {l.firebaseSyncing}
             </span>
           ) : (
-            <button
-              className="btn btn-info"
-              onClick={() => this.props.store.syncWithFirebase()}
-            >
+            <button className="btn btn-info" onClick={() => this.props.store.syncWithFirebase()}>
               <div
                 className="d-flex align-items-center justify-content-center"
                 style={{
-                  whiteSpace: "normal"
+                  whiteSpace: "normal",
                 }}
               >
                 <span className="mr-1">

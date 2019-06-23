@@ -12,11 +12,11 @@ export class DivFadeinCss extends React.Component<
   }
 > {
   state = {
-    entered: false
+    entered: false,
   };
   componentWillMount() {
     this.setState({
-      entered: false
+      entered: false,
     });
   }
   componentDidMount() {
@@ -24,7 +24,7 @@ export class DivFadeinCss extends React.Component<
     setTimeout(() => {
       if (this.mounted) {
         this.setState({
-          entered: true
+          entered: true,
         });
       }
     }, 10);

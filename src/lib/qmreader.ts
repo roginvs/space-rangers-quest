@@ -18,9 +18,7 @@ class Reader {
     const ifString = this.int32();
     if (ifString) {
       const strLen = this.int32();
-      const str = this.data
-        .slice(this.i, this.i + strLen * 2)
-        .toString("utf16le");
+      const str = this.data.slice(this.i, this.i + strLen * 2).toString("utf16le");
       this.i += strLen * 2;
       return str;
     } else {
@@ -33,9 +31,7 @@ class Reader {
   dwordFlag(expected?: number) {
     const val = this.int32();
     if (expected !== undefined && val !== expected) {
-      throw new Error(
-        `Expecting ${expected}, but get ${val} at position ${this.i - 4}`
-      );
+      throw new Error(`Expecting ${expected}, but get ${val} at position ${this.i - 4}`);
     }
   }
   float64() {
@@ -52,9 +48,7 @@ class Reader {
     } else {
       return (
         `Not an end! We are at ` +
-        `0x${Number(this.i).toString(16)}, file len=0x${Number(
-          this.data.length
-        ).toString(16)} ` +
+        `0x${Number(this.i).toString(16)}, file len=0x${Number(this.data.length).toString(16)} ` +
         ` left=0x${Number(this.data.length - this.i).toString(16)}`
       );
     }
@@ -64,8 +58,7 @@ class Reader {
     console.info("Data at 0x" + Number(this.i).toString(16) + "\n");
     let s = "";
     for (let i = 0; i < n; i++) {
-      s =
-        s + ("0" + Number(this.data[this.i + i]).toString(16)).slice(-2) + ":";
+      s = s + ("0" + Number(this.data[this.i + i]).toString(16)).slice(-2) + ":";
       if (i % 16 === 15) {
         s = s + "\n";
       }
@@ -79,7 +72,7 @@ enum PlayerRace {
   Пеленги = 2,
   Люди = 4,
   Феяне = 8,
-  Гаальцы = 16
+  Гаальцы = 16,
 }
 enum PlanetRace {
   Малоки = 1,
@@ -87,17 +80,17 @@ enum PlanetRace {
   Люди = 4,
   Феяне = 8,
   Гаальцы = 16,
-  Незаселенная = 64
+  Незаселенная = 64,
 }
 
 enum WhenDone {
   OnReturn = 0,
-  OnFinish = 1
+  OnFinish = 1,
 }
 enum PlayerCareer {
   Торговец = 1,
   Пират = 2,
-  Воин = 4
+  Воин = 4,
 }
 
 export const HEADER_QM_2 = 0x423a35d2; // 24 parameters
@@ -138,8 +131,7 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
   if (header === HEADER_QMM_6 || header === HEADER_QMM_7) {
     const majorVersion = header === HEADER_QMM_7 ? r.int32() : undefined;
     const minorVersion = header === HEADER_QMM_7 ? r.int32() : undefined;
-    const changeLogString =
-      header === HEADER_QMM_7 ? r.readString() : undefined;
+    const changeLogString = header === HEADER_QMM_7 ? r.readString() : undefined;
 
     const givingRace = r.byte();
     const whenDone = r.byte();
@@ -173,7 +165,7 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
       screenSizeY,
       reputationChange,
       widthSize,
-      heigthSize
+      heigthSize,
     };
   } else {
     const paramsCount =
@@ -220,7 +212,7 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
       screenSizeX: 200,
       screenSizeY: 200,
       heigthSize: 100,
-      widthSize: 100
+      widthSize: 100,
     };
   }
 }
@@ -229,11 +221,11 @@ export enum ParamType {
   Обычный = 0,
   Провальный = 1,
   Успешный = 2,
-  Смертельный = 3
+  Смертельный = 3,
 }
 export enum ParamCritType {
   Максимум = 0,
-  Минимум = 1
+  Минимум = 1,
 }
 
 interface QMParamShowInfo {
@@ -288,7 +280,7 @@ function parseParam(r: Reader): QMParam {
     critValueString: "",
     img: undefined,
     sound: undefined,
-    track: undefined
+    track: undefined,
   };
   for (let i = 0; i < showingRangesCount; i++) {
     const from = r.int32();
@@ -297,7 +289,7 @@ function parseParam(r: Reader): QMParam {
     param.showingInfo.push({
       from,
       to,
-      str
+      str,
     });
   }
   param.critValueString = r.readString();
@@ -345,7 +337,7 @@ function parseParamQmm(r: Reader): QMParam {
     critValueString: "",
     img: undefined,
     sound: undefined,
-    track: undefined
+    track: undefined,
   };
   // console.info(`Ranges=${showingRangesCount}`)
   for (let i = 0; i < showingRangesCount; i++) {
@@ -355,7 +347,7 @@ function parseParamQmm(r: Reader): QMParam {
     param.showingInfo.push({
       from,
       to,
-      str
+      str,
     });
   }
   param.critValueString = r.readString();
@@ -427,19 +419,19 @@ function parseBase2(r: Reader, isQmm: boolean): QMBase2 {
       Money,
       FromPlanet,
       FromStar,
-      Ranger
+      Ranger,
     },
     locationsCount,
     jumpsCount,
     successText,
-    taskText
+    taskText,
   };
 }
 
 export enum ParameterShowingType {
   НеТрогать = 0x00,
   Показать = 0x01,
-  Скрыть = 0x02
+  Скрыть = 0x02,
 }
 
 export interface ParameterChange extends Media {
@@ -456,7 +448,7 @@ export enum ParameterChangeType {
   Value = 0x00,
   Summ = 0x01,
   Percentage = 0x02,
-  Formula = 0x03
+  Formula = 0x03,
 }
 
 export enum LocationType {
@@ -465,7 +457,7 @@ export enum LocationType {
   Empty = 0x02,
   Success = 0x03,
   Faily = 0x04,
-  Deadly = 0x05
+  Deadly = 0x05,
 }
 
 export interface Location {
@@ -518,7 +510,7 @@ function parseLocation(r: Reader, paramsCount: number): Location {
       critText,
       img: undefined,
       track: undefined,
-      sound: undefined
+      sound: undefined,
     });
   }
   const texts: string[] = [];
@@ -550,7 +542,7 @@ function parseLocation(r: Reader, paramsCount: number): Location {
 
     // TODO
     locX: 50,
-    locY: 50
+    locY: 50,
   };
 }
 function parseLocationQmm(r: Reader, paramsCount: number): Location {
@@ -582,7 +574,7 @@ function parseLocationQmm(r: Reader, paramsCount: number): Location {
       critText: "",
       img: undefined,
       track: undefined,
-      sound: undefined
+      sound: undefined,
     });
   }
   const affectedParamsCount = r.int32();
@@ -611,7 +603,7 @@ function parseLocationQmm(r: Reader, paramsCount: number): Location {
       critText,
       img,
       track,
-      sound
+      sound,
     };
   }
   const texts: string[] = [];
@@ -645,7 +637,7 @@ function parseLocationQmm(r: Reader, paramsCount: number): Location {
     textSelectFurmula,
     maxVisits,
     locX,
-    locY
+    locY,
   };
 }
 
@@ -727,7 +719,7 @@ function parseJump(r: Reader, paramsCount: number): Jump {
       critText,
       img: undefined,
       track: undefined,
-      sound: undefined
+      sound: undefined,
     });
     paramsConditions.push({
       mustFrom,
@@ -735,7 +727,7 @@ function parseJump(r: Reader, paramsCount: number): Jump {
       mustEqualValues,
       mustEqualValuesEqual,
       mustModValues,
-      mustModValuesMod
+      mustModValuesMod,
     });
   }
 
@@ -761,15 +753,11 @@ function parseJump(r: Reader, paramsCount: number): Jump {
     description,
     img: undefined,
     track: undefined,
-    sound: undefined
+    sound: undefined,
   };
 }
 
-function parseJumpQmm(
-  r: Reader,
-  paramsCount: number,
-  questParams: QMParam[]
-): Jump {
+function parseJumpQmm(r: Reader, paramsCount: number, questParams: QMParam[]): Jump {
   //r.debugShowHex()
   const prio = r.float64();
   const dayPassed = !!r.int32();
@@ -795,7 +783,7 @@ function parseJumpQmm(
       critText: "",
       img: undefined,
       track: undefined,
-      sound: undefined
+      sound: undefined,
     });
     paramsConditions.push({
       mustFrom: questParams[i].min,
@@ -803,7 +791,7 @@ function parseJumpQmm(
       mustEqualValues: [],
       mustEqualValuesEqual: false,
       mustModValues: [],
-      mustModValuesMod: false
+      mustModValuesMod: false,
     });
   }
   const affectedConditionsParamsCount = r.int32();
@@ -835,7 +823,7 @@ function parseJumpQmm(
       mustEqualValues,
       mustEqualValuesEqual,
       mustModValues,
-      mustModValuesMod
+      mustModValuesMod,
     };
   }
 
@@ -870,7 +858,7 @@ function parseJumpQmm(
       critText,
       img,
       track,
-      sound
+      sound,
     };
   }
 
@@ -899,7 +887,7 @@ function parseJumpQmm(
     description,
     img,
     track,
-    sound
+    sound,
   };
 }
 
@@ -921,19 +909,13 @@ export function parse(data: Buffer): QM {
 
   for (let i = 0; i < base2.locationsCount; i++) {
     locations.push(
-      isQmm
-        ? parseLocationQmm(r, base.paramsCount)
-        : parseLocation(r, base.paramsCount)
+      isQmm ? parseLocationQmm(r, base.paramsCount) : parseLocation(r, base.paramsCount),
     );
   }
 
   const jumps: Jump[] = [];
   for (let i = 0; i < base2.jumpsCount; i++) {
-    jumps.push(
-      isQmm
-        ? parseJumpQmm(r, base.paramsCount, params)
-        : parseJump(r, base.paramsCount)
-    );
+    jumps.push(isQmm ? parseJumpQmm(r, base.paramsCount, params) : parseJump(r, base.paramsCount));
   }
 
   if (r.isNotEnd()) {
@@ -941,7 +923,7 @@ export function parse(data: Buffer): QM {
   }
 
   const base3: QMBase3 = {
-    header
+    header,
   };
   return {
     ...base,
@@ -949,7 +931,7 @@ export function parse(data: Buffer): QM {
     ...base3,
     params,
     locations,
-    jumps
+    jumps,
   };
 }
 
@@ -983,9 +965,7 @@ export function getImagesListFromQmm(qmmQuest: QM) {
     l.media.map(x => x.sound).forEach(x => (x ? sounds.push(x) : undefined));
 
     l.paramsChanges.forEach((p, pid) => {
-      l.media
-        .map(x => x.img)
-        .forEach(x => addImg(x, `Loc ${l.id} p${pid + 1}`));
+      l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id} p${pid + 1}`));
       tracks.push(p.track);
       sounds.push(p.sound);
     });

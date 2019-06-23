@@ -446,9 +446,7 @@ questRawPQI
     }
 
     const questFileName =
-      questIdToName[questId] !== "Prison.qm"
-        ? questIdToName[questId]
-        : "Prison1.qm";
+      questIdToName[questId] !== "Prison.qm" ? questIdToName[questId] : "Prison1.qm";
     const questName = questFileName.slice(0, -3);
     if (!questFileName.endsWith(".qm")) {
       throw new Error();
@@ -461,19 +459,19 @@ questRawPQI
       filename: imageName.toLowerCase() + ".jpg",
       ...(type === "L"
         ? {
-            locationIds: ids.map(x => parseInt(x))
+            locationIds: ids.map(x => parseInt(x)),
           }
         : undefined),
       ...(type === "P"
         ? {
-            jumpIds: ids.map(x => parseInt(x))
+            jumpIds: ids.map(x => parseInt(x)),
           }
         : undefined),
       ...(type === "PAR"
         ? {
-            critParams: ids.map(x => parseInt(x))
+            critParams: ids.map(x => parseInt(x)),
           }
-        : undefined)
+        : undefined),
     });
   });
 

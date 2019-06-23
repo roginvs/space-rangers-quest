@@ -1,9 +1,5 @@
 import "../lib.webworker";
-import {
-  WorkerMsgRequest,
-  WorkerMsgResponce,
-  METHOD_CHECK_QUEST
-} from "./defs";
+import { WorkerMsgRequest, WorkerMsgResponce, METHOD_CHECK_QUEST } from "./defs";
 import { checkQuest } from "./workerCheckQuest";
 
 self.onmessage = e => {
@@ -20,7 +16,7 @@ self.onmessage = e => {
       const result: WorkerMsgResponce = {
         id: msg.id,
         method: msg.method,
-        data: resultData
+        data: resultData,
       };
       (self.postMessage as any)(JSON.stringify(result));
     })
@@ -29,7 +25,7 @@ self.onmessage = e => {
         id: msg.id,
         method: msg.method,
         data: null,
-        errorMessage: e.message
+        errorMessage: e.message,
       };
       (self.postMessage as any)(JSON.stringify(result));
     });

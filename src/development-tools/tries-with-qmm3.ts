@@ -11,9 +11,7 @@ for (const fileName of fs.readdirSync(qmmDir)) {
   const qmmQuest = parse(qmmData);
 
   if (qmmQuest.majorVersion !== undefined) {
-    console.info(
-      `v${qmmQuest.majorVersion}.${qmmQuest.minorVersion}: ${qmmQuest.changeLogString}`
-    );
+    console.info(`v${qmmQuest.majorVersion}.${qmmQuest.minorVersion}: ${qmmQuest.changeLogString}`);
   }
 
   const images: {
@@ -45,9 +43,7 @@ for (const fileName of fs.readdirSync(qmmDir)) {
     sounds = [...sounds, ...l.media.map(x => x.sound)];
 
     l.paramsChanges.forEach((p, pid) => {
-      l.media
-        .map(x => x.img)
-        .forEach(x => addImg(x, `Loc ${l.id} p${pid + 1}`));
+      l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id} p${pid + 1}`));
       tracks.push(p.track);
       sounds.push(p.sound);
     });

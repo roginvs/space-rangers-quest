@@ -9,15 +9,15 @@ import { FirebasePublic } from "../ui/db/defs";
 //const acc = require("~/space-rangers-firebase-root-key.json");
 
 const serviceAccount = JSON.parse(
-  fs.readFileSync("../../../space-rangers-firebase-root-key.json").toString()
+  fs.readFileSync("../../../space-rangers-firebase-root-key.json").toString(),
 );
 const questIndex = JSON.parse(
-  fs.readFileSync("../../built-web/data/index.json").toString()
+  fs.readFileSync("../../built-web/data/index.json").toString(),
 ) as Index;
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://test-project-5f054.firebaseio.com"
+  databaseURL: "https://test-project-5f054.firebaseio.com",
 });
 const db = admin.database();
 
@@ -35,9 +35,7 @@ const db = admin.database();
       // continue;
     }
     const userData = usersPublic[userId];
-    console.info(
-      `Checking user id=${userId} name=${userData.info && userData.info.name}`
-    );
+    console.info(`Checking user id=${userId} name=${userData.info && userData.info.name}`);
 
     const checkedProofs: FirebasePublic["gamesWonProofs"] = {};
 
@@ -50,20 +48,12 @@ const db = admin.database();
         continue;
       }
 
-      const questArrayBuffer = fs.readFileSync(
-        `./../../built-web/data/${gameInfo.filename}`
-      );
-      const quest = parse(
-        Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))
-      ) as Quest;
+      const questArrayBuffer = fs.readFileSync(`./../../built-web/data/${gameInfo.filename}`);
+      const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))) as Quest;
 
       for (const proofSeed of Object.keys(gameProofs)) {
         //  console.info("seed", proofSeed, "info", gameProofs[proofSeed]);
-        const validationResult = validateWinningLog(
-          quest,
-          gameProofs[proofSeed],
-          false
-        );
+        const validationResult = validateWinningLog(quest, gameProofs[proofSeed], false);
         if (validationResult) {
           if (!checkedProofs[gameName]) {
             checkedProofs[gameName] = {};
@@ -79,10 +69,10 @@ const db = admin.database();
     const updatedUserData = {
       ...userData,
       gamesWonCount,
-      gamesWonProofs: checkedProofs
+      gamesWonProofs: checkedProofs,
     };
     console.info(
-      `Updating data in firebase oldCount=${userData.gamesWonCount} new=${gamesWonCount}`
+      `Updating data in firebase oldCount=${userData.gamesWonCount} new=${gamesWonCount}`,
     );
     await db.ref(`usersPublic/${userId}`).set(updatedUserData);
 

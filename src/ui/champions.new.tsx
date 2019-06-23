@@ -22,7 +22,7 @@ export class ChampionsTabContainerNew extends React.Component<
   private readonly worker: WorkerPromise = new WorkerPromise("worker.js");
   private readonly onUnmount: (() => void)[] = [
     () => (this.mounted = false),
-    () => this.worker.destroy()
+    () => this.worker.destroy(),
   ];
   componentWillUnmount() {
     this.onUnmount.forEach(f => f());

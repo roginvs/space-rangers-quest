@@ -11,18 +11,12 @@ import {
   getUIState,
   getAllImagesToPreload,
   getGameLog,
-  GameLog
+  GameLog,
 } from "../lib/qmplayer/funcs";
 import { JUMP_I_AGREE } from "../lib/qmplayer/defs";
 import { Index, Game } from "../packGameData";
 import { AppNavbar } from "./appNavbar";
-import {
-  ButtonDropdown,
-  DropdownMenu,
-  DropdownToggle,
-  DropdownItem,
-  Progress
-} from "reactstrap";
+import { ButtonDropdown, DropdownMenu, DropdownToggle, DropdownItem, Progress } from "reactstrap";
 import { QuestReplaceTags } from "./questReplaceTags";
 import { substitute } from "../lib/substitution";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
@@ -66,7 +60,7 @@ export class QuestPlay extends React.Component<
 > {
   state: QuestPlayState = {
     width: window.innerWidth,
-    questLoadProgress: 0
+    questLoadProgress: 0,
   };
 
   componentDidMount() {
@@ -82,63 +76,54 @@ export class QuestPlay extends React.Component<
   }
 
   async loadData() {
-    const game = this.props.store.index.quests.find(
-      x => x.gameName === this.props.gameName
-    );
+    const game = this.props.store.index.quests.find(x => x.gameName === this.props.gameName);
     if (!game) {
       location.hash = "#";
       return;
     }
     this.setState({
-      game
+      game,
     });
-    const noMusic =
-      (await this.props.store.db.getConfigLocal("noMusic")) || undefined;
+    const noMusic = (await this.props.store.db.getConfigLocal("noMusic")) || undefined;
     this.setState({
-      noMusic
+      noMusic,
     });
 
-    const questArrayBuffer = await new Promise<ArrayBuffer>(
-      (resolv, reject) => {
-        const xhr = new XMLHttpRequest();
-        const url = DATA_DIR + game.filename;
-        xhr.open("GET", url);
+    const questArrayBuffer = await new Promise<ArrayBuffer>((resolv, reject) => {
+      const xhr = new XMLHttpRequest();
+      const url = DATA_DIR + game.filename;
+      xhr.open("GET", url);
 
-        xhr.responseType = "arraybuffer";
+      xhr.responseType = "arraybuffer";
 
-        xhr.onload = e => {
-          if (xhr.status <= 299) {
-            resolv(xhr.response);
-          } else {
-            reject(new Error(`Url ${url} ${xhr.status}`));
-          }
-        };
+      xhr.onload = e => {
+        if (xhr.status <= 299) {
+          resolv(xhr.response);
+        } else {
+          reject(new Error(`Url ${url} ${xhr.status}`));
+        }
+      };
 
-        xhr.onerror = e => {
-          reject(new Error(`${xhr.statusText}`));
-        };
+      xhr.onerror = e => {
+        reject(new Error(`${xhr.statusText}`));
+      };
 
-        xhr.onprogress = e => {
-          this.setState({
-            questLoadProgress: e.loaded / e.total
-          });
-        };
-        xhr.send();
-      }
-    );
-    const quest = parse(
-      Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))
-    ) as Quest;
+      xhr.onprogress = e => {
+        this.setState({
+          questLoadProgress: e.loaded / e.total,
+        });
+      };
+      xhr.send();
+    });
+    const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))) as Quest;
 
-    let gameState = await this.props.store.db.getLocalSaving(
-      this.props.gameName
-    );
+    let gameState = await this.props.store.db.getLocalSaving(this.props.gameName);
     if (!gameState) {
       gameState = initRandomGameAndDoFirstStep(quest, game.images);
     }
     this.setState({
       quest,
-      gameState
+      gameState,
     });
   }
 
@@ -146,22 +131,22 @@ export class QuestPlay extends React.Component<
     const width = window.innerWidth;
     if (this.state.width !== width) {
       this.setState({
-        width
+        width,
       });
     }
   };
 
   saveGame(gameState: null | GameState) {
     this.setState({
-      thinkingSavingGame: true
+      thinkingSavingGame: true,
     });
     this.props.store.db
       .saveGame(this.props.gameName, gameState)
       .catch(e => console.warn(e))
       .then(() =>
         this.setState({
-          thinkingSavingGame: false
-        })
+          thinkingSavingGame: false,
+        }),
       )
       .catch(e => console.error(e));
   }
@@ -197,7 +182,7 @@ export class QuestPlay extends React.Component<
       <DivFadeinCss key={st.imageFileName}>
         <img
           style={{
-            width: "100%"
+            width: "100%",
           }}
           src={DATA_DIR + "img/" + st.imageFileName}
         />
@@ -205,9 +190,7 @@ export class QuestPlay extends React.Component<
     ) : null;
 
     const imagesPreloaded = getAllImagesToPreload(quest, game.images).map(x => {
-      return (
-        <img key={x} src={DATA_DIR + "img/" + x} style={{ display: "none" }} />
-      );
+      return <img key={x} src={DATA_DIR + "img/" + x} style={{ display: "none" }} />;
     });
 
     const locationText = (
@@ -228,18 +211,13 @@ export class QuestPlay extends React.Component<
 
                   this.playAudio(false);
 
-                  const newState = performJump(
-                    choice.jumpId,
-                    quest,
-                    gameState,
-                    game.images
-                  );
+                  const newState = performJump(choice.jumpId, quest, gameState, game.images);
 
                   this.saveGame(newState);
 
                   if (getUIState(quest, newState, player).gameState === "win") {
                     this.setState({
-                      thinkingSavingWin: true
+                      thinkingSavingWin: true,
                     });
                     this.props.store.db
                       .setGamePassing(this.props.gameName, getGameLog(newState))
@@ -247,22 +225,21 @@ export class QuestPlay extends React.Component<
                       .catch(e => console.warn(e))
                       .then(() =>
                         this.setState({
-                          thinkingSavingWin: false
-                        })
+                          thinkingSavingWin: false,
+                        }),
                       )
                       .catch(e => console.warn(e));
                   }
 
                   this.setState({
-                    gameState: newState
+                    gameState: newState,
                   });
                   //window.scrollTo(0, isMobile ? 44 : 0);
                   window.scrollTo(0, isMobile ? 42 : 0);
                 }}
                 className={"game " + (choice.active ? "" : "disabled")}
               >
-                <i className="fa fa-angle-double-right" />{" "}
-                <QuestReplaceTags str={choice.text} />
+                <i className="fa fa-angle-double-right" /> <QuestReplaceTags str={choice.text} />
               </a>
             </div>
           );
@@ -270,9 +247,7 @@ export class QuestPlay extends React.Component<
       </DivFadeinCss>
     );
 
-    const paramsStrings = ([] as string[]).concat(
-      ...st.paramsState.map(x => x.split("<br>"))
-    );
+    const paramsStrings = ([] as string[]).concat(...st.paramsState.map(x => x.split("<br>")));
 
     const params = (
       <>
@@ -283,7 +258,7 @@ export class QuestPlay extends React.Component<
                 style={{
                   whiteSpace: "pre-wrap",
                   textAlign: "center",
-                  minHeight: "1em"
+                  minHeight: "1em",
                 }}
               >
                 <QuestReplaceTags str={paramText} />
@@ -300,9 +275,7 @@ export class QuestPlay extends React.Component<
           className="btn btn-light mr-1"
           onClick={() => {
             let gameState = this.state.gameState;
-            const uiState = gameState
-              ? getUIState(quest, gameState, player)
-              : undefined;
+            const uiState = gameState ? getUIState(quest, gameState, player) : undefined;
             if (
               !uiState ||
               uiState.gameState === "dead" ||
@@ -311,12 +284,12 @@ export class QuestPlay extends React.Component<
             ) {
               gameState = initRandomGameAndDoFirstStep(quest, game.images);
               this.setState({
-                gameState
+                gameState,
               });
               this.saveGame(null);
             } else {
               this.setState({
-                reallyRestart: true
+                reallyRestart: true,
               });
             }
           }}
@@ -329,20 +302,20 @@ export class QuestPlay extends React.Component<
           onClick={() => {
             this.setState(
               {
-                noMusic: !this.state.noMusic
+                noMusic: !this.state.noMusic,
               },
               () => {
                 this.props.store.db
                   .setConfigBoth("noMusic", !!this.state.noMusic)
                   .catch(e => console.warn(e));
-              }
+              },
             );
           }}
         >
           <i
             className={classnames(
               "fa fa-fw",
-              this.state.noMusic ? "fa-volume-off" : "fa-volume-up"
+              this.state.noMusic ? "fa-volume-off" : "fa-volume-up",
             )}
           />
         </button>
@@ -383,7 +356,7 @@ export class QuestPlay extends React.Component<
           style={{
             marginLeft: "auto",
             marginRight: "auto",
-            marginTop: isMobile ? 0 : "2rem"
+            marginTop: isMobile ? 0 : "2rem",
           }}
         >
           {this.state.reallyRestart ? (
@@ -394,13 +367,10 @@ export class QuestPlay extends React.Component<
                   <button
                     className="btn btn-warning mt-1 mr-1"
                     onClick={() => {
-                      const gameState = initRandomGameAndDoFirstStep(
-                        quest,
-                        game.images
-                      );
+                      const gameState = initRandomGameAndDoFirstStep(quest, game.images);
                       this.setState({
                         reallyRestart: false,
-                        gameState
+                        gameState,
                       });
                       this.saveGame(null);
                     }}
@@ -412,7 +382,7 @@ export class QuestPlay extends React.Component<
                     className="btn btn-secondary mt-1"
                     onClick={() =>
                       this.setState({
-                        reallyRestart: false
+                        reallyRestart: false,
                       })
                     }
                   >
@@ -426,7 +396,7 @@ export class QuestPlay extends React.Component<
               <div
                 style={{
                   margin: 5,
-                  textAlign: "center"
+                  textAlign: "center",
                 }}
               >
                 {controlButtons}
@@ -434,7 +404,7 @@ export class QuestPlay extends React.Component<
 
               <div
                 style={{
-                  margin: 5
+                  margin: 5,
                 }}
               >
                 {imagesPreloaded}
@@ -443,7 +413,7 @@ export class QuestPlay extends React.Component<
 
               <div
                 style={{
-                  margin: 5
+                  margin: 5,
                 }}
               >
                 {locationText}
@@ -454,7 +424,7 @@ export class QuestPlay extends React.Component<
                   marginTop: 25,
                   marginBottom: 25,
                   marginLeft: "auto",
-                  marginRight: "auto"
+                  marginRight: "auto",
                 }}
               >
                 {params}
@@ -462,7 +432,7 @@ export class QuestPlay extends React.Component<
 
               <div
                 style={{
-                  margin: 5
+                  margin: 5,
                 }}
               >
                 {choices}
@@ -474,7 +444,7 @@ export class QuestPlay extends React.Component<
                 style={{
                   position: "fixed",
                   right: 15,
-                  bottom: 15
+                  bottom: 15,
                 }}
               >
                 {controlButtons}
@@ -483,13 +453,13 @@ export class QuestPlay extends React.Component<
                 style={{
                   marginLeft: "auto",
                   marginRight: "auto",
-                  width: this.state.width * 0.9
+                  width: this.state.width * 0.9,
                 }}
               >
                 <div
                   style={{
                     display: "flex",
-                    flexDirection: "row"
+                    flexDirection: "row",
                   }}
                 >
                   <div
@@ -497,7 +467,7 @@ export class QuestPlay extends React.Component<
                       flex: `0 0 ${(100 / 3) * 2}%`,
                       maxWidth: `${(100 / 3) * 2}%`,
                       boxSizing: "border-box",
-                      padding: 15
+                      padding: 15,
                     }}
                   >
                     {locationText}
@@ -506,7 +476,7 @@ export class QuestPlay extends React.Component<
                     style={{
                       flex: `0 0 ${100 / 3}%`,
                       maxWidth: `${100 / 3}%`,
-                      padding: 15
+                      padding: 15,
                     }}
                   >
                     {imagesPreloaded}
@@ -516,7 +486,7 @@ export class QuestPlay extends React.Component<
                 <div
                   style={{
                     display: "flex",
-                    flexDirection: "row"
+                    flexDirection: "row",
                   }}
                 >
                   <div
@@ -524,7 +494,7 @@ export class QuestPlay extends React.Component<
                       flex: `0 0 ${(100 / 3) * 2}%`,
                       maxWidth: `${(100 / 3) * 2}%`,
                       boxSizing: "border-box",
-                      padding: 15
+                      padding: 15,
                     }}
                   >
                     {choices}
@@ -534,7 +504,7 @@ export class QuestPlay extends React.Component<
                       flex: `0 0 ${100 / 3}%`,
                       maxWidth: `${100 / 3}%`,
                       padding: 15,
-                      paddingBottom: 65
+                      paddingBottom: 65,
                     }}
                   >
                     {params}
@@ -553,9 +523,7 @@ export class QuestPlay extends React.Component<
   private playAudio(restart: boolean) {
     if (this.audio) {
       if (!this.audio.src || restart) {
-        const musicList = this.props.store.index.dir.music.files.map(
-          x => x.path
-        );
+        const musicList = this.props.store.index.dir.music.files.map(x => x.path);
         const i = Math.floor(Math.random() * musicList.length);
         this.audio.src = DATA_DIR + musicList[i];
       }
@@ -563,12 +531,7 @@ export class QuestPlay extends React.Component<
       const audioPlayPromise = this.audio.play();
       if (audioPlayPromise) {
         audioPlayPromise.catch(e => {
-          console.warn(
-            `Error with music src='${
-              this.audio ? this.audio.src : "no audio tag"
-            }'`,
-            e
-          );
+          console.warn(`Error with music src='${this.audio ? this.audio.src : "no audio tag"}'`, e);
         });
       }
     }
@@ -608,15 +571,9 @@ function initRandomGameAndDoFirstStep(quest: Quest, images: PQImages) {
       .slice(2) +
       Math.random()
         .toString(36)
-        .slice(2)
+        .slice(2),
   );
-  gameState = performJump(
-    JUMP_I_AGREE,
-    quest,
-    gameState,
-    images,
-    new Date().getTime()
-  );
+  gameState = performJump(JUMP_I_AGREE, quest, gameState, images, new Date().getTime());
   return gameState;
 }
 

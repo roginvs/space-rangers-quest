@@ -41,7 +41,7 @@ for (const fileName of fs.readdirSync(gameDir)) {
               ((x.path[0] === "params" || x.path[2] === "params") &&
                 x.index >= origQuest.paramsCount)) ||
             (x.path.length === 1 && x.path[0] === "paramsCount")
-          )
+          ),
       );
       if (diffWithoutAddings.length === 0) {
         console.info(`Same but have inserts in arrays`);
@@ -55,7 +55,7 @@ for (const fileName of fs.readdirSync(gameDir)) {
     }
   } else {
     console.info(
-      `Skipping check: resavedParams=${resavedQuest.paramsCount} originalParams=${origQuest.paramsCount}`
+      `Skipping check: resavedParams=${resavedQuest.paramsCount} originalParams=${origQuest.paramsCount}`,
     );
   }
 

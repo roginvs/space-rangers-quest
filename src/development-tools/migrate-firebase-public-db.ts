@@ -10,15 +10,15 @@ import { Quest, validateWinningLog } from "../lib/qmplayer/funcs";
 const FIREBASE_PUBLIC_WON_PROOF = "wonProofs";
 
 const serviceAccount = JSON.parse(
-  fs.readFileSync("../../../space-rangers-firebase-root-key.json").toString()
+  fs.readFileSync("../../../space-rangers-firebase-root-key.json").toString(),
 );
 const questIndex = JSON.parse(
-  fs.readFileSync("../../built-web/data/index.json").toString()
+  fs.readFileSync("../../built-web/data/index.json").toString(),
 ) as Index;
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: "https://test-project-5f054.firebaseio.com"
+  databaseURL: "https://test-project-5f054.firebaseio.com",
 });
 const db = admin.database();
 
@@ -40,7 +40,7 @@ async function createRow(key: string, row: WonProofTableRow) {
   console.info("Creating backup file");
   fs.writeFileSync(
     `backup/usersPublic-${new Date().getTime()}.json`,
-    JSON.stringify(usersPublic, null, 4)
+    JSON.stringify(usersPublic, null, 4),
   );
 
   for (const userId of Object.keys(usersPublic)) {
@@ -48,9 +48,7 @@ async function createRow(key: string, row: WonProofTableRow) {
       // continue;
     }
     const userData = usersPublic[userId];
-    console.info(
-      `Checking user id=${userId} name=${userData.info && userData.info.name}`
-    );
+    console.info(`Checking user id=${userId} name=${userData.info && userData.info.name}`);
 
     for (const gameName of Object.keys(userData.gamesWonProofs || {})) {
       const gameProofs = userData.gamesWonProofs[gameName];
@@ -61,29 +59,19 @@ async function createRow(key: string, row: WonProofTableRow) {
         continue;
       }
 
-      const questArrayBuffer = fs.readFileSync(
-        `./../../built-web/data/${gameInfo.filename}`
-      );
-      const quest = parse(
-        Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))
-      ) as Quest;
+      const questArrayBuffer = fs.readFileSync(`./../../built-web/data/${gameInfo.filename}`);
+      const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))) as Quest;
 
       for (const proofSeed of Object.keys(gameProofs)) {
         //  console.info("seed", proofSeed, "info", gameProofs[proofSeed]);
-        const validationResult = validateWinningLog(
-          quest,
-          gameProofs[proofSeed],
-          false
-        );
+        const validationResult = validateWinningLog(quest, gameProofs[proofSeed], false);
         if (validationResult) {
           await createRow(proofSeed, {
-            createdAt:
-              gameProofs[proofSeed].created ||
-              admin.database.ServerValue.TIMESTAMP,
+            createdAt: gameProofs[proofSeed].created || admin.database.ServerValue.TIMESTAMP,
             gameName,
             userId,
             proof: gameProofs[proofSeed],
-            rangerName: userData.info ? userData.info.name : ""
+            rangerName: userData.info ? userData.info.name : "",
           });
         } else {
           console.info("======= Not validated ======== ");

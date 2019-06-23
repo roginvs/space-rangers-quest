@@ -31,17 +31,11 @@ describe(`Checking all quests for formulas and params substitution`, function() 
           Day: "Day",
           Money: "Money",
           CurDate: "CurDate",
-          lang: "rus"
+          lang: "rus",
         };
         function check(str: string, place = "", isDiamond = false) {
           try {
-            substitute(
-              str,
-              player,
-              params,
-              randomFromMathRandom,
-              isDiamond ? 1 : undefined
-            );
+            substitute(str, player, params, randomFromMathRandom, isDiamond ? 1 : undefined);
           } catch (e) {
             throw new Error(`String failed '${str}' with ${e} in ${place}`);
           }
@@ -67,7 +61,7 @@ describe(`Checking all quests for formulas and params substitution`, function() 
             0.26661520895002355,
             0.95424331893931,
             0.8900907263092355,
-            0.9796112746203975
+            0.9796112746203975,
           ];
 
           function createRandom(staticRandom: number[]) {
@@ -82,11 +76,7 @@ describe(`Checking all quests for formulas and params substitution`, function() 
             };
           }
           try {
-            const formulaResult = formula.parse(
-              str,
-              params,
-              createRandom(staticRandomGenerated)
-            );
+            const formulaResult = formula.parse(str, params, createRandom(staticRandomGenerated));
           } catch (e) {
             throw new Error(`String failed '${str}' with ${e} in ${place}`);
           }
@@ -120,19 +110,12 @@ describe(`Checking all quests for formulas and params substitution`, function() 
               if (p.critText !== quest.params[i].critValueString) {
                 check(p.critText, `Loc ${loc.id} crit param ${i}`);
               }
-              if (
-                quest.params[i].active &&
-                p.isChangeFormula &&
-                p.changingFormula
-              ) {
+              if (quest.params[i].active && p.isChangeFormula && p.changingFormula) {
                 checkFormula(p.changingFormula, `param ${i} in loc=${loc.id}`);
               }
             });
             if (loc.isTextByFormula && loc.textSelectFurmula) {
-              checkFormula(
-                loc.textSelectFurmula,
-                `loc=${loc.id} text select formula`
-              );
+              checkFormula(loc.textSelectFurmula, `loc=${loc.id} text select formula`);
             }
           });
         });
@@ -148,22 +131,12 @@ describe(`Checking all quests for formulas and params substitution`, function() 
               if (p.critText !== quest.params[i].critValueString) {
                 check(p.critText, `Jump ${jump.id} crit param ${i}`);
               }
-              if (
-                quest.params[i].active &&
-                p.isChangeFormula &&
-                p.changingFormula
-              ) {
-                checkFormula(
-                  p.changingFormula,
-                  `param ${i} in jump=${jump.id}`
-                );
+              if (quest.params[i].active && p.isChangeFormula && p.changingFormula) {
+                checkFormula(p.changingFormula, `param ${i} in jump=${jump.id}`);
               }
             });
             if (jump.formulaToPass) {
-              checkFormula(
-                jump.formulaToPass,
-                `Jump id=${jump.id} formula to pass`
-              );
+              checkFormula(jump.formulaToPass, `Jump id=${jump.id} formula to pass`);
             }
           });
         });

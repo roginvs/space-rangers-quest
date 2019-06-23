@@ -5,7 +5,7 @@ import {
   ParamCritType,
   Location,
   Jump,
-  ParameterShowingType
+  ParameterShowingType,
 } from "../lib/qmreader";
 
 import * as fs from "fs";
@@ -16,9 +16,7 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
   describe(`Player on qmreader-1.${ext}`, function() {
     let qm: QM;
     before(() => {
-      const data = fs.readFileSync(
-        __dirname + `/../../src/test/qmreader-1.${ext}`
-      );
+      const data = fs.readFileSync(__dirname + `/../../src/test/qmreader-1.${ext}`);
       qm = parse(data);
     });
 
@@ -194,13 +192,13 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
         it("Visit limit loc id=10", () => {
           assert.strictEqual(
             qm.locations.find(x => x.id === 10)!.maxVisits,
-            ext === "qmm" ? 78 : 0
+            ext === "qmm" ? 78 : 0,
           );
         });
         it("Visit limit loc id=5", () => {
           assert.strictEqual(
             qm.locations.find(x => x.id === 5)!.maxVisits,
-            ext === "qmm" ? 312 : 0
+            ext === "qmm" ? 312 : 0,
           );
         });
 

@@ -16,12 +16,7 @@ export const QUEST_SEARCH_ALL = "all";
 export const QUEST_SEARCH_OWN = "own";
 
 export class Store {
-  constructor(
-    public index: Index,
-    public app: firebase.app.App,
-    public db: DB,
-    player: Player
-  ) {
+  constructor(public index: Index, public app: firebase.app.App, public db: DB, player: Player) {
     window.onhashchange = () => this.setPath();
     this.setPath();
     this.player = player;
@@ -51,7 +46,7 @@ export class Store {
     return {
       tab0: arr[0],
       tab1: arr[1],
-      tab2: arr[2]
+      tab2: arr[2],
     };
   }
 
@@ -72,7 +67,7 @@ export class Store {
       this.index.quests.map(async quest => {
         const passed = await this.db.isGamePassedLocal(quest.gameName);
         m.set(quest.gameName, passed);
-      })
+      }),
     );
     this.wonProofs = m;
   }
@@ -152,7 +147,7 @@ export class Store {
     this.musicCacheInstallInfo = {
       currentFile: "",
       sizeTotal: this.index.dir.music.totalSize,
-      downloaded: 0
+      downloaded: 0,
     };
     const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
     for (const f of this.index.dir.music.files) {
@@ -172,7 +167,7 @@ export class Store {
     this.imagesCacheInstallInfo = {
       currentFile: "",
       sizeTotal: this.index.dir.images.totalSize,
-      downloaded: 0
+      downloaded: 0,
     };
     const cacheImages = await caches.open(CACHE_IMAGES_NAME);
     for (const f of this.index.dir.images.files) {

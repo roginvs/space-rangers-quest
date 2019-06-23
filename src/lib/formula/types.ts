@@ -40,12 +40,7 @@ export interface Token {
   text: string;
 }
 
-export type ExpressionType =
-  | "number"
-  | "range"
-  | "parameter"
-  | "binary"
-  | "unary";
+export type ExpressionType = "number" | "range" | "parameter" | "binary" | "unary";
 
 export type Expression =
   | NumberExpression

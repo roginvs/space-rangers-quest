@@ -11,7 +11,7 @@ import {
   GameState,
   JUMP_I_AGREE,
   JUMP_GO_BACK_TO_SHIP,
-  JUMP_NEXT
+  JUMP_NEXT,
 } from "../lib/qmplayer";
 
 let player: QMPlayer;
@@ -21,15 +21,11 @@ function jumpTo(text: string = "") {
   // const saving = player.getSaving();
   //console.info(`jumpto='${text}' state=${saving.state} locId=${saving.locationId} jumps=${saving.possibleJumps
   //    .map(j =>`id=${j.id}${j.active}`).join(', ')} locs=`,saving.locationVisitCount);
-  const jump = state.choices
-    .filter(x => x.text.indexOf(text) > -1 && x.active)
-    .shift();
+  const jump = state.choices.filter(x => x.text.indexOf(text) > -1 && x.active).shift();
   //console.info(`jump=${jump ? jump.jumpId : "!"}`);
   if (!jump) {
     // const saving = player.getSaving();
-    throw new Error(
-      `OLOLO: No jump '${text}' in ` + JSON.stringify(state, null, 4)
-    );
+    throw new Error(`OLOLO: No jump '${text}' in ` + JSON.stringify(state, null, 4));
   }
   player.performJump(jump.jumpId);
   // console.info(player.getState());
@@ -38,9 +34,7 @@ function jumpTo(text: string = "") {
 
 describe("test11-critonlocation.qm", function() {
   beforeEach(`Reads and parses quest`, () => {
-    const data = fs.readFileSync(
-      __dirname + "/../../src/test/test11-critonlocation.qm"
-    );
+    const data = fs.readFileSync(__dirname + "/../../src/test/test11-critonlocation.qm");
     const qm = parse(data);
     player = new QMPlayer(qm, undefined, "rus"); // false
     player.start();
@@ -48,11 +42,7 @@ describe("test11-critonlocation.qm", function() {
   });
   it("-> L2", () => {
     const st = jumpTo("L2");
-    assert.strictEqual(
-      st.choices[0].jumpId,
-      JUMP_GO_BACK_TO_SHIP,
-      "It is go back to ship"
-    );
+    assert.strictEqual(st.choices[0].jumpId, JUMP_GO_BACK_TO_SHIP, "It is go back to ship");
     assert.strictEqual(st.choices.length, 1, "one choice");
     player.performJump(JUMP_GO_BACK_TO_SHIP);
     assert.strictEqual(player.getState().gameState, "win");
@@ -100,9 +90,7 @@ describe("test11-critonlocation.qm", function() {
 for (const ext of ["qm", "qmm"]) {
   describe(`Player on test10-locationtexts.${ext}`, function() {
     before(`Reads and parses quest`, () => {
-      const data = fs.readFileSync(
-        __dirname + `/../../src/test/test10-locationtexts.${ext}`
-      );
+      const data = fs.readFileSync(__dirname + `/../../src/test/test10-locationtexts.${ext}`);
       const qm = parse(data);
       player = new QMPlayer(qm, undefined, "rus"); // false
       player.start();
@@ -172,9 +160,7 @@ for (const ext of ["qm", "qmm"]) {
 describe("Player on test10-deadly-loc.qmm", function() {
   let save: GameState;
   it(`Reads and parses quest`, () => {
-    const data = fs.readFileSync(
-      __dirname + "/../../src/test/test10-deadly-loc.qmm"
-    );
+    const data = fs.readFileSync(__dirname + "/../../src/test/test10-deadly-loc.qmm");
     const qm = parse(data);
     player = new QMPlayer(qm, undefined, "rus"); // false
     player.start();
@@ -216,9 +202,7 @@ describe("Player on test10-deadly-loc.qmm", function() {
 
 describe("Player on limitedLocation.qmm", function() {
   it(`Reads and parses quest`, () => {
-    const data = fs.readFileSync(
-      __dirname + "/../../src/test/limitedLocation.qmm"
-    );
+    const data = fs.readFileSync(__dirname + "/../../src/test/limitedLocation.qmm");
     const qm = parse(data);
     player = new QMPlayer(qm, undefined, "rus"); // false
     player.start();
@@ -242,9 +226,7 @@ describe("Player on limitedLocation.qmm", function() {
 describe("Player on test4-forqmm.qm", function() {
   describe("Old behaviour", () => {
     it(`Reads and parses quest`, () => {
-      const data = fs.readFileSync(
-        __dirname + "/../../src/test/test4-forqmm.qm"
-      );
+      const data = fs.readFileSync(__dirname + "/../../src/test/test4-forqmm.qm");
       const qm = parse(data);
       player = new QMPlayer(qm, undefined, "rus"); // true
       player.start();
@@ -260,18 +242,12 @@ describe("Player on test4-forqmm.qm", function() {
       jumpTo("");
     });
     it("No jump here", () => {
-      assert.strictEqual(
-        player.getState().choices.length,
-        0,
-        "TGE 4 shows not choices here"
-      );
+      assert.strictEqual(player.getState().choices.length, 0, "TGE 4 shows not choices here");
     });
   });
   describe("New behaviour", () => {
     it(`Reads and parses quest`, () => {
-      const data = fs.readFileSync(
-        __dirname + "/../../src/test/test4-forqmm.qmm"
-      );
+      const data = fs.readFileSync(__dirname + "/../../src/test/test4-forqmm.qmm");
       const qm = parse(data);
       player = new QMPlayer(qm, undefined, "rus"); // false
       player.start();
@@ -291,11 +267,7 @@ describe("Player on test4-forqmm.qm", function() {
             jumpTo('');
             assert.strictEqual(player.getState().gameState, 'win', 'TGE 5 allows here to win')
             */
-      assert.strictEqual(
-        player.getState().choices.length,
-        0,
-        "TGE 5.2.9 shows not choices here"
-      );
+      assert.strictEqual(player.getState().choices.length, 0, "TGE 5.2.9 shows not choices here");
     });
   });
 });
@@ -303,9 +275,7 @@ describe("Player on test4-forqmm.qm", function() {
 describe("Player on test8-emptyloc.qmm", function() {
   describe("New behaviour", () => {
     beforeEach(`Reads and parses quest`, () => {
-      const data = fs.readFileSync(
-        __dirname + "/../../src/test/test8-emptyloc.qmm"
-      );
+      const data = fs.readFileSync(__dirname + "/../../src/test/test8-emptyloc.qmm");
       const qm = parse(data);
       player = new QMPlayer(qm, undefined, "rus"); // false
       player.start();
@@ -335,9 +305,7 @@ describe("Player on test8-emptyloc.qmm", function() {
 
 describe("Player on test9-loop-qm.qm", function() {
   beforeEach(`Reads and parses quest`, () => {
-    const data = fs.readFileSync(
-      __dirname + "/../../src/test/test9-loop-qm.qm"
-    );
+    const data = fs.readFileSync(__dirname + "/../../src/test/test9-loop-qm.qm");
     const qm = parse(data);
     player = new QMPlayer(qm, undefined, "rus"); // false
     player.start();

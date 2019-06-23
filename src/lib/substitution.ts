@@ -15,7 +15,7 @@ export const PLAYER_KEYS_TO_REPLACE: (keyof PlayerSubstitute)[] = [
   "Money",
   "Date",
   "Day",
-  "CurDate"
+  "CurDate",
 ]; // TODO: Maybe move from here
 
 export function substitute(
@@ -23,7 +23,7 @@ export function substitute(
   player: PlayerSubstitute,
   params: ReadonlyArray<number>,
   random: RandomFunc,
-  diamondIndex?: number
+  diamondIndex?: number,
 ) {
   if (diamondIndex !== undefined) {
     str = str.replace(/<>/g, `[p${diamondIndex + 1}]`);
@@ -37,7 +37,7 @@ export function substitute(
     const result = parse(
       formulaWithBrackets.slice(1, formulaWithBrackets.length - 1),
       params,
-      random
+      random,
     );
     str = str.replace(formulaWithBrackets, `${clr}${result}${clrEnd}`);
   }

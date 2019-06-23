@@ -10,7 +10,7 @@ import {
   Nav,
   NavItem,
   NavLink,
-  Container
+  Container,
 } from "reactstrap";
 
 import { observer } from "mobx-react";
@@ -40,7 +40,7 @@ export class AppNavbar extends React.Component<
           <NavbarToggler
             onClick={() => {
               this.setState({
-                navbarIsOpen: !this.state.navbarIsOpen
+                navbarIsOpen: !this.state.navbarIsOpen,
               });
             }}
           />
@@ -93,8 +93,7 @@ export class AppNavbar extends React.Component<
                       </span>
                     ) : (
                       <>
-                        <i className="fa fa-fw fa-cloud-download" />{" "}
-                        {l.installMode}
+                        <i className="fa fa-fw fa-cloud-download" /> {l.installMode}
                       </>
                     )}
                   </NavLink>

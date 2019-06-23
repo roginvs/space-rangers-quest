@@ -4,12 +4,7 @@ import { LangTexts } from "./lang";
 import { WonProofs } from "./db/defs";
 import { Player, Lang } from "../lib/qmplayer/player";
 import { Index, Game } from "../packGameData";
-import {
-  ButtonDropdown,
-  DropdownMenu,
-  DropdownToggle,
-  DropdownItem
-} from "reactstrap";
+import { ButtonDropdown, DropdownMenu, DropdownToggle, DropdownItem } from "reactstrap";
 import { observer } from "mobx-react";
 import { Store, QUEST_SEARCH_ALL, QUEST_SEARCH_OWN } from "./store";
 
@@ -31,7 +26,7 @@ export class QuestList extends React.Component<
   QuestListState
 > {
   state: QuestListState = {
-    dropdownOpen: false
+    dropdownOpen: false,
   };
   onScroll = () => {
     this.props.store.lastQuestListScroll = window.scrollY;
@@ -53,17 +48,12 @@ export class QuestList extends React.Component<
     const origins = index.quests
       .filter(x => x.lang === player.lang)
       .map(x => x.questOrigin)
-      .reduce(
-        (acc, d) => (acc.indexOf(d) > -1 ? acc : acc.concat(d)),
-        [] as string[]
-      );
+      .reduce((acc, d) => (acc.indexOf(d) > -1 ? acc : acc.concat(d)), [] as string[]);
 
     const questsToShow = index.quests
       .filter(quest => quest.lang === player.lang)
       .filter(quest =>
-        store.questsListTab !== QUEST_SEARCH_ALL
-          ? quest.questOrigin === store.questsListTab
-          : true
+        store.questsListTab !== QUEST_SEARCH_ALL ? quest.questOrigin === store.questsListTab : true,
       )
       .map(quest => ({
         ...quest,
@@ -83,22 +73,18 @@ export class QuestList extends React.Component<
             ...player,
             Day: `${DEFAULT_DAYS_TO_PASS_QUEST}`,
             Date: SRDateToString(DEFAULT_DAYS_TO_PASS_QUEST, player.lang),
-            CurDate: SRDateToString(0, player.lang)
+            CurDate: SRDateToString(0, player.lang),
           },
           [],
           // tslint:disable-next-line:strict-type-predicates
-          n => (n !== undefined ? Math.floor(Math.random() * n) : Math.random())
-        )
+          n => (n !== undefined ? Math.floor(Math.random() * n) : Math.random()),
+        ),
       }))
       .filter(quest =>
         store.questsListSearch
-          ? quest.gameName
-              .toLowerCase()
-              .indexOf(store.questsListSearch.toLowerCase()) > -1 ||
-            quest.taskText
-              .toLowerCase()
-              .indexOf(store.questsListSearch.toLowerCase()) > -1
-          : true
+          ? quest.gameName.toLowerCase().indexOf(store.questsListSearch.toLowerCase()) > -1 ||
+            quest.taskText.toLowerCase().indexOf(store.questsListSearch.toLowerCase()) > -1
+          : true,
       );
     const questsToShowUnpassed = questsToShow.filter(x => x.passed === false);
 
@@ -112,12 +98,12 @@ export class QuestList extends React.Component<
             <div className="col-md-6 mb-3">
               <ButtonDropdown
                 style={{
-                  display: "block"
+                  display: "block",
                 }}
                 isOpen={this.state.dropdownOpen}
                 toggle={() =>
                   this.setState({
-                    dropdownOpen: !this.state.dropdownOpen
+                    dropdownOpen: !this.state.dropdownOpen,
                   })
                 }
               >
@@ -129,9 +115,7 @@ export class QuestList extends React.Component<
                     : store.questsListTab}
                 </DropdownToggle>
                 <DropdownMenu>
-                  <DropdownItem
-                    onClick={() => (store.questsListTab = QUEST_SEARCH_ALL)}
-                  >
+                  <DropdownItem onClick={() => (store.questsListTab = QUEST_SEARCH_ALL)}>
                     {l.all}
                   </DropdownItem>
                   <DropdownItem divider />
@@ -165,9 +149,7 @@ export class QuestList extends React.Component<
                 value={store.questsListSearch}
                 onChange={e => (store.questsListSearch = e.target.value)}
                 onKeyUp={e =>
-                  e.which === 27 /* ESC */
-                    ? (store.questsListSearch = "")
-                    : undefined
+                  e.which === 27 /* ESC */ ? (store.questsListSearch = "") : undefined
                 }
                 placeholder={l.search}
               />
@@ -179,12 +161,10 @@ export class QuestList extends React.Component<
                 <button
                   className="btn btn-block btn-primary mb-3"
                   style={{
-                    whiteSpace: "normal"
+                    whiteSpace: "normal",
                   }}
                   onClick={() => {
-                    const idx = Math.floor(
-                      Math.random() * questsToShowUnpassed.length
-                    );
+                    const idx = Math.floor(Math.random() * questsToShowUnpassed.length);
                     const quest = questsToShowUnpassed[idx];
                     location.href = `#/quests/${quest.gameName}`;
                   }}

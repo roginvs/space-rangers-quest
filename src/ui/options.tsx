@@ -26,7 +26,7 @@ export class OptionsTabContainer extends React.Component<
 > {
   state = {
     ...this.props.store.player,
-    busy: false
+    busy: false,
   };
   render() {
     const l = this.props.store.l;
@@ -110,7 +110,7 @@ export class OptionsTabContainer extends React.Component<
             className="btn btn-primary px-5"
             onClick={() => {
               this.setState({
-                busy: true
+                busy: true,
               });
               (async () => {
                 const db = this.props.store.db;
@@ -122,7 +122,7 @@ export class OptionsTabContainer extends React.Component<
                   FromStar: this.state.FromStar,
                   ToPlanet: this.state.ToPlanet,
                   ToStar: this.state.ToStar,
-                  lang: this.state.lang
+                  lang: this.state.lang,
                 });
                 await db.setOwnHighscoresName(this.state.Ranger);
                 const player = await db.getConfigLocal("player");
@@ -131,7 +131,7 @@ export class OptionsTabContainer extends React.Component<
                 }
                 this.props.store.player = player;
                 this.setState({
-                  busy: false
+                  busy: false,
                 });
               })().catch(e => location.reload());
             }}

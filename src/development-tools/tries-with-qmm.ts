@@ -54,8 +54,7 @@ for (const fileName of fs.readdirSync(qmmDir)) {
           (x.path.length === 1 && x.path[0] === "paramsCount") ||
           //  (x.path[2] === 'img' || x.path[2] === 'sound' || x.path[2] === 'track') ||
           x.path[0] === "header" ||
-          ((x.path[0] === "strings" &&
-            (x.path[1] === "Parsec" || x.path[1] === "Artefact")) ||
+          ((x.path[0] === "strings" && (x.path[1] === "Parsec" || x.path[1] === "Artefact")) ||
             (x.path[x.path.length - 1] === "img" ||
               x.path[x.path.length - 1] === "sound" ||
               x.path[x.path.length - 1] === "track")) ||
@@ -64,7 +63,7 @@ for (const fileName of fs.readdirSync(qmmDir)) {
             (x.item.path[x.item.path.length - 1] === "img" ||
               x.item.path[x.item.path.length - 1] === "sound" ||
               x.item.path[x.item.path.length - 1] === "track"))
-        )
+        ),
     );
     if (diffWithoutAddings.length === 0) {
       console.info(`Almost the same`);
