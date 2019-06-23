@@ -52,6 +52,7 @@ function addPaddingToPopper(e: ReferenceObject | null): ReferenceObject | null {
 function range(n: number) {
   return new Array(n).fill(0).map((zero, index) => index);
 }
+const Divider = () => <div className="text-center">---</div>;
 class SummaryForParamsChangeAndConditions extends React.Component<{
   store: EditorStore;
   target: {
@@ -64,6 +65,7 @@ class SummaryForParamsChangeAndConditions extends React.Component<{
     // asd quest.paramsCount
     return (
       <div>
+        <Divider />
         {range(quest.paramsCount).map(paramId => {
           const change = this.props.target.paramsChanges[paramId];
           const showHideString =
@@ -144,11 +146,6 @@ class JumpPopupBody extends React.Component<{
   jump: Jump;
 }> {
   render() {
-    // - переход без описания
-    // - переход с описанием
-    // - спорный
-    // - пустой
-    // - с описанием
     const jump = this.props.jump;
     const conflictingJumps = this.props.store.quest.jumps.filter(
       x => x.fromLocationId === jump.fromLocationId && x.text === jump.text && x.id !== jump.id,
@@ -170,6 +167,14 @@ class JumpPopupBody extends React.Component<{
           <div>{conflictoryString}</div>
         </div>
         <div className="popover-body">
+          <div className="text-center text-primary">{jump.text}</div>
+          {jump.description ? (
+            <>
+              <div className="text-center text-primary">-></div>
+              <div className="text-center text-primary">{jump.description}</div>{" "}
+            </>
+          ) : null}
+
           <SummaryForParamsChangeAndConditions store={this.props.store} target={this.props.jump} />
         </div>
       </div>
