@@ -182,6 +182,7 @@ class JumpArrow extends React.Component<{
                 paddedEnd.y,
               ].join(" ")}
               stroke="black"
+              strokeWidth={this.hovered ? 3 : 1}
               fill="none"
               markerEnd="url(#arrowBlack)"
             />
