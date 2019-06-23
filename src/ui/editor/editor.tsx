@@ -149,21 +149,24 @@ class JumpArrow extends React.Component<{
 
     return (
       <>
-        {paddedStart && paddedEnd ? (
-          <path
-            d={[
-              "M",
-              paddedStart.x,
-              paddedStart.y,
-              "Q",
-              controlPointX,
-              controlPointY,
-              paddedEnd.x,
-              paddedEnd.y,
-            ].join(" ")}
-            stroke="black"
-            fill="none"
-          />
+        {paddedStart && paddedEnd && arrowAnchor ? (
+          <>
+            <path
+              d={[
+                "M",
+                paddedStart.x,
+                paddedStart.y,
+                "Q",
+                controlPointX,
+                controlPointY,
+                paddedEnd.x,
+                paddedEnd.y,
+              ].join(" ")}
+              stroke="black"
+              fill="none"
+              markerEnd="url(#arrowBlack)"
+            />
+          </>
         ) : null}
         <path
           onMouseEnter={() => {
@@ -187,7 +190,7 @@ class JumpArrow extends React.Component<{
             endLoc.locX,
             endLoc.locY,
           ].join(" ")}
-          stroke="yellow"
+          stroke="transparent"
           strokeWidth={5}
           fill="none"
           ref={e => {
@@ -219,6 +222,19 @@ export class Editor extends React.Component<{
           backgroundColor: colors.background,
         }}
       >
+        <defs>
+          <marker
+            id="arrowBlack"
+            markerWidth="10"
+            markerHeight="10"
+            refX="9"
+            refY="3"
+            orient="auto"
+            markerUnits="strokeWidth"
+          >
+            <path d="M0,0 L0,6 L9,3 z" fill="currentColor" />
+          </marker>
+        </defs>
         {quest.jumps.map(j => (
           <JumpArrow quest={quest} store={store} jump={j} key={j.id} />
         ))}
