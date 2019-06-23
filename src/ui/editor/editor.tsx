@@ -4,6 +4,7 @@ import { QM, Location, Jump } from "../../lib/qmreader";
 import { observer } from "mobx-react";
 import { observable } from "mobx";
 import Popper from "@material-ui/core/Popper";
+import { ReferenceObject } from "popper.js";
 
 const colors = {
   background: "#aaaaaa",
@@ -16,6 +17,34 @@ const colors = {
   },
 } as const;
 
+@observer
+class InfoPopup extends React.Component<{
+  anchorEl: ReferenceObject | null;
+  target: Location | Jump;
+}> {
+  render() {
+    const target = this.props.target;
+    return (
+      <Popper open={true} anchorEl={this.props.anchorEl} popperOptions={{}}>
+        <div className="popover" style={{ position: "static", margin: 10 }}>
+          <div className="popover-header">Header id={target.id}</div>
+          <div className="popover-body">
+            The content of the Popper
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            <br />
+            XXX .
+          </div>
+        </div>
+      </Popper>
+    );
+  }
+}
 @observer
 class LocationPoint extends React.Component<{
   store: Store;
@@ -60,27 +89,7 @@ class LocationPoint extends React.Component<{
             }
           }}
         />
-        {this.hovered ? (
-          <Popper open={true} anchorEl={this.ref} popperOptions={{}}>
-            <div className="popover" style={{ position: "static", margin: 10 }}>
-              <div className="popover-header">Header id={location.id}</div>
-              <div className="popover-body">
-                The content of the Popper
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                <br />
-                XXX .
-              </div>
-            </div>
-          </Popper>
-        ) : (
-          undefined
-        )}
+        {this.hovered ? <InfoPopup anchorEl={this.ref} target={location} /> : undefined}
       </>
     );
   }
