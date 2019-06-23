@@ -17,6 +17,27 @@ const colors = {
   },
 } as const;
 
+function addPaddingToPopper(e: ReferenceObject | null): ReferenceObject | null {
+  if (!e) {
+    return null;
+  }
+  const PADDING = 5;
+  return {
+    clientHeight: e.clientHeight,
+    clientWidth: e.clientWidth,
+    getBoundingClientRect: () => {
+      const eRect = e.getBoundingClientRect();
+      return {
+        bottom: eRect.bottom + 2 * PADDING,
+        top: eRect.top - PADDING,
+        height: eRect.height + 2 * PADDING,
+        width: eRect.width + 2 * PADDING,
+        left: eRect.left - PADDING,
+        right: eRect.right + 2 * PADDING,
+      };
+    },
+  };
+}
 @observer
 class InfoPopup extends React.Component<{
   anchorEl: ReferenceObject | null;
@@ -34,7 +55,11 @@ class InfoPopup extends React.Component<{
       },
     };
     return (
-      <Popper open={true} anchorEl={this.props.anchorEl} popperOptions={popperOptions}>
+      <Popper
+        open={true}
+        anchorEl={addPaddingToPopper(this.props.anchorEl)}
+        popperOptions={popperOptions}
+      >
         <div className="popover" style={{ position: "static" }}>
           <div className="popover-header">
             Header
