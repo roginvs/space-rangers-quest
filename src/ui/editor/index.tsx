@@ -9,7 +9,7 @@ import { Editor } from "./editor";
 import { observer } from "mobx-react";
 
 @observer
-export class EditorTabContainer extends React.Component<{
+export class EditorContainer extends React.Component<{
   store: Store;
 }> {
   @observable
