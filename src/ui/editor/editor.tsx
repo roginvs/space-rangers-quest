@@ -15,6 +15,7 @@ const colors = {
   },
 } as const;
 
+@observer
 class LocationPoint extends React.Component<{
   store: Store;
   quest: QM;
@@ -46,6 +47,8 @@ class LocationPoint extends React.Component<{
             : location.isFaily || location.isFailyDeadly
             ? colors.location.fail
             : colors.location.intermediate,
+          border: this.hovered ? "3px solid black" : undefined,
+          cursor: "pointer",
         }}
       ></div>
     );
