@@ -118,7 +118,7 @@ function getSummaryForParamsChangeAndConditions(
           <span>
             [p{paramId + 1}] ({param.name}){showHideString} {conditionString}
           </span>
-          <span style={{ marginLeft: "auto" }}>{changeString}</span>
+          <span style={{ marginLeft: "auto", flexShrink: 0 }}>{changeString}</span>
         </div>
       );
     })
@@ -158,7 +158,7 @@ class JumpPopupBody extends React.Component<{
 
     const paramsInfo = getSummaryForParamsChangeAndConditions(this.props.store, this.props.jump);
     return (
-      <div className="popover" style={{ position: "static", minWidth: 250 }}>
+      <div className="popover" style={{ position: "static", minWidth: 300 }}>
         <div className="popover-header" style={{ textAlign: "center" }}>
           <div>
             id={jump.id} {shortInfo}
