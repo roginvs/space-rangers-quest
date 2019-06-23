@@ -4,7 +4,7 @@ import { QM, Location, Jump } from "../../lib/qmreader";
 import { observer } from "mobx-react";
 import { observable } from "mobx";
 import Popper from "@material-ui/core/Popper";
-import { ReferenceObject } from "popper.js";
+import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 
 const colors = {
   background: "#aaaaaa",
@@ -24,10 +24,23 @@ class InfoPopup extends React.Component<{
 }> {
   render() {
     const target = this.props.target;
+    const popperOptions: Modifiers = {
+      flip: {
+        enabled: true,
+      },
+      preventOverflow: {
+        enabled: true,
+        boundariesElement: "window",
+      },
+    };
     return (
-      <Popper open={true} anchorEl={this.props.anchorEl} popperOptions={{}}>
-        <div className="popover" style={{ position: "static", margin: 10 }}>
-          <div className="popover-header">Header id={target.id}</div>
+      <Popper open={true} anchorEl={this.props.anchorEl} popperOptions={popperOptions}>
+        <div className="popover" style={{ position: "static" }}>
+          <div className="popover-header">
+            Header
+            {"locX" in target ? "location" : "jump"}
+            id={target.id}
+          </div>
           <div className="popover-body">
             The content of the Popper
             <br />
@@ -104,7 +117,10 @@ class JumpArrow extends React.Component<{
   hovered = false;
 
   @observable
-  ref: SVGPathElement | null = null;
+  lineRef: SVGPathElement | null = null;
+
+  @observable
+  popperRef: SVGPathElement | null = null;
 
   render() {
     const { store, quest, jump } = this.props;
@@ -114,9 +130,12 @@ class JumpArrow extends React.Component<{
       console.error(`Jump id=${jump.id} unable to find locations`);
       return null;
     }
-    const myIndex = quest.jumps
-      .filter(x => x.fromLocationId === jump.fromLocationId && x.toLocationId === jump.toLocationId)
-      .findIndex(x => x.id === jump.id);
+    const allJumpFromThisLocations = quest.jumps.filter(
+      x =>
+        (x.fromLocationId === jump.fromLocationId && x.toLocationId === jump.toLocationId) ||
+        (x.fromLocationId === jump.toLocationId && x.toLocationId === jump.fromLocationId),
+    );
+    const myIndex = allJumpFromThisLocations.findIndex(x => x.id === jump.id);
     if (myIndex < 0) {
       console.error(`Wrong index for jump id=${jump.id}`);
       return null;
@@ -139,12 +158,12 @@ class JumpArrow extends React.Component<{
     const controlPointX = middleX + offsetVectorX * offsetVectorCount * offsetVectorSign;
     const controlPointY = middleY + offsetVectorY * offsetVectorCount * offsetVectorSign;
 
-    const paddedStart = this.ref ? this.ref.getPointAtLength(10) : undefined;
-    const paddedEnd = this.ref
-      ? this.ref.getPointAtLength(this.ref.getTotalLength() - 10)
+    const paddedStart = this.lineRef ? this.lineRef.getPointAtLength(10) : undefined;
+    const paddedEnd = this.lineRef
+      ? this.lineRef.getPointAtLength(this.lineRef.getTotalLength() - 10)
       : undefined;
-    const arrowAnchor = this.ref
-      ? this.ref.getPointAtLength(this.ref.getTotalLength() - 20)
+    const arrowAnchor = this.lineRef
+      ? this.lineRef.getPointAtLength(this.lineRef.getTotalLength() - 20)
       : undefined;
 
     return (
@@ -166,20 +185,53 @@ class JumpArrow extends React.Component<{
               fill="none"
               markerEnd="url(#arrowBlack)"
             />
+            <path
+              d={[
+                "M",
+                paddedStart.x,
+                paddedStart.y,
+                "Q",
+                controlPointX,
+                controlPointY,
+                paddedEnd.x,
+                paddedEnd.y,
+              ].join(" ")}
+              stroke="transparent"
+              strokeWidth={10}
+              fill="none"
+              onMouseEnter={() => {
+                console.info(`Enter jump=${jump.id}`);
+                this.hovered = true;
+              }}
+              onMouseLeave={() => {
+                console.info(`Leave jump=${jump.id}`);
+                this.hovered = false;
+              }}
+              onClick={() => {
+                console.info(`Click jump=${jump.id}`);
+              }}
+            />
           </>
         ) : null}
         <path
-          onMouseEnter={() => {
-            // console.info(`Enter jump=${jump.id}`);
-            this.hovered = true;
+          d={[
+            "M",
+            Math.min(startLoc.locX, endLoc.locX) - 10,
+            Math.min(startLoc.locY, endLoc.locY) - 10,
+            "L",
+            Math.max(startLoc.locX, endLoc.locX) + 10,
+            Math.max(startLoc.locY, endLoc.locY) + 10,
+          ].join(" ")}
+          stroke="none"
+          fill="none"
+          ref={popperRef => {
+            if (!this.popperRef) {
+              this.popperRef = popperRef;
+            }
           }}
-          onMouseLeave={() => {
-            // console.info(`Leave jump=${jump.id}`);
-            this.hovered = false;
-          }}
-          onClick={() => {
-            // console.info(`Click jump=${jump.id}`);
-          }}
+        />
+        {this.hovered ? <InfoPopup anchorEl={this.popperRef} target={jump} /> : undefined}
+        <path
           d={[
             "M",
             startLoc.locX,
@@ -191,15 +243,14 @@ class JumpArrow extends React.Component<{
             endLoc.locY,
           ].join(" ")}
           stroke="transparent"
-          strokeWidth={5}
+          strokeWidth={1}
           fill="none"
           ref={e => {
-            if (!this.ref) {
-              this.ref = e;
+            if (!this.lineRef) {
+              this.lineRef = e;
             }
           }}
         />
-        {this.hovered ? <InfoPopup anchorEl={this.ref} target={jump} /> : undefined}
       </>
     );
   }
