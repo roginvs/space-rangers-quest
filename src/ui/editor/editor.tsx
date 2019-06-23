@@ -173,13 +173,27 @@ class JumpPopupBody extends React.Component<{
               <div className="text-center text-primary">{jump.description}</div>{" "}
             </>
           ) : null}
-
           {paramsInfo.length > 0 ? (
             <>
               {jump.text || jump.description ? <Divider /> : null}
               {paramsInfo}
             </>
           ) : null}
+          {jump.formulaToPass ? (
+            <>
+              <Divider />
+              <div className="text-center">{jump.formulaToPass}</div>
+            </>
+          ) : null}
+          <Divider />
+          {jump.jumpingCountLimit ? (
+            <div className="text-center">Не более {jump.jumpingCountLimit} переходов</div>
+          ) : (
+            ""
+          )}
+          {jump.alwaysShow ? <div className="text-center">Всегда показывать</div> : ""}
+          {jump.dayPassed ? <div className="text-center">Прошел один день</div> : ""}
+          order={jump.showingOrder}
         </div>
       </div>
     );
@@ -286,11 +300,19 @@ class JumpArrow extends React.Component<{
       return null;
     }
 
-    const allJumpFromThisLocations = quest.jumps.filter(
-      x =>
-        (x.fromLocationId === jump.fromLocationId && x.toLocationId === jump.toLocationId) ||
-        (x.fromLocationId === jump.toLocationId && x.toLocationId === jump.fromLocationId),
-    );
+    const allJumpFromThisLocations = quest.jumps
+      .filter(
+        x =>
+          (x.fromLocationId === jump.fromLocationId && x.toLocationId === jump.toLocationId) ||
+          (x.fromLocationId === jump.toLocationId && x.toLocationId === jump.fromLocationId),
+      )
+      .sort((a, b) => {
+        return a.fromLocationId > b.fromLocationId
+          ? 1
+          : a.fromLocationId < b.fromLocationId
+          ? -1
+          : a.showingOrder - b.showingOrder;
+      });
     const myIndex = allJumpFromThisLocations.findIndex(x => x.id === jump.id);
     if (myIndex < 0) {
       console.error(`Wrong index for jump id=${jump.id}`);
@@ -367,11 +389,11 @@ class JumpArrow extends React.Component<{
               strokeWidth={10}
               fill="none"
               onMouseEnter={() => {
-                console.info(`Enter jump=${jump.id}`);
+                // console.info(`Enter jump=${jump.id}`);
                 this.hovered = true;
               }}
               onMouseLeave={() => {
-                console.info(`Leave jump=${jump.id}`);
+                //console.info(`Leave jump=${jump.id}`);
                 this.hovered = false;
               }}
               onClick={() => {
