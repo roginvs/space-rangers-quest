@@ -138,11 +138,45 @@ class JumpArrow extends React.Component<{
     const offsetVectorSign = myIndex % 2 === 0 ? 1 : -1;
     const controlPointX = middleX + offsetVectorX * offsetVectorCount * offsetVectorSign;
     const controlPointY = middleY + offsetVectorY * offsetVectorCount * offsetVectorSign;
+
+    const paddedStart = this.ref ? this.ref.getPointAtLength(10) : undefined;
+    const paddedEnd = this.ref
+      ? this.ref.getPointAtLength(this.ref.getTotalLength() - 10)
+      : undefined;
+    const arrowAnchor = this.ref
+      ? this.ref.getPointAtLength(this.ref.getTotalLength() - 20)
+      : undefined;
+
     return (
       <>
+        {paddedStart && paddedEnd ? (
+          <path
+            d={[
+              "M",
+              paddedStart.x,
+              paddedStart.y,
+              "Q",
+              controlPointX,
+              controlPointY,
+              paddedEnd.x,
+              paddedEnd.y,
+            ].join(" ")}
+            stroke="black"
+            fill="none"
+          />
+        ) : null}
         <path
-          onMouseEnter={() => (this.hovered = true)}
-          onMouseLeave={() => (this.hovered = false)}
+          onMouseEnter={() => {
+            // console.info(`Enter jump=${jump.id}`);
+            this.hovered = true;
+          }}
+          onMouseLeave={() => {
+            // console.info(`Leave jump=${jump.id}`);
+            this.hovered = false;
+          }}
+          onClick={() => {
+            // console.info(`Click jump=${jump.id}`);
+          }}
           d={[
             "M",
             startLoc.locX,
@@ -153,8 +187,9 @@ class JumpArrow extends React.Component<{
             endLoc.locX,
             endLoc.locY,
           ].join(" ")}
-          stroke="black"
-          fill="transparent"
+          stroke="yellow"
+          strokeWidth={5}
+          fill="none"
           ref={e => {
             if (!this.ref) {
               this.ref = e;
@@ -184,11 +219,11 @@ export class Editor extends React.Component<{
           backgroundColor: colors.background,
         }}
       >
-        {quest.locations.map(l => (
-          <LocationPoint quest={quest} store={store} location={l} key={l.id} />
-        ))}
         {quest.jumps.map(j => (
           <JumpArrow quest={quest} store={store} jump={j} key={j.id} />
+        ))}
+        {quest.locations.map(l => (
+          <LocationPoint quest={quest} store={store} location={l} key={l.id} />
         ))}
       </svg>
     );
