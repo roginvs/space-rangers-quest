@@ -130,6 +130,7 @@ class JumpArrow extends React.Component<{
       console.error(`Jump id=${jump.id} unable to find locations`);
       return null;
     }
+
     const allJumpFromThisLocations = quest.jumps.filter(
       x =>
         (x.fromLocationId === jump.fromLocationId && x.toLocationId === jump.toLocationId) ||
@@ -140,10 +141,13 @@ class JumpArrow extends React.Component<{
       console.error(`Wrong index for jump id=${jump.id}`);
       return null;
     }
-    const middleVectorX = (endLoc.locX - startLoc.locX) / 2;
-    const middleVectorY = (endLoc.locY - startLoc.locY) / 2;
-    const middleX = startLoc.locX + middleVectorX;
-    const middleY = startLoc.locY + middleVectorY;
+    const allJumpsEvenCount = allJumpFromThisLocations.length % 2 === 0;
+    const middleVectorX =
+      (Math.max(endLoc.locX, startLoc.locX) - Math.min(endLoc.locX, startLoc.locX)) / 2;
+    const middleVectorY =
+      (Math.max(endLoc.locY, startLoc.locY) - Math.min(endLoc.locY, startLoc.locY)) / 2;
+    const middleX = Math.min(endLoc.locX, startLoc.locX) + middleVectorX;
+    const middleY = Math.min(endLoc.locY, startLoc.locY) + middleVectorY;
     const offsetVectorUnnormalizedX = middleVectorY;
     const offsetVectorUnnormalizedY = -middleVectorX;
     const offsetVectorLength = Math.sqrt(
@@ -155,8 +159,14 @@ class JumpArrow extends React.Component<{
 
     const offsetVectorCount = Math.floor((myIndex + 1) / 2);
     const offsetVectorSign = myIndex % 2 === 0 ? 1 : -1;
-    const controlPointX = middleX + offsetVectorX * offsetVectorCount * offsetVectorSign;
-    const controlPointY = middleY + offsetVectorY * offsetVectorCount * offsetVectorSign;
+    const controlPointX =
+      middleX +
+      offsetVectorX * offsetVectorCount * offsetVectorSign +
+      (allJumpsEvenCount ? offsetVectorX * 0.5 : 0);
+    const controlPointY =
+      middleY +
+      offsetVectorY * offsetVectorCount * offsetVectorSign +
+      (allJumpsEvenCount ? offsetVectorY * 0.5 : 0);
 
     const paddedStart = this.lineRef ? this.lineRef.getPointAtLength(10) : undefined;
     const paddedEnd = this.lineRef
