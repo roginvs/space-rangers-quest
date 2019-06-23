@@ -5,6 +5,7 @@ import { observer } from "mobx-react";
 import { observable, computed } from "mobx";
 import Popper from "@material-ui/core/Popper";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
+import { EditorStore } from "./store";
 
 const colors = {
   background: "#aaaaaa",
@@ -37,6 +38,12 @@ function addPaddingToPopper(e: ReferenceObject | null): ReferenceObject | null {
       };
     },
   };
+}
+
+class JumpPopupBody extends React.Component<{}> {
+  render() {
+    return null;
+  }
 }
 @observer
 class InfoPopup extends React.Component<{
@@ -81,8 +88,7 @@ class InfoPopup extends React.Component<{
 }
 @observer
 class LocationPoint extends React.Component<{
-  store: Store;
-  quest: QM;
+  store: EditorStore;
   location: Location;
 }> {
   @observable
@@ -92,7 +98,8 @@ class LocationPoint extends React.Component<{
   ref: SVGCircleElement | null = null;
 
   render() {
-    const { store, quest, location } = this.props;
+    // const quest = this.props.store.quest;
+    const location = this.props.location;
     return (
       <>
         <circle
@@ -130,8 +137,7 @@ class LocationPoint extends React.Component<{
 
 @observer
 class JumpArrow extends React.Component<{
-  store: Store;
-  quest: QM;
+  store: EditorStore;
   jump: Jump;
 }> {
   @observable
@@ -144,7 +150,9 @@ class JumpArrow extends React.Component<{
   // popperRef: SVGPathElement | null = null;
 
   render() {
-    const { store, quest, jump } = this.props;
+    const quest = this.props.store.quest;
+    const jump = this.props.jump;
+
     const startLoc = quest.locations.find(x => x.id === jump.fromLocationId);
     const endLoc = quest.locations.find(x => x.id === jump.toLocationId);
     if (!startLoc || !endLoc) {
@@ -293,26 +301,16 @@ class JumpArrow extends React.Component<{
 
 @observer
 export class Editor extends React.Component<{
-  store: Store;
-  quest: QM;
+  store: EditorStore;
 }> {
-  @computed
-  get svgWidth() {
-    return Math.max(...this.props.quest.locations.map(l => l.locX)) + 100;
-  }
-  @computed
-  get svgHeight() {
-    return Math.max(...this.props.quest.locations.map(l => l.locY)) + 100;
-  }
-
   render() {
     const store = this.props.store;
-    const quest = this.props.quest;
+    const quest = this.props.store.quest;
     return (
       <svg
         style={{
-          width: this.svgWidth,
-          height: this.svgHeight,
+          width: store.svgWidth,
+          height: store.svgHeight,
           position: "relative",
           backgroundColor: colors.background,
         }}
@@ -331,10 +329,10 @@ export class Editor extends React.Component<{
           </marker>
         </defs>
         {quest.jumps.map(j => (
-          <JumpArrow quest={quest} store={store} jump={j} key={j.id} />
+          <JumpArrow store={store} jump={j} key={j.id} />
         ))}
         {quest.locations.map(l => (
-          <LocationPoint quest={quest} store={store} location={l} key={l.id} />
+          <LocationPoint store={store} location={l} key={l.id} />
         ))}
       </svg>
     );
