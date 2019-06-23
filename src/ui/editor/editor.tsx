@@ -156,7 +156,14 @@ class LocationPopupBody extends React.Component<{
           </div>
         </div>
         <div className="popover-body">
-          {firstText ? <div className="text-center text-primary">{firstText}</div> : null}
+          {firstText ? (
+            <div
+              className="text-center text-primary"
+              style={{ maxHeight: "15em", overflow: "hidden" }}
+            >
+              {firstText}
+            </div>
+          ) : null}
 
           {paramsInfo.length > 0 ? (
             <>
