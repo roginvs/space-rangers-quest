@@ -62,7 +62,6 @@ class LocationPoint extends React.Component<{
     return (
       <>
         <circle
-          key={location.id}
           onMouseEnter={() => (this.hovered = true)}
           onMouseLeave={() => (this.hovered = false)}
           cx={location.locX}
@@ -118,23 +117,52 @@ class JumpArrow extends React.Component<{
     const myIndex = quest.jumps
       .filter(x => x.fromLocationId === jump.fromLocationId && x.toLocationId === jump.toLocationId)
       .findIndex(x => x.id === jump.id);
-    const controlPointX = endLoc.locX;
-    const controlPointY = endLoc.locY;
+    if (myIndex < 0) {
+      console.error(`Wrong index for jump id=${jump.id}`);
+      return null;
+    }
+    const middleVectorX = (endLoc.locX - startLoc.locX) / 2;
+    const middleVectorY = (endLoc.locY - startLoc.locY) / 2;
+    const middleX = startLoc.locX + middleVectorX;
+    const middleY = startLoc.locY + middleVectorY;
+    const offsetVectorUnnormalizedX = middleVectorY;
+    const offsetVectorUnnormalizedY = -middleVectorX;
+    const offsetVectorLength = Math.sqrt(
+      offsetVectorUnnormalizedX * offsetVectorUnnormalizedX +
+        offsetVectorUnnormalizedY * offsetVectorUnnormalizedY,
+    );
+    const offsetVectorX = (offsetVectorUnnormalizedX / offsetVectorLength) * 30;
+    const offsetVectorY = (offsetVectorUnnormalizedY / offsetVectorLength) * 30;
+
+    const offsetVectorCount = Math.floor((myIndex + 1) / 2);
+    const offsetVectorSign = myIndex % 2 === 0 ? 1 : -1;
+    const controlPointX = middleX + offsetVectorX * offsetVectorCount * offsetVectorSign;
+    const controlPointY = middleY + offsetVectorY * offsetVectorCount * offsetVectorSign;
     return (
-      <path
-        d={[
-          "M",
-          startLoc.locX,
-          startLoc.locY,
-          "Q",
-          controlPointX,
-          controlPointY,
-          endLoc.locX,
-          endLoc.locY,
-        ].join(" ")}
-        stroke="black"
-        fill="transparent"
-      />
+      <>
+        <path
+          onMouseEnter={() => (this.hovered = true)}
+          onMouseLeave={() => (this.hovered = false)}
+          d={[
+            "M",
+            startLoc.locX,
+            startLoc.locY,
+            "Q",
+            controlPointX,
+            controlPointY,
+            endLoc.locX,
+            endLoc.locY,
+          ].join(" ")}
+          stroke="black"
+          fill="transparent"
+          ref={e => {
+            if (!this.ref) {
+              this.ref = e;
+            }
+          }}
+        />
+        {this.hovered ? <InfoPopup anchorEl={this.ref} target={jump} /> : undefined}
+      </>
     );
   }
 }

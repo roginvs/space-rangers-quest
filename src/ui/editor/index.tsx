@@ -23,7 +23,7 @@ export class EditorContainer extends React.Component<{
     fetch(DATA_DIR + questInfo.filename)
       .then(x => x.arrayBuffer())
       .then(questArrayBuffer => {
-        const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))) as QM;
+        const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer))));
         this.quest = quest;
       })
       .catch(e => {
