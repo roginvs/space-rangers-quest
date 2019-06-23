@@ -1,11 +1,20 @@
 import * as React from "react";
 import { Store } from "../store";
-import { QM, Location, Jump } from "../../lib/qmreader";
+import {
+  QM,
+  Location,
+  Jump,
+  ParamsChanger,
+  JumpParameterCondition,
+  ParameterChange,
+  ParameterShowingType,
+} from "../../lib/qmreader";
 import { observer } from "mobx-react";
 import { observable, computed } from "mobx";
 import Popper from "@material-ui/core/Popper";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 import { EditorStore } from "./store";
+import { assertNever } from "../../lib/formula/calculator";
 
 const colors = {
   background: "#aaaaaa",
@@ -40,18 +49,116 @@ function addPaddingToPopper(e: ReferenceObject | null): ReferenceObject | null {
   };
 }
 
-class JumpPopupBody extends React.Component<{}> {
+function range(n: number) {
+  return new Array(n).fill(0).map((zero, index) => index);
+}
+class JustParamsPopupInfo extends React.Component<{
+  store: EditorStore;
+  jump: {
+    paramsConditions?: JumpParameterCondition[];
+    paramsChanges: ParameterChange[];
+  };
+}> {
   render() {
-    return null;
+    const quest = this.props.store.quest;
+    // asd quest.paramsCount
+    return (
+      <div>
+        {range(quest.paramsCount).map(paramId => {
+          const change = this.props.jump.paramsChanges[paramId];
+          const showHideString =
+            change.showingType === ParameterShowingType.НеТрогать
+              ? ""
+              : change.showingType === ParameterShowingType.Показать
+              ? " (показать)"
+              : change.showingType === ParameterShowingType.Скрыть
+              ? " (скрыть)"
+              : assertNever(change.showingType);
+          const changeString = change.isChangeValue
+            ? `:=${change.change}`
+            : change.isChangePercentage
+            ? change.change > 100
+              ? `+${change.change - 100}%`
+              : change.change < 100
+              ? `-${change.change}`
+              : ""
+            : change.isChangeFormula
+            ? `:='${change.changingFormula}'`
+            : change.change > 0
+            ? `+${change.change}`
+            : change.change < 0
+            ? `${change.change}`
+            : "";
+          let conditionString = "";
+          const param = quest.params[paramId];
+          const paramsConditions = this.props.jump.paramsConditions;
+          if (paramsConditions) {
+            const conditions = paramsConditions[paramId];
+            if (conditions.mustFrom > param.min) {
+              conditionString += `>${conditions.mustFrom} `;
+            }
+            if (conditions.mustTo < param.max) {
+              conditionString += `<${conditions.mustTo} `;
+            }
+            if (conditions.mustEqualValues.length > 0) {
+              conditionString += conditions.mustEqualValuesEqual ? "==" : "!==";
+              conditions.mustEqualValues.forEach(v => (conditionString += `${v}`));
+              conditionString += " ";
+            }
+            if (conditions.mustModValues.length > 0) {
+              conditionString += conditions.mustModValuesMod ? "%" : "!%";
+              conditions.mustModValues.forEach(v => (conditionString += `${v}`));
+              conditionString += " ";
+            }
+          }
+          if (!changeString && !showHideString && !conditionString) {
+            return null;
+          }
+          return (
+            <div style={{ display: "flex" }}>
+              <span>
+                [p{paramId + 1}] ({param.name}){showHideString} {conditionString}
+              </span>
+              <span style={{ marginLeft: "auto" }}>{changeString}</span>
+            </div>
+          );
+        })}
+      </div>
+    );
+  }
+}
+class LocationPopupBody extends React.Component<{
+  store: EditorStore;
+  location: Location;
+}> {
+  render() {
+    return (
+      <div className="popover" style={{ position: "static" }}>
+        todo
+      </div>
+    );
+  }
+}
+class JumpPopupBody extends React.Component<{
+  store: EditorStore;
+  jump: Jump;
+}> {
+  render() {
+    return (
+      <div className="popover" style={{ position: "static", minWidth: 250 }}>
+        <div className="popover-header">Header</div>
+        <div className="popover-body">
+          <JustParamsPopupInfo store={this.props.store} jump={this.props.jump} />
+        </div>
+      </div>
+    );
   }
 }
 @observer
 class InfoPopup extends React.Component<{
   anchorEl: ReferenceObject | null;
-  target: Location | Jump;
 }> {
   render() {
-    const target = this.props.target;
     const modifiers: Modifiers = {
       flip: {
         enabled: true,
@@ -63,25 +170,7 @@ class InfoPopup extends React.Component<{
     };
     return (
       <Popper open={true} anchorEl={addPaddingToPopper(this.props.anchorEl)} modifiers={modifiers}>
-        <div className="popover" style={{ position: "static" }}>
-          <div className="popover-header">
-            Header
-            {"locX" in target ? "location" : "jump"}
-            id={target.id}
-          </div>
-          <div className="popover-body">
-            The content of the Popper
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            <br />
-            XXX .
-          </div>
-        </div>
+        {this.props.children}
       </Popper>
     );
   }
@@ -129,7 +218,13 @@ class LocationPoint extends React.Component<{
             }
           }}
         />
-        {this.hovered ? <InfoPopup anchorEl={this.ref} target={location} /> : undefined}
+        {this.hovered ? (
+          <InfoPopup anchorEl={this.ref}>
+            <LocationPopupBody store={this.props.store} location={location} />
+          </InfoPopup>
+        ) : (
+          undefined
+        )}
       </>
     );
   }
@@ -254,26 +349,14 @@ class JumpArrow extends React.Component<{
             />
           </>
         ) : null}
-        {/*
-        <path
-          d={[
-            "M",
-            Math.min(startLoc.locX, endLoc.locX) - 10,
-            Math.min(startLoc.locY, endLoc.locY) - 10,
-            "L",
-            Math.max(startLoc.locX, endLoc.locX) + 10,
-            Math.max(startLoc.locY, endLoc.locY) + 10,
-          ].join(" ")}
-          stroke="none"
-          fill="none"
-          ref={popperRef => {
-            if (!this.popperRef) {
-              this.popperRef = popperRef;
-            }
-          }}
-        />
-        */}
-        {this.hovered ? <InfoPopup anchorEl={this.lineRef} target={jump} /> : undefined}
+
+        {this.hovered ? (
+          <InfoPopup anchorEl={this.lineRef}>
+            <JumpPopupBody store={this.props.store} jump={jump} />
+          </InfoPopup>
+        ) : (
+          undefined
+        )}
         <path
           d={[
             "M",

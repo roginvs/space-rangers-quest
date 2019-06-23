@@ -233,6 +233,12 @@ interface QMParamShowInfo {
   to: number;
   str: string;
 }
+
+interface Media {
+  img: string | undefined;
+  sound: string | undefined;
+  track: string | undefined;
+}
 export interface QMParam extends Media {
   min: number;
   max: number;
@@ -455,12 +461,6 @@ export enum LocationType {
   Deadly = 0x05,
 }
 
-interface Media {
-  img: string | undefined;
-  sound: string | undefined;
-  track: string | undefined;
-}
-
 export type LocationId = number & { readonly __nominal: unique symbol };
 export type JumpId = number & { readonly __nominal: unique symbol };
 
@@ -662,7 +662,7 @@ function parseLocationQmm(r: Reader, paramsCount: number): Location {
   };
 }
 
-interface JumpParameterCondition {
+export interface JumpParameterCondition {
   mustFrom: number;
   mustTo: number;
   mustEqualValues: number[];
