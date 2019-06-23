@@ -464,7 +464,10 @@ interface Media {
 export type LocationId = number & { readonly __nominal: unique symbol };
 export type JumpId = number & { readonly __nominal: unique symbol };
 
-export interface Jump extends Media {
+export interface ParamsChanger {
+  paramsChanges: ParameterChange[];
+}
+export interface Jump extends Media, ParamsChanger {
   prio: number;
   dayPassed: boolean;
   id: JumpId;
@@ -473,14 +476,14 @@ export interface Jump extends Media {
   alwaysShow: boolean;
   jumpingCountLimit: number;
   showingOrder: number;
-  paramsChanges: ParameterChange[];
+
   paramsConditions: JumpParameterCondition[];
   formulaToPass: string;
   text: string;
   description: string;
 }
 
-export interface Location {
+export interface Location extends ParamsChanger {
   dayPassed: boolean;
   id: LocationId;
   isStarting: boolean;
@@ -488,12 +491,10 @@ export interface Location {
   isFaily: boolean;
   isFailyDeadly: boolean;
   isEmpty: boolean;
-
-  paramsChanges: ParameterChange[];
   texts: string[];
   media: Media[];
   isTextByFormula: boolean;
-  textSelectFurmula: string;
+  textSelectFormula: string;
   maxVisits: number;
   locX: number;
   locY: number;
@@ -557,7 +558,7 @@ function parseLocation(r: Reader, paramsCount: number): Location {
     texts,
     media,
     isTextByFormula,
-    textSelectFurmula,
+    textSelectFormula: textSelectFurmula,
     maxVisits: 0,
 
     // TODO
@@ -654,7 +655,7 @@ function parseLocationQmm(r: Reader, paramsCount: number): Location {
     texts,
     media,
     isTextByFormula,
-    textSelectFurmula,
+    textSelectFormula: textSelectFurmula,
     maxVisits,
     locX,
     locY,

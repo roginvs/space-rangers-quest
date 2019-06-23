@@ -114,8 +114,8 @@ describe(`Checking all quests for formulas and params substitution`, function() 
                 checkFormula(p.changingFormula, `param ${i} in loc=${loc.id}`);
               }
             });
-            if (loc.isTextByFormula && loc.textSelectFurmula) {
-              checkFormula(loc.textSelectFurmula, `loc=${loc.id} text select formula`);
+            if (loc.isTextByFormula && loc.textSelectFormula) {
+              checkFormula(loc.textSelectFormula, `loc=${loc.id} text select formula`);
             }
           });
         });

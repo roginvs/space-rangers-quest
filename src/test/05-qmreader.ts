@@ -171,7 +171,7 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
             throw new Error("Location not found!");
           }
           assert.strictEqual(loc.isTextByFormula, true);
-          assert.strictEqual(loc.textSelectFurmula, "[p1]+1");
+          assert.strictEqual(loc.textSelectFormula, "[p1]+1");
         });
 
         it("Empty loc", () => {

@@ -214,8 +214,8 @@ function calculateLocationShowingTextId(
     .filter(x => x.text);
 
   if (location.isTextByFormula) {
-    if (location.textSelectFurmula) {
-      const id = parse(location.textSelectFurmula, state.paramValues, random) - 1;
+    if (location.textSelectFormula) {
+      const id = parse(location.textSelectFormula, state.paramValues, random) - 1;
       if (location.texts[id]) {
         return id;
       } else {
