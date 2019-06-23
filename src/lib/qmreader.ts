@@ -124,7 +124,7 @@ interface QMBase {
   screenSizeY: number;
   reputationChange: number;
   widthSize: number;
-  heigthSize: number;
+  heightSize: number;
 }
 
 function parseBase(r: Reader, header: HeaderMagic): QMBase {
@@ -143,7 +143,7 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
     const screenSizeX = r.int32(); // In pixels
     const screenSizeY = r.int32(); // In pixels
     const widthSize = r.int32(); // Grid width, from small to big 1E-16-0F-0A
-    const heigthSize = r.int32(); // Grid heigth, from small to big 18-12-0C-08
+    const heightSize = r.int32(); // Grid heigth, from small to big 18-12-0C-08
     const defaultJumpCountLimit = r.int32();
     const hardness = r.int32();
 
@@ -165,7 +165,7 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
       screenSizeY,
       reputationChange,
       widthSize,
-      heigthSize,
+      heightSize,
     };
   } else {
     const paramsCount =
@@ -211,7 +211,7 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
       // TODO
       screenSizeX: 200,
       screenSizeY: 200,
-      heigthSize: 100,
+      heightSize: 100,
       widthSize: 100,
     };
   }
@@ -468,7 +468,7 @@ export interface ParamsChanger {
   paramsChanges: ParameterChange[];
 }
 export interface Jump extends Media, ParamsChanger {
-  prio: number;
+  priority: number;
   dayPassed: boolean;
   id: JumpId;
   fromLocationId: LocationId;
@@ -672,7 +672,7 @@ interface JumpParameterCondition {
 }
 
 function parseJump(r: Reader, paramsCount: number): Jump {
-  const prio = r.float64();
+  const priority = r.float64();
   const dayPassed = !!r.int32();
   const id = r.int32() as JumpId;
   const fromLocationId = r.int32() as LocationId;
@@ -744,7 +744,7 @@ function parseJump(r: Reader, paramsCount: number): Jump {
   const description = r.readString();
 
   return {
-    prio,
+    priority,
     dayPassed,
     id,
     fromLocationId,
@@ -878,7 +878,7 @@ function parseJumpQmm(r: Reader, paramsCount: number, questParams: QMParam[]): J
   const track = r.readString();
 
   return {
-    prio,
+    priority: prio,
     dayPassed,
     id,
     fromLocationId,

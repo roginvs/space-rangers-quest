@@ -900,9 +900,9 @@ function calculateLocation(
       seenTexts[j.jump.text] = true;
       const jumpsWithSameText = allPossibleJumps.filter(x => x.jump.text === j.jump.text);
       if (jumpsWithSameText.length === 1) {
-        if (j.jump.prio < 1 && j.active) {
+        if (j.jump.priority < 1 && j.active) {
           const ACCURACY = 1000;
-          j.active = random(ACCURACY) < j.jump.prio * ACCURACY;
+          j.active = random(ACCURACY) < j.jump.priority * ACCURACY;
           // console.info(`Jump ${j.jump.text} is now ${j.active} by random`)
         }
         if (j.active || j.jump.alwaysShow) {
@@ -912,23 +912,23 @@ function calculateLocation(
         const jumpsActiveWithSameText = jumpsWithSameText.filter(x => x.active);
         if (jumpsActiveWithSameText.length > 0) {
           const maxPrio = jumpsActiveWithSameText.reduce(
-            (max, jump) => (jump.jump.prio > max ? jump.jump.prio : max),
+            (max, jump) => (jump.jump.priority > max ? jump.jump.priority : max),
             0,
           );
           const jumpsWithNotSoLowPrio = jumpsActiveWithSameText.filter(
-            x => x.jump.prio * 100 >= maxPrio,
+            x => x.jump.priority * 100 >= maxPrio,
           );
           const prioSum = jumpsWithNotSoLowPrio
-            .map(x => x.jump.prio)
+            .map(x => x.jump.priority)
             .reduce((sum, i) => i + sum, 0);
           const ACCURACY = 1000000;
           let rnd = (random(ACCURACY) / ACCURACY) * prioSum;
           for (const jj of jumpsWithNotSoLowPrio) {
-            if (jj.jump.prio >= rnd || jj === jumpsWithNotSoLowPrio.slice(-1).pop()) {
+            if (jj.jump.priority >= rnd || jj === jumpsWithNotSoLowPrio.slice(-1).pop()) {
               possibleJumpsWithSameTextGrouped.push(jj);
               break;
             } else {
-              rnd = rnd - jj.jump.prio;
+              rnd = rnd - jj.jump.priority;
             }
           }
         } else {

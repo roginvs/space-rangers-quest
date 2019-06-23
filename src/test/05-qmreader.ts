@@ -276,7 +276,7 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
           assert.strictEqual(jump.dayPassed, false);
           assert.strictEqual(jump.alwaysShow, false);
           assert.strictEqual(jump.jumpingCountLimit, 0);
-          assert.ok(Math.abs(jump.prio - 1) < 0.000001, `Jump prio`);
+          assert.ok(Math.abs(jump.priority - 1) < 0.000001, `Jump prio`);
           assert.strictEqual(jump.showingOrder, 4);
         });
         it("Jump id=3", () => {
@@ -301,7 +301,7 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
           assert.strictEqual(jump.dayPassed, true);
           assert.strictEqual(jump.alwaysShow, false);
           assert.strictEqual(jump.jumpingCountLimit, 34);
-          assert.ok(Math.abs(jump.prio - 1.5) < 0.000001, `Jump prio`);
+          assert.ok(Math.abs(jump.priority - 1.5) < 0.000001, `Jump prio`);
           assert.strictEqual(jump.showingOrder, 5);
         });
         it("Jump id=4", () => {
@@ -312,7 +312,7 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
           assert.strictEqual(jump.text, "alwaysShow");
           assert.strictEqual(jump.alwaysShow, true);
           assert.strictEqual(jump.jumpingCountLimit, 78);
-          assert.ok(Math.abs(jump.prio - 0.2) < 0.000001, `Jump prio`);
+          assert.ok(Math.abs(jump.priority - 0.2) < 0.000001, `Jump prio`);
           assert.strictEqual(jump.showingOrder, 9);
         });
 
