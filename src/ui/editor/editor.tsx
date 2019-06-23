@@ -144,9 +144,31 @@ class JumpPopupBody extends React.Component<{
   jump: Jump;
 }> {
   render() {
+    // - переход без описания
+    // - переход с описанием
+    // - спорный
+    // - пустой
+    // - с описанием
+    const jump = this.props.jump;
+    const conflictingJumps = this.props.store.quest.jumps.filter(
+      x => x.fromLocationId === jump.fromLocationId && x.text === jump.text && x.id !== jump.id,
+    );
+    const conflictoryString =
+      conflictingJumps.length > 0 ? `Спорный с приоритетом ${jump.priority}` : "";
+    const shortInfo = jump.text
+      ? jump.description
+        ? "Переход с описанием"
+        : "Переход без описания"
+      : jump.description
+      ? "Пустой переход с описанием"
+      : "Пустой переход без описания";
+
     return (
       <div className="popover" style={{ position: "static", minWidth: 250 }}>
-        <div className="popover-header">Header</div>
+        <div className="popover-header" style={{ textAlign: "center" }}>
+          <div>{shortInfo}</div>
+          <div>{conflictoryString}</div>
+        </div>
         <div className="popover-body">
           <SummaryForParamsChangeAndConditions store={this.props.store} target={this.props.jump} />
         </div>
