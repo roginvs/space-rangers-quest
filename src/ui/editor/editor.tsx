@@ -119,8 +119,8 @@ class JumpArrow extends React.Component<{
   @observable
   lineRef: SVGPathElement | null = null;
 
-  @observable
-  popperRef: SVGPathElement | null = null;
+  // @observable
+  // popperRef: SVGPathElement | null = null;
 
   render() {
     const { store, quest, jump } = this.props;
@@ -208,6 +208,7 @@ class JumpArrow extends React.Component<{
                 paddedEnd.y,
               ].join(" ")}
               stroke="transparent"
+              //stroke="yellow"
               strokeWidth={10}
               fill="none"
               onMouseEnter={() => {
@@ -224,6 +225,7 @@ class JumpArrow extends React.Component<{
             />
           </>
         ) : null}
+        {/*
         <path
           d={[
             "M",
@@ -241,7 +243,8 @@ class JumpArrow extends React.Component<{
             }
           }}
         />
-        {this.hovered ? <InfoPopup anchorEl={this.popperRef} target={jump} /> : undefined}
+        */}
+        {this.hovered ? <InfoPopup anchorEl={this.lineRef} target={jump} /> : undefined}
         <path
           d={[
             "M",
