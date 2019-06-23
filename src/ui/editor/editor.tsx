@@ -53,82 +53,78 @@ function range(n: number) {
   return new Array(n).fill(0).map((zero, index) => index);
 }
 const Divider = () => <div className="text-center">---</div>;
-class SummaryForParamsChangeAndConditions extends React.Component<{
-  store: EditorStore;
+
+function getSummaryForParamsChangeAndConditions(
+  store: EditorStore,
   target: {
     paramsConditions?: JumpParameterCondition[];
     paramsChanges: ParameterChange[];
-  };
-}> {
-  render() {
-    const quest = this.props.store.quest;
-    // asd quest.paramsCount
-    return (
-      <div>
-        <Divider />
-        {range(quest.paramsCount).map(paramId => {
-          const change = this.props.target.paramsChanges[paramId];
-          const showHideString =
-            change.showingType === ParameterShowingType.НеТрогать
-              ? ""
-              : change.showingType === ParameterShowingType.Показать
-              ? " (показать)"
-              : change.showingType === ParameterShowingType.Скрыть
-              ? " (скрыть)"
-              : assertNever(change.showingType);
-          const changeString = change.isChangeValue
-            ? `:=${change.change}`
-            : change.isChangePercentage
-            ? change.change > 100
-              ? `+${change.change - 100}%`
-              : change.change < 100
-              ? `-${change.change}`
-              : ""
-            : change.isChangeFormula
-            ? `:='${change.changingFormula}'`
-            : change.change > 0
-            ? `+${change.change}`
-            : change.change < 0
-            ? `${change.change}`
-            : "";
-          let conditionString = "";
-          const param = quest.params[paramId];
-          const paramsConditions = this.props.target.paramsConditions;
-          if (paramsConditions) {
-            const conditions = paramsConditions[paramId];
-            if (conditions.mustFrom > param.min) {
-              conditionString += `>${conditions.mustFrom} `;
-            }
-            if (conditions.mustTo < param.max) {
-              conditionString += `<${conditions.mustTo} `;
-            }
-            if (conditions.mustEqualValues.length > 0) {
-              conditionString += conditions.mustEqualValuesEqual ? "==" : "!==";
-              conditions.mustEqualValues.forEach(v => (conditionString += `${v}`));
-              conditionString += " ";
-            }
-            if (conditions.mustModValues.length > 0) {
-              conditionString += conditions.mustModValuesMod ? "%" : "!%";
-              conditions.mustModValues.forEach(v => (conditionString += `${v}`));
-              conditionString += " ";
-            }
-          }
-          if (!changeString && !showHideString && !conditionString) {
-            return null;
-          }
-          return (
-            <div style={{ display: "flex" }} key={`changeandcondition-${paramId}`}>
-              <span>
-                [p{paramId + 1}] ({param.name}){showHideString} {conditionString}
-              </span>
-              <span style={{ marginLeft: "auto" }}>{changeString}</span>
-            </div>
-          );
-        })}
-      </div>
-    );
-  }
+  },
+): React.ReactNode[] {
+  const quest = store.quest;
+  return range(quest.paramsCount)
+    .map(paramId => {
+      const change = target.paramsChanges[paramId];
+      const showHideString =
+        change.showingType === ParameterShowingType.НеТрогать
+          ? ""
+          : change.showingType === ParameterShowingType.Показать
+          ? " (показать)"
+          : change.showingType === ParameterShowingType.Скрыть
+          ? " (скрыть)"
+          : assertNever(change.showingType);
+      const changeString = change.isChangeValue
+        ? `:=${change.change}`
+        : change.isChangePercentage
+        ? change.change > 100
+          ? `+${change.change - 100}%`
+          : change.change < 100
+          ? `-${change.change}`
+          : ""
+        : change.isChangeFormula
+        ? `:='${change.changingFormula}'`
+        : change.change > 0
+        ? `+${change.change}`
+        : change.change < 0
+        ? `${change.change}`
+        : "";
+      let conditionString = "";
+      const param = quest.params[paramId];
+      const paramsConditions = target.paramsConditions;
+      if (paramsConditions) {
+        const conditions = paramsConditions[paramId];
+        if (conditions.mustFrom > param.min) {
+          conditionString += `>${conditions.mustFrom} `;
+        }
+        if (conditions.mustTo < param.max) {
+          conditionString += `<${conditions.mustTo} `;
+        }
+        if (conditions.mustEqualValues.length > 0) {
+          conditionString += conditions.mustEqualValuesEqual ? "==" : "!==";
+          conditions.mustEqualValues.forEach(v => (conditionString += `${v}`));
+          conditionString += " ";
+        }
+        if (conditions.mustModValues.length > 0) {
+          conditionString += conditions.mustModValuesMod ? "%" : "!%";
+          conditions.mustModValues.forEach(v => (conditionString += `${v}`));
+          conditionString += " ";
+        }
+      }
+      if (!changeString && !showHideString && !conditionString) {
+        return null;
+      }
+      return (
+        <div style={{ display: "flex" }} key={`changeandcondition-${paramId}`}>
+          <span>
+            [p{paramId + 1}] ({param.name}){showHideString} {conditionString}
+          </span>
+          <span style={{ marginLeft: "auto" }}>{changeString}</span>
+        </div>
+      );
+    })
+    .filter(x => x !== null);
 }
+
 class LocationPopupBody extends React.Component<{
   store: EditorStore;
   location: Location;
@@ -160,10 +156,13 @@ class JumpPopupBody extends React.Component<{
       ? "Пустой переход с описанием"
       : "Пустой переход без описания";
 
+    const paramsInfo = getSummaryForParamsChangeAndConditions(this.props.store, this.props.jump);
     return (
       <div className="popover" style={{ position: "static", minWidth: 250 }}>
         <div className="popover-header" style={{ textAlign: "center" }}>
-          <div>{shortInfo}</div>
+          <div>
+            id={jump.id} {shortInfo}
+          </div>
           <div>{conflictoryString}</div>
         </div>
         <div className="popover-body">
@@ -175,7 +174,12 @@ class JumpPopupBody extends React.Component<{
             </>
           ) : null}
 
-          <SummaryForParamsChangeAndConditions store={this.props.store} target={this.props.jump} />
+          {paramsInfo.length > 0 ? (
+            <>
+              <Divider />
+              {paramsInfo}
+            </>
+          ) : null}
         </div>
       </div>
     );
