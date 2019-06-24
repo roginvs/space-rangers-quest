@@ -208,6 +208,7 @@ class JumpPopupBody extends React.Component<{
     const conflictingJumps = this.props.store.quest.jumps.filter(
       x => x.fromLocationId === jump.fromLocationId && x.text === jump.text && x.id !== jump.id,
     );
+
     const conflictoryString =
       conflictingJumps.length > 0 ? `Спорный с приоритетом ${jump.priority}` : "";
     const shortInfo = jump.text
@@ -393,7 +394,10 @@ class JumpArrow extends React.Component<{
       return null;
     }
 
-    const orientationIsNormal = endLoc.locX - startLoc.locX > 0;
+    const orientationIsNormal =
+      endLoc.locX !== startLoc.locX
+        ? endLoc.locX - startLoc.locX > 0
+        : endLoc.locY - startLoc.locY > 0;
     const startX = orientationIsNormal ? startLoc.locX : endLoc.locX;
     const endX = orientationIsNormal ? endLoc.locX : startLoc.locX;
     const startY = orientationIsNormal ? startLoc.locY : endLoc.locY;
