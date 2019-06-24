@@ -33,7 +33,8 @@ const colors = {
 
 const LOCATION_RADIUS = 7;
 const JUMP_MARGIN = 10;
-const JUMPS_DISTANCE = 30;
+const JUMPS_CONTROL_POINT_DISTANCE = 30;
+const JUMP_HOVER_ZONE_WIDTH = 10;
 
 function addPaddingToPopper(e: ReferenceObject | null): ReferenceObject | null {
   if (!e) {
@@ -413,8 +414,10 @@ class JumpArrow extends React.Component<{
       offsetVectorUnnormalizedX * offsetVectorUnnormalizedX +
         offsetVectorUnnormalizedY * offsetVectorUnnormalizedY,
     );
-    const offsetVectorX = (offsetVectorUnnormalizedX / offsetVectorLength) * JUMPS_DISTANCE;
-    const offsetVectorY = (offsetVectorUnnormalizedY / offsetVectorLength) * JUMPS_DISTANCE;
+    const offsetVectorX =
+      (offsetVectorUnnormalizedX / offsetVectorLength) * JUMPS_CONTROL_POINT_DISTANCE;
+    const offsetVectorY =
+      (offsetVectorUnnormalizedY / offsetVectorLength) * JUMPS_CONTROL_POINT_DISTANCE;
 
     const offsetVectorCount = myIndex;
 
@@ -479,7 +482,7 @@ class JumpArrow extends React.Component<{
               ].join(" ")}
               stroke="transparent"
               //stroke="yellow"
-              strokeWidth={10}
+              strokeWidth={JUMP_HOVER_ZONE_WIDTH}
               fill="none"
               onMouseEnter={() => {
                 // console.info(`Enter jump=${jump.id}`);
