@@ -539,34 +539,45 @@ export class Editor extends React.Component<{
     const store = this.props.store;
     const quest = this.props.store.quest;
     return (
-      <svg
-        style={{
-          width: store.svgWidth,
-          height: store.svgHeight,
-          position: "relative",
-          backgroundColor: colors.background,
-        }}
-      >
-        <defs>
-          <marker
-            id="arrowBlack"
-            markerWidth="10"
-            markerHeight="10"
-            refX="9"
-            refY="3"
-            orient="auto"
-            markerUnits="strokeWidth"
+      <div style={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column" }}>
+        <div>Header</div>
+        <div
+          style={{
+            flexGrow: 1,
+            alignSelf: "stretch",
+            overflow: "scroll",
+          }}
+        >
+          <svg
+            style={{
+              width: store.svgWidth,
+              height: store.svgHeight,
+              position: "relative",
+              backgroundColor: colors.background,
+            }}
           >
-            <path d="M0,0 L0,6 L9,3 z" fill={colors.jump.arrow} />
-          </marker>
-        </defs>
-        {quest.jumps.map(j => (
-          <JumpArrow store={store} jump={j} key={j.id} />
-        ))}
-        {quest.locations.map(l => (
-          <LocationPoint store={store} location={l} key={l.id} />
-        ))}
-      </svg>
+            <defs>
+              <marker
+                id="arrowBlack"
+                markerWidth="10"
+                markerHeight="10"
+                refX="9"
+                refY="3"
+                orient="auto"
+                markerUnits="strokeWidth"
+              >
+                <path d="M0,0 L0,6 L9,3 z" fill={colors.jump.arrow} />
+              </marker>
+            </defs>
+            {quest.jumps.map(j => (
+              <JumpArrow store={store} jump={j} key={j.id} />
+            ))}
+            {quest.locations.map(l => (
+              <LocationPoint store={store} location={l} key={l.id} />
+            ))}
+          </svg>
+        </div>
+      </div>
     );
   }
 }
