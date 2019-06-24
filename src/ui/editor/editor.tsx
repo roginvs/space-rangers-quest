@@ -31,6 +31,10 @@ const colors = {
   },
 } as const;
 
+const LOCATION_RADIUS = 7;
+const JUMP_MARGIN = 10;
+const JUMPS_DISTANCE = 30;
+
 function addPaddingToPopper(e: ReferenceObject | null): ReferenceObject | null {
   if (!e) {
     return null;
@@ -323,7 +327,7 @@ class LocationPoint extends React.Component<{
               : colors.location.intermediate
           }
           stroke={this.hovered ? "black" : undefined}
-          r={7}
+          r={LOCATION_RADIUS}
           style={{
             cursor: "pointer",
           }}
@@ -389,21 +393,23 @@ class JumpArrow extends React.Component<{
       return null;
     }
 
+    const startX = Math.min(endLoc.locX, startLoc.locX);
+    const endX = Math.max(endLoc.locX, startLoc.locX);
+    const startY = Math.min(endLoc.locY, startLoc.locY);
+    const endY = Math.max(endLoc.locY, startLoc.locY);
     const allJumpsCount = allJumpFromThisLocations.length;
-    const middleVectorX =
-      (Math.max(endLoc.locX, startLoc.locX) - Math.min(endLoc.locX, startLoc.locX)) / 2;
-    const middleVectorY =
-      (Math.max(endLoc.locY, startLoc.locY) - Math.min(endLoc.locY, startLoc.locY)) / 2;
-    const middleX = Math.min(endLoc.locX, startLoc.locX) + middleVectorX;
-    const middleY = Math.min(endLoc.locY, startLoc.locY) + middleVectorY;
+    const middleVectorX = (endX - startX) / 2;
+    const middleVectorY = (endY - startY) / 2;
+    const middleX = startX + middleVectorX;
+    const middleY = startY + middleVectorY;
     const offsetVectorUnnormalizedX = middleVectorY;
-    const offsetVectorUnnormalizedY = -middleVectorX;
+    const offsetVectorUnnormalizedY = middleVectorX;
     const offsetVectorLength = Math.sqrt(
       offsetVectorUnnormalizedX * offsetVectorUnnormalizedX +
         offsetVectorUnnormalizedY * offsetVectorUnnormalizedY,
     );
-    const offsetVectorX = (offsetVectorUnnormalizedX / offsetVectorLength) * 30;
-    const offsetVectorY = (offsetVectorUnnormalizedY / offsetVectorLength) * 30;
+    const offsetVectorX = (offsetVectorUnnormalizedX / offsetVectorLength) * JUMPS_DISTANCE;
+    const offsetVectorY = (offsetVectorUnnormalizedY / offsetVectorLength) * JUMPS_DISTANCE;
 
     const offsetVectorCount = myIndex;
 
@@ -413,18 +419,30 @@ class JumpArrow extends React.Component<{
     const controlPointY =
       middleY + offsetVectorY * offsetVectorCount - offsetVectorY * shiftMultiplier;
 
-    const paddedStart = this.lineRef ? this.lineRef.getPointAtLength(10) : undefined;
+    const paddedStart = this.lineRef ? this.lineRef.getPointAtLength(JUMP_MARGIN) : undefined;
     const paddedEnd = this.lineRef
-      ? this.lineRef.getPointAtLength(this.lineRef.getTotalLength() - 10)
-      : undefined;
-    const arrowAnchor = this.lineRef
-      ? this.lineRef.getPointAtLength(this.lineRef.getTotalLength() - 20)
+      ? this.lineRef.getPointAtLength(this.lineRef.getTotalLength() - JUMP_MARGIN)
       : undefined;
 
     return (
       <>
-        {paddedStart && paddedEnd && arrowAnchor ? (
+        {paddedStart && paddedEnd ? (
           <>
+            {/*jump.id === 346 ? (
+              <path
+                d={[
+                  "M",
+                  middleX,
+                  middleY,
+                  "L",
+                  middleX + offsetVectorUnnormalizedX,
+                  middleY + offsetVectorUnnormalizedY,
+                ].join(" ")}
+                stroke={"green"}
+                strokeWidth={5}
+                fill="none"
+              />
+              ) : null*/}
             <path
               d={[
                 "M",
