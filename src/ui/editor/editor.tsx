@@ -25,6 +25,10 @@ const colors = {
     empty: "#004101",
     fail: "#d10201",
   },
+  jump: {
+    line: "black",
+    arrow: "black",
+  },
 } as const;
 
 function addPaddingToPopper(e: ReferenceObject | null): ReferenceObject | null {
@@ -432,7 +436,7 @@ class JumpArrow extends React.Component<{
                 paddedEnd.x,
                 paddedEnd.y,
               ].join(" ")}
-              stroke="black"
+              stroke={colors.jump.line}
               strokeWidth={this.hovered ? 3 : 1}
               fill="none"
               markerEnd="url(#arrowBlack)"
@@ -525,7 +529,7 @@ export class Editor extends React.Component<{
             orient="auto"
             markerUnits="strokeWidth"
           >
-            <path d="M0,0 L0,6 L9,3 z" fill="currentColor" />
+            <path d="M0,0 L0,6 L9,3 z" fill={colors.jump.arrow} />
           </marker>
         </defs>
         {quest.jumps.map(j => (
