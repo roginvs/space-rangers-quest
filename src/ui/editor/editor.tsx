@@ -393,17 +393,18 @@ class JumpArrow extends React.Component<{
       return null;
     }
 
-    const startX = Math.min(endLoc.locX, startLoc.locX);
-    const endX = Math.max(endLoc.locX, startLoc.locX);
-    const startY = Math.min(endLoc.locY, startLoc.locY);
-    const endY = Math.max(endLoc.locY, startLoc.locY);
+    const orientationIsNormal = endLoc.locX - startLoc.locX > 0;
+    const startX = orientationIsNormal ? startLoc.locX : endLoc.locX;
+    const endX = orientationIsNormal ? endLoc.locX : startLoc.locX;
+    const startY = orientationIsNormal ? startLoc.locY : endLoc.locY;
+    const endY = orientationIsNormal ? endLoc.locY : startLoc.locY;
     const allJumpsCount = allJumpFromThisLocations.length;
     const middleVectorX = (endX - startX) / 2;
     const middleVectorY = (endY - startY) / 2;
     const middleX = startX + middleVectorX;
     const middleY = startY + middleVectorY;
     const offsetVectorUnnormalizedX = middleVectorY;
-    const offsetVectorUnnormalizedY = middleVectorX;
+    const offsetVectorUnnormalizedY = -middleVectorX;
     const offsetVectorLength = Math.sqrt(
       offsetVectorUnnormalizedX * offsetVectorUnnormalizedX +
         offsetVectorUnnormalizedY * offsetVectorUnnormalizedY,
@@ -428,15 +429,17 @@ class JumpArrow extends React.Component<{
       <>
         {paddedStart && paddedEnd ? (
           <>
-            {/*jump.id === 346 ? (
+            {/*jump.id === 346 || jump.id === 293 ? (
               <path
                 d={[
                   "M",
                   middleX,
                   middleY,
                   "L",
-                  middleX + offsetVectorUnnormalizedX,
-                  middleY + offsetVectorUnnormalizedY,
+                  startX,
+                  startY,
+                  //middleX + offsetVectorUnnormalizedX,
+                  //middleY + offsetVectorUnnormalizedY,
                 ].join(" ")}
                 stroke={"green"}
                 strokeWidth={5}
