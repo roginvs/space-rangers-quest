@@ -765,7 +765,7 @@ function parseJump(r: Reader, paramsCount: number): Jump {
 
 function parseJumpQmm(r: Reader, paramsCount: number, questParams: QMParam[]): Jump {
   //r.debugShowHex()
-  const prio = r.float64();
+  const priority = r.float64();
   const dayPassed = !!r.int32();
   const id = r.int32() as JumpId;
   const fromLocationId = r.int32() as LocationId;
@@ -878,7 +878,7 @@ function parseJumpQmm(r: Reader, paramsCount: number, questParams: QMParam[]): J
   const track = r.readString();
 
   return {
-    priority: prio,
+    priority,
     dayPassed,
     id,
     fromLocationId,

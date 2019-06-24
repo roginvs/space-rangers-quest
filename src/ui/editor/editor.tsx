@@ -157,7 +157,7 @@ class LocationPopupBody extends React.Component<{
 
     const firstText = texts.shift();
     return (
-      <div className="popover" style={{ position: "static" }}>
+      <div className="popover" style={{ position: "static", overflow: "hidden" }}>
         <div className="popover-header" style={{ textAlign: "center" }}>
           <div>
             id={location.id} {shortInfo}
@@ -220,7 +220,7 @@ class JumpPopupBody extends React.Component<{
 
     const paramsInfo = getSummaryForParamsChangeAndConditions(this.props.store, this.props.jump);
     return (
-      <div className="popover" style={{ position: "static", minWidth: 300 }}>
+      <div className="popover" style={{ position: "static", minWidth: 300, overflow: "hidden" }}>
         <div className="popover-header" style={{ textAlign: "center" }}>
           <div>
             id={jump.id} {shortInfo}
