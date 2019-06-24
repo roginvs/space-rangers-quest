@@ -1,5 +1,5 @@
 import { observable, computed } from "mobx";
-import { QM } from "../../lib/qmreader";
+import { QM, JumpId, LocationId } from "../../lib/qmreader";
 
 const CANVAS_PADDING = 150;
 export class EditorStore {
@@ -17,5 +17,19 @@ export class EditorStore {
   @computed
   get svgHeight() {
     return Math.max(...this.quest.locations.map(l => l.locY)) + CANVAS_PADDING;
+  }
+
+  @observable
+  selected?: {
+    id: JumpId | LocationId;
+    type: "location" | "jump_start" | "jump_end";
+    initialX: number;
+    initialY: number;
+    moving: boolean;
+  };
+
+  @computed
+  get moving() {
+    return this.selected ? this.selected.moving : false;
   }
 }

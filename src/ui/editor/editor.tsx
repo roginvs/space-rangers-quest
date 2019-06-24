@@ -302,8 +302,12 @@ class LocationPoint extends React.Component<{
   ref: SVGCircleElement | null = null;
 
   render() {
+    const store = this.props.store;
     // const quest = this.props.store.quest;
     const location = this.props.location;
+
+    const iAmSelected =
+      store.selected && store.selected.type === "location" && store.selected.id === location.id;
     return (
       <>
         <circle
@@ -314,6 +318,18 @@ class LocationPoint extends React.Component<{
           onMouseLeave={() => {
             // console.info(`Leave location=${location.id}`);
             this.hovered = false;
+          }}
+          onClick={e => {
+            // e.stopPropagation();
+          }}
+          onMouseDown={e => {
+            store.selected = {
+              type: "location",
+              id: location.id,
+              initialX: location.locX,
+              initialY: location.locY,
+              moving: true,
+            };
           }}
           cx={location.locX}
           cy={location.locY}
@@ -328,7 +344,9 @@ class LocationPoint extends React.Component<{
               ? colors.location.fail
               : colors.location.intermediate
           }
+          opacity={iAmSelected ? 0.5 : 1}
           stroke={this.hovered ? "black" : undefined}
+          strokeDasharray={iAmSelected ? 4 : undefined}
           r={LOCATION_RADIUS}
           style={{
             cursor: "pointer",
@@ -339,7 +357,7 @@ class LocationPoint extends React.Component<{
             }
           }}
         />
-        {this.hovered ? (
+        {this.hovered && !store.moving ? (
           <InfoPopup anchorEl={this.ref}>
             <LocationPopupBody store={this.props.store} location={location} />
           </InfoPopup>
@@ -366,6 +384,7 @@ class JumpArrow extends React.Component<{
   // popperRef: SVGPathElement | null = null;
 
   render() {
+    const store = this.props.store;
     const quest = this.props.store.quest;
     const jump = this.props.jump;
 
@@ -499,7 +518,7 @@ class JumpArrow extends React.Component<{
           </>
         ) : null}
 
-        {this.hovered ? (
+        {this.hovered && !store.moving ? (
           <InfoPopup anchorEl={this.lineRef}>
             <JumpPopupBody store={this.props.store} jump={jump} />
           </InfoPopup>
@@ -554,6 +573,31 @@ export class Editor extends React.Component<{
               height: store.svgHeight,
               position: "relative",
               backgroundColor: colors.background,
+            }}
+            onClick={e => {
+              if (e.target === e.currentTarget) {
+                store.selected = undefined;
+              }
+            }}
+            onMouseMove={e => {
+              const selected = store.selected;
+              if (!selected) {
+                return;
+              }
+              if (selected.moving && selected.type === "location") {
+                const loc = quest.locations.find(x => x.id === selected.id);
+                if (!loc) {
+                  console.warn(`Lost location id=${selected.id}`);
+                  return;
+                }
+                loc.locX = loc.locX + e.movementX;
+                loc.locY = loc.locY + e.movementY;
+              }
+            }}
+            onMouseUp={() => {
+              if (store.selected) {
+                store.selected.moving = false;
+              }
             }}
           >
             <defs>
