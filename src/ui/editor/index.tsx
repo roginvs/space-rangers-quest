@@ -17,7 +17,7 @@ export class EditorContainer extends React.Component<{
   store?: EditorStore;
 
   componentDidMount() {
-    const questInfo = this.props.store.index.quests.find(x => x.gameName === "Ministry");
+    const questInfo = this.props.store.index.quests.find(x => x.gameName === "Xenolog");
     if (!questInfo) {
       throw new Error("TODO");
     }

@@ -103,10 +103,10 @@ function getSummaryForParamsChangeAndConditions(
       if (paramsConditions) {
         const conditions = paramsConditions[paramId];
         if (conditions.mustFrom > param.min) {
-          conditionString += `>${conditions.mustFrom} `;
+          conditionString += `>=${conditions.mustFrom} `;
         }
         if (conditions.mustTo < param.max) {
-          conditionString += `<${conditions.mustTo} `;
+          conditionString += `<=${conditions.mustTo} `;
         }
         if (conditions.mustEqualValues.length > 0) {
           conditionString += conditions.mustEqualValuesEqual ? "==" : "!==";
