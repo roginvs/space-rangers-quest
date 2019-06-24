@@ -29,6 +29,23 @@ export class EditorStore {
   };
 
   @computed
+  get gridX() {
+    return Math.floor(this.quest.screenSizeX / this.quest.widthSize);
+  }
+  @computed
+  get grixXoffset() {
+    return Math.floor(this.gridX / 2);
+  }
+  @computed
+  get gridY() {
+    return Math.floor(this.quest.screenSizeY / this.quest.heightSize);
+  }
+  @computed
+  get grixYoffset() {
+    return Math.floor(this.gridY / 2);
+  }
+
+  @computed
   get moving() {
     return this.selected ? this.selected.moving : false;
   }

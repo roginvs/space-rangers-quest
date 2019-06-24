@@ -25,7 +25,9 @@ export class EditorContainer extends React.Component<{
       .then(x => x.arrayBuffer())
       .then(questArrayBuffer => {
         const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer))));
-        this.store = new EditorStore(quest);
+        const store = new EditorStore(quest);
+        (window as any).es = store;
+        this.store = store;
       })
       .catch(e => {
         console.error("Lol");

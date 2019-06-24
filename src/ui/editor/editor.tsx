@@ -345,7 +345,7 @@ class LocationPoint extends React.Component<{
               : colors.location.intermediate
           }
           opacity={iAmSelected ? 0.5 : 1}
-          stroke={this.hovered ? "black" : undefined}
+          stroke={this.hovered && !store.moving ? "black" : undefined}
           strokeDasharray={iAmSelected ? 4 : undefined}
           r={LOCATION_RADIUS}
           style={{
@@ -484,7 +484,7 @@ class JumpArrow extends React.Component<{
                 paddedEnd.y,
               ].join(" ")}
               stroke={colors.jump.line}
-              strokeWidth={this.hovered ? 3 : 1}
+              strokeWidth={this.hovered && !store.moving ? 3 : 1}
               fill="none"
               markerEnd="url(#arrowBlack)"
             />
@@ -595,9 +595,23 @@ export class Editor extends React.Component<{
               }
             }}
             onMouseUp={() => {
-              if (store.selected) {
-                store.selected.moving = false;
+              const selected = store.selected;
+              if (!selected) {
+                return;
               }
+              if (selected.moving && selected.type === "location") {
+                const loc = quest.locations.find(x => x.id === selected.id);
+                if (!loc) {
+                  console.warn(`Lost location id=${selected.id}`);
+                  return;
+                }
+                //const griddedX =
+                //  Math.round((loc.locX - store.grixXoffset) / store.gridX) * store.gridX +
+                //  store.grixXoffset;
+                //loc.locX = griddedX;
+              }
+
+              selected.moving = false;
             }}
           >
             <defs>
