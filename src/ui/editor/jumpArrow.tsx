@@ -15,7 +15,12 @@ import Popper from "@material-ui/core/Popper";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 import { EditorStore } from "./store";
 import { assertNever } from "../../lib/formula/calculator";
-import { JUMPS_CONTROL_POINT_DISTANCE, JUMP_MARGIN, JUMP_HOVER_ZONE_WIDTH } from "./consts";
+import {
+  JUMPS_CONTROL_POINT_DISTANCE,
+  JUMP_MARGIN,
+  JUMP_HOVER_ZONE_WIDTH,
+  JUMPS_LOOP_CONTROL_POINT_DISTANCE,
+} from "./consts";
 import { colors } from "./colors";
 import { InfoPopup, JumpPopupBody } from "./infopopup";
 
@@ -263,14 +268,20 @@ export class JumpArrow extends React.Component<{
           y: controlPointY,
         }
       : {
-          x: startLoc.locX,
-          y: startLoc.locY - 50 - myIndex * 10,
+          x: startLoc.locX + JUMPS_LOOP_CONTROL_POINT_DISTANCE,
+          y:
+            startLoc.locY -
+            JUMPS_LOOP_CONTROL_POINT_DISTANCE -
+            (myIndex * JUMPS_CONTROL_POINT_DISTANCE) / 2,
         };
     const controlPoint2 = isBetweenTwoPoints
-      ? controlPoint1
+      ? undefined
       : {
-          x: startLoc.locX - 50,
-          y: startLoc.locY - 50 - myIndex * 10,
+          x: startLoc.locX - JUMPS_LOOP_CONTROL_POINT_DISTANCE,
+          y:
+            startLoc.locY -
+            JUMPS_LOOP_CONTROL_POINT_DISTANCE -
+            (myIndex * JUMPS_CONTROL_POINT_DISTANCE) / 2,
         };
     // console.info(`Render outmost lineref`);
     return (
@@ -280,11 +291,9 @@ export class JumpArrow extends React.Component<{
             "M",
             startLoc.locX,
             startLoc.locY,
-            "C",
-            controlPoint1.x,
-            controlPoint1.y,
-            controlPoint2.x,
-            controlPoint2.y,
+            ...(!controlPoint2
+              ? ["Q", controlPoint1.x, controlPoint1.y]
+              : ["C", controlPoint1.x, controlPoint1.y, controlPoint2.x, controlPoint2.y]),
             endLoc.locX,
             endLoc.locY,
           ].join(" ")}
