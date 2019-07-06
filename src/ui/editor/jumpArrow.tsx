@@ -30,7 +30,8 @@ class JumpArrowReal extends React.Component<{
   jump: Jump;
   start: Point;
   end: Point;
-  control: Point;
+  control1?: Point;
+  control2?: Point;
   youAreMoving?: boolean;
 }> {
   @observable
@@ -40,38 +41,33 @@ class JumpArrowReal extends React.Component<{
   popupRef: SVGPathElement | null = null;
 
   render() {
-    const store = this.props.store;
-    const jump = this.props.jump;
+    const { store, jump, control1, control2 } = this.props;
+
+    const pathD = [
+      "M",
+      this.props.start.x,
+      this.props.start.y,
+      ...(control1 && control2
+        ? ["C", control1.x, control1.y, control2.x, control2.y]
+        : control1
+        ? ["Q", control1.x, control1.y]
+        : ["L"]),
+
+      this.props.end.x,
+      this.props.end.y,
+    ].join(" ");
     // console.info("Render real jump line", this.props.start.x, this.props.start.y);
     return (
       <>
         <path
-          d={[
-            "M",
-            this.props.start.x,
-            this.props.start.y,
-            "Q",
-            this.props.control.x,
-            this.props.control.y,
-            this.props.end.x,
-            this.props.end.y,
-          ].join(" ")}
+          d={pathD}
           stroke={colors.jump.line}
           strokeWidth={(this.hovered && !store.moving) || this.props.youAreMoving ? 3 : 1}
           fill="none"
           markerEnd="url(#arrowBlack)"
         />
         <path
-          d={[
-            "M",
-            this.props.start.x,
-            this.props.start.y,
-            "Q",
-            this.props.control.x,
-            this.props.control.y,
-            this.props.end.x,
-            this.props.end.y,
-          ].join(" ")}
+          d={pathD}
           stroke="transparent"
           //stroke="yellow"
           strokeWidth={JUMP_HOVER_ZONE_WIDTH}
@@ -180,10 +176,6 @@ export class JumpArrow extends React.Component<{
             x: endLoc.locX,
             y: endLoc.locY,
           }}
-          control={{
-            x: endLoc.locX, //(endLoc.locX - store.selected.currentX) / 2,
-            y: endLoc.locY, //(endLoc.locY - store.selected.currentY) / 2,
-          }}
           youAreMoving={true}
         />
       );
@@ -206,10 +198,6 @@ export class JumpArrow extends React.Component<{
           end={{
             x: store.selected.currentX,
             y: store.selected.currentY,
-          }}
-          control={{
-            x: startLoc.locX, //(endLoc.locX - store.selected.currentX) / 2,
-            y: startLoc.locY, //(endLoc.locY - store.selected.currentY) / 2,
           }}
           youAreMoving={true}
         />
@@ -254,10 +242,13 @@ export class JumpArrow extends React.Component<{
       offsetVectorUnnormalizedX * offsetVectorUnnormalizedX +
         offsetVectorUnnormalizedY * offsetVectorUnnormalizedY,
     );
-    const offsetVectorX =
-      (offsetVectorUnnormalizedX / offsetVectorLength) * JUMPS_CONTROL_POINT_DISTANCE;
-    const offsetVectorY =
-      (offsetVectorUnnormalizedY / offsetVectorLength) * JUMPS_CONTROL_POINT_DISTANCE;
+    const isBetweenTwoPoints = offsetVectorLength > 0;
+    const offsetVectorX = isBetweenTwoPoints
+      ? (offsetVectorUnnormalizedX / offsetVectorLength) * JUMPS_CONTROL_POINT_DISTANCE
+      : 0;
+    const offsetVectorY = isBetweenTwoPoints
+      ? (offsetVectorUnnormalizedY / offsetVectorLength) * JUMPS_CONTROL_POINT_DISTANCE
+      : 0;
 
     const offsetVectorCount = myIndex;
 
@@ -266,11 +257,21 @@ export class JumpArrow extends React.Component<{
       middleX + offsetVectorX * offsetVectorCount - offsetVectorX * shiftMultiplier;
     const controlPointY =
       middleY + offsetVectorY * offsetVectorCount - offsetVectorY * shiftMultiplier;
-    const controlPoint: Point = {
-      x: controlPointX,
-      y: controlPointY,
-    };
-
+    const controlPoint1: Point = isBetweenTwoPoints
+      ? {
+          x: controlPointX,
+          y: controlPointY,
+        }
+      : {
+          x: startLoc.locX,
+          y: startLoc.locY - 50 - myIndex * 10,
+        };
+    const controlPoint2 = isBetweenTwoPoints
+      ? controlPoint1
+      : {
+          x: startLoc.locX - 50,
+          y: startLoc.locY - 50 - myIndex * 10,
+        };
     // console.info(`Render outmost lineref`);
     return (
       <>
@@ -279,9 +280,11 @@ export class JumpArrow extends React.Component<{
             "M",
             startLoc.locX,
             startLoc.locY,
-            "Q",
-            controlPoint.x,
-            controlPoint.y,
+            "C",
+            controlPoint1.x,
+            controlPoint1.y,
+            controlPoint2.x,
+            controlPoint2.y,
             endLoc.locX,
             endLoc.locY,
           ].join(" ")}
@@ -318,7 +321,8 @@ export class JumpArrow extends React.Component<{
             jump={jump}
             start={this.start}
             end={this.end}
-            control={controlPoint}
+            control1={controlPoint1}
+            control2={controlPoint2}
           />
         ) : null}
       </>
