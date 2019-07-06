@@ -31,6 +31,7 @@ class JumpArrowReal extends React.Component<{
   start: Point;
   end: Point;
   control: Point;
+  youAreMoving?: boolean;
 }> {
   @observable
   hovered = false;
@@ -56,7 +57,7 @@ class JumpArrowReal extends React.Component<{
             this.props.end.y,
           ].join(" ")}
           stroke={colors.jump.line}
-          strokeWidth={this.hovered && !store.moving ? 3 : 1}
+          strokeWidth={(this.hovered && !store.moving) || this.props.youAreMoving ? 3 : 1}
           fill="none"
           markerEnd="url(#arrowBlack)"
         />
@@ -111,8 +112,8 @@ class JumpArrowReal extends React.Component<{
               id: jump.id,
               initialX,
               initialY,
-              currentX: initialX,
-              currentY: initialY,
+              currentX: x,
+              currentY: y,
               moving: true,
             };
           }}
@@ -160,22 +161,59 @@ export class JumpArrow extends React.Component<{
       return null;
     }
 
-    /*
-    if (store.selected && 
+    if (
+      store.selected &&
       store.moving &&
-      store.selected.type == "jump_start") {
-      return <JumpArrowReal
-      store={store}
-      jump={jump}
-      start={{
-        x: startLoc.locX,
-        y: startLoc.locY
-      }}
-      end={store.selected.moving}
-      control={controlPoint}
-      />
+      store.selected.type == "jump_start" &&
+      store.selected.id === jump.id
+    ) {
+      return (
+        <JumpArrowReal
+          store={store}
+          jump={jump}
+          start={{
+            x: store.selected.currentX,
+            y: store.selected.currentY,
+          }}
+          end={{
+            x: endLoc.locX,
+            y: endLoc.locY,
+          }}
+          control={{
+            x: endLoc.locX, //(endLoc.locX - store.selected.currentX) / 2,
+            y: endLoc.locY, //(endLoc.locY - store.selected.currentY) / 2,
+          }}
+          youAreMoving={true}
+        />
+      );
     }
-    */
+
+    if (
+      store.selected &&
+      store.moving &&
+      store.selected.type == "jump_end" &&
+      store.selected.id === jump.id
+    ) {
+      return (
+        <JumpArrowReal
+          store={store}
+          jump={jump}
+          start={{
+            x: startLoc.locX,
+            y: startLoc.locY,
+          }}
+          end={{
+            x: store.selected.currentX,
+            y: store.selected.currentY,
+          }}
+          control={{
+            x: startLoc.locX, //(endLoc.locX - store.selected.currentX) / 2,
+            y: startLoc.locY, //(endLoc.locY - store.selected.currentY) / 2,
+          }}
+          youAreMoving={true}
+        />
+      );
+    }
 
     const allJumpFromThisLocations = quest.jumps
       .filter(
