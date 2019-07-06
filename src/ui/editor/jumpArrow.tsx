@@ -107,6 +107,7 @@ class JumpArrowReal extends React.Component<{
             // asd
             const initialX = startIsCloser ? startLoc.locX : endLoc.locX;
             const initialY = startIsCloser ? startLoc.locY : endLoc.locY;
+
             store.selected = {
               type: startIsCloser ? "jump_start" : "jump_end",
               id: jump.id,
@@ -114,7 +115,7 @@ class JumpArrowReal extends React.Component<{
               initialY,
               currentX: x,
               currentY: y,
-              moving: true,
+              moving: e.shiftKey,
             };
           }}
           onClick={e => {

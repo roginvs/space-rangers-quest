@@ -74,7 +74,7 @@ export class LocationPoint extends React.Component<{
               initialY: location.locY,
               currentX: location.locX,
               currentY: location.locY,
-              moving: true,
+              moving: e.shiftKey,
             };
           }}
           cx={myX}
