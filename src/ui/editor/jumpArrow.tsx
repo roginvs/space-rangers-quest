@@ -19,23 +19,103 @@ import { JUMPS_CONTROL_POINT_DISTANCE, JUMP_MARGIN, JUMP_HOVER_ZONE_WIDTH } from
 import { colors } from "./colors";
 import { InfoPopup, JumpPopupBody } from "./infopopup";
 
+interface Point {
+  x: number;
+  y: number;
+}
+
 @observer
-export class JumpArrow extends React.Component<{
+class JumpArrowReal extends React.Component<{
   store: EditorStore;
   jump: Jump;
+  start: Point;
+  end: Point;
+  control: Point;
 }> {
   @observable
   hovered = false;
 
   @observable
-  lineRef: SVGPathElement | null = null;
-
-  // @observable
-  // popperRef: SVGPathElement | null = null;
+  popupRef: SVGPathElement | null = null;
 
   render() {
     const store = this.props.store;
-    const quest = this.props.store.quest;
+    const jump = this.props.jump;
+    console.info("Render real jump line", this.props.start.x, this.props.start.y);
+    return (
+      <>
+        <path
+          d={[
+            "M",
+            this.props.start.x,
+            this.props.start.y,
+            "Q",
+            this.props.control.x,
+            this.props.control.y,
+            this.props.end.x,
+            this.props.end.y,
+          ].join(" ")}
+          stroke={colors.jump.line}
+          strokeWidth={this.hovered && !store.moving ? 3 : 1}
+          fill="none"
+          markerEnd="url(#arrowBlack)"
+        />
+        <path
+          d={[
+            "M",
+            this.props.start.x,
+            this.props.start.y,
+            "Q",
+            this.props.control.x,
+            this.props.control.y,
+            this.props.end.x,
+            this.props.end.y,
+          ].join(" ")}
+          stroke="transparent"
+          //stroke="yellow"
+          strokeWidth={JUMP_HOVER_ZONE_WIDTH}
+          fill="none"
+          onMouseEnter={() => {
+            // console.info(`Enter jump=${jump.id}`);
+            this.hovered = true;
+          }}
+          onMouseLeave={() => {
+            //console.info(`Leave jump=${jump.id}`);
+            this.hovered = false;
+          }}
+          onClick={() => {
+            console.info(`Click jump=${jump.id}`);
+          }}
+          ref={r => {
+            if (this.popupRef) {
+              return;
+            }
+            this.popupRef = r;
+          }}
+        />
+
+        {this.hovered && !store.moving ? (
+          <InfoPopup anchorEl={this.popupRef}>
+            <JumpPopupBody store={this.props.store} jump={jump} />
+          </InfoPopup>
+        ) : (
+          undefined
+        )}
+      </>
+    );
+  }
+}
+
+@observer
+export class JumpArrow extends React.Component<{
+  store: EditorStore;
+  jump: Jump;
+}> {
+  lineRef = observable.box<SVGPathElement | null>(null);
+
+  render() {
+    const store = this.props.store;
+    const quest = store.quest;
     const jump = this.props.jump;
 
     const startLoc = quest.locations.find(x => x.id === jump.fromLocationId);
@@ -95,106 +175,52 @@ export class JumpArrow extends React.Component<{
       middleX + offsetVectorX * offsetVectorCount - offsetVectorX * shiftMultiplier;
     const controlPointY =
       middleY + offsetVectorY * offsetVectorCount - offsetVectorY * shiftMultiplier;
+    const controlPoint: Point = {
+      x: controlPointX,
+      y: controlPointY,
+    };
 
-    const paddedStart = this.lineRef ? this.lineRef.getPointAtLength(JUMP_MARGIN) : undefined;
-    const paddedEnd = this.lineRef
-      ? this.lineRef.getPointAtLength(this.lineRef.getTotalLength() - JUMP_MARGIN)
+    const lineRef = this.lineRef.get();
+    const paddedStart = lineRef ? lineRef.getPointAtLength(JUMP_MARGIN) : undefined;
+    const paddedEnd = lineRef
+      ? lineRef.getPointAtLength(lineRef.getTotalLength() - JUMP_MARGIN)
       : undefined;
 
+    console.info(`Render outmost lineref`);
     return (
       <>
-        {paddedStart && paddedEnd ? (
-          <>
-            {/*jump.id === 346 || jump.id === 293 ? (
-              <path
-                d={[
-                  "M",
-                  middleX,
-                  middleY,
-                  "L",
-                  startX,
-                  startY,
-                  //middleX + offsetVectorUnnormalizedX,
-                  //middleY + offsetVectorUnnormalizedY,
-                ].join(" ")}
-                stroke={"green"}
-                strokeWidth={5}
-                fill="none"
-              />
-              ) : null*/}
-            <path
-              d={[
-                "M",
-                paddedStart.x,
-                paddedStart.y,
-                "Q",
-                controlPointX,
-                controlPointY,
-                paddedEnd.x,
-                paddedEnd.y,
-              ].join(" ")}
-              stroke={colors.jump.line}
-              strokeWidth={this.hovered && !store.moving ? 3 : 1}
-              fill="none"
-              markerEnd="url(#arrowBlack)"
-            />
-            <path
-              d={[
-                "M",
-                paddedStart.x,
-                paddedStart.y,
-                "Q",
-                controlPointX,
-                controlPointY,
-                paddedEnd.x,
-                paddedEnd.y,
-              ].join(" ")}
-              stroke="transparent"
-              //stroke="yellow"
-              strokeWidth={JUMP_HOVER_ZONE_WIDTH}
-              fill="none"
-              onMouseEnter={() => {
-                // console.info(`Enter jump=${jump.id}`);
-                this.hovered = true;
-              }}
-              onMouseLeave={() => {
-                //console.info(`Leave jump=${jump.id}`);
-                this.hovered = false;
-              }}
-              onClick={() => {
-                console.info(`Click jump=${jump.id}`);
-              }}
-            />
-          </>
-        ) : null}
-
-        {this.hovered && !store.moving ? (
-          <InfoPopup anchorEl={this.lineRef}>
-            <JumpPopupBody store={this.props.store} jump={jump} />
-          </InfoPopup>
-        ) : (
-          undefined
-        )}
         <path
           d={[
             "M",
             startLoc.locX,
             startLoc.locY,
             "Q",
-            controlPointX,
-            controlPointY,
+            controlPoint.x,
+            controlPoint.y,
             endLoc.locX,
             endLoc.locY,
           ].join(" ")}
           stroke="transparent"
           strokeWidth={1}
           fill="none"
-          ref={e => {
-            if (!this.lineRef) {
-              this.lineRef = e;
+          ref={lineRef => {
+            console.info(`Got lineRef=`, lineRef);
+
+            if (!this.lineRef.get()) {
+              this.lineRef.set(lineRef);
             }
           }}
         />
+
+        {paddedStart && paddedEnd ? (
+          <JumpArrowReal
+            store={store}
+            jump={jump}
+            start={paddedStart}
+            end={paddedEnd}
+            control={controlPoint}
+          />
+        ) : null}
       </>
     );
   }
