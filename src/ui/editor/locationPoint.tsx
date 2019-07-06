@@ -20,7 +20,7 @@ import { InfoPopup, LocationPopupBody } from "./infopopup";
 import { colors } from "./colors";
 
 @observer
-class LocationPoint extends React.Component<{
+export class LocationPoint extends React.Component<{
   store: EditorStore;
   location: Location;
 }> {
