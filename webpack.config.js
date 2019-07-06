@@ -79,14 +79,12 @@ const config = (env, argv) => {
           loader: "ts-loader",
           options: {
             transpileOnly: true, // IMPORTANT! use transpileOnly mode to speed-up compilation
-            compilerOptions: MODE_DEVELOPMENT
-              ? {
-                  target: "ES2018",
-                  downlevelIteration: false,
-                  module: "ES6",
-                  moduleResolution: "node",
-                }
-              : { module: "ES6", moduleResolution: "node" },
+            compilerOptions: {
+              target: MODE_DEVELOPMENT ? "ES2018" : "es5",
+              downlevelIteration: MODE_DEVELOPMENT ? false : true,
+              module: "ESNext",
+              moduleResolution: "node",
+            },
           },
           exclude: /node_modules/,
         },
