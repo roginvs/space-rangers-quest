@@ -83,8 +83,41 @@ class JumpArrowReal extends React.Component<{
             //console.info(`Leave jump=${jump.id}`);
             this.hovered = false;
           }}
-          onClick={() => {
-            console.info(`Click jump=${jump.id}`);
+          onMouseDown={e => {
+            const startLoc = this.props.store.quest.locations.find(
+              x => x.id === jump.fromLocationId,
+            );
+            const endLoc = this.props.store.quest.locations.find(x => x.id === jump.toLocationId);
+            if (!startLoc || !endLoc) {
+              console.error(`Jump id=${jump.id} unable to find locations`);
+              return null;
+            }
+
+            const x = e.nativeEvent.offsetX;
+            const y = e.nativeEvent.offsetY;
+            //console.info(`startX=${this.props.start.x} startY=${this.props.start.y}`);
+            //console.info(`endX=${this.props.end.x} endY=${this.props.end.y}`);
+            //console.info(`Click x=${x} y=${y}`);
+            const startDistanceSquare =
+              (x - this.props.start.x) ** 2 + (y - this.props.start.y) ** 2;
+            const endDistanceSquare = (x - this.props.end.x) ** 2 + (y - this.props.end.y) ** 2;
+            const startIsCloser = startDistanceSquare < endDistanceSquare;
+            //console.info(`Click, startIsCloser=${startIsCloser}`);
+            // asd
+            const initialX = startIsCloser ? startLoc.locX : endLoc.locX;
+            const initialY = startIsCloser ? startLoc.locY : endLoc.locY;
+            store.selected = {
+              type: startIsCloser ? "jump_start" : "jump_end",
+              id: jump.id,
+              initialX,
+              initialY,
+              currentX: initialX,
+              currentY: initialY,
+              moving: true,
+            };
+          }}
+          onClick={e => {
+            // console.info(`Click jump=${jump.id}`);
           }}
           ref={r => {
             if (this.popupRef) {
@@ -126,6 +159,23 @@ export class JumpArrow extends React.Component<{
       console.error(`Jump id=${jump.id} unable to find locations`);
       return null;
     }
+
+    /*
+    if (store.selected && 
+      store.moving &&
+      store.selected.type == "jump_start") {
+      return <JumpArrowReal
+      store={store}
+      jump={jump}
+      start={{
+        x: startLoc.locX,
+        y: startLoc.locY
+      }}
+      end={store.selected.moving}
+      control={controlPoint}
+      />
+    }
+    */
 
     const allJumpFromThisLocations = quest.jumps
       .filter(

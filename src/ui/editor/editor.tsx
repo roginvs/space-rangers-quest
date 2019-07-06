@@ -53,14 +53,9 @@ export class Editor extends React.Component<{
               if (!selected) {
                 return;
               }
-              if (selected.moving && selected.type === "location") {
-                const loc = quest.locations.find(x => x.id === selected.id);
-                if (!loc) {
-                  console.warn(`Lost location id=${selected.id}`);
-                  return;
-                }
-                loc.locX = loc.locX + e.movementX;
-                loc.locY = loc.locY + e.movementY;
+              if (selected.moving) {
+                selected.currentX = selected.currentX + e.movementX;
+                selected.currentY = selected.currentY + e.movementY;
               }
             }}
             onMouseUp={() => {
@@ -75,10 +70,10 @@ export class Editor extends React.Component<{
                   return;
                 }
                 const griddedX =
-                  Math.round((loc.locX - store.grixXoffset) / store.gridX) * store.gridX +
+                  Math.round((selected.currentX - store.grixXoffset) / store.gridX) * store.gridX +
                   store.grixXoffset;
                 const griddedY =
-                  Math.round((loc.locY - store.grixYoffset) / store.gridY) * store.gridY +
+                  Math.round((selected.currentY - store.grixYoffset) / store.gridY) * store.gridY +
                   store.grixYoffset;
                 if (!quest.locations.find(x => x.locX === griddedX && x.locY === griddedY)) {
                   runInAction(() => {
@@ -94,6 +89,7 @@ export class Editor extends React.Component<{
                   });
                 }
               } else {
+                console.info("TODO");
                 selected.moving = false;
               }
             }}

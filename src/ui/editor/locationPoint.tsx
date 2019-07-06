@@ -37,6 +37,21 @@ export class LocationPoint extends React.Component<{
 
     const iAmSelected =
       store.selected && store.selected.type === "location" && store.selected.id === location.id;
+    const myX =
+      store.selected &&
+      store.selected.type === "location" &&
+      store.selected.id === location.id &&
+      store.moving
+        ? store.selected.currentX
+        : location.locX;
+    const myY =
+      store.selected &&
+      store.selected.type === "location" &&
+      store.selected.id === location.id &&
+      store.moving
+        ? store.selected.currentY
+        : location.locY;
+
     return (
       <>
         <circle
@@ -57,11 +72,13 @@ export class LocationPoint extends React.Component<{
               id: location.id,
               initialX: location.locX,
               initialY: location.locY,
+              currentX: location.locX,
+              currentY: location.locY,
               moving: true,
             };
           }}
-          cx={location.locX}
-          cy={location.locY}
+          cx={myX}
+          cy={myY}
           fill={
             location.isStarting
               ? colors.location.starting

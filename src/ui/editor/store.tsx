@@ -25,6 +25,8 @@ export class EditorStore {
     type: "location" | "jump_start" | "jump_end";
     initialX: number;
     initialY: number;
+    currentX: number;
+    currentY: number;
     moving: boolean;
   };
 
