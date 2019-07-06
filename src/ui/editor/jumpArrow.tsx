@@ -41,7 +41,7 @@ class JumpArrowReal extends React.Component<{
   render() {
     const store = this.props.store;
     const jump = this.props.jump;
-    console.info("Render real jump line", this.props.start.x, this.props.start.y);
+    // console.info("Render real jump line", this.props.start.x, this.props.start.y);
     return (
       <>
         <path
@@ -111,7 +111,9 @@ export class JumpArrow extends React.Component<{
   store: EditorStore;
   jump: Jump;
 }> {
-  lineRef = observable.box<SVGPathElement | null>(null);
+  @observable
+  start?: Point;
+  end?: Point;
 
   render() {
     const store = this.props.store;
@@ -180,13 +182,7 @@ export class JumpArrow extends React.Component<{
       y: controlPointY,
     };
 
-    const lineRef = this.lineRef.get();
-    const paddedStart = lineRef ? lineRef.getPointAtLength(JUMP_MARGIN) : undefined;
-    const paddedEnd = lineRef
-      ? lineRef.getPointAtLength(lineRef.getTotalLength() - JUMP_MARGIN)
-      : undefined;
-
-    console.info(`Render outmost lineref`);
+    // console.info(`Render outmost lineref`);
     return (
       <>
         <path
@@ -204,20 +200,35 @@ export class JumpArrow extends React.Component<{
           strokeWidth={1}
           fill="none"
           ref={lineRef => {
-            console.info(`Got lineRef=`, lineRef);
-
-            if (!this.lineRef.get()) {
-              this.lineRef.set(lineRef);
+            // console.info(`Got lineRef=`, lineRef);
+            if (!lineRef) {
+              return;
+            }
+            const EPSILON = 0.00001;
+            const paddedStart = lineRef.getPointAtLength(JUMP_MARGIN);
+            const paddedEnd = lineRef.getPointAtLength(lineRef.getTotalLength() - JUMP_MARGIN);
+            if (
+              !this.start ||
+              Math.abs(this.start.x - paddedStart.x) > EPSILON ||
+              Math.abs(this.start.y - paddedStart.y) > EPSILON ||
+              !this.end ||
+              Math.abs(this.end.x - paddedEnd.x) > EPSILON ||
+              Math.abs(this.end.y - paddedEnd.y) > EPSILON
+            ) {
+              runInAction(() => {
+                this.start = paddedStart;
+                this.end = paddedEnd;
+              });
             }
           }}
         />
 
-        {paddedStart && paddedEnd ? (
+        {this.start && this.end ? (
           <JumpArrowReal
             store={store}
             jump={jump}
-            start={paddedStart}
-            end={paddedEnd}
+            start={this.start}
+            end={this.end}
             control={controlPoint}
           />
         ) : null}
