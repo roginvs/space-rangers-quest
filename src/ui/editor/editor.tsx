@@ -10,7 +10,7 @@ import {
   ParameterShowingType,
 } from "../../lib/qmreader";
 import { observer } from "mobx-react";
-import { observable, computed } from "mobx";
+import { observable, computed, runInAction } from "mobx";
 import Popper from "@material-ui/core/Popper";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 import { EditorStore } from "./store";
@@ -605,13 +605,28 @@ export class Editor extends React.Component<{
                   console.warn(`Lost location id=${selected.id}`);
                   return;
                 }
-                //const griddedX =
-                //  Math.round((loc.locX - store.grixXoffset) / store.gridX) * store.gridX +
-                //  store.grixXoffset;
-                //loc.locX = griddedX;
+                const griddedX =
+                  Math.round((loc.locX - store.grixXoffset) / store.gridX) * store.gridX +
+                  store.grixXoffset;
+                const griddedY =
+                  Math.round((loc.locY - store.grixYoffset) / store.gridY) * store.gridY +
+                  store.grixYoffset;
+                if (!quest.locations.find(x => x.locX === griddedX && x.locY === griddedY)) {
+                  runInAction(() => {
+                    loc.locX = griddedX;
+                    loc.locY = griddedY;
+                    selected.moving = false;
+                  });
+                } else {
+                  runInAction(() => {
+                    loc.locX = selected.initialX;
+                    loc.locY = selected.initialY;
+                    selected.moving = false;
+                  });
+                }
+              } else {
+                selected.moving = false;
               }
-
-              selected.moving = false;
             }}
           >
             <defs>
