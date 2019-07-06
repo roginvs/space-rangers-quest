@@ -18,6 +18,7 @@ import { assertNever } from "../../lib/formula/calculator";
 import { colors } from "./colors";
 import { JumpArrow } from "./jumpArrow";
 import { LocationPoint } from "./locationPoint";
+import { LOCATION_DROP_RADIUS } from "./consts";
 
 @observer
 export class Editor extends React.Component<{
@@ -67,6 +68,7 @@ export class Editor extends React.Component<{
                 const loc = quest.locations.find(x => x.id === selected.id);
                 if (!loc) {
                   console.warn(`Lost location id=${selected.id}`);
+                  store.selected = undefined;
                   return;
                 }
                 const griddedX =
@@ -88,8 +90,32 @@ export class Editor extends React.Component<{
                     selected.moving = false;
                   });
                 }
+              } else if (
+                selected.moving &&
+                (selected.type === "jump_start" || selected.type === "jump_end")
+              ) {
+                const jump = quest.jumps.find(x => x.id === selected.id);
+                if (!jump) {
+                  console.warn(`Lost jump id=${selected.id}`);
+                  store.selected = undefined;
+                  return;
+                }
+                selected.moving = false;
+                const newLocation = quest.locations.find(
+                  loc =>
+                    (loc.locX - selected.currentX) ** 2 + (loc.locY - selected.currentY) ** 2 <
+                    LOCATION_DROP_RADIUS ** 2,
+                );
+                if (!newLocation) {
+                  return;
+                }
+                if (selected.type === "jump_start") {
+                  jump.fromLocationId = newLocation.id;
+                } else {
+                  jump.toLocationId = newLocation.id;
+                }
               } else {
-                console.info("TODO");
+                console.info("TODO: open info popup");
                 selected.moving = false;
               }
             }}

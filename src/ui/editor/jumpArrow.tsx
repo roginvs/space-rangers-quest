@@ -164,7 +164,7 @@ export class JumpArrow extends React.Component<{
     if (
       store.selected &&
       store.moving &&
-      store.selected.type == "jump_start" &&
+      store.selected.type === "jump_start" &&
       store.selected.id === jump.id
     ) {
       return (
@@ -191,7 +191,7 @@ export class JumpArrow extends React.Component<{
     if (
       store.selected &&
       store.moving &&
-      store.selected.type == "jump_end" &&
+      store.selected.type === "jump_end" &&
       store.selected.id === jump.id
     ) {
       return (
