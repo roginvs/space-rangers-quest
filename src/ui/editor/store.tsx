@@ -31,6 +31,7 @@ export class EditorStore {
     currentX: number;
     currentY: number;
     moving: boolean;
+    opened: boolean;
   };
 
   @computed

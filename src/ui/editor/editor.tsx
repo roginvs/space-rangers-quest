@@ -21,6 +21,7 @@ import { LocationPoint } from "./locationPoint";
 import { LOCATION_DROP_RADIUS } from "./consts";
 import classnames from "classnames";
 import { Hotkeys } from "./hotkeys";
+import { LocationJumpParamsModal } from "./locationJumpModal";
 
 @observer
 export class Editor extends React.Component<{
@@ -190,8 +191,8 @@ export class Editor extends React.Component<{
                   assertNever(store.selected.type);
                 }
               } else {
-                console.info("TODO: open info popup");
                 selected.moving = false;
+                selected.opened = true;
               }
             }}
           >
@@ -216,6 +217,7 @@ export class Editor extends React.Component<{
             ))}
           </svg>
         </div>
+        <LocationJumpParamsModal store={store} />
         <Hotkeys store={store} />
       </div>
     );
