@@ -215,7 +215,22 @@ export class LocationJumpParamsModal extends React.Component<{
         loc={loc}
         jump={jump}
         onClose={newTarget => {
-          // TODO: save
+          if (newTarget) {
+            if (selected.type === "location" && "isStarting" in newTarget) {
+              const idx = quest.locations.findIndex(x => x.id === newTarget.id);
+              if (idx > -1) {
+                quest.locations[idx] = newTarget;
+              }
+            } else if (
+              (selected.type === "jump_end" || selected.type === "jump_start") &&
+              "priority" in target
+            ) {
+              const idx = quest.jumps.findIndex(x => x.id === target.id);
+              if (idx > -1) {
+                quest.jumps[idx] = target;
+              }
+            }
+          }
           selected.opened = false;
         }}
       />
