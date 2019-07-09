@@ -20,6 +20,7 @@ import { JumpArrow } from "./jumpArrow";
 import { LocationPoint } from "./locationPoint";
 import { LOCATION_DROP_RADIUS } from "./consts";
 import classnames from "classnames";
+import { Hotkeys } from "./hotkeys";
 
 @observer
 export class Editor extends React.Component<{
@@ -38,13 +39,13 @@ export class Editor extends React.Component<{
               onClick={() => (store.mode = mode)}
             >
               {mode === "move" ? (
-                <i className="fa fa-arrows" />
+                <i className="fa fa-arrows" title="Двигать (2)" />
               ) : mode === "select" ? (
-                <i className="fa fa-mouse-pointer" />
+                <i className="fa fa-mouse-pointer" title="Выделять (1)" />
               ) : mode === "newJump" ? (
-                <i className="fa fa-arrows-h" />
+                <i className="fa fa-arrows-h" title="Новый переход (4)" />
               ) : mode === "newLocation" ? (
-                <i className="fa fa-circle" />
+                <i className="fa fa-circle" title="Новая локация (3)" />
               ) : (
                 assertNever(mode)
               )}
@@ -172,6 +173,7 @@ export class Editor extends React.Component<{
             ))}
           </svg>
         </div>
+        <Hotkeys store={store} />
       </div>
     );
   }
