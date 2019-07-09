@@ -2,7 +2,7 @@ import { observable, computed } from "mobx";
 import { QM, JumpId, LocationId } from "../../lib/qmreader";
 import { CANVAS_PADDING } from "./consts";
 
-export const EDITOR_MODES = ["select", "move", "newLocation", "newJump"] as const;
+export const EDITOR_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
 export type EditorMode = typeof EDITOR_MODES[number];
 export class EditorStore {
   constructor(quest: QM) {

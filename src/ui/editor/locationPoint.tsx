@@ -95,7 +95,7 @@ export class LocationPoint extends React.Component<{
           strokeDasharray={iAmSelected ? 4 : undefined}
           r={LOCATION_RADIUS}
           style={{
-            cursor: "pointer",
+            cursor: store.mode === "select" ? "pointer" : undefined,
           }}
           ref={e => {
             if (!this.ref) {

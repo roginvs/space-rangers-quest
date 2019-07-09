@@ -46,6 +46,8 @@ export class Editor extends React.Component<{
                 <i className="fa fa-arrows-h" title="Новый переход (4)" />
               ) : mode === "newLocation" ? (
                 <i className="fa fa-circle" title="Новая локация (3)" />
+              ) : mode === "remove" ? (
+                <i className="fa fa-remove" title="Удалить (5)" />
               ) : (
                 assertNever(mode)
               )}
@@ -74,6 +76,8 @@ export class Editor extends React.Component<{
                   ? "crosshair"
                   : store.mode === "newJump"
                   ? "e-resize"
+                  : store.mode === "remove"
+                  ? "url('/fa/remove.svg') 12 12, pointer"
                   : assertNever(store.mode),
             }}
             onClick={e => {

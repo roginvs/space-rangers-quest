@@ -14,6 +14,8 @@ export class Hotkeys extends React.Component<{
       store.mode = "newLocation";
     } else if (e.key === "4") {
       store.mode = "newJump";
+    } else if (e.key === "5") {
+      store.mode = "remove";
     }
   };
   componentDidMount() {
