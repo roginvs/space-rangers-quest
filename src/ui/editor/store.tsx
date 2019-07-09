@@ -7,7 +7,7 @@ export type EditorMode = typeof EDITOR_MODES[number];
 export class EditorStore {
   constructor(quest: QM) {
     this.quest = quest;
-    this.initReactionForUndo(true);
+    this.pushUndo();
   }
 
   @observable
@@ -65,39 +65,18 @@ export class EditorStore {
   @observable
   private undoPosition = 0;
 
-  private stopReactionForUndoCallback: undefined | (() => void) = undefined;
-
-  private initReactionForUndo(fireImmediately: boolean) {
+  public pushUndo() {
     const HISTORY_LIMIT = 100;
-    if (this.stopReactionForUndoCallback) {
-      throw new Error("Reaction already exists!");
+
+    const currentState = toJS(this.quest);
+    while (this.projectChangeHistory.length - 1 > this.undoPosition) {
+      this.projectChangeHistory.pop();
     }
-    this.stopReactionForUndoCallback = reaction(
-      () => {
-        return toJS(this.quest);
-      },
-      currentState => {
-        while (this.projectChangeHistory.length - 1 > this.undoPosition) {
-          this.projectChangeHistory.pop();
-        }
-        this.projectChangeHistory.push(currentState);
-        while (this.projectChangeHistory.length > HISTORY_LIMIT) {
-          this.projectChangeHistory.shift();
-        }
-        this.undoPosition = this.projectChangeHistory.length - 1;
-      },
-      {
-        delay: 1000,
-        fireImmediately,
-      },
-    );
-  }
-  private stopReactionForUndo() {
-    if (!this.stopReactionForUndoCallback) {
-      throw new Error("Where is reaction for undo?");
+    this.projectChangeHistory.push(currentState);
+    while (this.projectChangeHistory.length > HISTORY_LIMIT) {
+      this.projectChangeHistory.shift();
     }
-    this.stopReactionForUndoCallback();
-    this.stopReactionForUndoCallback = undefined;
+    this.undoPosition = this.projectChangeHistory.length - 1;
   }
 
   @computed
@@ -115,7 +94,7 @@ export class EditorStore {
       }
       this.undoPosition--;
       const newState = toJS(this.projectChangeHistory[this.undoPosition]);
-      this.updateWithNoUndoRedo(newState);
+      this.quest = newState;
     });
   }
   redo() {
@@ -125,13 +104,7 @@ export class EditorStore {
       }
       this.undoPosition++;
       const newState = toJS(this.projectChangeHistory[this.undoPosition]);
-      this.updateWithNoUndoRedo(newState);
+      this.quest = newState;
     });
-  }
-
-  protected updateWithNoUndoRedo(quest: QM) {
-    this.stopReactionForUndo();
-    this.quest = quest;
-    this.initReactionForUndo(false);
   }
 }

@@ -126,11 +126,10 @@ export class Editor extends React.Component<{
                     loc.locX = griddedX;
                     loc.locY = griddedY;
                     selected.moving = false;
+                    store.pushUndo();
                   });
                 } else {
                   runInAction(() => {
-                    loc.locX = selected.initialX;
-                    loc.locY = selected.initialY;
                     selected.moving = false;
                   });
                 }
@@ -153,11 +152,14 @@ export class Editor extends React.Component<{
                 if (!newLocation) {
                   return;
                 }
-                if (selected.type === "jump_start") {
-                  jump.fromLocationId = newLocation.id;
-                } else {
-                  jump.toLocationId = newLocation.id;
-                }
+                runInAction(() => {
+                  if (selected.type === "jump_start") {
+                    jump.fromLocationId = newLocation.id;
+                  } else {
+                    jump.toLocationId = newLocation.id;
+                  }
+                  store.pushUndo();
+                });
               } else if (store.selected && store.mouseMode === "remove") {
                 if (store.selected.type === "location") {
                   const loc = quest.locations.find(x => x.id === selected.id);
@@ -172,6 +174,7 @@ export class Editor extends React.Component<{
                     );
                     quest.locations = quest.locations.filter(l => !(l.id === loc.id));
                     store.selected = undefined;
+                    store.pushUndo();
                   });
                 } else if (
                   store.selected.type === "jump_end" ||
@@ -186,6 +189,7 @@ export class Editor extends React.Component<{
                   runInAction(() => {
                     quest.jumps = quest.jumps.filter(j => j.id !== jump.id);
                     store.selected = undefined;
+                    store.pushUndo();
                   });
                 } else {
                   assertNever(store.selected.type);
