@@ -13,12 +13,13 @@ import { observer } from "mobx-react";
 import { observable, computed, runInAction } from "mobx";
 import Popper from "@material-ui/core/Popper";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
-import { EditorStore } from "./store";
+import { EditorStore, EDITOR_MODES } from "./store";
 import { assertNever } from "../../lib/formula/calculator";
 import { colors } from "./colors";
 import { JumpArrow } from "./jumpArrow";
 import { LocationPoint } from "./locationPoint";
 import { LOCATION_DROP_RADIUS } from "./consts";
+import classnames from "classnames";
 
 @observer
 export class Editor extends React.Component<{
@@ -29,7 +30,27 @@ export class Editor extends React.Component<{
     const quest = this.props.store.quest;
     return (
       <div style={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column" }}>
-        <div>Header</div>
+        <div>
+          {EDITOR_MODES.map(mode => (
+            <button
+              key={mode}
+              className={classnames("btn", store.mode === mode ? "btn-info" : "btn-light")}
+              onClick={() => (store.mode = mode)}
+            >
+              {mode === "move" ? (
+                <i className="fa fa-arrows" />
+              ) : mode === "select" ? (
+                <i className="fa fa-mouse-pointer" />
+              ) : mode === "newJump" ? (
+                <i className="fa fa-arrows-h" />
+              ) : mode === "newLocation" ? (
+                <i className="fa fa-circle" />
+              ) : (
+                assertNever(mode)
+              )}
+            </button>
+          ))}
+        </div>
         <div
           style={{
             flexGrow: 1,
@@ -43,6 +64,16 @@ export class Editor extends React.Component<{
               height: store.svgHeight,
               position: "relative",
               backgroundColor: colors.background,
+              cursor:
+                store.mode === "move"
+                  ? "move"
+                  : store.mode === "select"
+                  ? "default"
+                  : store.mode === "newLocation"
+                  ? "crosshair"
+                  : store.mode === "newJump"
+                  ? "e-resize"
+                  : assertNever(store.mode),
             }}
             onClick={e => {
               if (e.target === e.currentTarget) {
