@@ -17,6 +17,12 @@ export class Hotkeys extends React.Component<{
     } else if (e.key === "5") {
       store.mode = "remove";
     }
+    if (e.key === "z" && (e.ctrlKey || e.metaKey) && store.canUndo) {
+      store.undo();
+    }
+    if (e.key === "Z" && (e.ctrlKey || e.metaKey) && store.canRedo) {
+      store.redo();
+    }
   };
   componentDidMount() {
     document.addEventListener("keypress", this.onKeyPress);

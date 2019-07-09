@@ -10,7 +10,7 @@ import {
   ParameterShowingType,
 } from "../../lib/qmreader";
 import { observer } from "mobx-react";
-import { observable, computed, runInAction } from "mobx";
+import { observable, computed, runInAction, keys } from "mobx";
 import Popper from "@material-ui/core/Popper";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 import { EditorStore, EDITOR_MODES } from "./store";
@@ -156,6 +156,38 @@ export class Editor extends React.Component<{
                   jump.fromLocationId = newLocation.id;
                 } else {
                   jump.toLocationId = newLocation.id;
+                }
+              } else if (store.selected && store.mode === "remove") {
+                if (store.selected.type === "location") {
+                  const loc = quest.locations.find(x => x.id === selected.id);
+                  if (!loc) {
+                    console.warn(`Lost location id=${selected.id}`);
+                    store.selected = undefined;
+                    return;
+                  }
+                  runInAction(() => {
+                    quest.jumps = quest.jumps.filter(
+                      j => !(j.fromLocationId === loc.id || j.toLocationId === loc.id),
+                    );
+                    quest.locations = quest.locations.filter(l => !(l.id === loc.id));
+                    store.selected = undefined;
+                  });
+                } else if (
+                  store.selected.type === "jump_end" ||
+                  store.selected.type === "jump_start"
+                ) {
+                  const jump = quest.jumps.find(x => x.id === selected.id);
+                  if (!jump) {
+                    console.warn(`Lost jump id=${selected.id}`);
+                    store.selected = undefined;
+                    return;
+                  }
+                  runInAction(() => {
+                    quest.jumps = quest.jumps.filter(j => j.id !== jump.id);
+                    store.selected = undefined;
+                  });
+                } else {
+                  assertNever(store.selected.type);
                 }
               } else {
                 console.info("TODO: open info popup");
