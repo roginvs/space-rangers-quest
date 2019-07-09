@@ -56,7 +56,7 @@ export class EditorStore {
   }
 
   @observable
-  mode: EditorMode = "select";
+  mouseMode: EditorMode = "select";
 
   @observable
   private readonly projectChangeHistory: QM[] = [];

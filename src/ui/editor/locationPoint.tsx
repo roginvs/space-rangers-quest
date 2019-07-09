@@ -74,7 +74,7 @@ export class LocationPoint extends React.Component<{
               initialY: location.locY,
               currentX: location.locX,
               currentY: location.locY,
-              moving: e.shiftKey || store.mode === "move",
+              moving: e.shiftKey || store.mouseMode === "move",
             };
           }}
           cx={myX}
@@ -95,7 +95,7 @@ export class LocationPoint extends React.Component<{
           strokeDasharray={iAmSelected ? 4 : undefined}
           r={LOCATION_RADIUS}
           style={{
-            cursor: store.mode === "select" ? "pointer" : undefined,
+            cursor: store.mouseMode === "select" ? "pointer" : undefined,
           }}
           ref={e => {
             if (!this.ref) {

@@ -116,7 +116,7 @@ class JumpArrowReal extends React.Component<{
               initialY,
               currentX: x,
               currentY: y,
-              moving: e.shiftKey || store.mode === "move",
+              moving: e.shiftKey || store.mouseMode === "move",
             };
           }}
           onClick={e => {

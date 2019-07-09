@@ -35,8 +35,8 @@ export class Editor extends React.Component<{
           {EDITOR_MODES.map(mode => (
             <button
               key={mode}
-              className={classnames("btn", store.mode === mode ? "btn-info" : "btn-light")}
-              onClick={() => (store.mode = mode)}
+              className={classnames("btn", store.mouseMode === mode ? "btn-info" : "btn-light")}
+              onClick={() => (store.mouseMode = mode)}
             >
               {mode === "move" ? (
                 <i className="fa fa-arrows" title="Двигать (2)" />
@@ -75,17 +75,17 @@ export class Editor extends React.Component<{
               position: "relative",
               backgroundColor: colors.background,
               cursor:
-                store.mode === "move"
+                store.mouseMode === "move"
                   ? "move"
-                  : store.mode === "select"
+                  : store.mouseMode === "select"
                   ? "default"
-                  : store.mode === "newLocation"
+                  : store.mouseMode === "newLocation"
                   ? "crosshair"
-                  : store.mode === "newJump"
+                  : store.mouseMode === "newJump"
                   ? "e-resize"
-                  : store.mode === "remove"
+                  : store.mouseMode === "remove"
                   ? "url('/fa/remove.svg') 12 12, pointer"
-                  : assertNever(store.mode),
+                  : assertNever(store.mouseMode),
             }}
             onClick={e => {
               if (e.target === e.currentTarget) {
@@ -157,7 +157,7 @@ export class Editor extends React.Component<{
                 } else {
                   jump.toLocationId = newLocation.id;
                 }
-              } else if (store.selected && store.mode === "remove") {
+              } else if (store.selected && store.mouseMode === "remove") {
                 if (store.selected.type === "location") {
                   const loc = quest.locations.find(x => x.id === selected.id);
                   if (!loc) {

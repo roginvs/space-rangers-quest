@@ -7,15 +7,15 @@ export class Hotkeys extends React.Component<{
   onKeyPress = (e: KeyboardEvent) => {
     const store = this.props.store;
     if (e.key === "1") {
-      store.mode = "select";
+      store.mouseMode = "select";
     } else if (e.key === "2") {
-      store.mode = "move";
+      store.mouseMode = "move";
     } else if (e.key === "3") {
-      store.mode = "newLocation";
+      store.mouseMode = "newLocation";
     } else if (e.key === "4") {
-      store.mode = "newJump";
+      store.mouseMode = "newJump";
     } else if (e.key === "5") {
-      store.mode = "remove";
+      store.mouseMode = "remove";
     }
     if (e.key === "z" && (e.ctrlKey || e.metaKey) && store.canUndo) {
       store.undo();
