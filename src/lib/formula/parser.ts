@@ -56,12 +56,16 @@ function parseParenExpression(tokens: Token[]) {
     if (tokens.length > 1) {
       throw new Error(`Unknown token ${tokens[1].text} at ${tokens[1].start} for paren`);
     }
-    const pConst = firstToken.text.slice(0, 1);
-    const pNumber = firstToken.text.slice(1);
-    const pId = parseInt(pNumber) - 1;
-    if (pConst !== "p" || isNaN(pId)) {
-      throw new Error(`Unknown identifier ${firstToken.text} at ${firstToken.start}`);
+
+    const paramRegexpMatch = firstToken.text.match(/^p(\d+)$/);
+    if (!paramRegexpMatch) {
+      throw new Error(`Unknown parameter '${firstToken.text}' at ${firstToken.start}`);
     }
+
+    const pNumber = paramRegexpMatch[1];
+
+    const pId = parseInt(pNumber) - 1;
+
     const exp: ParameterExpression = {
       type: "parameter",
       parameterId: pId,
