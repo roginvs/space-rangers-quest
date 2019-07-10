@@ -22,6 +22,7 @@ import { LOCATION_DROP_RADIUS } from "./consts";
 import classnames from "classnames";
 import { Hotkeys } from "./hotkeys";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
+import { range } from "./utils";
 
 type Target = Location | Jump;
 function isLocation(t: Target): t is Location {
@@ -90,24 +91,45 @@ class LocationTexts extends React.Component<{
           ) : null}
         </div>
 
-        <div>========================</div>
-        <div className="row">
-          <div className="col-3">
-            Описание #{" "}
-            <select
-              value={this.currentTextId}
-              onChange={e => (this.currentTextId = parseInt(e.target.value))}
-              style={{ marginRight: 4, width: "4em" }}
+        <ul className="nav nav-tabs">
+          {range(loc.texts.length).map(textId => (
+            <li className="nav-item" key={textId}>
+              <a
+                className={`nav-link ${textId === this.currentTextId ? "active" : ""}`}
+                href="#"
+                onClick={e => {
+                  e.preventDefault();
+                  this.currentTextId = textId;
+                }}
+              >
+                {textId + 1}
+              </a>
+            </li>
+          ))}
+
+          <li className="nav-item">
+            <a
+              className={`nav-link ${
+                loc.texts.length <= 1 || this.currentTextId !== loc.texts.length - 1
+                  ? "disabled"
+                  : ""
+              }`}
+              onClick={e => {
+                e.preventDefault();
+                const idToRemove = this.currentTextId;
+                this.currentTextId = Math.max(0, this.currentTextId - 1);
+                loc.texts.splice(idToRemove, 1);
+                loc.media.splice(idToRemove, 1);
+              }}
             >
-              {loc.texts.map((t, id) => (
-                <option key={id} value={id}>
-                  {id + 1}
-                </option>
-              ))}
-            </select>
-            <button
-              className="btn btn-light btn-sm"
-              onClick={() => {
+              -
+            </a>
+          </li>
+          <li className="nav-item">
+            <a
+              className={`nav-link`}
+              onClick={e => {
+                e.preventDefault();
                 loc.texts.push("");
                 loc.media.push({
                   img: "",
@@ -118,23 +140,11 @@ class LocationTexts extends React.Component<{
               }}
             >
               +
-            </button>
-            <button
-              className="btn btn-light btn-sm"
-              disabled={loc.texts.length <= 1 || this.currentTextId !== loc.texts.length - 1}
-              onClick={() => {
-                const idToRemove = this.currentTextId;
-                this.currentTextId = Math.max(0, this.currentTextId - 1);
-                loc.texts.splice(idToRemove, 1);
-                loc.media.splice(idToRemove, 1);
-              }}
-            >
-              -
-            </button>
-          </div>
-        </div>
+            </a>
+          </li>
+        </ul>
 
-        <div className="my-2">
+        <div className="tab-content">
           {this.currentTextId < loc.texts.length ? (
             <>
               <textarea
@@ -145,17 +155,19 @@ class LocationTexts extends React.Component<{
 
               <div className="row">
                 <div className="col-4 form-group">
-                  <label>Иллюстрация</label>
                   <input
                     type="text"
+                    placeholder="Иллюстрация"
+                    title="Иллюстрация"
                     className="form-control"
                     value={loc.media[this.currentTextId].img}
                     onChange={e => (loc.media[this.currentTextId].img = e.target.value)}
                   />
                 </div>
                 <div className="col-4 form-group">
-                  <label>Фоновый трек</label>
                   <input
+                    placeholder="Фоновый трек"
+                    title="Фоновый трек"
                     type="text"
                     className="form-control"
                     value={loc.media[this.currentTextId].track}
@@ -163,8 +175,9 @@ class LocationTexts extends React.Component<{
                   />
                 </div>
                 <div className="col-4 form-group">
-                  <label>Звуковой эффект</label>
                   <input
+                    placeholder="Звуковой эффект"
+                    title="Звуковой эффект"
                     type="text"
                     className="form-control"
                     value={loc.media[this.currentTextId].sound}
