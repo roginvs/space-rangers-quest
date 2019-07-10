@@ -82,6 +82,9 @@ export function Scanner(str: string) {
     }
 
     const kind: SyntaxKind = keywordKind !== undefined ? keywordKind : "identifier";
+    if (start === pos) {
+      throw new Error(`Unknown char ${str[pos]}`);
+    }
     return {
       kind,
       start,

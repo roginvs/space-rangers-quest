@@ -5,11 +5,23 @@ import * as assert from "assert";
 import { parse, MAX_NUMBER } from "../lib/formula";
 import { randomFromMathRandom } from "../lib/randomFunc";
 
-describe("Formula parser test", function() {
-  it(`Throws on wrong formula`, () => {
-    const throwingFormulas = ["2+", "2+2{"];
-    for (const t of throwingFormulas) {
-      assert.throws(() => parse(t, [0, 0, 0, 0, 0], () => 0), `${t}`);
-    }
-  });
+describe("Formula parser test throws", function() {
+  const throwingFormulas = [
+    "2+",
+    "2 + 2 {",
+    "-",
+    "-3..",
+    "Кек",
+    "%",
+    "2%4",
+    "2 div ",
+    " div 54",
+    "#",
+    "[pp]",
+  ];
+  for (const t of throwingFormulas) {
+    it(`Throws at '${t}'`, () => {
+      assert.throws(() => parse(t, [0, 0, 0, 0, 0], () => 0));
+    });
+  }
 });
