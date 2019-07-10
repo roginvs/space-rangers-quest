@@ -51,7 +51,7 @@ class LocationTexts extends React.Component<{
     return (
       <>
         <div className="row">
-          <div className="col-6">
+          <div className="col-3">
             Описание #{" "}
             <select
               value={this.currentTextId}
@@ -85,7 +85,45 @@ class LocationTexts extends React.Component<{
               -
             </button>
           </div>
-          <div className="col-6">todo</div>
+          <div className="col-9">
+            <div className="form-check">
+              <label className="form-check-label">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  checked={!loc.isTextByFormula}
+                  onChange={e => {
+                    if (e.target.checked) {
+                      loc.isTextByFormula = false;
+                    }
+                  }}
+                />
+                Выбирать по порядку
+              </label>
+            </div>
+            <div className="form-check">
+              <label className="form-check-label">
+                <input
+                  className="form-check-input"
+                  type="radio"
+                  checked={loc.isTextByFormula}
+                  onChange={e => {
+                    if (e.target.checked) {
+                      loc.isTextByFormula = true;
+                    }
+                  }}
+                />
+                Выбирать по формуле
+              </label>
+              {loc.isTextByFormula ? (
+                <input
+                  // className="form-control"
+                  value={loc.textSelectFormula}
+                  onChange={e => (loc.textSelectFormula = e.target.value)}
+                />
+              ) : null}
+            </div>
+          </div>
         </div>
 
         <div className="my-2">
