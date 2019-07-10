@@ -23,6 +23,21 @@ import classnames from "classnames";
 import { Hotkeys } from "./hotkeys";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 
+type Target = Location | Jump;
+function isLocation(t: Target): t is Location {
+  if ("isStarting" in t) {
+    return true;
+  } else {
+    return false;
+  }
+}
+function isJump(t: Target): t is Jump {
+  if ("priority" in t) {
+    return true;
+  } else {
+    return false;
+  }
+}
 @observer
 class LocationTexts extends React.Component<{
   loc: Location;
@@ -93,14 +108,11 @@ class LocationTexts extends React.Component<{
 
 @observer
 class ModalInside extends React.Component<{
-  loc?: Location;
-  jump?: Jump;
+  target: Target;
   onClose: (target?: Location | Jump) => void;
 }> {
   @observable
-  loc = toJS(this.props.loc);
-  @observable
-  jump = toJS(this.props.jump);
+  target: Target = toJS(this.props.target);
 
   @observable
   popupForConfirmChanges = false;
@@ -109,7 +121,7 @@ class ModalInside extends React.Component<{
   changed = false;
 
   changeCatched = reaction(
-    () => toJS(this.loc || this.jump),
+    () => toJS(this.target),
     (change, reaction) => {
       this.changed = true;
       reaction.dispose();
@@ -157,12 +169,8 @@ class ModalInside extends React.Component<{
         </Modal>
       );
     }
-    const loc = this.loc;
-    const jump = this.jump;
-    const target = loc || jump;
-    if (!target) {
-      return null;
-    }
+
+    const target = this.target;
     return (
       <Modal
         isOpen={true}
@@ -174,10 +182,14 @@ class ModalInside extends React.Component<{
         backdropTransition={{ timeout: 50 }}
       >
         <ModalHeader toggle={() => this.onClose()} className="py-1">
-          {loc ? `Локация L${loc.id}` : jump ? `Переход J${jump.id}` : null}
+          {isLocation(target)
+            ? `Локация L${target.id}`
+            : isJump(target)
+            ? `Переход J${target.id}`
+            : null}
         </ModalHeader>
         <ModalBody className="p-2">
-          {loc ? <LocationTexts key={loc.id} loc={loc} /> : null}
+          {isLocation(target) ? <LocationTexts key={target.id} loc={target} /> : null}
         </ModalBody>
       </Modal>
     );
@@ -212,22 +224,21 @@ export class LocationJumpParamsModal extends React.Component<{
     return (
       <ModalInside
         key={`${selected.type}-${selected.id}`}
-        loc={loc}
-        jump={jump}
+        target={target}
         onClose={newTarget => {
           if (newTarget) {
-            if (selected.type === "location" && "isStarting" in newTarget) {
+            if (selected.type === "location" && isLocation(newTarget)) {
               const idx = quest.locations.findIndex(x => x.id === newTarget.id);
               if (idx > -1) {
                 quest.locations[idx] = newTarget;
               }
             } else if (
               (selected.type === "jump_end" || selected.type === "jump_start") &&
-              "priority" in target
+              isJump(newTarget)
             ) {
-              const idx = quest.jumps.findIndex(x => x.id === target.id);
+              const idx = quest.jumps.findIndex(x => x.id === newTarget.id);
               if (idx > -1) {
-                quest.jumps[idx] = target;
+                quest.jumps[idx] = newTarget;
               }
             }
           }
