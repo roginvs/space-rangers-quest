@@ -68,6 +68,11 @@ class LocationTexts extends React.Component<{
               className="btn btn-light btn-sm"
               onClick={() => {
                 loc.texts.push("");
+                loc.media.push({
+                  img: "",
+                  sound: "",
+                  track: "",
+                });
                 this.currentTextId = loc.texts.length - 1;
               }}
             >
@@ -80,6 +85,7 @@ class LocationTexts extends React.Component<{
                 const idToRemove = this.currentTextId;
                 this.currentTextId = Math.max(0, this.currentTextId - 1);
                 loc.texts.splice(idToRemove, 1);
+                loc.media.splice(idToRemove, 1);
               }}
             >
               -
@@ -128,20 +134,48 @@ class LocationTexts extends React.Component<{
 
         <div className="my-2">
           {this.currentTextId < loc.texts.length ? (
-            <textarea
-              style={{ width: "100%", height: "10em" }}
-              value={loc.texts[this.currentTextId]}
-              onChange={e => (loc.texts[this.currentTextId] = e.target.value)}
-            />
+            <>
+              <textarea
+                style={{ width: "100%", height: "10em" }}
+                value={loc.texts[this.currentTextId]}
+                onChange={e => (loc.texts[this.currentTextId] = e.target.value)}
+              />
+
+              <div className="row">
+                <div className="col-4 form-group">
+                  <label>Иллюстрация</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={loc.media[this.currentTextId].img}
+                    onChange={e => (loc.media[this.currentTextId].img = e.target.value)}
+                  />
+                </div>
+                <div className="col-4 form-group">
+                  <label>Фоновый трек</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={loc.media[this.currentTextId].track}
+                    onChange={e => (loc.media[this.currentTextId].track = e.target.value)}
+                  />
+                </div>
+                <div className="col-4 form-group">
+                  <label>Звуковой эффект</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    value={loc.media[this.currentTextId].sound}
+                    onChange={e => (loc.media[this.currentTextId].sound = e.target.value)}
+                  />
+                </div>
+              </div>
+            </>
           ) : (
             <div>
               <i>Нет текстов</i>
             </div>
           )}
-        </div>
-
-        <div className="row">
-          <div className="col-4">asdasdsa111aaaaa</div>
         </div>
       </>
     );
