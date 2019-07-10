@@ -159,7 +159,7 @@ class LocationTexts extends React.Component<{
                     type="text"
                     placeholder="Иллюстрация"
                     title="Иллюстрация"
-                    className="form-control"
+                    className="form-control form-control-sm"
                     value={loc.media[this.currentTextId].img}
                     onChange={e => (loc.media[this.currentTextId].img = e.target.value)}
                   />
@@ -169,7 +169,7 @@ class LocationTexts extends React.Component<{
                     placeholder="Фоновый трек"
                     title="Фоновый трек"
                     type="text"
-                    className="form-control"
+                    className="form-control form-control-sm"
                     value={loc.media[this.currentTextId].track}
                     onChange={e => (loc.media[this.currentTextId].track = e.target.value)}
                   />
@@ -179,7 +179,7 @@ class LocationTexts extends React.Component<{
                     placeholder="Звуковой эффект"
                     title="Звуковой эффект"
                     type="text"
-                    className="form-control"
+                    className="form-control form-control-sm"
                     value={loc.media[this.currentTextId].sound}
                     onChange={e => (loc.media[this.currentTextId].sound = e.target.value)}
                   />
@@ -252,6 +252,15 @@ class JumpTexts extends React.Component<{
               />
             </div>
           </div>
+        </div>
+        <div className="form-group mb-2 d-flex ">
+          <label className="flex-shrink-0 col-form-label">Логическое условие: </label>
+          <input
+            type="text"
+            className="form-control form-control-sm ml-2 xxis-invalid"
+            value={j.formulaToPass}
+            onChange={e => (j.formulaToPass = e.target.value)}
+          />
         </div>
       </>
     );
