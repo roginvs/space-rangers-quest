@@ -18,7 +18,8 @@ const config = (env, argv) => {
 
   const developmentModePlugins = MODE_DEVELOPMENT
     ? [
-        // new webpack.HotModuleReplacementPlugin(),
+        // TODO: Disable this for webworker development
+        new webpack.HotModuleReplacementPlugin(),
 
         new ForkTsCheckerWebpackPlugin({
           tslint: true,

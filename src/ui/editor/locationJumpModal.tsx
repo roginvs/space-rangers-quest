@@ -86,7 +86,7 @@ class LocationTexts extends React.Component<{
             </button>
           </div>
           <div className="col-9">
-            <div className="form-check">
+            <div>
               <label className="form-check-label">
                 <input
                   className="form-check-input"
@@ -101,7 +101,7 @@ class LocationTexts extends React.Component<{
                 Выбирать по порядку
               </label>
             </div>
-            <div className="form-check">
+            <div className="d-flex">
               <label className="form-check-label">
                 <input
                   className="form-check-input"
@@ -117,7 +117,7 @@ class LocationTexts extends React.Component<{
               </label>
               {loc.isTextByFormula ? (
                 <input
-                  // className="form-control"
+                  className="form-control"
                   value={loc.textSelectFormula}
                   onChange={e => (loc.textSelectFormula = e.target.value)}
                 />
