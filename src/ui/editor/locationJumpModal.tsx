@@ -23,6 +23,18 @@ import classnames from "classnames";
 import { Hotkeys } from "./hotkeys";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { range } from "./utils";
+import { parseExpression } from "../../lib/formula/parser";
+import { parse } from "../../lib/formula";
+
+function validateFormula(s: string) {
+  try {
+    // Just to check that it is not throws
+    parse(s, [], () => 0);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
 
 type Target = Location | Jump;
 function isLocation(t: Target): t is Location {
@@ -257,7 +269,9 @@ class JumpTexts extends React.Component<{
           <label className="flex-shrink-0 col-form-label">Логическое условие: </label>
           <input
             type="text"
-            className="form-control form-control-sm ml-2 xxis-invalid"
+            className={`form-control form-control-sm ml-2 ${
+              validateFormula(j.formulaToPass) ? "" : "is-invalid"
+            }`}
             value={j.formulaToPass}
             onChange={e => (j.formulaToPass = e.target.value)}
           />
