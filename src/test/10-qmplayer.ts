@@ -915,7 +915,8 @@ describe("Player on test3.qm", function() {
       assert.strictEqual(player.getState().text, "Main menu", "Wants main menu");
     });
     it(`loc0text_0empty_jump0text_param=1`, () => {
-      //      const st = jumpTo(`loc0text_0empty_jump0text_param=1`);
+      //      const st =
+      jumpTo(`loc0text_0empty_jump0text_param=1`);
       assert.strictEqual(player.getState().choices.length, 1);
       assert.strictEqual(player.getState().text, "");
       assert.strictEqual(jumpTo("2win").text, "Win");
@@ -1096,7 +1097,8 @@ describe("Player on test2.qm", function() {
       assert.strictEqual(player.getState().choices[0].text, "neverActive");
     });
     it(`loc0text_0empty_jump0text_param=1`, () => {
-      //      const st = jumpTo(`loc0text_0empty_jump0text_param=1`);
+      //      const st =
+      jumpTo(`loc0text_0empty_jump0text_param=1`);
       assert.strictEqual(player.getState().choices.length, 2);
       assert.strictEqual(jumpTo("2win").text, "Win");
     });
