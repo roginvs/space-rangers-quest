@@ -50,6 +50,47 @@ class LocationTexts extends React.Component<{
 
     return (
       <>
+        <div className="d-flex">
+          <div className="form-check flex-shrink-0 mr-2">
+            <label className="form-check-label">
+              <input
+                className="form-check-input"
+                type="radio"
+                checked={!loc.isTextByFormula}
+                onChange={e => {
+                  if (e.target.checked) {
+                    loc.isTextByFormula = false;
+                  }
+                }}
+              />
+              Выбирать по порядку
+            </label>
+          </div>
+          <div className="form-check flex-shrink-0 mr-1">
+            <label className="form-check-label">
+              <input
+                className="form-check-input"
+                type="radio"
+                checked={loc.isTextByFormula}
+                onChange={e => {
+                  if (e.target.checked) {
+                    loc.isTextByFormula = true;
+                  }
+                }}
+              />
+              Выбирать по формуле
+            </label>
+          </div>
+          {loc.isTextByFormula ? (
+            <input
+              className="form-control"
+              value={loc.textSelectFormula}
+              onChange={e => (loc.textSelectFormula = e.target.value)}
+            />
+          ) : null}
+        </div>
+
+        <div>========================</div>
         <div className="row">
           <div className="col-3">
             Описание #{" "}
@@ -90,45 +131,6 @@ class LocationTexts extends React.Component<{
             >
               -
             </button>
-          </div>
-          <div className="col-9">
-            <div>
-              <label className="form-check-label">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  checked={!loc.isTextByFormula}
-                  onChange={e => {
-                    if (e.target.checked) {
-                      loc.isTextByFormula = false;
-                    }
-                  }}
-                />
-                Выбирать по порядку
-              </label>
-            </div>
-            <div className="d-flex">
-              <label className="form-check-label">
-                <input
-                  className="form-check-input"
-                  type="radio"
-                  checked={loc.isTextByFormula}
-                  onChange={e => {
-                    if (e.target.checked) {
-                      loc.isTextByFormula = true;
-                    }
-                  }}
-                />
-                Выбирать по формуле
-              </label>
-              {loc.isTextByFormula ? (
-                <input
-                  className="form-control"
-                  value={loc.textSelectFormula}
-                  onChange={e => (loc.textSelectFormula = e.target.value)}
-                />
-              ) : null}
-            </div>
           </div>
         </div>
 
