@@ -60,7 +60,7 @@ function parseParenExpression(tokens: Token[]) {
     const pNumber = firstToken.text.slice(1);
     const pId = parseInt(pNumber) - 1;
     if (pConst !== "p" || isNaN(pId)) {
-      throw new Error(`Unknown indentified ${firstToken.text} at ${firstToken.start}`);
+      throw new Error(`Unknown identifier ${firstToken.text} at ${firstToken.start}`);
     }
     const exp: ParameterExpression = {
       type: "parameter",

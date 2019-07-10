@@ -18,6 +18,7 @@ describe("Formula parser test throws", function() {
     " div 54",
     "#",
     "[pp]",
+    "[p1sss] + 2",
   ];
   for (const t of throwingFormulas) {
     it(`Throws at '${t}'`, () => {
