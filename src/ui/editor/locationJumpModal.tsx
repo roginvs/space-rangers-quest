@@ -198,6 +198,66 @@ class LocationTexts extends React.Component<{
 }
 
 @observer
+class JumpTexts extends React.Component<{
+  jump: Jump;
+}> {
+  render() {
+    const j = this.props.jump;
+    return (
+      <>
+        <label>Вопрос для совершения перехода</label>
+        <textarea
+          style={{ width: "100%", height: "3em" }}
+          value={j.text}
+          onChange={e => (j.text = e.target.value)}
+        />
+        <div className="row">
+          <div className="col-9">
+            <label>Сообщение, выводящееся при выполнении перехода</label>
+            <textarea
+              style={{ width: "100%", height: "6em" }}
+              value={j.description}
+              onChange={e => (j.description = e.target.value)}
+            />
+          </div>
+          <div className="col-3">
+            <div className="form-group">
+              <input
+                type="text"
+                placeholder="Иллюстрация"
+                title="Иллюстрация"
+                className="form-control"
+                value={j.img}
+                onChange={e => (j.img = e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <input
+                placeholder="Фоновый трек"
+                title="Фоновый трек"
+                type="text"
+                className="form-control"
+                value={j.track}
+                onChange={e => (j.track = e.target.value)}
+              />
+            </div>
+            <div className="form-group">
+              <input
+                placeholder="Звуковой эффект"
+                title="Звуковой эффект"
+                type="text"
+                className="form-control"
+                value={j.sound}
+                onChange={e => (j.sound = e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+      </>
+    );
+  }
+}
+@observer
 class ModalInside extends React.Component<{
   target: Target;
   onClose: (target?: Location | Jump) => void;
@@ -280,7 +340,11 @@ class ModalInside extends React.Component<{
             : null}
         </ModalHeader>
         <ModalBody className="p-2">
-          {isLocation(target) ? <LocationTexts key={target.id} loc={target} /> : null}
+          {isLocation(target) ? (
+            <LocationTexts key={target.id} loc={target} />
+          ) : isJump(target) ? (
+            <JumpTexts key={target.id} jump={target} />
+          ) : null}
         </ModalBody>
       </Modal>
     );
