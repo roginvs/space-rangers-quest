@@ -26,13 +26,14 @@ import { range } from "./utils";
 import { parseExpression } from "../../lib/formula/parser";
 import { parse } from "../../lib/formula";
 
-function validateFormula(s: string) {
+/** Return undefined if fine, return string with description if something is wrong */
+function isFormulaIncorrect(s: string) {
   try {
     // Just to check that it is not throws
     parse(s, [], () => 0);
-    return true;
+    return undefined;
   } catch (e) {
-    return false;
+    return `${e.message || "error"}`;
   }
 }
 
@@ -96,7 +97,9 @@ class LocationTexts extends React.Component<{
           </div>
           {loc.isTextByFormula ? (
             <input
-              className="form-control"
+              className={`form-control ${
+                isFormulaIncorrect(loc.textSelectFormula) ? "is-invalid" : ""
+              }`}
               value={loc.textSelectFormula}
               onChange={e => (loc.textSelectFormula = e.target.value)}
             />
@@ -270,7 +273,7 @@ class JumpTexts extends React.Component<{
           <input
             type="text"
             className={`form-control form-control-sm ml-2 ${
-              validateFormula(j.formulaToPass) ? "" : "is-invalid"
+              isFormulaIncorrect(j.formulaToPass) ? "is-invalid" : ""
             }`}
             value={j.formulaToPass}
             onChange={e => (j.formulaToPass = e.target.value)}
