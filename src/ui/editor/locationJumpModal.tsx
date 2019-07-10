@@ -139,6 +139,10 @@ class LocationTexts extends React.Component<{
             </div>
           )}
         </div>
+
+        <div className="row">
+          <div className="col-4">asdasdsa111aaaaa</div>
+        </div>
       </>
     );
   }

@@ -10,6 +10,7 @@ const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 const devServer /*: webpackDevServer.Configuration */ = {
   contentBase: "./built-web",
   port: 4099,
+  hot: true,
   // inline: false, // for serviceWorker development tests
 };
 
@@ -19,7 +20,7 @@ const config = (env, argv) => {
   const developmentModePlugins = MODE_DEVELOPMENT
     ? [
         // TODO: Disable this for webworker development
-        new webpack.HotModuleReplacementPlugin(),
+        // new webpack.HotModuleReplacementPlugin(),
 
         new ForkTsCheckerWebpackPlugin({
           tslint: true,

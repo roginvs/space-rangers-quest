@@ -9,6 +9,7 @@ import { Editor } from "./editor";
 import { observer } from "mobx-react";
 import { EditorStore } from "./store";
 
+//import { hot } from "react-hot-loader/root";
 @observer
 export class EditorContainer extends React.Component<{
   store: Store;

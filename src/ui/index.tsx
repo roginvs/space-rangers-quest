@@ -46,7 +46,6 @@ import { ChampionsTabContainer } from "./champions";
 import { firebaseConfig } from "./firebaseConfig";
 import { ChampionsTabContainerNew } from "./champions.new";
 import { EditorContainer } from "./editor";
-
 console.info("starting");
 
 const app = firebase.initializeApp(firebaseConfig);
