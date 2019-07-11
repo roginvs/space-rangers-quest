@@ -108,6 +108,7 @@ describe("Formula parser test", function() {
 
     "0.05*100": 5,
     "100*0.05": 5,
+    "10 000 + 1 00": 10100,
   };
   const params = [0, 1, 2, 4, 8, 16, 32, 64, 100];
   for (let i = 0; i < 100; i++) {
