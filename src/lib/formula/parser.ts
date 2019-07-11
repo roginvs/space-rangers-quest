@@ -139,7 +139,7 @@ function makeFlatExpression(tokens: Token[]) {
     } else if (token.kind === "numeric literal") {
       const exp: NumberExpression = {
         type: "number",
-        value: parseFloat(token.text.replace(",", ".")),
+        value: parseFloat(token.text.replace(",", ".").replace(/ /g, "")),
       };
       flatExpression.push(exp);
     } else if (token.kind === "open brace token") {

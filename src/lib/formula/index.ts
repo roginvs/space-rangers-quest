@@ -10,8 +10,8 @@ export { MAX_NUMBER } from "./consts";
 export function parse(str: string, params: Params = [], random: RandomFunc) {
   // console.info(`New parsing '${str}'`);
   const tokensAndWhitespace: Token[] = [];
-  const strNoWhitespaces = str.replace(/\r|\n/g, "").replace(/ /g, ""); // Some quests have "10 000" as number
-  const scanner = Scanner(strNoWhitespaces);
+  const strNoLineBreaks = str.replace(/\r|\n/g, " ");
+  const scanner = Scanner(strNoLineBreaks);
   while (true) {
     const token = scanner();
     if (token) {
@@ -26,12 +26,12 @@ export function parse(str: string, params: Params = [], random: RandomFunc) {
   for (const sanityCheckToken of tokensAndWhitespace) {
     assert.strictEqual(
       sanityCheckToken.text,
-      strNoWhitespaces.slice(sanityCheckToken.start, sanityCheckToken.end),
+      strNoLineBreaks.slice(sanityCheckToken.start, sanityCheckToken.end),
     );
     assert.strictEqual(sanityCheckToken.text.length, sanityCheckToken.end - sanityCheckToken.start);
   }
 
-  assert.strictEqual(strNoWhitespaces, tokensAndWhitespace.map(x => x.text).join(""));
+  assert.strictEqual(strNoLineBreaks, tokensAndWhitespace.map(x => x.text).join(""));
   const tokens = tokensAndWhitespace.filter(x => x.kind !== "white space token");
 
   const ast = parseExpression(tokens);

@@ -97,7 +97,9 @@ export function Scanner(str: string) {
     let dotSeen = false;
     const start = pos;
 
+    let trailingSpacesStartsAtPos: number | undefined = undefined;
     while (pos < end) {
+      let thisCharacterIsASpace = false;
       const char = str[pos];
       if (isDigit(char)) {
         // ok
@@ -113,18 +115,46 @@ export function Scanner(str: string) {
         }
         // } else if (char === "-" && pos === start) {
         // Ok here
+      } else if (char === " ") {
+        thisCharacterIsASpace = true;
       } else {
         break;
       }
 
+      // Allow spaces inside digits but keep spaces as separate token if they are trailing spaces
+      if (thisCharacterIsASpace) {
+        if (trailingSpacesStartsAtPos === undefined) {
+          // Ok, looks like a series of spaces have been begun
+          trailingSpacesStartsAtPos = pos;
+        } else {
+          // Series of spaces is still continues
+        }
+      } else {
+        // Character is not a space and belongs to digit chars set.
+        // So, spaces are not a trailing spaces
+        trailingSpacesStartsAtPos = undefined;
+      }
+
       pos++;
     }
+
+    if (trailingSpacesStartsAtPos !== undefined) {
+      // health check
+      if (!str.slice(trailingSpacesStartsAtPos, pos).match(/^\s*$/)) {
+        throw new Error(
+          `Unknown internal state: trailingSpacesStartsAtPos is set but tail is not spaces`,
+        );
+      }
+      pos = trailingSpacesStartsAtPos;
+    }
+
     const token: Token = {
       kind: "numeric literal",
       start,
       end: pos,
       text: str.slice(start, pos),
     };
+
     return token;
   }
 
