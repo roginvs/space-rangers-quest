@@ -8,9 +8,9 @@ import { CACHE_MUSIC_NAME_MP3, DATA_DIR, CACHE_IMAGES_NAME } from "./consts";
 
 type CacheInfo = "no" | "yes" | undefined;
 interface CacheInstallInfo {
-    sizeTotal: number;
-    downloaded: number;
-    currentFile: string;
+  sizeTotal: number;
+  downloaded: number;
+  currentFile: string;
 }
 export const QUEST_SEARCH_ALL = "all";
 export const QUEST_SEARCH_OWN = "own";
@@ -22,220 +22,220 @@ export const QUEST_SEARCH_OWN = "own";
  * Only supported on Chrome and Android Webview.
  */
 interface BeforeInstallPromptEvent extends Event {
-    /**
-     * Returns an array of DOMString items containing the platforms on which the event was dispatched.
-     * This is provided for user agents that want to present a choice of versions to the user such as,
-     * for example, "web" or "play" which would allow the user to chose between a web version or
-     * an Android version.
-     */
-    readonly platforms: Array<string>;
+  /**
+   * Returns an array of DOMString items containing the platforms on which the event was dispatched.
+   * This is provided for user agents that want to present a choice of versions to the user such as,
+   * for example, "web" or "play" which would allow the user to chose between a web version or
+   * an Android version.
+   */
+  readonly platforms: Array<string>;
 
-    /**
-     * Returns a Promise that resolves to a DOMString containing either "accepted" or "dismissed".
-     */
-    readonly userChoice: Promise<{
-        outcome: "accepted" | "dismissed";
-        platform: string;
-    }>;
+  /**
+   * Returns a Promise that resolves to a DOMString containing either "accepted" or "dismissed".
+   */
+  readonly userChoice: Promise<{
+    outcome: "accepted" | "dismissed";
+    platform: string;
+  }>;
 
-    /**
-     * Allows a developer to show the install prompt at a time of their own choosing.
-     * This method returns a Promise.
-     */
-    prompt(): Promise<void>;
+  /**
+   * Allows a developer to show the install prompt at a time of their own choosing.
+   * This method returns a Promise.
+   */
+  prompt(): Promise<void>;
 }
 
 export class Store {
-    constructor(public index: Index, public app: firebase.app.App, public db: DB, player: Player) {
-        window.addEventListener("hashchange", this.setPath);
-        this.setPath();
-        this.player = player;
+  constructor(public index: Index, public app: firebase.app.App, public db: DB, player: Player) {
+    window.addEventListener("hashchange", this.setPath);
+    this.setPath();
+    this.player = player;
 
-        this.queryCacheInfo().catch(e => console.warn(e));
+    this.queryCacheInfo().catch(e => console.warn(e));
 
-        this.pwaAlreadyInstalled = window.matchMedia("(display-mode: standalone)").matches;
-        window.addEventListener("beforeinstallprompt", e => {
-            e.preventDefault();
-            this.pwaInstallReadyEvent = e as BeforeInstallPromptEvent;
-        });
-        window.addEventListener("appinstalled", evt => {
-            this.pwaAlreadyInstalled = true;
-        });
+    this.pwaAlreadyInstalled = window.matchMedia("(display-mode: standalone)").matches;
+    window.addEventListener("beforeinstallprompt", e => {
+      e.preventDefault();
+      this.pwaInstallReadyEvent = e as BeforeInstallPromptEvent;
+    });
+    window.addEventListener("appinstalled", evt => {
+      this.pwaAlreadyInstalled = true;
+    });
+  }
+
+  @observable player: Player;
+
+  private readonly setPath = () => {
+    const hash = location.hash.replace(/^#/, "").replace(/^\//, "");
+    if (this._hash === hash) {
+      return;
     }
+    this._hash = hash;
+  };
 
-    @observable player: Player;
+  @observable pwaInstallReadyEvent?: BeforeInstallPromptEvent;
+  @observable pwaAlreadyInstalled: boolean;
 
-    private readonly setPath = () => {
-        const hash = location.hash.replace(/^#/, "").replace(/^\//, "");
-        if (this._hash === hash) {
-            return;
-        }
-        this._hash = hash;
+  @observable private _hash: string = "";
+
+  @computed
+  get hash() {
+    return "#/" + this._hash;
+  }
+  @computed
+  get path() {
+    const arr = this._hash.split("/");
+    return {
+      tab0: arr[0],
+      tab1: arr[1],
+      tab2: arr[2],
     };
+  }
 
-    @observable pwaInstallReadyEvent?: BeforeInstallPromptEvent;
-    @observable pwaAlreadyInstalled: boolean;
+  @observable firebaseLoggedIn: firebase.User | null | undefined = undefined;
 
-    @observable private _hash: string = "";
+  @observable firebaseSyncing: boolean = false;
 
-    @computed
-    get hash() {
-        return "#/" + this._hash;
+  @computed
+  get l() {
+    return getLang(this.player.lang);
+  }
+
+  @observable wonProofs: Map<string, GameWonProofs | undefined> | undefined;
+
+  async loadWinProofsFromLocal() {
+    const m = new Map<string, GameWonProofs | undefined>();
+    await Promise.all(
+      this.index.quests.map(async quest => {
+        const passed = await this.db.isGamePassedLocal(quest.gameName);
+        m.set(quest.gameName, passed);
+      }),
+    );
+    this.wonProofs = m;
+  }
+
+  async syncWithFirebase() {
+    if (this.firebaseSyncing) {
+      // TODO: retry sync when first finished
+      return;
     }
-    @computed
-    get path() {
-        const arr = this._hash.split("/");
-        return {
-            tab0: arr[0],
-            tab1: arr[1],
-            tab2: arr[2],
-        };
-    }
+    this.firebaseSyncing = true;
+    await this.db.syncWithFirebase();
 
-    @observable firebaseLoggedIn: firebase.User | null | undefined = undefined;
-
-    @observable firebaseSyncing: boolean = false;
-
-    @computed
-    get l() {
-        return getLang(this.player.lang);
-    }
-
-    @observable wonProofs: Map<string, GameWonProofs | undefined> | undefined;
-
-    async loadWinProofsFromLocal() {
-        const m = new Map<string, GameWonProofs | undefined>();
-        await Promise.all(
-            this.index.quests.map(async quest => {
-                const passed = await this.db.isGamePassedLocal(quest.gameName);
-                m.set(quest.gameName, passed);
-            }),
-        );
-        this.wonProofs = m;
+    // console.info: renew all cached values
+    const player = await this.db.getConfigLocal("player");
+    if (player) {
+      this.player = player;
     }
 
-    async syncWithFirebase() {
-        if (this.firebaseSyncing) {
-            // TODO: retry sync when first finished
-            return;
-        }
-        this.firebaseSyncing = true;
-        await this.db.syncWithFirebase();
+    await this.loadWinProofsFromLocal();
 
-        // console.info: renew all cached values
-        const player = await this.db.getConfigLocal("player");
-        if (player) {
-            this.player = player;
-        }
+    this.firebaseSyncing = false;
+  }
 
-        await this.loadWinProofsFromLocal();
+  lastQuestListScroll: number = 0;
 
-        this.firebaseSyncing = false;
+  @observable serviceWorkerRegistered: boolean = false;
+
+  @observable serviceWorkerController: ServiceWorkerState | null = null;
+
+  @observable reloadingPage: boolean = false;
+
+  @observable storageIsPersisted: boolean | undefined = undefined;
+
+  @observable installingServiceWorkerState: ServiceWorkerState | null = null;
+  @observable waitingServiceWorkerState: ServiceWorkerState | null = null;
+  @observable waitingServiceWorker: ServiceWorker | null = null;
+  @observable activeServiceWorkerState: ServiceWorkerState | null = null;
+
+  @observable questsListTab: string = QUEST_SEARCH_ALL;
+  @observable questsListSearch: string = "";
+
+  @observable imagesCache: CacheInfo;
+  @observable imagesCacheInstallInfo: CacheInstallInfo | undefined;
+
+  @observable musicCache: CacheInfo;
+  @observable musicCacheInstallInfo: CacheInstallInfo | undefined;
+
+  async queryCacheInfo() {
+    const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
+    let somethingMissingMusic = false;
+    for (const f of this.index.dir.music.files) {
+      if (!(await cacheMusic.match(DATA_DIR + f.path))) {
+        somethingMissingMusic = true;
+        break;
+      }
+    }
+    if (!this.musicCacheInstallInfo) {
+      this.musicCache = somethingMissingMusic ? "no" : "yes";
     }
 
-    lastQuestListScroll: number = 0;
-
-    @observable serviceWorkerRegistered: boolean = false;
-
-    @observable serviceWorkerController: ServiceWorkerState | null = null;
-
-    @observable reloadingPage: boolean = false;
-
-    @observable storageIsPersisted: boolean | undefined = undefined;
-
-    @observable installingServiceWorkerState: ServiceWorkerState | null = null;
-    @observable waitingServiceWorkerState: ServiceWorkerState | null = null;
-    @observable waitingServiceWorker: ServiceWorker | null = null;
-    @observable activeServiceWorkerState: ServiceWorkerState | null = null;
-
-    @observable questsListTab: string = QUEST_SEARCH_ALL;
-    @observable questsListSearch: string = "";
-
-    @observable imagesCache: CacheInfo;
-    @observable imagesCacheInstallInfo: CacheInstallInfo | undefined;
-
-    @observable musicCache: CacheInfo;
-    @observable musicCacheInstallInfo: CacheInstallInfo | undefined;
-
-    async queryCacheInfo() {
-        const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
-        let somethingMissingMusic = false;
-        for (const f of this.index.dir.music.files) {
-            if (!(await cacheMusic.match(DATA_DIR + f.path))) {
-                somethingMissingMusic = true;
-                break;
-            }
-        }
-        if (!this.musicCacheInstallInfo) {
-            this.musicCache = somethingMissingMusic ? "no" : "yes";
-        }
-
-        const cacheImages = await caches.open(CACHE_IMAGES_NAME);
-        let somethingMissingImages = false;
-        for (const f of this.index.dir.images.files) {
-            if (!(await cacheImages.match(DATA_DIR + f.path))) {
-                somethingMissingImages = true;
-                break;
-            }
-        }
-        if (!this.imagesCacheInstallInfo) {
-            this.imagesCache = somethingMissingImages ? "no" : "yes";
-        }
+    const cacheImages = await caches.open(CACHE_IMAGES_NAME);
+    let somethingMissingImages = false;
+    for (const f of this.index.dir.images.files) {
+      if (!(await cacheImages.match(DATA_DIR + f.path))) {
+        somethingMissingImages = true;
+        break;
+      }
     }
-    async installMusicCache() {
-        if (this.musicCacheInstallInfo) {
-            return;
-        }
-        this.musicCacheInstallInfo = {
-            currentFile: "",
-            sizeTotal: this.index.dir.music.totalSize,
-            downloaded: 0,
-        };
-        const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
-        for (const f of this.index.dir.music.files) {
-            this.musicCacheInstallInfo.currentFile = f.path;
-            const url = DATA_DIR + f.path;
-            const data = await fetch(url);
-            await cacheMusic.put(url, data);
-            this.musicCacheInstallInfo.downloaded += f.size;
-        }
-        this.musicCache = "yes";
-        this.musicCacheInstallInfo = undefined;
+    if (!this.imagesCacheInstallInfo) {
+      this.imagesCache = somethingMissingImages ? "no" : "yes";
     }
-    async installImagesCache() {
-        if (this.imagesCacheInstallInfo) {
-            return;
-        }
-        this.imagesCacheInstallInfo = {
-            currentFile: "",
-            sizeTotal: this.index.dir.images.totalSize,
-            downloaded: 0,
-        };
-        const cacheImages = await caches.open(CACHE_IMAGES_NAME);
-        for (const f of this.index.dir.images.files) {
-            this.imagesCacheInstallInfo.currentFile = f.path;
-            const url = DATA_DIR + f.path;
-            const data = await fetch(url);
-            await cacheImages.put(url, data);
-            this.imagesCacheInstallInfo.downloaded += f.size;
-        }
-        this.imagesCache = "yes";
-        this.imagesCacheInstallInfo = undefined;
+  }
+  async installMusicCache() {
+    if (this.musicCacheInstallInfo) {
+      return;
     }
-    async removeMusicCache() {
-        if (this.musicCacheInstallInfo) {
-            return;
-        }
-        await caches.delete(CACHE_MUSIC_NAME_MP3);
-        this.musicCache = "no";
+    this.musicCacheInstallInfo = {
+      currentFile: "",
+      sizeTotal: this.index.dir.music.totalSize,
+      downloaded: 0,
+    };
+    const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
+    for (const f of this.index.dir.music.files) {
+      this.musicCacheInstallInfo.currentFile = f.path;
+      const url = DATA_DIR + f.path;
+      const data = await fetch(url);
+      await cacheMusic.put(url, data);
+      this.musicCacheInstallInfo.downloaded += f.size;
     }
-    async removeImagesCache() {
-        if (this.imagesCacheInstallInfo) {
-            return;
-        }
-        await caches.delete(CACHE_IMAGES_NAME);
-        this.imagesCache = "no";
+    this.musicCache = "yes";
+    this.musicCacheInstallInfo = undefined;
+  }
+  async installImagesCache() {
+    if (this.imagesCacheInstallInfo) {
+      return;
     }
+    this.imagesCacheInstallInfo = {
+      currentFile: "",
+      sizeTotal: this.index.dir.images.totalSize,
+      downloaded: 0,
+    };
+    const cacheImages = await caches.open(CACHE_IMAGES_NAME);
+    for (const f of this.index.dir.images.files) {
+      this.imagesCacheInstallInfo.currentFile = f.path;
+      const url = DATA_DIR + f.path;
+      const data = await fetch(url);
+      await cacheImages.put(url, data);
+      this.imagesCacheInstallInfo.downloaded += f.size;
+    }
+    this.imagesCache = "yes";
+    this.imagesCacheInstallInfo = undefined;
+  }
+  async removeMusicCache() {
+    if (this.musicCacheInstallInfo) {
+      return;
+    }
+    await caches.delete(CACHE_MUSIC_NAME_MP3);
+    this.musicCache = "no";
+  }
+  async removeImagesCache() {
+    if (this.imagesCacheInstallInfo) {
+      return;
+    }
+    await caches.delete(CACHE_IMAGES_NAME);
+    this.imagesCache = "no";
+  }
 }
 
 /*
