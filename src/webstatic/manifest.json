@@ -1,8 +1,11 @@
 {
     "name": "Квесты из Космических Рейнджеров",
     "short_name": "Квесты КР",
+    "description": "Сборник текстовых квестов из Космических Рейнджеров",
     "start_url": "./#/",
     "display": "standalone",
+    "theme_color": "#eceeef",
+    "background_color": "#eceeef",
     "icons": [
         {
             "src": "favicon.png",
