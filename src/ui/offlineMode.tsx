@@ -77,7 +77,7 @@ export class OfflineModeTabContainer extends React.Component<
     const l = store.l;
     return (
       <DivFadeinCss key="offlinemode" className="text-center container my-3">
-        <PwaInstallPrompt store={store}/>
+        <PwaInstallPrompt store={store} />
         {!store.serviceWorkerRegistered ? (
           <h5 className="text-muted">
             <i className="fa fa-spin fa-circle-o-notch fa-fw" />

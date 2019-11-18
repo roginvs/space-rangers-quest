@@ -5,7 +5,7 @@ const RUS = {
   hi: "Привет, ",
   quests: "Квесты",
   options: "Опции",
-  installMode: "Установить",
+  installMode: "Приложение",
   installModeInstalling: "Загрузка",
   installModeNeedReload: "Готово обновление",
   login: "Войти",
