@@ -17,18 +17,19 @@ import {
 import { observer } from "mobx-react";
 import { Store } from "./store";
 import { DivFadeinCss } from "./common";
+import { observable } from "mobx";
 
-interface AppNavbarState {
-    navbarIsOpen: boolean;
-}
 @observer
-export class AppNavbar extends React.Component<
-    {
-        store: Store;
-    },
-    AppNavbarState
-> {
-    state: AppNavbarState = { navbarIsOpen: false }; // For mobile view
+export class AppNavbar extends React.Component<{
+    store: Store;
+}> {
+    @observable
+    pwaInstallStatus?: "ok" | "failed" = undefined;
+
+    // For mobile view
+    @observable
+    navbarIsOpen = false;
+
     render() {
         const { l, firebaseLoggedIn, player } = this.props.store;
         const store = this.props.store;
@@ -41,12 +42,10 @@ export class AppNavbar extends React.Component<
                     </NavbarBrand>
                     <NavbarToggler
                         onClick={() => {
-                            this.setState({
-                                navbarIsOpen: !this.state.navbarIsOpen,
-                            });
+                            this.navbarIsOpen = !this.navbarIsOpen;
                         }}
                     />
-                    <Collapse isOpen={this.state.navbarIsOpen} navbar>
+                    <Collapse isOpen={this.navbarIsOpen} navbar>
                         <Nav className="ml-auto" navbar>
                             <NavItem>
                                 <NavLink active={tab0 === "quests"} href="#/quests">
@@ -132,11 +131,11 @@ export class AppNavbar extends React.Component<
                         </Nav>
                     </Collapse>
                 </Navbar>
-                {store.onBeforeInstallPromptEvent ? (
+                {!store.pwaAlreadyInstalled && store.pwaInstallReadyEvent ? (
                     <DivFadeinCss>
                         <Alert
                             color="primary"
-                            toggle={() => (store.onBeforeInstallPromptEvent = undefined)}
+                            toggle={() => (store.pwaInstallReadyEvent = undefined)}
                         >
                             <h4 className="alert-heading">{l.pwaInstallHeader}</h4>
                             <p>
@@ -145,11 +144,11 @@ export class AppNavbar extends React.Component<
                                     className="alert-link"
                                     onClick={e => {
                                         e.preventDefault();
-                                        const savedEvent = store.onBeforeInstallPromptEvent;
+                                        const savedEvent = store.pwaInstallReadyEvent;
                                         if (!savedEvent) {
                                             return;
                                         }
-                                        store.onBeforeInstallPromptEvent = undefined;
+                                        store.pwaInstallReadyEvent = undefined;
                                         savedEvent.prompt().catch(e => console.warn(e));
                                         // At this point we are not interested in userChoice
                                     }}

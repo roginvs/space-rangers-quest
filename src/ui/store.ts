@@ -53,9 +53,13 @@ export class Store {
 
         this.queryCacheInfo().catch(e => console.warn(e));
 
+        this.pwaAlreadyInstalled = window.matchMedia("(display-mode: standalone)").matches;
         window.addEventListener("beforeinstallprompt", e => {
             e.preventDefault();
-            this.onBeforeInstallPromptEvent = e as BeforeInstallPromptEvent;
+            this.pwaInstallReadyEvent = e as BeforeInstallPromptEvent;
+        });
+        window.addEventListener("appinstalled", evt => {
+            this.pwaAlreadyInstalled = true;
         });
     }
 
@@ -69,7 +73,8 @@ export class Store {
         this._hash = hash;
     };
 
-    @observable onBeforeInstallPromptEvent?: BeforeInstallPromptEvent;
+    @observable pwaInstallReadyEvent?: BeforeInstallPromptEvent;
+    @observable pwaAlreadyInstalled: boolean;
 
     @observable private _hash: string = "";
 
