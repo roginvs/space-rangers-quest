@@ -16,6 +16,7 @@ import {
 
 import { observer } from "mobx-react";
 import { Store } from "./store";
+import { DivFadeinCss } from "./common";
 
 interface AppNavbarState {
     navbarIsOpen: boolean;
@@ -131,32 +132,34 @@ export class AppNavbar extends React.Component<
                         </Nav>
                     </Collapse>
                 </Navbar>
-                {store.onBeforeInstallPromptEvent || true ? (
-                    <Alert
-                        color="primary"
-                        toggle={() => (store.onBeforeInstallPromptEvent = undefined)}
-                    >
-                        <h4 className="alert-heading">{l.pwaInstallHeader}</h4>
-                        <p>
-                            <a
-                                href="#"
-                                className="alert-link"
-                                onClick={e => {
-                                    e.preventDefault();
-                                    const savedEvent = store.onBeforeInstallPromptEvent;
-                                    if (!savedEvent) {
-                                        return;
-                                    }
-                                    store.onBeforeInstallPromptEvent = undefined;
-                                    savedEvent.prompt().catch(e => console.warn(e));
-                                    // At this point we are not interested in userChoice
-                                }}
-                            >
-                                {l.pwaInstallInfoLink}
-                            </a>
-                            {l.pwaInstallInfoToAddToDesktop}
-                        </p>
-                    </Alert>
+                {store.onBeforeInstallPromptEvent ? (
+                    <DivFadeinCss>
+                        <Alert
+                            color="primary"
+                            toggle={() => (store.onBeforeInstallPromptEvent = undefined)}
+                        >
+                            <h4 className="alert-heading">{l.pwaInstallHeader}</h4>
+                            <p>
+                                <a
+                                    href="#"
+                                    className="alert-link"
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        const savedEvent = store.onBeforeInstallPromptEvent;
+                                        if (!savedEvent) {
+                                            return;
+                                        }
+                                        store.onBeforeInstallPromptEvent = undefined;
+                                        savedEvent.prompt().catch(e => console.warn(e));
+                                        // At this point we are not interested in userChoice
+                                    }}
+                                >
+                                    {l.pwaInstallInfoLink}
+                                </a>
+                                {l.pwaInstallInfoToAddToDesktop}
+                            </p>
+                        </Alert>
+                    </DivFadeinCss>
                 ) : null}
                 <Container className="mt-3">{this.props.children}</Container>
             </>
