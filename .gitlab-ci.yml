@@ -1,20 +1,20 @@
 image: node:10
 pages:
-  stage: deploy
-  script:
-  - rm -R built-web || true
-  - npx prettier --list-different "src/**/*.ts*(x)"
-  - npm install
-  - mkdir built-web
-  - npm run tsc
-  - npm run test
-  - npm run lint
-  - mv coverage built-web
-  - node built-node/packGameData.js
-  - npm run build
-  - mv built-web public
-  artifacts:
-    paths:
-    - public
-  only:
-  - master
+    stage: deploy
+    script:
+        - rm -R built-web || true
+        - npm install
+        - mkdir built-web
+        - npm run prettier-check
+        - npm run tsc
+        - npm run test
+        - npm run lint
+        - mv coverage built-web
+        - node built-node/packGameData.js
+        - npm run build
+        - mv built-web public
+    artifacts:
+        paths:
+            - public
+    only:
+        - master
