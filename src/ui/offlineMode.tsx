@@ -6,6 +6,7 @@ import { Progress } from "reactstrap";
 import { observer } from "mobx-react";
 import { Store } from "./store";
 import { SKIP_WAITING_MESSAGE_DATA } from "./consts";
+import { PwaInstallPrompt } from "./pwaInstallPrompt";
 
 interface StorageUsedInfoState {
   error?: Error;
@@ -76,6 +77,7 @@ export class OfflineModeTabContainer extends React.Component<
     const l = store.l;
     return (
       <DivFadeinCss key="offlinemode" className="text-center container my-3">
+        <PwaInstallPrompt store={store}/>
         {!store.serviceWorkerRegistered ? (
           <h5 className="text-muted">
             <i className="fa fa-spin fa-circle-o-notch fa-fw" />
