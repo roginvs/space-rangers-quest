@@ -33,7 +33,7 @@ export class PwaInstallPrompt extends React.Component<{
 
     if (this.pwaInstallResult === undefined) {
       if (store.pwaAlreadyInstalled || !store.pwaInstallReadyEvent) {
-        //    return null;
+        return null;
       }
       return (
         <DivFadeinCss>
