@@ -114,7 +114,7 @@ const RUS = {
     pwaInstallHeader: "Веб-приложение",
     pwaInstallInfoLink: "Нажми здесь",
     pwaInstallInfoToAddToDesktop: " чтобы закончить установку и создать ярлык на рабочем столе",
-    pwaInstallOk: "Приложение установлено!",
+    pwaInstallOk: "Установка приложения началась!",
     pwaInstallNotOk: "Не получилось установить",
 };
 
@@ -232,7 +232,7 @@ const ENG: LangTexts = {
     pwaInstallHeader: "Web application",
     pwaInstallInfoLink: "Click here",
     pwaInstallInfoToAddToDesktop: " to finish installation and to add to homescreen",
-    pwaInstallOk: "Application installed!",
+    pwaInstallOk: "Application installation started!",
     pwaInstallNotOk: "Failed to install application",
 };
 
