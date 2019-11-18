@@ -11,7 +11,7 @@ pages:
         - npm run lint
         - mv coverage built-web
         - node built-node/packGameData.js
-        - npm run build
+        - npm run buildui
         - mv built-web public
     artifacts:
         paths:
