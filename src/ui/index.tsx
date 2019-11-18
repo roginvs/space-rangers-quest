@@ -282,7 +282,11 @@ class MainLoader extends React.Component<{}> {
                 return <QuestList store={store} />;
             } else {
                 if (!tab2) {
-                    return <QuestInfo key={tab1} store={store} gameName={tab1} />;
+                    return (
+                        <AppNavbar store={store}>
+                            <QuestInfo key={tab1} store={store} gameName={tab1} />
+                        </AppNavbar>
+                    );
                 } else {
                     return <QuestPlay key={tab1} store={store} gameName={tab1} />;
                 }
