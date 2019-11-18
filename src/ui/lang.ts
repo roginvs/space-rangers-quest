@@ -124,7 +124,7 @@ const ENG: LangTexts = {
   hi: "Hi, ",
   quests: "Quests",
   options: "Option",
-  installMode: "Install",
+  installMode: "Application",
   installModeInstalling: "Downloading",
   installModeNeedReload: "Update ready",
   login: "Log in",
