@@ -61,14 +61,6 @@ class MainLoader extends React.Component<{}> {
     error?: string;
 
     componentDidMount() {
-        /*
-        app.auth().onAuthStateChanged(user => {
-        this.setState({
-            firebaseLoggedIn: user ? user : null
-        });
-        })
-        */
-
         (async () => {
             this.loadingStage = "index";
 
