@@ -18,13 +18,14 @@ import { observer } from "mobx-react";
 import { Store } from "./store";
 import { DivFadeinCss } from "./common";
 import { observable } from "mobx";
+import { assertNever } from "../lib/formula/calculator";
 
 @observer
 export class AppNavbar extends React.Component<{
     store: Store;
 }> {
     @observable
-    pwaInstallStatus?: "ok" | "failed" = undefined;
+    pwaInstallResult?: "success" | "failed" = undefined;
 
     // For mobile view
     @observable
@@ -150,7 +151,20 @@ export class AppNavbar extends React.Component<{
                                         }
                                         store.pwaInstallReadyEvent = undefined;
                                         savedEvent.prompt().catch(e => console.warn(e));
-                                        // At this point we are not interested in userChoice
+                                        savedEvent.userChoice
+                                            .then(choiceResult => {
+                                                this.pwaInstallResult =
+                                                    choiceResult.outcome === "accepted"
+                                                        ? "success"
+                                                        : choiceResult.outcome === "dismissed"
+                                                        ? "failed"
+                                                        : assertNever(choiceResult.outcome);
+                                                setTimeout(
+                                                    () => (this.pwaInstallResult = undefined),
+                                                    4000,
+                                                );
+                                            })
+                                            .catch(e => console.warn(e));
                                     }}
                                 >
                                     {l.pwaInstallInfoLink}
@@ -160,6 +174,18 @@ export class AppNavbar extends React.Component<{
                         </Alert>
                     </DivFadeinCss>
                 ) : null}
+                {this.pwaInstallResult === undefined ? null : this.pwaInstallResult ===
+                  "success" ? (
+                    <Alert color="success" toggle={() => (this.pwaInstallResult = undefined)}>
+                        {l.pwaInstallOk}
+                    </Alert>
+                ) : this.pwaInstallResult === "failed" ? (
+                    <Alert color="warning" toggle={() => (this.pwaInstallResult = undefined)}>
+                        {l.pwaInstallNotOk}
+                    </Alert>
+                ) : (
+                    assertNever(this.pwaInstallResult)
+                )}
                 <Container className="mt-3">{this.props.children}</Container>
             </>
         );

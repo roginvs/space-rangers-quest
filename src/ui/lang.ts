@@ -114,6 +114,8 @@ const RUS = {
     pwaInstallHeader: "Веб-приложение",
     pwaInstallInfoLink: "Нажми здесь",
     pwaInstallInfoToAddToDesktop: " чтобы закончить установку и создать ярлык на рабочем столе",
+    pwaInstallOk: "Приложение установлено!",
+    pwaInstallNotOk: "Не получилось установить",
 };
 
 export type LangTexts = typeof RUS;
@@ -230,6 +232,8 @@ const ENG: LangTexts = {
     pwaInstallHeader: "Web application",
     pwaInstallInfoLink: "Click here",
     pwaInstallInfoToAddToDesktop: " to finish installation and to add to homescreen",
+    pwaInstallOk: "Application installed!",
+    pwaInstallNotOk: "Failed to install application",
 };
 
 export function getLang(lang: Lang) {
