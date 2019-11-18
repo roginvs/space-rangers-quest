@@ -131,28 +131,31 @@ export class AppNavbar extends React.Component<
                         </Nav>
                     </Collapse>
                 </Navbar>
-                {store.onBeforeInstallPromptEvent ? (
+                {store.onBeforeInstallPromptEvent || true ? (
                     <Alert
                         color="primary"
                         toggle={() => (store.onBeforeInstallPromptEvent = undefined)}
                     >
-                        <a
-                            href="#"
-                            className="alert-link"
-                            onClick={e => {
-                                e.preventDefault();
-                                const savedEvent = store.onBeforeInstallPromptEvent;
-                                if (!savedEvent) {
-                                    return;
-                                }
-                                store.onBeforeInstallPromptEvent = undefined;
-                                savedEvent.prompt().catch(e => console.warn(e));
-                                // At this point we are not interested in userChoice
-                            }}
-                        >
-                            {l.createLinkAt}
-                        </a>{" "}
-                        {l.createLinkDesktop}
+                        <h4 className="alert-heading">{l.pwaInstallHeader}</h4>
+                        <p>
+                            <a
+                                href="#"
+                                className="alert-link"
+                                onClick={e => {
+                                    e.preventDefault();
+                                    const savedEvent = store.onBeforeInstallPromptEvent;
+                                    if (!savedEvent) {
+                                        return;
+                                    }
+                                    store.onBeforeInstallPromptEvent = undefined;
+                                    savedEvent.prompt().catch(e => console.warn(e));
+                                    // At this point we are not interested in userChoice
+                                }}
+                            >
+                                {l.pwaInstallInfoLink}
+                            </a>
+                            {l.pwaInstallInfoToAddToDesktop}
+                        </p>
                     </Alert>
                 ) : null}
                 <Container className="mt-3">{this.props.children}</Container>

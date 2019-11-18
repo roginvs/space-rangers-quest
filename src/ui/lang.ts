@@ -111,8 +111,9 @@ const RUS = {
     championsTotal: "Загружено чемпионов:",
     championsLoading: "Загрузка списка чемпионов",
 
-    createLinkAt: "Создать ярлык",
-    createLinkDesktop: "на рабочем столе",
+    pwaInstallHeader: "Веб-приложение",
+    pwaInstallInfoLink: "Нажми здесь",
+    pwaInstallInfoToAddToDesktop: " чтобы закончить установку и создать ярлык на рабочем столе",
 };
 
 export type LangTexts = typeof RUS;
@@ -226,8 +227,9 @@ const ENG: LangTexts = {
     championsTotal: "Loaded champions:",
     championsLoading: "Loading list of champions",
 
-    createLinkAt: "Add application",
-    createLinkDesktop: "into homescreen",
+    pwaInstallHeader: "Web application",
+    pwaInstallInfoLink: "Click here",
+    pwaInstallInfoToAddToDesktop: " to finish installation and to add to homescreen",
 };
 
 export function getLang(lang: Lang) {
