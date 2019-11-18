@@ -10,3 +10,5 @@ echo "Checkouting master branch"
 git checkout master
 echo "Copying borrowed files"
 cp -R ../space-rangers-borrowed/* borrowed/
+echo "Pushing to origin/master"
+git push
