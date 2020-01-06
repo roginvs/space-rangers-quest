@@ -11,7 +11,6 @@ import {
 } from "../../lib/qmreader";
 import { observer } from "mobx-react";
 import { observable, computed, runInAction } from "mobx";
-import Popper from "@material-ui/core/Popper";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 import { EditorStore } from "./store";
 import { assertNever } from "../../lib/formula/calculator";

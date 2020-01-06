@@ -11,7 +11,7 @@ import {
 } from "../../lib/qmreader";
 import { observer } from "mobx-react";
 import { observable, computed, runInAction } from "mobx";
-import Popper from "@material-ui/core/Popper";
+import { Popper } from "react-popper";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 import { EditorStore } from "./store";
 import { assertNever } from "../../lib/formula/calculator";
@@ -256,6 +256,9 @@ export class InfoPopup extends React.Component<{
         boundariesElement: "viewport",
       },
     };
+    // TODO
+    return null;
+    /*
     return (
       <Popper
         open={true}
@@ -268,5 +271,6 @@ export class InfoPopup extends React.Component<{
         {this.props.children}
       </Popper>
     );
+    */
   }
 }
