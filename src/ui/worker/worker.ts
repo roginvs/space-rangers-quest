@@ -2,7 +2,7 @@ import "../lib.webworker";
 import { WorkerMsgRequest, WorkerMsgResponce, METHOD_CHECK_QUEST } from "./defs";
 import { checkQuest } from "./workerCheckQuest";
 
-self.onmessage = e => {
+self.addEventListener("message", e => {
   const msg = JSON.parse(e.data) as WorkerMsgRequest;
   (async () => {
     if (msg.method === METHOD_CHECK_QUEST) {
@@ -29,4 +29,4 @@ self.onmessage = e => {
       };
       (self.postMessage as any)(JSON.stringify(result));
     });
-};
+});
