@@ -1,20 +1,19 @@
 image: node:10
 pages:
-    stage: deploy
-    script:
-        - rm -R built-web || true
-        - npm install
-        - mkdir built-web
-        - npm run prettier-check
-        - npm run tsc
-        - npm run test
-        - npm run lint
-        - mv coverage built-web
-        - node built-node/packGameData.js
-        - npm run buildui
-        - mv built-web public
-    artifacts:
-        paths:
-            - public
-    only:
-        - master
+  stage: deploy
+  script:
+    - rm -R built-web || true
+    - npm install
+    - mkdir built-web
+    - npm run prettier-check
+    - npm run test
+    - npm run lint
+    - mv coverage built-web
+    - ./node_modules/.bin/ts-node src/packGameData.ts
+    - npm run buildui
+    - mv built-web public
+  artifacts:
+    paths:
+      - public
+  only:
+    - master

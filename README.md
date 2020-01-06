@@ -22,11 +22,10 @@
 ```
 rm -R built-web || true
 npm install
-npm run tsc
 npm run lint
 npm run test
 mkdir built-web
-node built-node/packGameData.js
+./node_modules/.bin/ts-node src/packGameData.ts
 npm run build
 ```
 
