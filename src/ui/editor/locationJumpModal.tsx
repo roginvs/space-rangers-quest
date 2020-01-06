@@ -390,11 +390,10 @@ export class LocationJumpParamsModal extends React.Component<{
     if (!selected.opened) {
       return null;
     }
-    const loc =
-      selected.type === "location" ? quest.locations.find(l => l.id === selected.id) : undefined;
+    const loc = selected.type === "location" ? store.locationById(selected.id) : undefined;
     const jump =
       selected.type === "jump_end" || selected.type === "jump_start"
-        ? quest.jumps.find(x => x.id === selected.id)
+        ? store.jumpById(selected.id)
         : undefined;
     const target = loc || jump;
     if (!target) {

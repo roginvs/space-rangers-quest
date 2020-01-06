@@ -26,7 +26,6 @@ export class LocationPoint extends React.Component<{
   @observable
   hovered = false;
 
-  @observable
   ref: SVGCircleElement | null = null;
 
   render() {

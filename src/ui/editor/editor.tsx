@@ -108,7 +108,8 @@ export class Editor extends React.Component<{
                 return;
               }
               if (selected.moving && selected.type === "location") {
-                const loc = quest.locations.find(x => x.id === selected.id);
+                const loc = store.locationById(selected.id);
+
                 if (!loc) {
                   console.warn(`Lost location id=${selected.id}`);
                   store.selected = undefined;
@@ -136,7 +137,7 @@ export class Editor extends React.Component<{
                 selected.moving &&
                 (selected.type === "jump_start" || selected.type === "jump_end")
               ) {
-                const jump = quest.jumps.find(x => x.id === selected.id);
+                const jump = store.jumpById(selected.id);
                 if (!jump) {
                   console.warn(`Lost jump id=${selected.id}`);
                   store.selected = undefined;
@@ -159,9 +160,9 @@ export class Editor extends React.Component<{
                   }
                   store.pushUndo();
                 });
-              } else if (store.selected && store.mouseMode === "remove") {
-                if (store.selected.type === "location") {
-                  const loc = quest.locations.find(x => x.id === selected.id);
+              } else if (store.mouseMode === "remove") {
+                if (selected.type === "location") {
+                  const loc = store.locationById(selected.id);
                   if (!loc) {
                     console.warn(`Lost location id=${selected.id}`);
                     store.selected = undefined;
@@ -175,11 +176,8 @@ export class Editor extends React.Component<{
                     store.selected = undefined;
                     store.pushUndo();
                   });
-                } else if (
-                  store.selected.type === "jump_end" ||
-                  store.selected.type === "jump_start"
-                ) {
-                  const jump = quest.jumps.find(x => x.id === selected.id);
+                } else if (selected.type === "jump_end" || selected.type === "jump_start") {
+                  const jump = store.jumpById(selected.id);
                   if (!jump) {
                     console.warn(`Lost jump id=${selected.id}`);
                     store.selected = undefined;
@@ -191,7 +189,7 @@ export class Editor extends React.Component<{
                     store.pushUndo();
                   });
                 } else {
-                  assertNever(store.selected.type);
+                  assertNever(selected.type);
                 }
               } else {
                 selected.moving = false;

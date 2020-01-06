@@ -1,9 +1,31 @@
 import { observable, computed, reaction, toJS, runInAction } from "mobx";
 import { QM, JumpId, LocationId } from "../../lib/qmreader";
 import { CANVAS_PADDING } from "./consts";
+import { computedFn } from "mobx-utils";
 
 export const EDITOR_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
 export type EditorMode = typeof EDITOR_MODES[number];
+
+interface SelectedCommon {
+  initialX: number;
+  initialY: number;
+  currentX: number;
+  currentY: number;
+  moving: boolean;
+  opened: boolean;
+}
+
+interface SelectedLocation extends SelectedCommon {
+  id: LocationId;
+  type: "location";
+}
+interface SelectedJump extends SelectedCommon {
+  id: JumpId;
+  type: "jump_start" | "jump_end";
+}
+
+type Selected = SelectedLocation | SelectedJump;
+
 export class EditorStore {
   constructor(quest: QM) {
     this.quest = quest;
@@ -23,16 +45,7 @@ export class EditorStore {
   }
 
   @observable
-  selected?: {
-    id: JumpId | LocationId;
-    type: "location" | "jump_start" | "jump_end";
-    initialX: number;
-    initialY: number;
-    currentX: number;
-    currentY: number;
-    moving: boolean;
-    opened: boolean;
-  };
+  selected?: Selected;
 
   @computed
   get gridX() {
@@ -107,4 +120,10 @@ export class EditorStore {
       this.quest = newState;
     });
   }
+
+  readonly jumpById = computedFn((jumpId: JumpId) => this.quest.jumps.find(j => j.id === jumpId));
+
+  readonly locationById = computedFn((locationId: LocationId) =>
+    this.quest.locations.find(l => l.id === locationId),
+  );
 }

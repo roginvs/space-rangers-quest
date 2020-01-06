@@ -85,10 +85,9 @@ class JumpArrowReal extends React.Component<{
             this.hovered = false;
           }}
           onMouseDown={e => {
-            const startLoc = this.props.store.quest.locations.find(
-              x => x.id === jump.fromLocationId,
-            );
-            const endLoc = this.props.store.quest.locations.find(x => x.id === jump.toLocationId);
+            const startLoc = this.props.store.locationById(jump.fromLocationId);
+
+            const endLoc = this.props.store.locationById(jump.toLocationId);
             if (!startLoc || !endLoc) {
               console.error(`Jump id=${jump.id} unable to find locations`);
               return null;
@@ -143,12 +142,13 @@ class JumpArrowReal extends React.Component<{
 }
 
 @observer
-export class JumpArrow extends React.Component<{
+export class IdleJumpArrow extends React.Component<{
   store: EditorStore;
   jump: Jump;
 }> {
   @observable
   start?: Point;
+  @observable
   end?: Point;
 
   render() {
@@ -156,57 +156,11 @@ export class JumpArrow extends React.Component<{
     const quest = store.quest;
     const jump = this.props.jump;
 
-    const startLoc = quest.locations.find(x => x.id === jump.fromLocationId);
-    const endLoc = quest.locations.find(x => x.id === jump.toLocationId);
+    const startLoc = store.locationById(jump.fromLocationId);
+    const endLoc = store.locationById(jump.toLocationId);
     if (!startLoc || !endLoc) {
       console.error(`Jump id=${jump.id} unable to find locations`);
       return null;
-    }
-
-    if (
-      store.selected &&
-      store.moving &&
-      store.selected.type === "jump_start" &&
-      store.selected.id === jump.id
-    ) {
-      return (
-        <JumpArrowReal
-          store={store}
-          jump={jump}
-          start={{
-            x: store.selected.currentX,
-            y: store.selected.currentY,
-          }}
-          end={{
-            x: endLoc.locX,
-            y: endLoc.locY,
-          }}
-          youAreMoving={true}
-        />
-      );
-    }
-
-    if (
-      store.selected &&
-      store.moving &&
-      store.selected.type === "jump_end" &&
-      store.selected.id === jump.id
-    ) {
-      return (
-        <JumpArrowReal
-          store={store}
-          jump={jump}
-          start={{
-            x: startLoc.locX,
-            y: startLoc.locY,
-          }}
-          end={{
-            x: store.selected.currentX,
-            y: store.selected.currentY,
-          }}
-          youAreMoving={true}
-        />
-      );
     }
 
     const allJumpFromThisLocations = quest.jumps
@@ -336,5 +290,71 @@ export class JumpArrow extends React.Component<{
         ) : null}
       </>
     );
+  }
+}
+
+@observer
+export class JumpArrow extends React.Component<{
+  store: EditorStore;
+  jump: Jump;
+}> {
+  render() {
+    const store = this.props.store;
+    const jump = this.props.jump;
+
+    const startLoc = store.locationById(jump.fromLocationId);
+    const endLoc = store.locationById(jump.toLocationId);
+    if (!startLoc || !endLoc) {
+      console.error(`Jump id=${jump.id} unable to find locations`);
+      return null;
+    }
+
+    if (
+      store.selected &&
+      store.moving &&
+      store.selected.type === "jump_start" &&
+      store.selected.id === jump.id
+    ) {
+      return (
+        <JumpArrowReal
+          store={store}
+          jump={jump}
+          start={{
+            x: store.selected.currentX,
+            y: store.selected.currentY,
+          }}
+          end={{
+            x: endLoc.locX,
+            y: endLoc.locY,
+          }}
+          youAreMoving={true}
+        />
+      );
+    }
+
+    if (
+      store.selected &&
+      store.moving &&
+      store.selected.type === "jump_end" &&
+      store.selected.id === jump.id
+    ) {
+      return (
+        <JumpArrowReal
+          store={store}
+          jump={jump}
+          start={{
+            x: startLoc.locX,
+            y: startLoc.locY,
+          }}
+          end={{
+            x: store.selected.currentX,
+            y: store.selected.currentY,
+          }}
+          youAreMoving={true}
+        />
+      );
+    }
+
+    return <IdleJumpArrow store={store} jump={jump} />;
   }
 }
