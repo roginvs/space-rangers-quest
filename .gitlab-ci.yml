@@ -10,7 +10,7 @@ pages:
     - npm run lint
     - mv coverage built-web
     - ./node_modules/.bin/ts-node src/packGameData.ts
-    - npm run buildui
+    - npm run build
     - mv built-web public
   artifacts:
     paths:

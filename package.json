@@ -62,8 +62,7 @@
     "lint": "tslint -c ./tslint.json --project ./tsconfig.json --format stylish",
     "test": "nyc --reporter=html --reporter=text mocha --require ts-node/register --bail src/test/**/*.ts",
     "prettier-check": "prettier --list-different \"src/**/*.ts*(x)\"",
-    "buildui": "webpack --mode production --devtool nosources-source-map --progress",
-    "build": "npm run lint && npm run tsc && npm run buildui",
+    "build": "webpack --mode production --devtool nosources-source-map --progress",
     "start": "webpack-dev-server --mode development --open --devtool cheap-module-source-map"
   },
   "repository": {
