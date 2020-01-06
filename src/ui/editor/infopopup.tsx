@@ -247,6 +247,9 @@ export class InfoPopup extends React.Component<{
   anchorEl: ReferenceObject | null;
 }> {
   render() {
+    // TODO
+    return null;
+    /*
     const modifiers: Modifiers = {
       flip: {
         enabled: true,
@@ -256,10 +259,7 @@ export class InfoPopup extends React.Component<{
         boundariesElement: "viewport",
       },
     };
-    // TODO
-    return null;
-    /*
-    return (
+     return (
       <Popper
         open={true}
         anchorEl={addPaddingToPopper(this.props.anchorEl)}
