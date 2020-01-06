@@ -40,6 +40,9 @@ const config = (env, argv) => {
       filename: "[name].js",
       chunkFilename: "[id].js",
       path: __dirname + "/built-web",
+      globalObject: /* This is small workaround for workers scope and HotModuleReplacementPlugin */ MODE_DEVELOPMENT
+        ? "this"
+        : undefined,
     },
 
     plugins: [
