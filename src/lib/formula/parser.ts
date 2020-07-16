@@ -196,17 +196,13 @@ function parseExpression2(reader: TokenReader) {
             from,
             to,
           });
-        } else if (reader.current().kind === "close paren token") {
+        } else if (
+          reader.current().kind === "close paren token" ||
+          reader.current().kind === "semicolon token"
+        ) {
           ranges.push({
             from,
           });
-          reader.readNext();
-          break;
-        } else if (reader.current().kind === "semicolon token") {
-          ranges.push({
-            from,
-          });
-          reader.readNext();
         } else {
           throw new Error(
             `Unexpected token inside paren '${reader.current().text}' pos=${
