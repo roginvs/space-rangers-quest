@@ -1,6 +1,6 @@
 import * as assert from "assert";
 import { Params, Token, SyntaxKind } from "./types";
-import { Scanner } from "./scanner";
+import { createScanner } from "./scanner";
 import { parseExpression } from "./parser";
 import { calculateAst } from "./calculator";
 import { RandomFunc } from "../randomFunc";
@@ -8,33 +8,9 @@ import { RandomFunc } from "../randomFunc";
 export { MAX_NUMBER } from "./consts";
 
 export function parse(str: string, params: Params = [], random: RandomFunc) {
-  // console.info(`New parsing '${str}'`);
-  const tokensAndWhitespace: Token[] = [];
   const strNoLineBreaks = str.replace(/\r|\n/g, " ");
-  const scanner = Scanner(strNoLineBreaks);
-  while (true) {
-    const token = scanner();
-    if (token) {
-      tokensAndWhitespace.push(token);
-      if (token.kind !== "white space token") {
-        // console.info(token);
-      }
-    } else {
-      break;
-    }
-  }
-  for (const sanityCheckToken of tokensAndWhitespace) {
-    assert.strictEqual(
-      sanityCheckToken.text,
-      strNoLineBreaks.slice(sanityCheckToken.start, sanityCheckToken.end),
-    );
-    assert.strictEqual(sanityCheckToken.text.length, sanityCheckToken.end - sanityCheckToken.start);
-  }
-
-  assert.strictEqual(strNoLineBreaks, tokensAndWhitespace.map(x => x.text).join(""));
-  const tokens = tokensAndWhitespace.filter(x => x.kind !== "white space token");
-
-  const ast = parseExpression(tokens);
+  const scanner = createScanner(strNoLineBreaks);
+  const ast = parseExpression(scanner);
   // console.info(JSON.stringify(ast, null, 4));
   const value = calculateAst(ast, params, random);
   return Math.round(value);

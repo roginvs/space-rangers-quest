@@ -11,7 +11,30 @@ const keywordsToKind: {
   or: "or keyword",
 };
 
-export function Scanner(str: string) {
+function addSanityCheckToScanFunc(originalString: string, originalScan: () => Token) {
+  let constructedString = "";
+  return () => {
+    const token = originalScan();
+    if (token.end - token.start <= 0 && token.kind !== "end token") {
+      throw new Error(
+        `Scanner fail: end=${token.end} start=${token.start} str='${originalString}'`,
+      );
+    }
+    if (originalString.slice(token.start, token.end) !== token.text) {
+      throw new Error(`Scanner fail: token slice differs`);
+    }
+    if (token.kind !== "end token") {
+      constructedString += token.text;
+    } else {
+      if (constructedString !== originalString) {
+        throw new Error(`Scanner fail: constructed string differs!`);
+      }
+    }
+    return token;
+  };
+}
+
+export function createScanner(str: string) {
   let pos = 0;
   const end = str.length;
 
@@ -62,7 +85,7 @@ export function Scanner(str: string) {
     return pos + charCount < end ? str[pos + charCount] : undefined;
   }
 
-  function scanIdentifierOrKeyword(): Token | undefined {
+  function scanIdentifierOrKeyword(): Token {
     const start = pos;
 
     let text = "";
@@ -158,9 +181,14 @@ export function Scanner(str: string) {
     return token;
   }
 
-  function scan(): Token | undefined {
+  function scan(): Token {
     if (pos >= end) {
-      return undefined;
+      return {
+        kind: "end token",
+        start: pos,
+        end: pos,
+        text: "",
+      };
     }
     const char = str[pos];
     if (isWhitespace(char)) {
@@ -252,5 +280,6 @@ export function Scanner(str: string) {
 
     return scanIdentifierOrKeyword();
   }
-  return scan;
+
+  return addSanityCheckToScanFunc(str, scan);
 }
