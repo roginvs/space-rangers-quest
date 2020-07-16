@@ -193,18 +193,18 @@ function parseExpression2(reader: TokenReader) {
           const to = readExpr();
 
           ranges.push({
-            from: from,
-            to: to,
+            from,
+            to,
           });
         } else if (reader.current().kind === "close paren token") {
           ranges.push({
-            from: from,
+            from,
           });
           reader.readNext();
           break;
         } else if (reader.current().kind === "semicolon token") {
           ranges.push({
-            from: from,
+            from,
           });
           reader.readNext();
         } else {
