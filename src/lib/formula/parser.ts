@@ -1,4 +1,4 @@
-import { Scanner } from "./scanner";
+import { createScanner } from "./scanner";
 import {
   Token,
   Expression,
@@ -9,18 +9,9 @@ import {
   RangeExpression,
   SyntaxKindBinary,
 } from "./types";
-import { assertNever } from "./calculator";
 
-type TokenOrEnd =
-  | Token
-  | {
-      kind: "end";
-      start: number;
-      end: number;
-      text: string;
-    };
 interface TokenReader {
-  current(): TokenOrEnd;
+  current(): Token;
   readNext(): void;
 }
 
@@ -86,63 +77,29 @@ function getBinaryTokenByPrecedence(
   }
 }
 
-function createReaderClass(reader: () => Token | undefined): TokenReader {
-  let currentToken: Token | undefined = reader();
-  let lastToken: Token | undefined;
-  const readNextToken = () => {
-    lastToken = currentToken;
+function createReaderClassSkipWhitespaces(reader: () => Token): TokenReader {
+  let currentToken: Token;
+
+  const readNext = () => {
     currentToken = reader();
+    while (currentToken.kind === "white space token") {
+      currentToken = reader();
+    }
   };
+
+  readNext();
+
   return {
     current() {
-      return (
-        currentToken ||
-        (lastToken
-          ? {
-              kind: "end",
-              start: lastToken.end + 1,
-              end: lastToken.end + 1,
-              text: "",
-            }
-          : {
-              kind: "end",
-              start: 0,
-              end: 0,
-              text: "",
-            })
-      );
+      return currentToken;
     },
-    readNext() {
-      readNextToken();
-      while (currentToken && currentToken.kind === "white space token") {
-        readNextToken();
-      }
-      //console.info(`readNext kind=${currentToken?.kind} pos=${currentToken?.start}`)
-    },
+    readNext,
   };
 }
 
-function createReaderFromArray(tokensInput: Token[]) {
-  let i = 0;
-  return createReaderClass(() => {
-    const t = tokensInput[i];
-    i++;
-    return t;
-  });
-}
-export function parseExpression(tokensInput: Token[]): Expression {
-  //const reader = createReaderClass(readerBase);
-  const reader = createReaderFromArray(tokensInput);
+export function parseExpression(readerFunc: () => Token) {
+  const reader = createReaderClassSkipWhitespaces(readerFunc);
 
-  return parseExpression2(reader);
-}
-
-function parseExpressionReader(readerFunc: () => Token | undefined) {
-  const reader = createReaderClass(readerFunc);
-  return parseExpression2(reader);
-}
-
-function parseExpression2(reader: TokenReader) {
   /**
    * Expects current = open paren token
    * Returns when position is after "clsoe paren token"
@@ -307,7 +264,7 @@ function parseExpression2(reader: TokenReader) {
       };
       return expr;
     } else {
-      if (reader.current().kind === "end") {
+      if (reader.current().kind === "end token") {
         throw new Error(`Expected value at ${reader.current().start}`);
       } else {
         throw new Error(
@@ -345,7 +302,7 @@ function parseExpression2(reader: TokenReader) {
       */
 
       const possibleBinaryTokenKind = reader.current().kind;
-      if (possibleBinaryTokenKind === "end") {
+      if (possibleBinaryTokenKind === "end token") {
         return left;
       }
       const possibleBinaryToken = getBinaryTokenByPrecedence(
@@ -380,7 +337,7 @@ function parseExpression2(reader: TokenReader) {
 
   const expr = readExpr();
 
-  if (reader.current().kind !== "end") {
+  if (reader.current().kind !== "end token") {
     throw new Error(
       `Unexpected data at ${reader.current().start}: '${reader.current().text}' kind=${
         reader.current().kind

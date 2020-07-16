@@ -31,7 +31,8 @@ export type SyntaxKind =
   | "dotdot token"
   | "semicolon token"
   | SyntaxKindBinary
-  | "identifier";
+  | "identifier"
+  | "end token";
 
 export interface Token {
   kind: SyntaxKind;
