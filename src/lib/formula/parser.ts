@@ -1,264 +1,311 @@
+import { Scanner } from "./scanner";
 import {
   Token,
-  RangePart,
   Expression,
+  NumberExpression,
   SyntaxKind,
   ParameterExpression,
-  ExpressionType,
-  BinaryExpression,
-  UnaryExpression,
+  RangePart,
   RangeExpression,
-  NumberExpression,
   SyntaxKindBinary,
 } from "./types";
+import { assertNever } from "./calculator";
 
-type TokenOrExpression = Token | Expression;
-
-function getBinaryTokenPrecedence(token: SyntaxKind) {
-  switch (token) {
-    case "or keyword":
-      return 1;
-    case "and keyword":
-      return 2;
-    case "greater than eq token":
-    case "less than eq token":
-    case "greater than token":
-    case "less than token":
-    case "equals token":
-    case "not equals token":
-      return 3;
-    case "in keyword":
-      return 3;
-    case "to keyword":
-      return 4;
-
-    case "plus token":
-      return 5;
-    case "minus token":
-      return 6;
-
-    case "asterisk token":
-      return 7;
-
-    case "slash token":
-    case "div keyword":
-    case "mod keyword":
-      return 8;
-  }
-  return 0;
-}
-function isTokenBinary(token: SyntaxKind): token is SyntaxKindBinary {
-  return getBinaryTokenPrecedence(token) !== 0;
-}
-function parseParenExpression(tokens: Token[]) {
-  const firstToken = tokens[0];
-  if (firstToken.kind === "identifier") {
-    if (tokens.length > 1) {
-      throw new Error(`Unknown token ${tokens[1].text} at ${tokens[1].start} for paren`);
-    }
-
-    const paramRegexpMatch = firstToken.text.match(/^p(\d+)$/);
-    if (!paramRegexpMatch) {
-      throw new Error(`Unknown parameter '${firstToken.text}' at ${firstToken.start}`);
-    }
-
-    const pNumber = paramRegexpMatch[1];
-
-    const pId = parseInt(pNumber) - 1;
-
-    const exp: ParameterExpression = {
-      type: "parameter",
-      parameterId: pId,
+type TokenOrEnd =
+  | Token
+  | {
+      kind: "end";
+      start: number;
+      end: number;
+      text: string;
     };
-    return exp;
-  } else {
-    const ranges: RangePart[] = [];
+interface TokenReader {
+  current(): TokenOrEnd;
+  readNext(): void;
+}
 
-    let i = 0;
-    while (i < tokens.length) {
-      if (i < tokens.length && tokens[i].kind === "semicolon token") {
-        i++;
-      }
-      if (i >= tokens.length) {
-        throw new Error(`Expected values at ${i}`);
-      }
+const MAX_PRECEDENCE = 8;
 
-      const rangePartStart = i;
-      while (i < tokens.length && tokens[i].kind !== "semicolon token") {
-        i++;
-      }
-      const rangePartEnd = i;
+/**
+ * If candidate is binary token on presedence, then return corresponding binary token
+ */
+function getBinaryTokenByPrecedence(
+  presedence: number,
+  candidate: SyntaxKind,
+): SyntaxKindBinary | undefined {
+  switch (presedence) {
+    // TODO: Why or/and have different prio?
+    case 8:
+      return candidate === "or keyword" ? "or keyword" : undefined;
+    case 7:
+      return candidate === "and keyword" ? "and keyword" : undefined;
+    case 6:
+      return candidate === "greater than eq token"
+        ? "greater than eq token"
+        : candidate === "less than eq token"
+        ? "less than eq token"
+        : candidate === "greater than token"
+        ? "greater than token"
+        : candidate === "less than token"
+        ? "less than token"
+        : candidate === "equals token"
+        ? "equals token"
+        : candidate === "not equals token"
+        ? "not equals token"
+        : candidate === "in keyword"
+        ? "in keyword"
+        : undefined;
 
-      let rangeLeftI = rangePartStart;
-      const rangeLeftStart = rangeLeftI;
-      while (rangeLeftI < rangePartEnd && tokens[rangeLeftI].kind !== "dotdot token") {
-        rangeLeftI++;
-      }
-      const rangeLeftEnd = rangeLeftI;
-      if (rangeLeftEnd === rangePartEnd) {
-        ranges.push({
-          from: parseExpression(tokens.slice(rangeLeftStart, rangeLeftEnd)),
-        });
-      } else {
-        if (tokens[rangeLeftEnd].kind !== "dotdot token") {
-          throw new Error(`Expected .. at ${tokens[rangeLeftEnd].start}`);
-        }
-        const rangeRightStart = rangeLeftEnd + 1;
-        const rangeRightEnd = rangePartEnd;
-        if (rangeRightStart === rangeRightEnd) {
-          throw new Error(`Expected expression at ${rangeRightStart}`);
-        }
-        ranges.push({
-          from: parseExpression(tokens.slice(rangeLeftStart, rangeLeftEnd)),
-          to: parseExpression(tokens.slice(rangeRightStart, rangeRightEnd)),
-        });
-      }
-    }
-    const exp: RangeExpression = {
-      type: "range",
-      ranges,
-    };
-    return exp;
+    case 5:
+      return undefined /* here was "in keyword */;
+    case 4:
+      return candidate === "to keyword" ? "to keyword" : undefined;
+    case 3:
+      return candidate === "plus token"
+        ? "plus token"
+        : candidate === "minus token"
+        ? "minus token"
+        : undefined;
+
+    case 2:
+      return candidate === "asterisk token"
+        ? "asterisk token"
+        : candidate === "slash token"
+        ? "slash token"
+        : undefined;
+
+    case 1:
+      return candidate === "div keyword"
+        ? "div keyword"
+        : candidate === "mod keyword"
+        ? "mod keyword"
+        : undefined;
+
+    default:
+      throw new Error(`Unknown presedence ${presedence}`);
   }
 }
 
-function makeFlatExpression(tokens: Token[]) {
-  const flatExpression: TokenOrExpression[] = [];
+function createReaderClass(reader: () => Token | undefined): TokenReader {
+  let currentToken: Token | undefined = reader();
+  let lastToken: Token | undefined;
+  const readNextToken = () => {
+    lastToken = currentToken;
+    currentToken = reader();
+  };
+  return {
+    current() {
+      return (
+        currentToken ||
+        (lastToken
+          ? {
+              kind: "end",
+              start: lastToken.end + 1,
+              end: lastToken.end + 1,
+              text: "",
+            }
+          : {
+              kind: "end",
+              start: 0,
+              end: 0,
+              text: "",
+            })
+      );
+    },
+    readNext() {
+      readNextToken();
+      while (currentToken && currentToken.kind === "white space token") {
+        readNextToken();
+      }
+      //console.info(`readNext kind=${currentToken?.kind} pos=${currentToken?.start}`)
+    },
+  };
+}
+
+function createReaderFromArray(tokensInput: Token[]) {
   let i = 0;
-  if (tokens.length === 0) {
-    const exp: NumberExpression = {
-      type: "number",
-      value: 0,
-    };
-    return [exp];
-  }
-  while (i < tokens.length) {
-    const token = tokens[i];
-    if (getBinaryTokenPrecedence(token.kind)) {
-      flatExpression.push(token);
-    } else if (token.kind === "numeric literal") {
-      const exp: NumberExpression = {
-        type: "number",
-        value: parseFloat(token.text.replace(",", ".").replace(/ /g, "")),
-      };
-      flatExpression.push(exp);
-    } else if (token.kind === "open brace token") {
-      let braceCount = 1;
-      const braceStartPos = i;
-      while (braceCount > 0 && i < tokens.length) {
-        i++;
-        const movedToken = tokens[i];
-        braceCount +=
-          movedToken.kind === "open brace token"
-            ? 1
-            : movedToken.kind === "close brace token"
-            ? -1
-            : 0;
-      }
-      if (braceCount !== 0) {
-        throw new Error(`Unable to find closing bracked at pos=${token.start}`);
-      }
-      const braceEndPos = i;
-      const exp = parseExpression(tokens.slice(braceStartPos + 1, braceEndPos));
-      flatExpression.push(exp);
-    } else if (token.kind === "open paren token") {
-      let parenCount = 1;
-      const parenStartPos = i;
-      while (parenCount > 0 && i < tokens.length) {
-        i++;
-        const movedToken = tokens[i];
-        parenCount += movedToken.kind === "close paren token" ? -1 : 0;
-      }
-      if (parenCount !== 0) {
-        throw new Error(`Unable to find closing paren bracked at pos=${token.start}`);
-      }
-      const parenEndPos = i;
-      const insideParens = tokens.slice(parenStartPos + 1, parenEndPos);
-      if (insideParens.length === 0) {
-        throw new Error(`Empry parens at ${token.start}`);
-      }
-      const exp = parseParenExpression(insideParens);
-      flatExpression.push(exp);
-    } else {
-      throw new Error(`Unknown token ${token.text} at ${token.start} kind='${token.kind}'`);
-    }
-
+  return createReaderClass(() => {
+    const t = tokensInput[i];
     i++;
-  }
-  return flatExpression;
+    return t;
+  });
+}
+export function parseExpression(tokensInput: Token[]): Expression {
+  //const reader = createReaderClass(readerBase);
+  const reader = createReaderFromArray(tokensInput);
+
+  return parseExpression2(reader);
 }
 
-export function parseExpression(tokensInput: Token[]): Expression {
-  const flatExpression = makeFlatExpression(tokensInput);
+function parseExpressionReader(readerFunc: () => Token | undefined) {
+  const reader = createReaderClass(readerFunc);
+  return parseExpression2(reader);
+}
 
-  function parseFlatExpression(exps: TokenOrExpression[]): Expression {
-    // Zero-length is never provided here
-    if (exps.length === 1) {
-      const exp = exps[0];
-      if ("type" in exp) {
-        return exp;
-      } else {
-        throw new Error(`Unknown token '${exp.text}' at ${exp.start} for flat exp`);
-      }
-    } else if (exps.length === 2) {
-      const exp1 = exps[0];
-      const exp2 = exps[1];
-      if ("kind" in exp1 && exp1.kind === "minus token" && "type" in exp2) {
-        const rexp: UnaryExpression = {
-          type: "unary",
-          expression: exp2,
-          operator: "minus token",
-        };
-        return rexp;
-      } else {
-        throw new Error(`Unknown state`);
-      }
-    } else {
-      // We have 3 items.
-      let lowest:
-        | {
-            idx: number;
-            prio: number;
-            oper: SyntaxKindBinary;
-          }
-        | undefined = undefined;
-      let i = 1;
+function parseExpression2(reader: TokenReader) {
+  /**
+   * Expects current = open paren token
+   * Returns when position is after "clsoe paren token"
+   */
+  function readInsideParenExpression(): Expression {
+    const start = reader.current();
 
-      while (i + 1 < exps.length) {
-        const left = exps[i - 1];
-        const middle = exps[i];
-        const right = exps[i + 1];
-        // console.info(left, middle, right);
-        if ("type" in left && "type" in right && "kind" in middle) {
-          const middleKind = middle.kind;
-          if (!isTokenBinary(middleKind)) {
-            throw new Error(`Now a binary operator '${middle.text}' at ${middle.start}`);
-          }
-          const prio = getBinaryTokenPrecedence(middleKind);
-          if (!lowest || lowest.prio >= prio) {
-            lowest = {
-              idx: i,
-              prio,
-              oper: middleKind,
-            };
-          }
-        }
-        i++;
+    if (start.kind === "identifier") {
+      const paramRegexpMatch = start.text.match(/^p(\d+)$/);
+      if (!paramRegexpMatch) {
+        throw new Error(`Unknown parameter '${start.text}' at ${start.start}`);
       }
-      if (!lowest) {
-        console.info(exps);
-        throw new Error(`Unable to find binary operator`);
-      }
-      const left = exps.slice(0, lowest.idx);
-      const right = exps.slice(lowest.idx + 1);
-      const exp: BinaryExpression = {
-        type: "binary",
-        left: parseFlatExpression(left),
-        right: parseFlatExpression(right),
-        operator: lowest.oper,
+      const pNumber = paramRegexpMatch[1];
+
+      const pId = parseInt(pNumber) - 1;
+
+      const exp: ParameterExpression = {
+        type: "parameter",
+        parameterId: pId,
       };
       return exp;
+    } else {
+      const ranges: RangePart[] = [];
+
+      while (true) {
+        const from = readExpr();
+        if (reader.current().kind === "dotdot token") {
+          reader.readNext();
+          const to = readExpr();
+          ranges.push({
+            from: from,
+            to: to,
+          });
+        } else if (reader.current().kind === "semicolon token") {
+          reader.readNext();
+          ranges.push({
+            from: from,
+          });
+        } else if (reader.current().kind === "close paren token") {
+          reader.readNext();
+          const exp: RangeExpression = {
+            type: "range",
+            ranges,
+          };
+          return exp;
+        } else {
+          throw new Error(
+            `Unexpected token inside paren '${reader.current().text}' pos=${
+              reader.current().start
+            } `,
+          );
+        }
+      }
     }
   }
-  return parseFlatExpression(flatExpression);
+
+  function readPrim(): Expression {
+    const primStartToken = reader.current();
+
+    if (primStartToken.kind === "numeric literal") {
+      const expr: Expression = {
+        type: "number",
+        value: parseFloat(primStartToken.text.replace(",", ".").replace(/ /g, "")),
+      };
+      reader.readNext();
+      return expr;
+    } else if (primStartToken.kind === "open paren token") {
+      const expr = readInsideParenExpression();
+      return expr;
+    } else if (primStartToken.kind === "open brace token") {
+      reader.readNext();
+      const expr = readExpr();
+      if (reader.current().kind !== "close brace token") {
+        throw new Error(
+          `Expected close brace token but got ${reader.current().text} at ${
+            reader.current().start
+          }`,
+        );
+      }
+      reader.readNext();
+      return expr;
+    } else if (primStartToken.kind === "minus token") {
+      reader.readNext();
+      const expr = readExpr();
+      return expr;
+    } else {
+      if (reader.current().kind === "end") {
+        throw new Error(`Expected value at ${reader.current().start}`);
+      } else {
+        throw new Error(
+          `Expecting primary value at ${reader.current().start} but got '${
+            reader.current().text
+          }' kind=${reader.current().kind}`,
+        );
+      }
+    }
+  }
+
+  function readExpr(currentPriority = MAX_PRECEDENCE): Expression {
+    console.info(`readExpr current=${reader.current().text} prio=${currentPriority}`);
+
+    if (currentPriority === 0) {
+      const prim = readPrim();
+      return prim;
+    }
+
+    let left = readExpr(currentPriority - 1);
+
+    while (true) {
+      console.info(
+        `cur=${reader.current().kind} start${reader.current().start} '${
+          reader.current().text
+        }' prio=${currentPriority}`,
+      );
+
+      const possibleBinaryTokenKind = reader.current().kind;
+      if (possibleBinaryTokenKind === "end") {
+        return left;
+      }
+      const possibleBinaryToken = getBinaryTokenByPrecedence(
+        currentPriority,
+        possibleBinaryTokenKind,
+      );
+
+      if (!possibleBinaryToken) {
+        return left;
+      }
+
+      reader.readNext();
+      console.info(
+        `   cur=${reader.current().kind} start${reader.current().start} '${
+          reader.current().text
+        }' prio=${currentPriority}`,
+      );
+
+      const right = readExpr(currentPriority - 1);
+
+      const newLeft: Expression = {
+        type: "binary",
+        operator: possibleBinaryToken,
+        left,
+        right,
+      };
+      left = newLeft;
+    }
+  }
+
+  const expr = readExpr();
+
+  if (reader.current().kind !== "end") {
+    throw new Error(
+      `Unexpected data at ${reader.current().start}: '${reader.current().text}' kind=${
+        reader.current().kind
+      }`,
+    );
+  }
+
+  return expr;
 }
+
+// const scanner = Scanner("1 + 2*5*(5-4)");
+//const scanner = Scanner("1 + 2*5");
+const scanner = Scanner("2+(2 *2 +3   )+4");
+
+const exp = parseExpressionReader(scanner);
+console.info(exp);
