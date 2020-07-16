@@ -15,7 +15,7 @@ const MAX_PRECEDENCE = 8;
 /**
  * If candidate is binary token on presedence, then return corresponding binary operator
  */
-function getBinaryTokenByPrecedence(
+function isTokenBinaryOperator(
   presedence: number,
   candidate: SyntaxKind,
 ): SyntaxKindBinary | undefined {
@@ -254,10 +254,7 @@ export function parseExpression(readerFunc: () => Token) {
       if (possibleBinaryTokenKind === "end token") {
         return left;
       }
-      const possibleBinaryToken = getBinaryTokenByPrecedence(
-        currentPriority,
-        possibleBinaryTokenKind,
-      );
+      const possibleBinaryToken = isTokenBinaryOperator(currentPriority, possibleBinaryTokenKind);
 
       if (!possibleBinaryToken) {
         return left;
