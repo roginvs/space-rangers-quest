@@ -177,8 +177,7 @@ function parseExpression2(reader: TokenReader) {
       const ranges: RangePart[] = [];
 
       while (true) {
-        if (reader.current().kind === "dotdot token") {
-          // Weird case
+        if (reader.current().kind === "semicolon token") {
           reader.readNext();
           continue;
         }
@@ -399,8 +398,9 @@ function parseExpression2(reader: TokenReader) {
 // const scanner = Scanner("1 + 2*5*(5-4)");
 //const scanner = Scanner("1 + 2*5");
 //const scanner = Scanner("2+(2 *2 +3   )+4");
-
+/*
 const scanner = Scanner("3 + [ -10 ..  -12; -3]");
 
 const exp = parseExpressionReader(scanner);
 console.info(exp);
+*/
