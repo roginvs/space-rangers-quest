@@ -10,15 +10,10 @@ import {
   SyntaxKindBinary,
 } from "./types";
 
-interface TokenReader {
-  current(): Token;
-  readNext(): void;
-}
-
 const MAX_PRECEDENCE = 8;
 
 /**
- * If candidate is binary token on presedence, then return corresponding binary token
+ * If candidate is binary token on presedence, then return corresponding binary operator
  */
 function getBinaryTokenByPrecedence(
   presedence: number,
@@ -77,6 +72,11 @@ function getBinaryTokenByPrecedence(
   }
 }
 
+interface TokenReader {
+  current(): Token;
+  readNext(): void;
+}
+
 function createReaderClassSkipWhitespaces(reader: () => Token): TokenReader {
   let currentToken: Token;
 
@@ -102,7 +102,7 @@ export function parseExpression(readerFunc: () => Token) {
 
   /**
    * Expects current = open paren token
-   * Returns when position is after "clsoe paren token"
+   * Returns when position is after "close paren token"
    */
   function readParenExpression(): Expression {
     reader.readNext();
@@ -175,57 +175,6 @@ export function parseExpression(readerFunc: () => Token) {
       };
 
       return expr;
-
-      /*
-      while (true) {
-        // @TODO Refactor this, what if we have [;;;] or [;2;3..4;;] ?
-
-        const from = readExpr();
-        if (reader.current().kind === "dotdot token") {
-          reader.readNext();
-          const to = readExpr();
-
-          ranges.push({
-            from: from,
-            to: to,
-          });
-          if (reader.current().kind === "close paren token") {
-            const expr: RangeExpression = {
-              type: "range",
-              ranges,
-            };
-            reader.readNext();
-            return expr;
-          } else if (reader.current().kind === "dotdot token") {
-            throw new Error(
-              `Unexpected .. after range '${reader.current().text}' pos=${reader.current().start} `,
-            );
-          }
-        } else if (reader.current().kind === "semicolon token") {
-          reader.readNext();
-          ranges.push({
-            from: from,
-          });
-        } else if (reader.current().kind === "close paren token") {
-          ranges.push({
-            from: from,
-          });
-          reader.readNext();
-          const expr: RangeExpression = {
-            type: "range",
-            ranges,
-          };
-          return expr;
-        } else {
-          throw new Error(
-            `Unexpected token inside paren '${reader.current().text}' pos=${
-              reader.current().start
-            } `,
-          );
-        }
-       
-        }
-         */
     }
   }
 
