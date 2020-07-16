@@ -147,7 +147,9 @@ function parseExpression2(reader: TokenReader) {
    * Expects current = open paren token
    * Returns when position is after "clsoe paren token"
    */
-  function readInsideParenExpression(): Expression {
+  function readParenExpression(): Expression {
+    reader.readNext();
+
     const start = reader.current();
 
     if (start.kind === "identifier") {
@@ -163,30 +165,42 @@ function parseExpression2(reader: TokenReader) {
         type: "parameter",
         parameterId: pId,
       };
+      reader.readNext();
+
       return exp;
     } else {
       const ranges: RangePart[] = [];
-
       while (true) {
+        //@TODO: Refactor this, here are errors
+
         const from = readExpr();
         if (reader.current().kind === "dotdot token") {
           reader.readNext();
           const to = readExpr();
+
           ranges.push({
             from: from,
             to: to,
           });
+          if (reader.current().kind === "dotdot token") {
+            throw new Error(
+              `Unexpected .. after range '${reader.current().text}' pos=${reader.current().start} `,
+            );
+          }
         } else if (reader.current().kind === "semicolon token") {
           reader.readNext();
           ranges.push({
             from: from,
           });
         } else if (reader.current().kind === "close paren token") {
+          // @TODO: A case if [2;;;] ???
+
           reader.readNext();
           const exp: RangeExpression = {
             type: "range",
             ranges,
           };
+          console.info("+=================");
           return exp;
         } else {
           throw new Error(
@@ -210,7 +224,7 @@ function parseExpression2(reader: TokenReader) {
       reader.readNext();
       return expr;
     } else if (primStartToken.kind === "open paren token") {
-      const expr = readInsideParenExpression();
+      const expr = readParenExpression();
       return expr;
     } else if (primStartToken.kind === "open brace token") {
       reader.readNext();
@@ -242,7 +256,11 @@ function parseExpression2(reader: TokenReader) {
   }
 
   function readExpr(currentPriority = MAX_PRECEDENCE): Expression {
-    console.info(`readExpr current=${reader.current().text} prio=${currentPriority}`);
+    console.info(
+      `readExpr current=${reader.current().text} prio=${currentPriority} pos=${
+        reader.current().start
+      }`,
+    );
 
     if (currentPriority === 0) {
       const prim = readPrim();
@@ -252,11 +270,13 @@ function parseExpression2(reader: TokenReader) {
     let left = readExpr(currentPriority - 1);
 
     while (true) {
+      /*
       console.info(
         `cur=${reader.current().kind} start${reader.current().start} '${
           reader.current().text
         }' prio=${currentPriority}`,
       );
+      */
 
       const possibleBinaryTokenKind = reader.current().kind;
       if (possibleBinaryTokenKind === "end") {
@@ -272,11 +292,13 @@ function parseExpression2(reader: TokenReader) {
       }
 
       reader.readNext();
+      /*
       console.info(
         `   cur=${reader.current().kind} start${reader.current().start} '${
           reader.current().text
         }' prio=${currentPriority}`,
       );
+*/
 
       const right = readExpr(currentPriority - 1);
 
@@ -305,7 +327,8 @@ function parseExpression2(reader: TokenReader) {
 
 // const scanner = Scanner("1 + 2*5*(5-4)");
 //const scanner = Scanner("1 + 2*5");
-const scanner = Scanner("2+(2 *2 +3   )+4");
+//const scanner = Scanner("2+(2 *2 +3   )+4");
+const scanner = Scanner("5 + [3..4]*2");
 
 const exp = parseExpressionReader(scanner);
 console.info(exp);
