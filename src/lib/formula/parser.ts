@@ -107,12 +107,12 @@ export function parseExpression(readerFunc: () => Token) {
   function readParenExpression(): Expression {
     reader.readNext();
 
-    const start = reader.current();
-
-    if (start.kind === "identifier") {
-      const paramRegexpMatch = start.text.match(/^p(\d+)$/);
+    if (reader.current().kind === "identifier") {
+      const paramRegexpMatch = reader.current().text.match(/^p(\d+)$/);
       if (!paramRegexpMatch) {
-        throw new Error(`Unknown parameter '${start.text}' at ${start.start}`);
+        throw new Error(
+          `Unknown parameter '${reader.current().text}' at ${reader.current().start}`,
+        );
       }
       const pNumber = paramRegexpMatch[1];
 
@@ -125,7 +125,9 @@ export function parseExpression(readerFunc: () => Token) {
       reader.readNext();
 
       if (reader.current().kind !== "close paren token") {
-        throw new Error(`Expected ], but got '${start.text}' at ${start.start}`);
+        throw new Error(
+          `Expected ], but got '${reader.current().text}' at ${reader.current().start}`,
+        );
       }
       reader.readNext();
 
