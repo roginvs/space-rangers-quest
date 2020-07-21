@@ -228,14 +228,6 @@ export function parseExpression(readerFunc: () => Token) {
   }
 
   function readExpr(currentPriority = MAX_PRECEDENCE): Expression {
-    /*
-    console.info(
-      `readExpr current=${reader.current().text} prio=${currentPriority} pos=${
-        reader.current().start
-      }`,
-    );
-    */
-
     if (currentPriority === 0) {
       const prim = readPrim();
       return prim;
@@ -244,14 +236,6 @@ export function parseExpression(readerFunc: () => Token) {
     let left = readExpr(currentPriority - 1);
 
     while (true) {
-      /*
-      console.info(
-        `cur=${reader.current().kind} start${reader.current().start} '${
-          reader.current().text
-        }' prio=${currentPriority}`,
-      );
-      */
-
       const possibleBinaryTokenKind = reader.current().kind;
       if (possibleBinaryTokenKind === "end token") {
         return left;
@@ -263,13 +247,6 @@ export function parseExpression(readerFunc: () => Token) {
       }
 
       reader.readNext();
-      /*
-      console.info(
-        `   cur=${reader.current().kind} start${reader.current().start} '${
-          reader.current().text
-        }' prio=${currentPriority}`,
-      );
-*/
 
       const right = readExpr(currentPriority - 1);
 
