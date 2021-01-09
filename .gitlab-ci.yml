@@ -21,7 +21,7 @@ pages:
           -o -name '*.svg' -o -name '*.json' \
           -o -name '*.woff2' -o -name '*.eot' -o -name '*.ttf' -o -name '*.woff' \
         \) \
-        -execdir gzip "{}" --keep --suffix .gz \;
+        -execdir gzip "{}" --keep --suffix .gz --verbose \;
 
     - mv built-web public
   artifacts:
