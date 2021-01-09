@@ -9,8 +9,20 @@ pages:
     - npm run test
     - npm run lint
     - mv coverage built-web
+
     - ./node_modules/.bin/ts-node src/packGameData.ts
+    
     - npm run build
+
+    - >  # Pre-compress files for gitlab pages
+      find built-web -type f \
+        \( \
+          -name '*.js' -o -name '*.css' -o -name '*.html' -o -name '*.map' \
+          -o -name '*.svg' -o -name '*.json' \
+          -o -name '*.woff2' -o -name '*.eot' -o -name '*.ttf' -o -name '*.woff' \
+        \) \
+        -execdir gzip "{}" --keep --suffix .gz \;
+
     - mv built-web public
   artifacts:
     paths:
