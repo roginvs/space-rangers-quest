@@ -8,7 +8,7 @@ pages:
     - npm run prettier-check
     - npm run test
     - npm run lint
-    - mv coverage built-web
+    - mv coverage built-web # This is broken now for some unknown reasons
 
     - ./node_modules/.bin/ts-node src/packGameData.ts
     
