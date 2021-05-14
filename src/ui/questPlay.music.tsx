@@ -1,10 +1,5 @@
 import * as React from "react";
 
-function getRandom<T>(list: T[]): T {
-  const i = Math.floor(Math.random() * list.length);
-  return list[i];
-}
-
 function useDocumentHidden() {
   const [hidden, setHidden] = React.useState(document.visibilityState === "hidden");
 
@@ -19,17 +14,23 @@ function useDocumentHidden() {
   return hidden;
 }
 
-export function Music({ urls }: { urls: string[] }) {
+function AudioPauseInBackground({ src, onEnded }: { src: string; onEnded: () => void }) {
   const audioElement = React.useRef<HTMLAudioElement | null>(null);
-  const [url, setUrl] = React.useState(getRandom(urls));
+  const audioElementSavedCurrentTimeBeforeDocumentBecomeHidden = React.useRef(0);
   const isHidden = useDocumentHidden();
 
   React.useEffect(() => {
+    audioElementSavedCurrentTimeBeforeDocumentBecomeHidden.current = 0;
+  }, [src]);
+
+  React.useEffect(() => {
     if (isHidden) {
-      if (audioElement.current) {
-        void audioElement.current.pause();
-      }
       return;
+    }
+
+    if (audioElement.current) {
+      audioElement.current.currentTime =
+        audioElementSavedCurrentTimeBeforeDocumentBecomeHidden.current;
     }
 
     const play = () => {
@@ -41,21 +42,44 @@ export function Music({ urls }: { urls: string[] }) {
     document.addEventListener("click", play);
     document.addEventListener("touchstart", play);
     play();
+
     return () => {
       document.removeEventListener("click", play);
       document.removeEventListener("touchstart", play);
+      audioElementSavedCurrentTimeBeforeDocumentBecomeHidden.current = audioElement.current
+        ? audioElement.current.currentTime
+        : 0;
+      audioElement.current = null;
     };
-  }, [url, isHidden]);
+  }, [isHidden]);
 
+  if (isHidden) {
+    return null;
+  }
   return (
     <audio
-      autoPlay={!isHidden}
       controls={false}
-      onEnded={() => {
-        setUrl(getRandom(urls));
+      autoPlay
+      onEnded={onEnded}
+      src={src}
+      ref={element => {
+        if (element) {
+          // We need this element ref in side-effect which runs after render
+          // So, we update ref only if element is mounted
+          // We will clear this ref in side-effect
+          audioElement.current = element;
+        }
       }}
-      src={url}
-      ref={audioElement}
     />
   );
+}
+
+function getRandom<T>(list: T[]): T {
+  const i = Math.floor(Math.random() * list.length);
+  return list[i];
+}
+export function Music({ urls }: { urls: string[] }) {
+  const [url, setUrl] = React.useState(getRandom(urls));
+
+  return <AudioPauseInBackground src={url} onEnded={() => setUrl(getRandom(urls))} />;
 }
