@@ -5,6 +5,7 @@ import { GameWonProofs } from "./db/defs";
 import { Player } from "../lib/qmplayer/player";
 import { getLang } from "./lang";
 import { CACHE_MUSIC_NAME_MP3, DATA_DIR, CACHE_IMAGES_NAME } from "./consts";
+import firebase from "firebase";
 
 type CacheInfo = "no" | "yes" | undefined;
 interface CacheInstallInfo {
