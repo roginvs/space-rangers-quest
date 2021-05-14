@@ -2,7 +2,7 @@ import * as React from "react";
 
 function getRandom<T>(list: T[]): T {
   const i = Math.floor(Math.random() * list.length);
-  return list[i]
+  return list[i];
 }
 
 export function Music({ urls }: { urls: string[] }) {
@@ -12,28 +12,28 @@ export function Music({ urls }: { urls: string[] }) {
   React.useEffect(() => {
     const play = () => {
       if (!audioElement.current) {
-        return
+        return;
       }
       void audioElement.current.play();
-    }
+    };
     document.addEventListener("click", play);
     document.addEventListener("touchstart", play);
     play();
     return () => {
       document.removeEventListener("click", play);
       document.removeEventListener("touchstart", play);
-    }
+    };
   }, [url]);
 
-  return <audio
-    autoPlay={true}
-    controls={false}
-    onEnded={() => {
-      setUrl(getRandom(urls))
-    }}
-    src={url}
-    ref={
-      audioElement
-    }
-  />
+  return (
+    <audio
+      autoPlay={true}
+      controls={false}
+      onEnded={() => {
+        setUrl(getRandom(urls));
+      }}
+      src={url}
+      ref={audioElement}
+    />
+  );
 }
