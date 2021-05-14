@@ -3,6 +3,8 @@ import { QM, JumpId, LocationId } from "../../lib/qmreader";
 import { CANVAS_PADDING } from "./consts";
 import { computedFn } from "mobx-utils";
 
+// False-positive from old tslint rule
+// tslint:disable-next-line:no-useless-cast
 export const EDITOR_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
 export type EditorMode = typeof EDITOR_MODES[number];
 
