@@ -34,15 +34,15 @@ function AudioPauseInBackground({ src, onEnded }: { src: string; onEnded: () => 
     audio.style.display = "none";
     audio.autoplay = true;
     audio.onended = onEnded;
-    audio.currentTime = audioElementSavedCurrentTimeBeforeDocumentBecomeHidden.current;
+
     document.body.appendChild(audio);
 
-    const play = () => {
-      void audio.play();
-    };
+    const play = () => audio.play();
     document.addEventListener("click", play);
     document.addEventListener("touchstart", play);
-    play();
+    void play().then(() => {
+      audio.currentTime = audioElementSavedCurrentTimeBeforeDocumentBecomeHidden.current;
+    });
 
     return () => {
       document.removeEventListener("click", play);
