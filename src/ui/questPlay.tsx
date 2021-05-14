@@ -32,6 +32,7 @@ import { Store } from "./store";
 
 import "./questPlay.css";
 import { PQImages } from "../lib/pqImages";
+import { Music } from "./questPlay.music";
 
 interface QuestPlayState {
   quest?: Quest;
@@ -209,8 +210,6 @@ export class QuestPlay extends React.Component<
                 onClick={e => {
                   e.preventDefault();
 
-                  this.playAudio(false);
-
                   const newState = performJump(choice.jumpId, quest, gameState, game.images);
 
                   this.saveGame(newState);
@@ -337,21 +336,15 @@ export class QuestPlay extends React.Component<
       </>
     );
 
-    const audioComponent = (
-      <audio
-        autoPlay={true}
-        controls={false}
-        onEnded={e => this.playAudio(true)}
-        ref={e => {
-          this.audio = e;
-          this.playAudio(false);
-        }}
-      />
-    );
-
     return (
       <div className="">
-        {!this.state.noMusic ? audioComponent : null}
+        {!this.state.noMusic ? (
+          <Music
+            urls={this.props.store.index.dir.music.files
+              .map(fileInfo => fileInfo.path)
+              .map(fileName => DATA_DIR + fileName)}
+          />
+        ) : null}
         <div
           style={{
             marginLeft: "auto",
@@ -517,51 +510,7 @@ export class QuestPlay extends React.Component<
       </div>
     );
   }
-
-  private audio: HTMLAudioElement | null = null;
-
-  private playAudio(restart: boolean) {
-    if (this.audio) {
-      if (!this.audio.src || restart) {
-        const musicList = this.props.store.index.dir.music.files.map(x => x.path);
-        const i = Math.floor(Math.random() * musicList.length);
-        this.audio.src = DATA_DIR + musicList[i];
-      }
-
-      const audioPlayPromise = this.audio.play();
-      if (audioPlayPromise) {
-        audioPlayPromise.catch(e => {
-          console.warn(`Error with music src='${this.audio ? this.audio.src : "no audio tag"}'`, e);
-        });
-      }
-    }
-  }
 }
-
-/*
-function scrollToTop(scrollDuration: number, offsetTop = 0) {
-    const originalScrollY = window.scrollY;    
-    const startedTimestamp = performance.now();
-    function step(nowTimestamp: number) {        
-        if (nowTimestamp - startedTimestamp >= scrollDuration) {
-            window.scrollTo(0, offsetTop);
-            return
-        }
-        if (window.scrollY === offsetTop) {
-            return;
-        }
-        
-        const coefficient = Math.cos( (nowTimestamp - startedTimestamp) / scrollDuration * Math.PI / 2);        
-        window.scrollTo(
-            0,
-            (originalScrollY - offsetTop)* coefficient + offsetTop,
-        );        
-        console.info((originalScrollY - offsetTop)* coefficient + offsetTop);
-        window.requestAnimationFrame(step);
-    }
-    window.requestAnimationFrame(step);
-}
-*/
 
 function initRandomGameAndDoFirstStep(quest: Quest, images: PQImages) {
   let gameState = initGame(

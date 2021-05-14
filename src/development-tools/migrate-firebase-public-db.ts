@@ -67,7 +67,8 @@ async function createRow(key: string, row: WonProofTableRow) {
         const validationResult = validateWinningLog(quest, gameProofs[proofSeed], false);
         if (validationResult) {
           await createRow(proofSeed, {
-            createdAt: gameProofs[proofSeed].created || admin.database.ServerValue.TIMESTAMP,
+            createdAt:
+              gameProofs[proofSeed].created || (admin.database.ServerValue.TIMESTAMP as any),
             gameName,
             userId,
             proof: gameProofs[proofSeed],

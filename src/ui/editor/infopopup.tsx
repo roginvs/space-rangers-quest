@@ -123,7 +123,7 @@ export class JumpPopupBody extends React.Component<{
           <div className="text-center text-primary">{jump.text}</div>
           {jump.description ? (
             <>
-              <div className="text-center text-primary">-></div>
+              <div className="text-center text-primary">{"->"}</div>
               <div className="text-center text-primary">{jump.description}</div>{" "}
             </>
           ) : null}

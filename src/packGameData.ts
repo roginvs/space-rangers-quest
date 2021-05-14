@@ -217,7 +217,7 @@ const music = fs
   .filter(x => {
     const fullName = dataSrcPath + "/music/" + x;
     return (
-      fs.statSync(fullName).isFile &&
+      fs.statSync(fullName).isFile() &&
       (fullName.toLowerCase().endsWith(".ogg") || fullName.toLowerCase().endsWith(".mp3"))
     );
   })

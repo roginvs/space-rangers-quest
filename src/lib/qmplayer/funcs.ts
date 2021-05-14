@@ -165,14 +165,12 @@ function replace(
   diamondIndex: number | undefined,
   random: RandomFunc, // Should not be called
 ) {
-  const lang: Lang = player.lang;
   return substitute(
     str,
     {
       Day: `${DEFAULT_DAYS_TO_PASS_QUEST - state.daysPassed}`,
-      Date: SRDateToString(DEFAULT_DAYS_TO_PASS_QUEST, lang),
-      CurDate: SRDateToString(state.daysPassed, lang),
-      lang,
+      Date: SRDateToString(DEFAULT_DAYS_TO_PASS_QUEST, player.lang),
+      CurDate: SRDateToString(state.daysPassed, player.lang),
       ...player,
     },
     state.paramValues,
