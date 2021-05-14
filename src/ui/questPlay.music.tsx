@@ -5,11 +5,33 @@ function getRandom<T>(list: T[]): T {
   return list[i];
 }
 
+function useDocumentHidden() {
+  const [hidden, setHidden] = React.useState(document.visibilityState === "hidden");
+
+  React.useEffect(() => {
+    const update = () => {
+      setHidden(document.visibilityState === "hidden");
+    };
+    document.addEventListener("visibilitychange", update);
+    return () => document.removeEventListener("visibilitychange", update);
+  });
+
+  return hidden;
+}
+
 export function Music({ urls }: { urls: string[] }) {
   const audioElement = React.useRef<HTMLAudioElement | null>(null);
   const [url, setUrl] = React.useState(getRandom(urls));
+  const isHidden = useDocumentHidden();
 
   React.useEffect(() => {
+    if (isHidden) {
+      if (audioElement.current) {
+        void audioElement.current.pause();
+      }
+      return;
+    }
+
     const play = () => {
       if (!audioElement.current) {
         return;
@@ -23,11 +45,11 @@ export function Music({ urls }: { urls: string[] }) {
       document.removeEventListener("click", play);
       document.removeEventListener("touchstart", play);
     };
-  }, [url]);
+  }, [url, isHidden]);
 
   return (
     <audio
-      autoPlay={true}
+      autoPlay={!isHidden}
       controls={false}
       onEnded={() => {
         setUrl(getRandom(urls));
