@@ -15,9 +15,9 @@ function useDocumentHidden() {
 }
 
 function AudioPauseInBackground({ src, onEnded }: { src: string; onEnded: () => void }) {
-  const isHidden = useDocumentHidden();
-
+  const audioElement = React.useRef<HTMLAudioElement | null>(null);
   const audioElementSavedCurrentTimeBeforeDocumentBecomeHidden = React.useRef(0);
+  const isHidden = useDocumentHidden();
 
   React.useEffect(() => {
     audioElementSavedCurrentTimeBeforeDocumentBecomeHidden.current = 0;
@@ -28,17 +28,16 @@ function AudioPauseInBackground({ src, onEnded }: { src: string; onEnded: () => 
       return;
     }
 
-    const audio = document.createElement("audio");
-    audio.src = src;
-    audio.controls = false;
-    audio.style.display = "none";
-    audio.autoplay = true;
-    audio.onended = onEnded;
-    audio.currentTime = audioElementSavedCurrentTimeBeforeDocumentBecomeHidden.current;
-    document.body.appendChild(audio);
+    if (audioElement.current) {
+      audioElement.current.currentTime =
+        audioElementSavedCurrentTimeBeforeDocumentBecomeHidden.current;
+    }
 
     const play = () => {
-      void audio.play();
+      if (!audioElement.current) {
+        return;
+      }
+      void audioElement.current.play();
     };
     document.addEventListener("click", play);
     document.addEventListener("touchstart", play);
@@ -47,15 +46,32 @@ function AudioPauseInBackground({ src, onEnded }: { src: string; onEnded: () => 
     return () => {
       document.removeEventListener("click", play);
       document.removeEventListener("touchstart", play);
-      audioElementSavedCurrentTimeBeforeDocumentBecomeHidden.current = audio.currentTime;
-      document.body.removeChild(audio);
-      audio.pause();
-      audio.currentTime = 0;
-      audio.src = "";
+      audioElementSavedCurrentTimeBeforeDocumentBecomeHidden.current = audioElement.current
+        ? audioElement.current.currentTime
+        : 0;
+      audioElement.current = null;
     };
-  }, [src, onEnded, isHidden]);
+  }, [isHidden]);
 
-  return null;
+  if (isHidden) {
+    return null;
+  }
+  return (
+    <audio
+      controls={false}
+      autoPlay
+      onEnded={onEnded}
+      src={src}
+      ref={element => {
+        if (element) {
+          // We need this element ref in side-effect which runs after render
+          // So, we update ref only if element is mounted
+          // We will clear this ref in side-effect
+          audioElement.current = element;
+        }
+      }}
+    />
+  );
 }
 
 function getRandom<T>(list: T[]): T {
@@ -65,8 +81,5 @@ function getRandom<T>(list: T[]): T {
 export function Music({ urls }: { urls: string[] }) {
   const [url, setUrl] = React.useState(getRandom(urls));
 
-  // Ignore dependencies to avoid audio pause-play
-  // Array contains same elements, but it is new array each time
-  const onEnded = React.useCallback(() => setUrl(getRandom(urls)), []);
-  return <AudioPauseInBackground src={url} onEnded={onEnded} />;
+  return <AudioPauseInBackground src={url} onEnded={() => setUrl(getRandom(urls))} />;
 }
