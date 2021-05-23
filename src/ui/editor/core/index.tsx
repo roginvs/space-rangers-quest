@@ -1,7 +1,9 @@
 import classNames from "classnames";
 import * as React from "react";
 import { assertNever } from "../../../lib/formula/calculator";
+import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../lib/qmplayer/funcs";
+import { Jump, Location } from "../../../lib/qmreader";
 import { colors } from "../colors";
 import {
   CANVAS_PADDING,
@@ -19,13 +21,19 @@ export interface EditorCoreProps {
 export const EDITOR_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
 export type EditorMode = typeof EDITOR_MODES[number];
 
+function isDistanceLower(x1: number, y1: number, x2: number, y2: number, distance: number) {
+  return (x1 - x2) ** 2 + (y1 - y2) ** 2 < distance ** 2;
+}
+
+type Hovered = null | DeepImmutable<Location> | DeepImmutable<Jump>;
 export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const [mode, setMode] = React.useState<EditorMode>("select");
 
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const contextRef = React.useRef<CanvasRenderingContext2D | null>(null);
-  const mouseX = React.useRef(0);
-  const mouseY = React.useRef(0);
+  const mouseXref = React.useRef(0);
+  const mouseYref = React.useRef(0);
+  const hoveredRef = React.useRef<Hovered>(null);
 
   const canvasWidth = Math.max(...quest.locations.map(l => l.locX)) + CANVAS_PADDING;
   const canvasHeight = Math.max(...quest.locations.map(l => l.locY)) + CANVAS_PADDING;
@@ -39,12 +47,14 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
     //console.info("draw");
-    /*
-    ctx.beginPath();
-    ctx.arc(mouseX.current, mouseY.current, 4, 0, 2 * Math.PI);
-    ctx.stroke();
-    */
+    const mouseX = mouseXref.current;
+    const mouseY = mouseYref.current;
 
+    let newHovered: Hovered = null;
+
+    // Locations
+    ctx.strokeStyle = "black";
+    ctx.lineWidth = 2;
     quest.locations.forEach(location => {
       const color = location.isStarting
         ? colors.location.starting
@@ -58,10 +68,19 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       ctx.fillStyle = color;
       ctx.beginPath();
       ctx.arc(location.locX, location.locY, LOCATION_RADIUS, 0, 2 * Math.PI);
-      // ctx.stroke();
+      //ctx.stroke();
+
+      if (!newHovered) {
+        if (isDistanceLower(location.locX, location.locY, mouseX, mouseY, LOCATION_RADIUS)) {
+          newHovered = location;
+          ctx.stroke();
+        }
+      }
+
       ctx.fill();
     });
 
+    // Jumps
     ctx.strokeStyle = colors.jump.line;
     ctx.lineWidth = 1;
     quest.jumps.forEach(jump => {
@@ -161,6 +180,11 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       }
       ctx.stroke();
     });
+
+    if (canvasRef.current) {
+      canvasRef.current.style.cursor = newHovered ? "pointer" : "";
+    }
+    hoveredRef.current = newHovered;
   }, [quest, canvasWidth, canvasHeight]);
 
   React.useEffect(() => drawOnCanvas(), [drawOnCanvas]);
@@ -171,8 +195,8 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     }
     const canvas = canvasRef.current;
     const onMove = (e: MouseEvent) => {
-      mouseX.current = e.pageX - canvas.offsetLeft;
-      mouseY.current = e.pageY - canvas.offsetTop;
+      mouseXref.current = e.pageX - canvas.offsetLeft;
+      mouseYref.current = e.pageY - canvas.offsetTop;
       drawOnCanvas();
     };
     document.addEventListener("mousemove", onMove);
