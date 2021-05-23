@@ -25,6 +25,76 @@ function isDistanceLower(x1: number, y1: number, x2: number, y2: number, distanc
   return (x1 - x2) ** 2 + (y1 - y2) ** 2 < distance ** 2;
 }
 
+interface LocationLocationOnly {
+  locX: number;
+  locY: number;
+}
+function getControlPoints(
+  startLoc: LocationLocationOnly,
+  endLoc: LocationLocationOnly,
+  myIndex: number,
+  allJumpsCount: number,
+) {
+  const orientationIsNormal =
+    endLoc.locX !== startLoc.locX
+      ? endLoc.locX - startLoc.locX > 0
+      : endLoc.locY - startLoc.locY > 0;
+  const startX = orientationIsNormal ? startLoc.locX : endLoc.locX;
+  const endX = orientationIsNormal ? endLoc.locX : startLoc.locX;
+  const startY = orientationIsNormal ? startLoc.locY : endLoc.locY;
+  const endY = orientationIsNormal ? endLoc.locY : startLoc.locY;
+
+  const middleVectorX = (endX - startX) / 2;
+  const middleVectorY = (endY - startY) / 2;
+  const middleX = startX + middleVectorX;
+  const middleY = startY + middleVectorY;
+  const offsetVectorUnnormalizedX = middleVectorY;
+  const offsetVectorUnnormalizedY = -middleVectorX;
+  const offsetVectorLength = Math.sqrt(
+    offsetVectorUnnormalizedX * offsetVectorUnnormalizedX +
+      offsetVectorUnnormalizedY * offsetVectorUnnormalizedY,
+  );
+
+  const isBetweenTwoPoints = offsetVectorLength > 0;
+  const offsetVectorX = isBetweenTwoPoints
+    ? (offsetVectorUnnormalizedX / offsetVectorLength) * JUMPS_CONTROL_POINT_DISTANCE
+    : 0;
+  const offsetVectorY = isBetweenTwoPoints
+    ? (offsetVectorUnnormalizedY / offsetVectorLength) * JUMPS_CONTROL_POINT_DISTANCE
+    : 0;
+
+  const offsetVectorCount = myIndex;
+
+  const shiftMultiplier = allJumpsCount > 1 ? (allJumpsCount - 1) / 2 : 0;
+  const controlPointX =
+    middleX + offsetVectorX * offsetVectorCount - offsetVectorX * shiftMultiplier;
+  const controlPointY =
+    middleY + offsetVectorY * offsetVectorCount - offsetVectorY * shiftMultiplier;
+  const controlPoint1 = isBetweenTwoPoints
+    ? {
+        x: controlPointX,
+        y: controlPointY,
+      }
+    : {
+        x: startLoc.locX + JUMPS_LOOP_CONTROL_POINT_DISTANCE,
+        y:
+          startLoc.locY -
+          JUMPS_LOOP_CONTROL_POINT_DISTANCE -
+          (myIndex * JUMPS_CONTROL_POINT_DISTANCE) / 2,
+      };
+  const controlPoint2 = isBetweenTwoPoints
+    ? undefined
+    : {
+        x: startLoc.locX - JUMPS_LOOP_CONTROL_POINT_DISTANCE,
+        y:
+          startLoc.locY -
+          JUMPS_LOOP_CONTROL_POINT_DISTANCE -
+          (myIndex * JUMPS_CONTROL_POINT_DISTANCE) / 2,
+      };
+
+  return [controlPoint1, controlPoint2] as const;
+}
+
 type Hovered = null | DeepImmutable<Location> | DeepImmutable<Jump>;
 export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const [mode, setMode] = React.useState<EditorMode>("select");
@@ -106,64 +176,15 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             ? -1
             : a.showingOrder - b.showingOrder;
         });
+      const allJumpsCount = allJumpsBetweenThisLocations.length;
       const myIndex = allJumpsBetweenThisLocations.indexOf(jump);
 
-      const orientationIsNormal =
-        endLoc.locX !== startLoc.locX
-          ? endLoc.locX - startLoc.locX > 0
-          : endLoc.locY - startLoc.locY > 0;
-      const startX = orientationIsNormal ? startLoc.locX : endLoc.locX;
-      const endX = orientationIsNormal ? endLoc.locX : startLoc.locX;
-      const startY = orientationIsNormal ? startLoc.locY : endLoc.locY;
-      const endY = orientationIsNormal ? endLoc.locY : startLoc.locY;
-      const allJumpsCount = allJumpsBetweenThisLocations.length;
-      const middleVectorX = (endX - startX) / 2;
-      const middleVectorY = (endY - startY) / 2;
-      const middleX = startX + middleVectorX;
-      const middleY = startY + middleVectorY;
-      const offsetVectorUnnormalizedX = middleVectorY;
-      const offsetVectorUnnormalizedY = -middleVectorX;
-      const offsetVectorLength = Math.sqrt(
-        offsetVectorUnnormalizedX * offsetVectorUnnormalizedX +
-          offsetVectorUnnormalizedY * offsetVectorUnnormalizedY,
+      const [controlPoint1, controlPoint2] = getControlPoints(
+        startLoc,
+        endLoc,
+        myIndex,
+        allJumpsCount,
       );
-
-      const isBetweenTwoPoints = jump.fromLocationId !== jump.toLocationId;
-      const offsetVectorX = isBetweenTwoPoints
-        ? (offsetVectorUnnormalizedX / offsetVectorLength) * JUMPS_CONTROL_POINT_DISTANCE
-        : 0;
-      const offsetVectorY = isBetweenTwoPoints
-        ? (offsetVectorUnnormalizedY / offsetVectorLength) * JUMPS_CONTROL_POINT_DISTANCE
-        : 0;
-
-      const offsetVectorCount = myIndex;
-
-      const shiftMultiplier = allJumpsCount > 1 ? (allJumpsCount - 1) / 2 : 0;
-      const controlPointX =
-        middleX + offsetVectorX * offsetVectorCount - offsetVectorX * shiftMultiplier;
-      const controlPointY =
-        middleY + offsetVectorY * offsetVectorCount - offsetVectorY * shiftMultiplier;
-      const controlPoint1 = isBetweenTwoPoints
-        ? {
-            x: controlPointX,
-            y: controlPointY,
-          }
-        : {
-            x: startLoc.locX + JUMPS_LOOP_CONTROL_POINT_DISTANCE,
-            y:
-              startLoc.locY -
-              JUMPS_LOOP_CONTROL_POINT_DISTANCE -
-              (myIndex * JUMPS_CONTROL_POINT_DISTANCE) / 2,
-          };
-      const controlPoint2 = isBetweenTwoPoints
-        ? undefined
-        : {
-            x: startLoc.locX - JUMPS_LOOP_CONTROL_POINT_DISTANCE,
-            y:
-              startLoc.locY -
-              JUMPS_LOOP_CONTROL_POINT_DISTANCE -
-              (myIndex * JUMPS_CONTROL_POINT_DISTANCE) / 2,
-          };
 
       ctx.moveTo(startLoc.locX, startLoc.locY);
       if (!controlPoint2) {
