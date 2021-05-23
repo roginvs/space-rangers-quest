@@ -8,10 +8,11 @@ import { DATA_DIR } from "../consts";
 import { Editor } from "./editor";
 import { observer } from "mobx-react";
 import { EditorStore } from "./store";
+import { EditorCore } from "./core";
 
 //import { hot } from "react-hot-loader/root";
 @observer
-export class EditorContainer extends React.Component<{
+export class EditorContainerOld extends React.Component<{
   store: Store;
 }> {
   @observable
@@ -41,4 +42,26 @@ export class EditorContainer extends React.Component<{
     }
     return <Editor store={this.store} />;
   }
+}
+
+export function EditorContainer() {
+  const [quest, setQuest] = React.useState<Quest | null>(null);
+
+  React.useEffect(() => {
+    fetch(DATA_DIR + "qm/Xenolog.qmm.gz")
+      .then(x => x.arrayBuffer())
+      .then(questArrayBuffer => {
+        const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer))));
+        setQuest(quest);
+      })
+      .catch(e => {
+        console.error("Lol");
+      });
+  }, []);
+
+  if (!quest) {
+    return <div>Loading</div>;
+  }
+
+  return <EditorCore quest={quest} onChange={setQuest} />;
 }
