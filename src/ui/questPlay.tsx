@@ -178,14 +178,14 @@ export class QuestPlay extends React.Component<
       );
     }
 
-    const st = getUIState(quest, gameState, player);
-    const image = st.imageFileName ? (
-      <DivFadeinCss key={st.imageFileName}>
+    const uistate = getUIState(quest, gameState, player);
+    const image = uistate.imageFileName ? (
+      <DivFadeinCss key={uistate.imageFileName}>
         <img
           style={{
             width: "100%",
           }}
-          src={DATA_DIR + "img/" + st.imageFileName}
+          src={DATA_DIR + "img/" + uistate.imageFileName}
         />
       </DivFadeinCss>
     ) : null;
@@ -195,14 +195,14 @@ export class QuestPlay extends React.Component<
     });
 
     const locationText = (
-      <DivFadeinCss key={`${st.text}#${gameState.performedJumps.length}`}>
-        <QuestReplaceTags str={st.text} />
+      <DivFadeinCss key={`${uistate.text}#${gameState.performedJumps.length}`}>
+        <QuestReplaceTags str={uistate.text} />
       </DivFadeinCss>
     );
 
     const choices = (
       <DivFadeinCss key={`#${gameState.performedJumps.length}`}>
-        {st.choices.map(choice => {
+        {uistate.choices.map(choice => {
           return (
             <div key={choice.jumpId} className="mb-4">
               <a
@@ -246,7 +246,7 @@ export class QuestPlay extends React.Component<
       </DivFadeinCss>
     );
 
-    const paramsStrings = ([] as string[]).concat(...st.paramsState.map(x => x.split("<br>")));
+    const paramsStrings = ([] as string[]).concat(...uistate.paramsState.map(x => x.split("<br>")));
 
     const params = (
       <>
