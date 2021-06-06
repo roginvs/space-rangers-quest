@@ -33,6 +33,7 @@ import { Store } from "./store";
 import "./questPlay.css";
 import { PQImages } from "../lib/pqImages";
 import { Music } from "./questPlay.music";
+import { QuestPlayImage } from "./questPlay.image";
 
 interface QuestPlayState {
   quest?: Quest;
@@ -179,16 +180,8 @@ export class QuestPlay extends React.Component<
     }
 
     const uistate = getUIState(quest, gameState, player);
-    const image = uistate.imageFileName ? (
-      <DivFadeinCss key={uistate.imageFileName}>
-        <img
-          style={{
-            width: "100%",
-          }}
-          src={DATA_DIR + "img/" + uistate.imageFileName}
-        />
-      </DivFadeinCss>
-    ) : null;
+
+    const imageUrl = uistate.imageFileName ? DATA_DIR + "img/" + uistate.imageFileName : null;
 
     const imagesPreloaded = getAllImagesToPreload(quest, game.images).map(x => {
       return <img key={x} src={DATA_DIR + "img/" + x} style={{ display: "none" }} />;
@@ -401,7 +394,7 @@ export class QuestPlay extends React.Component<
                 }}
               >
                 {imagesPreloaded}
-                {image}
+                <QuestPlayImage src={imageUrl} />
               </div>
 
               <div
@@ -473,7 +466,7 @@ export class QuestPlay extends React.Component<
                     }}
                   >
                     {imagesPreloaded}
-                    {image}
+                    <QuestPlayImage src={imageUrl} />
                   </div>
                 </div>
                 <div
