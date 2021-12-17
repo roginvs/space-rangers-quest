@@ -8,7 +8,7 @@
 
 Основан на описании формата qm `lastqm.txt` и исследовании поведения TGE 4.3.0.
 
-## Сборка
+## Сборка 123
 
 - Файлы квестов (_.qm, _.qmm) нужно извлечь из игры и положить в `borrowed/qm/SR 2.1.2170/`
   - и/или в `borrowed/qm/SR 2.1.2121 eng/`
@@ -20,6 +20,7 @@
 - Затем всё собрать:
 
 ```
+cd public_html/git
 rm -R built-web || true
 npm install
 npm run lint
@@ -27,6 +28,7 @@ npm run test
 mkdir built-web
 ./node_modules/.bin/ts-node src/packGameData.ts
 npm run build
+
 ```
 
 ## Известные проблемы

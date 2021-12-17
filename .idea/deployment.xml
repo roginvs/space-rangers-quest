@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" serverName="Darkon.su" remoteFilesAllowedToDisappearOnAutoupload="false">
+    <serverData>
+      <paths name="Darkon.su">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/public_html/git" local="$PROJECT_DIR$" web="https://www.darkon.su" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+  </component>
+</project>
