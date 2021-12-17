@@ -5,7 +5,7 @@
       <paths name="Darkon.su">
         <serverdata>
           <mappings>
-            <mapping deploy="/public_html/git" local="$PROJECT_DIR$" web="https://www.darkon.su" />
+            <mapping local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
