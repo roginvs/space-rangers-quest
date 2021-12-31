@@ -5,9 +5,9 @@ import { Player } from "./qmplayer/player";
 import { QM } from "./qmreader";
 import { substitute } from "./substitution";
 
-export function getGameTaskText(quest: QM, player: Player) {
+export function getGameTaskText(taskText: string, player: Player) {
   return substitute(
-    quest.taskText,
+    taskText,
     {
       ...player,
       Day: `${DEFAULT_DAYS_TO_PASS_QUEST}`,

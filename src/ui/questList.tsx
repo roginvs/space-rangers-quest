@@ -67,7 +67,7 @@ export class QuestList extends React.Component<
           }
           return true;
         })(),
-        taskText: getGameTaskText(quest, player),
+        taskText: getGameTaskText(quest.taskText, player),
       }))
       .filter(quest =>
         store.questsListSearch

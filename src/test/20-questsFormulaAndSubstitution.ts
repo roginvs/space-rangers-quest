@@ -96,7 +96,7 @@ describe(`Checking all quests for formulas and params substitution`, function() 
           check(quest.successText, "success");
         });
         it(`Starting text as shown in main menu`, () => {
-          getGameTaskText(quest, player);
+          getGameTaskText(quest.taskText, player);
         });
         it(`Locations texts and formulas`, () => {
           quest.locations.forEach(loc => {
