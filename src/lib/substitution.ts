@@ -18,6 +18,15 @@ export const PLAYER_KEYS_TO_REPLACE: (keyof PlayerSubstitute)[] = [
   "CurDate",
 ]; // TODO: Maybe move from here
 
+/**
+ * Replaces:
+ *    <>        -> diamongIndex (if provided)
+ *   {1+2}      -> parse formula, using random
+ *   <Ranger>   -> player.Ranger
+ *   [p22]      -> params[21]
+ *
+ * All replaced values have <clr>...<clrEnd> around them
+ */
 export function substitute(
   str: string,
   player: PlayerSubstitute,
