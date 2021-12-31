@@ -29,7 +29,7 @@ describe("Checking substitute", function() {
     // This is commented because current implementation causes infinite loop
     // ["Special char <ToStar>", "Special char <clr><ToStar><clrEnd>"],
     ["Diamond <>", "Diamond <clr>20<clrEnd>"],
-    //    ["Один [d2]", "Один <clr>Фиал<clrEnd>"],
+    ["Один [d2]", "Один <clr>Фиал<clrEnd>"],
     //    ["Один [d2:25]", "Один <clr>Bottle<clrEnd>"],
     //    ["Один [d2:10+15]", "Один <clr>Bottle<clrEnd>"],
     //    ["Один [d2:{10+15}]", "Один <clr>Bottle<clrEnd>"],
@@ -40,7 +40,7 @@ describe("Checking substitute", function() {
     //    ["Random [d1:{[10..20]}]", "Random <clr>Param1valueString<clrEnd>"],
   ]) {
     const random = createDetermenisticRandom([5, 6, 7]);
-    it(`Substitute '${str}'`, () =>
+    it(`Substitute '${str}' into '${expected}'`, () =>
       assert.equal(
         substitute(
           str,

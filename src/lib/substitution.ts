@@ -30,8 +30,13 @@ export const PLAYER_KEYS_TO_REPLACE: (keyof PlayerSubstitute)[] = [
  *   {1+2}      -> parse formula, using random
  *   <Ranger>   -> player.Ranger
  *   [p22]      -> params[21]
+ *   [d1]       -> Param 1 text with current value
+ *   [d1:440 + 4]   -> Param 1 text with value = 444 (see tests for supported cases)
  *
  * All replaced values have <clr>...<clrEnd> around them
+ *
+ *
+ * TODO: Use scanning method, go char by char
  */
 export function substitute(
   str: string,
@@ -44,6 +49,32 @@ export function substitute(
   if (diamondIndex !== undefined) {
     str = str.replace(/<>/g, `[p${diamondIndex + 1}]`);
   }
+
+  while (true) {
+    const matchPlain = str.match(/\[d(\d+)\]/);
+    if (matchPlain) {
+      const paramIndex = parseInt(matchPlain[1]) - 1;
+      const paramValue = paramValues[paramIndex];
+
+      for (const range of paramShowInfos[paramIndex].showingInfo) {
+        if (paramValue >= range.from && paramValue <= range.to) {
+          const paramString = substitute(
+            range.str,
+            player,
+            paramValues,
+            paramShowInfos,
+            random,
+            diamondIndex,
+          );
+          str = str.split(matchPlain[0]).join(clr + paramString + clrEnd);
+          break;
+        }
+      }
+    } else {
+      break;
+    }
+  }
+
   while (true) {
     const m = str.match(/{[^}]*}/);
     if (!m) {
