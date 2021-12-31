@@ -26,10 +26,10 @@ export const PLAYER_KEYS_TO_REPLACE: (keyof PlayerSubstitute)[] = [
 
 /**
  * Replaces:
- *    <>        -> diamongIndex (if provided)
+ *    <>        -> value of parameter with index = diamongIndex (if provided)
  *   {1+2}      -> parse formula, using random
- *   <Ranger>   -> player.Ranger
- *   [p22]      -> params[21]
+ *   <Ranger>   -> player.Ranger and others
+ *   [p22]      -> Value of parameter
  *   [d1]       -> Param 1 text with current value
  *   [d1:440 + 4]   -> Param 1 text with value = 444 (see tests for supported cases)
  *
