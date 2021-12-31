@@ -37,6 +37,8 @@ export const PLAYER_KEYS_TO_REPLACE: (keyof PlayerSubstitute)[] = [
  *
  *
  * TODO: Use scanning method, go char by char
+ *
+ *
  */
 export function substitute(
   str: string,

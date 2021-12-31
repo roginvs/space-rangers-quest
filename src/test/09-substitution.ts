@@ -26,7 +26,7 @@ describe("Checking substitute", function() {
     ["Boo {2+3}", "Boo <clr>5<clrEnd>"],
     ["Boo {2+[10..20]}", "Boo <clr>17<clrEnd>"],
     ["Lol <Ranger><Ranger>", "Lol <clr>MyName<clrEnd><clr>MyName<clrEnd>"],
-    // This is commented because current implementation causes infinite loop
+    // TODO This is commented because current implementation causes infinite loop.
     // ["Special char <ToStar>", "Special char <clr><ToStar><clrEnd>"],
     ["Diamond <>", "Diamond <clr>20<clrEnd>"],
     ["Один [d2]", "Один <clr>Фиал<clrEnd>"],
@@ -40,6 +40,7 @@ describe("Checking substitute", function() {
     ["Random [d1:[10..20]]", "Random <clr>Param1valueString<clrEnd>"],
     ["Random [d1:{[10..20]}]", "Random <clr>Param1valueString<clrEnd>"],
     ["Spaces [d2: { 6  -    3    }    ] ", "Spaces <clr>Fial<clrEnd> "],
+    // TODO: What if [d1] refers [d2] which refers [d1]? TGE crashes with stack overflow
   ]) {
     const random = createDetermenisticRandom([5, 6, 7]);
     it(`Substitute '${str}' into '${expected}'`, () =>
