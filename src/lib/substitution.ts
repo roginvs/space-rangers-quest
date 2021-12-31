@@ -50,33 +50,6 @@ export function substitute(
     str = str.replace(/<>/g, `[p${diamondIndex + 1}]`);
   }
 
-  /*
-  while (true) {
-    const matchPlain = str.match(/\[d(\d+)\]/);
-    if (matchPlain) {
-      const paramIndex = parseInt(matchPlain[1]) - 1;
-      const paramValue = paramValues[paramIndex];
-
-      for (const range of paramShowInfos[paramIndex].showingInfo) {
-        if (paramValue >= range.from && paramValue <= range.to) {
-          const paramString = substitute(
-            range.str,
-            player,
-            paramValues,
-            paramShowInfos,
-            random,
-            diamondIndex,
-          );
-          str = str.split(matchPlain[0]).join(clr + paramString + clrEnd);
-          break;
-        }
-      }
-    } else {
-      break;
-    }
-  }
-  */
-
   let searchPosition = 0;
   while (true) {
     const dIndex = str.indexOf("[d", searchPosition);
