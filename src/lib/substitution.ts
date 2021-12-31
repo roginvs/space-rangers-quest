@@ -36,7 +36,8 @@ export const PLAYER_KEYS_TO_REPLACE: (keyof PlayerSubstitute)[] = [
  * All replaced values have <clr>...<clrEnd> around them
  *
  *
- * TODO: Use scanning method, go char by char
+ * TODO: Use scanning method, go char by char.
+ * Do not use .replace due to side-effect of special chars
  *
  *
  */
