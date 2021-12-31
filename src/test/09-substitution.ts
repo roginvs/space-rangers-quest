@@ -29,7 +29,7 @@ describe("Checking substitute", function() {
     // This is commented because current implementation causes infinite loop
     // ["Special char <ToStar>", "Special char <clr><ToStar><clrEnd>"],
     ["Diamond <>", "Diamond <clr>20<clrEnd>"],
-    ["Один [d1]", "Один <clr>Фиал<clrEnd>"],
+    //    ["Один [d1]", "Один <clr>Фиал<clrEnd>"],
   ]) {
     const random = createDetermenisticRandom([5, 6, 7]);
     it(`Substitute '${str}'`, () =>

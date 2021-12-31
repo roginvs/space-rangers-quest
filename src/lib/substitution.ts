@@ -2,8 +2,12 @@ import { parse } from "./formula";
 // import { Lang } from './qmplayer/player';
 import { RandomFunc } from "./randomFunc";
 import { PlayerSubstitute } from "./qmplayer/playerSubstitute";
-import { QMParamShowInfo } from "./qmreader";
+import { QM, QMParamShowInfo } from "./qmreader";
 import { DeepImmutable } from "./qmplayer/deepImmutable";
+import { Game } from "../packGameData";
+import { Player } from "./qmplayer/player";
+import { DEFAULT_DAYS_TO_PASS_QUEST } from "./qmplayer/defs";
+import { SRDateToString } from "./qmplayer/funcs";
 export const clr = "<clr>";
 export const clrEnd = "<clrEnd>";
 

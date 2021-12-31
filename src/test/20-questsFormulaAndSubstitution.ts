@@ -8,6 +8,7 @@ import { substitute } from "../lib/substitution";
 import * as formula from "../lib/formula";
 import { PlayerSubstitute } from "../lib/qmplayer/playerSubstitute";
 import { createDetermenisticRandom, randomFromMathRandom } from "../lib/randomFunc";
+import { getGameTaskText } from "../lib/getGameTaskText";
 
 // tslint:disable:no-invalid-this
 
@@ -93,6 +94,9 @@ describe(`Checking all quests for formulas and params substitution`, function() 
         it(`Starting/ending text`, () => {
           check(quest.taskText, "start");
           check(quest.successText, "success");
+        });
+        it(`Starting text as shown in main menu`, () => {
+          getGameTaskText(quest, player);
         });
         it(`Locations texts and formulas`, () => {
           quest.locations.forEach(loc => {

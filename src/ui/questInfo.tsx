@@ -29,6 +29,7 @@ import * as pako from "pako";
 import { QuestPlay } from "./questPlay";
 import { observer } from "mobx-react";
 import { Store } from "./store";
+import { getGameTaskText } from "../lib/getGameTaskText";
 
 interface QuestInfoState {
   lastSavedGameState?: GameState | null;
@@ -137,22 +138,7 @@ export class QuestInfo extends React.Component<
           </div>
         </div>
         <div className="mb-3">
-          <QuestReplaceTags
-            str={substitute(
-              game.taskText,
-              {
-                ...player,
-                Day: `${DEFAULT_DAYS_TO_PASS_QUEST}`,
-                Date: SRDateToString(DEFAULT_DAYS_TO_PASS_QUEST, player.lang),
-                CurDate: SRDateToString(0, player.lang),
-              },
-              [],
-              [],
-              n =>
-                // tslint:disable-next-line:strict-type-predicates
-                n !== undefined ? Math.floor(Math.random() * n) : Math.random(),
-            )}
-          />
+          <QuestReplaceTags str={getGameTaskText(game, player)} />
         </div>
         <div className="row">
           <div className="col-md-4">
