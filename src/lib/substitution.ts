@@ -50,6 +50,7 @@ export function substitute(
     str = str.replace(/<>/g, `[p${diamondIndex + 1}]`);
   }
 
+  /*
   while (true) {
     const matchPlain = str.match(/\[d(\d+)\]/);
     if (matchPlain) {
@@ -73,6 +74,92 @@ export function substitute(
     } else {
       break;
     }
+  }
+  */
+
+  let searchPosition = 0;
+  while (true) {
+    const dIndex = str.indexOf("[d", searchPosition);
+    if (dIndex === -1) {
+      break;
+    }
+    let paramIndexStr = "";
+    let scanIndex = dIndex + 2;
+
+    while (true) {
+      const currentChar = str[scanIndex];
+      if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].indexOf(currentChar) === -1) {
+        break;
+      }
+      scanIndex++;
+    }
+
+    paramIndexStr = str.substring(dIndex + 2, scanIndex);
+    if (paramIndexStr === "") {
+      console.warn(`No param index found in '${str}' at ${dIndex}`);
+      break;
+    }
+    const paramIndex = parseInt(paramIndexStr) - 1;
+
+    let paramValue: number | undefined;
+    if (str[scanIndex] === "]") {
+      scanIndex++;
+      paramValue = paramValues[paramIndex];
+    } else if (str[scanIndex] === ":") {
+      scanIndex++;
+      const formulaStartIndex = scanIndex;
+      let formulaEndIndex = formulaStartIndex;
+      while (str[scanIndex] === " ") {
+        scanIndex++;
+      }
+
+      // And here goes the formula parsing
+      // TODO: Use parse() method without throwing errors
+      // So, parse() should read the expression and return the index where it ends
+      // Now we just using naive implementation and counting square brackets
+      let squareBracketsCount = 0;
+      while (true) {
+        if (str[scanIndex] === "[") {
+          squareBracketsCount++;
+        } else if (str[scanIndex] === "]") {
+          if (squareBracketsCount === 0) {
+            formulaEndIndex = scanIndex;
+            scanIndex++;
+            break;
+          } else {
+            squareBracketsCount--;
+          }
+        }
+        scanIndex++;
+        if (scanIndex > str.length) {
+          console.warn(`No closing bracket found in '${str}' at ${formulaStartIndex}`);
+          break;
+        }
+      }
+      const formulaWithMaybeCurlyBrackets = str.substring(formulaStartIndex, formulaEndIndex);
+      const formula = formulaWithMaybeCurlyBrackets; // TODO .replace(/\{/g, "(");
+      paramValue = parse(formula, paramValues, random);
+    } else {
+      console.warn(`Unknown symbol in '${str}' at ${scanIndex}`);
+      break;
+    }
+
+    for (const range of paramShowInfos[paramIndex].showingInfo) {
+      if (paramValue >= range.from && paramValue <= range.to) {
+        const paramString = substitute(
+          range.str,
+          player,
+          paramValues,
+          paramShowInfos,
+          random,
+          diamondIndex,
+        );
+        str = str.slice(0, dIndex) + clr + paramString + clrEnd + str.slice(scanIndex);
+        break;
+      }
+    }
+
+    searchPosition = scanIndex;
   }
 
   while (true) {
