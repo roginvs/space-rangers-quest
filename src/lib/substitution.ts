@@ -110,7 +110,13 @@ export function substitute(
         }
       }
       const formulaWithMaybeCurlyBrackets = str.substring(formulaStartIndex, formulaEndIndex);
-      const formula = formulaWithMaybeCurlyBrackets; // TODO .replace(/\{/g, "(");
+
+      let formula = formulaWithMaybeCurlyBrackets;
+      const insideCurlyBracketsMatch = formulaWithMaybeCurlyBrackets.match(/\s*\{(.*)\}\s*/);
+      if (insideCurlyBracketsMatch) {
+        formula = insideCurlyBracketsMatch[1];
+      }
+
       paramValue = parse(formula, paramValues, random);
     } else {
       console.warn(`Unknown symbol in '${str}' at ${scanIndex}`);
