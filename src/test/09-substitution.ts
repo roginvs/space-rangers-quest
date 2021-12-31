@@ -40,7 +40,21 @@ describe("Checking substitute", function() {
     ["Random [d1:[10..20]]", "Random <clr>Param1valueString<clrEnd>"],
     ["Random [d1:{[10..20]}]", "Random <clr>Param1valueString<clrEnd>"],
     ["Spaces [d2: { 6  -    3    }    ] ", "Spaces <clr>Fial<clrEnd> "],
+    [
+      "Multiple [d1] [d1]",
+      "Multiple <clr>Param1valueString<clrEnd> <clr>Param1valueString<clrEnd>",
+    ],
+    ["Incorrect [d] [d1]", "Incorrect [d] <clr>Param1valueString<clrEnd>"],
+    ["Incorrect [d:] [d1]", "Incorrect [d:] <clr>Param1valueString<clrEnd>"],
+    ["Incorrect [d[d1]", "Incorrect [d<clr>Param1valueString<clrEnd>"],
+    ["Incorrect [d:{3+5] [d1]", "Incorrect [d:{3+5] <clr>Param1valueString<clrEnd>"],
+    ["Incorrect [d:4+] [d1]", "Incorrect [d:4+] <clr>Param1valueString<clrEnd>"],
+    ["Incorrect [d:4+[[] [d1]", "Incorrect [d:4+[[] <clr>Param1valueString<clrEnd>"],
+    //
+    //
     // TODO: What if [d1] refers [d2] which refers [d1]? TGE crashes with stack overflow
+    //
+    //
   ]) {
     const random = createDetermenisticRandom([5, 6, 7]);
     it(`Substitute '${str}' into '${expected}'`, () =>

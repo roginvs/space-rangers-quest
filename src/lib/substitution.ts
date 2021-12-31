@@ -73,7 +73,8 @@ export function substitute(
     paramIndexStr = str.substring(dIndex + 2, scanIndex);
     if (paramIndexStr === "") {
       console.warn(`No param index found in '${str}' at ${dIndex}`);
-      break;
+      searchPosition = scanIndex;
+      continue;
     }
     const paramIndex = parseInt(paramIndexStr) - 1;
 
