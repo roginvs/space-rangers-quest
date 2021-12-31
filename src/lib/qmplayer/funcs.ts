@@ -166,8 +166,8 @@ function replace(
   player: Player,
   diamondIndex: number | undefined,
   /** 
-   In theory this random should never be called because this replace function
-     is used for visual replacements, like location text, param values, jump text and etc.
+   Calling this random affects only visual representation of the game.
+   It is used in few quests for example to make some random number on location description.
    */
   random: RandomFunc,
 ) {
