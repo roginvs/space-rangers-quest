@@ -158,13 +158,18 @@ export function SRDateToString(
   return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear() + 1000}`;
 }
 
+/** This function is almost the same as substitute but it takes quest and state */
 function replace(
   str: string,
   quest: Quest,
   state: GameState,
   player: Player,
   diamondIndex: number | undefined,
-  random: RandomFunc, // Should not be called
+  /** 
+   In theory this random should never be called because this replace function
+     is used for visual replacements, like location text, param values, jump text and etc.
+   */
+  random: RandomFunc,
 ) {
   return substitute(
     str,

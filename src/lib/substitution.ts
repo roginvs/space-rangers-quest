@@ -123,6 +123,7 @@ export function substitute(
       break;
     }
 
+    // TODO: This is very similar to getParamsState function, maybe better to refactor
     for (const range of paramShowInfos[paramIndex].showingInfo) {
       if (paramValue >= range.from && paramValue <= range.to) {
         const paramString = substitute(
