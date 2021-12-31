@@ -228,7 +228,7 @@ export enum ParamCritType {
   Минимум = 1,
 }
 
-interface QMParamShowInfo {
+interface QMParamShowInfoPart {
   from: number;
   to: number;
   str: string;
@@ -239,7 +239,11 @@ interface Media {
   sound: string | undefined;
   track: string | undefined;
 }
-export interface QMParam extends Media {
+
+export interface QMParamShowInfo {
+  showingInfo: QMParamShowInfoPart[];
+}
+export interface QMParam extends Media, QMParamShowInfo {
   min: number;
   max: number;
   type: ParamType;
@@ -249,7 +253,6 @@ export interface QMParam extends Media {
   showingRangesCount: number;
   isMoney: boolean;
   name: string;
-  showingInfo: QMParamShowInfo[];
   starting: string;
   critValueString: string;
 }

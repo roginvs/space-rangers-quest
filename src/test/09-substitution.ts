@@ -33,6 +33,6 @@ describe("Checking substitute", function() {
   ]) {
     const random = createDetermenisticRandom([5, 6, 7]);
     it(`Substitute '${str}'`, () =>
-      assert.equal(substitute(str, player, [10, 20, 30], random, 1), expected));
+      assert.equal(substitute(str, player, [10, 20, 30], [], random, 1), expected));
   }
 });

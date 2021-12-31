@@ -2,6 +2,8 @@ import { parse } from "./formula";
 // import { Lang } from './qmplayer/player';
 import { RandomFunc } from "./randomFunc";
 import { PlayerSubstitute } from "./qmplayer/playerSubstitute";
+import { QMParamShowInfo } from "./qmreader";
+import { DeepImmutable } from "./qmplayer/deepImmutable";
 export const clr = "<clr>";
 export const clrEnd = "<clrEnd>";
 
@@ -31,6 +33,7 @@ export function substitute(
   str: string,
   player: PlayerSubstitute,
   paramValues: ReadonlyArray<number>,
+  paramShowInfos: DeepImmutable<QMParamShowInfo[]>,
   random: RandomFunc,
   diamondIndex?: number,
 ) {

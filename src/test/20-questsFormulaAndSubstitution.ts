@@ -7,7 +7,7 @@ import { parse, QM } from "../lib/qmreader";
 import { substitute } from "../lib/substitution";
 import * as formula from "../lib/formula";
 import { PlayerSubstitute } from "../lib/qmplayer/playerSubstitute";
-import { randomFromMathRandom } from "../lib/randomFunc";
+import { createDetermenisticRandom, randomFromMathRandom } from "../lib/randomFunc";
 
 // tslint:disable:no-invalid-this
 
@@ -19,7 +19,7 @@ describe(`Checking all quests for formulas and params substitution`, function() 
       const fullname = srcDir + origin + "/" + f;
       describe(`Checking quest ${fullname}`, () => {
         let quest: QM;
-        let params: number[];
+        let paramValues: number[];
         const player: PlayerSubstitute = {
           Ranger: "Ranger",
           Player: "Player",
@@ -35,7 +35,14 @@ describe(`Checking all quests for formulas and params substitution`, function() 
         };
         function check(str: string, place = "", isDiamond = false) {
           try {
-            substitute(str, player, params, randomFromMathRandom, isDiamond ? 1 : undefined);
+            substitute(
+              str,
+              player,
+              paramValues,
+              quest.params,
+              randomFromMathRandom,
+              isDiamond ? 1 : undefined,
+            );
           } catch (e) {
             throw new Error(`String failed '${str}' with ${e} in ${place}`);
           }
@@ -64,19 +71,12 @@ describe(`Checking all quests for formulas and params substitution`, function() 
             0.9796112746203975,
           ];
 
-          function createRandom(staticRandom: number[]) {
-            let i = 0;
-            return () => {
-              i++;
-              if (i >= staticRandom.length) {
-                throw new Error(`Lots of random`);
-                i = 0;
-              }
-              return staticRandom[i];
-            };
-          }
           try {
-            const formulaResult = formula.parse(str, params, createRandom(staticRandomGenerated));
+            const formulaResult = formula.parse(
+              str,
+              paramValues,
+              createDetermenisticRandom(staticRandomGenerated),
+            );
           } catch (e) {
             throw new Error(`String failed '${str}' with ${e} in ${place}`);
           }
@@ -84,7 +84,7 @@ describe(`Checking all quests for formulas and params substitution`, function() 
         it(`Loads quest and substitute variables`, () => {
           const data = fs.readFileSync(fullname);
           quest = parse(data);
-          params = quest.params.map((p, i) => i * i);
+          paramValues = quest.params.map((p, i) => i * i);
         });
         it(`Creates player and starts (to check init values)`, () => {
           const player = new QMPlayer(quest, [], "rus");

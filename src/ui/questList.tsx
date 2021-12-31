@@ -76,6 +76,7 @@ export class QuestList extends React.Component<
             CurDate: SRDateToString(0, player.lang),
           },
           [],
+          [],
           // tslint:disable-next-line:strict-type-predicates
           n => (n !== undefined ? Math.floor(Math.random() * n) : Math.random()),
         ),

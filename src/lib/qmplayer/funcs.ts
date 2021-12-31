@@ -160,6 +160,7 @@ export function SRDateToString(
 
 function replace(
   str: string,
+  quest: Quest,
   state: GameState,
   player: Player,
   diamondIndex: number | undefined,
@@ -174,6 +175,7 @@ function replace(
       ...player,
     },
     state.paramValues,
+    quest.params,
     random,
     diamondIndex,
   );
@@ -188,7 +190,7 @@ function getParamsState(quest: Quest, state: GameState, player: Player, random: 
       if (val !== 0 || param.showWhenZero) {
         for (const range of param.showingInfo) {
           if (val >= range.from && val <= range.to) {
-            const str = replace(range.str, state, player, i, random);
+            const str = replace(range.str, quest, state, player, i, random);
             paramsState.push(str);
             break;
           }
@@ -263,7 +265,7 @@ export function getUIState(
 
   if (state.state === "starting") {
     return {
-      text: replace(quest.taskText, state, player, undefined, random),
+      text: replace(quest.taskText, quest, state, player, undefined, random),
       paramsState: [],
       choices: [
         {
@@ -281,7 +283,7 @@ export function getUIState(
       throw new Error(`Internal error: no last jump id=${state.lastJumpId}`);
     }
     return {
-      text: replace(jump.description, state, player, undefined, alea.random),
+      text: replace(jump.description, quest, state, player, undefined, alea.random),
       paramsState: getParamsState(quest, state, player, random),
       choices: [
         {
@@ -308,7 +310,7 @@ export function getUIState(
       location.isEmpty && lastJump && lastJump.description ? lastJump.description : locationOwnText;
 
     return {
-      text: replace(text, state, player, undefined, alea.random),
+      text: replace(text, quest, state, player, undefined, alea.random),
       paramsState: getParamsState(quest, state, player, random),
       choices:
         state.state === "location"
@@ -328,7 +330,8 @@ export function getUIState(
                   throw new Error(`Internal error: no jump ${x.id} in possible jumps`);
                 }
                 return {
-                  text: replace(jump.text, state, player, undefined, alea.random) || texts.next,
+                  text:
+                    replace(jump.text, quest, state, player, undefined, alea.random) || texts.next,
                   jumpId: x.id,
                   active: x.active,
                 };
@@ -356,6 +359,7 @@ export function getUIState(
     return {
       text: replace(
         jump.paramsChanges[critId].critText || quest.params[critId].critValueString,
+        quest,
         state,
         player,
         undefined,
@@ -389,7 +393,7 @@ export function getUIState(
 
     // const param = quest.params[critId];
     return {
-      text: replace(jump.description, state, player, undefined, alea.random),
+      text: replace(jump.description, quest, state, player, undefined, alea.random),
       paramsState: getParamsState(quest, state, player, random),
       choices: [
         {
@@ -416,6 +420,7 @@ export function getUIState(
     return {
       text: replace(
         location.paramsChanges[critId].critText || quest.params[critId].critValueString,
+        quest,
         state,
         player,
         undefined,
@@ -442,7 +447,7 @@ export function getUIState(
     };
   } else if (state.state === "returnedending") {
     return {
-      text: replace(quest.successText, state, player, undefined, alea.random),
+      text: replace(quest.successText, quest, state, player, undefined, alea.random),
       paramsState: [],
       choices: [],
       gameState: "win",
