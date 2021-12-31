@@ -2,6 +2,7 @@ import * as assert from "assert";
 import "mocha";
 
 import { _sortJumps } from "../lib/qmplayer/funcs";
+import { createDetermenisticRandom } from "../lib/randomFunc";
 
 describe("Checking _sortJumps", function() {
   it(`Empty list returns empty`, () => {
@@ -34,23 +35,7 @@ describe("Checking _sortJumps", function() {
   });
 
   it(`Sorting, have duplicated prios`, () => {
-    let randomId = -1;
-    const random = (n: number | undefined) => {
-      if (n === undefined) {
-        throw new Error("todo this test");
-      }
-      const randoms = [1, 0, 0, 1];
-      randomId++;
-      if (randomId >= randoms.length) {
-        throw new Error("Lots of randoms");
-      }
-      const randomValue = randoms[randomId];
-      // console.info(`Random call range=${n} randomValue=${randomValue}`)
-      if (randomValue >= n) {
-        throw new Error(`Why stored random value is greater?`);
-      }
-      return randomValue;
-    };
+    const random = createDetermenisticRandom([1, 0, 0, 1]);
     const r = _sortJumps(
       [
         { id: 0, showingOrder: 5 },
