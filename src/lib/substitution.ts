@@ -30,7 +30,7 @@ export const PLAYER_KEYS_TO_REPLACE: (keyof PlayerSubstitute)[] = [
 export function substitute(
   str: string,
   player: PlayerSubstitute,
-  params: ReadonlyArray<number>,
+  paramValues: ReadonlyArray<number>,
   random: RandomFunc,
   diamondIndex?: number,
 ) {
@@ -45,7 +45,7 @@ export function substitute(
     const formulaWithBrackets = m[0];
     const result = parse(
       formulaWithBrackets.slice(1, formulaWithBrackets.length - 1),
-      params,
+      paramValues,
       random,
     );
     str = str.replace(formulaWithBrackets, `${clr}${result}${clrEnd}`);
@@ -55,9 +55,9 @@ export function substitute(
       str = str.replace(`<${k}>`, `${clr}${player[k]}${clrEnd}`);
     }
   }
-  for (let ii = 0; ii < params.length; ii++) {
+  for (let ii = 0; ii < paramValues.length; ii++) {
     while (str.indexOf(`[p${ii + 1}]`) > -1) {
-      str = str.replace(`[p${ii + 1}]`, `${clr}${params[ii]}${clrEnd}`);
+      str = str.replace(`[p${ii + 1}]`, `${clr}${paramValues[ii]}${clrEnd}`);
     }
   }
 

@@ -20,6 +20,7 @@ export function createDetermenisticRandom(randomValues: number[]) {
     if (randomValue >= n) {
       throw new Error(`Why stored random value is greater?`);
     }
+
     return randomValue;
   };
   return random;
