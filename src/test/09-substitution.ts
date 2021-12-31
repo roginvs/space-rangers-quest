@@ -29,10 +29,66 @@ describe("Checking substitute", function() {
     // This is commented because current implementation causes infinite loop
     // ["Special char <ToStar>", "Special char <clr><ToStar><clrEnd>"],
     ["Diamond <>", "Diamond <clr>20<clrEnd>"],
-    //    ["Один [d1]", "Один <clr>Фиал<clrEnd>"],
+    //    ["Один [d2]", "Один <clr>Фиал<clrEnd>"],
+    //    ["Один [d2:25]", "Один <clr>Bottle<clrEnd>"],
+    //    ["Один [d2:10+15]", "Один <clr>Bottle<clrEnd>"],
+    //    ["Один [d2:{10+15}]", "Один <clr>Bottle<clrEnd>"],
+    //    ["Один [d2:[p1] + 15]", "Один <clr>Bottle<clrEnd>"],
+    //    ["Один [d2:{[p1] + 15}]", "Один <clr>Bottle<clrEnd>"],
+    //    ["Deep [d3]", "Deep <clr>Lol <clr>Param1valueString<clrEnd><clrEnd>"],
+    //    ["Random [d1:[10..20]]", "Random <clr>Param1valueString<clrEnd>"],
+    //    ["Random [d1:{[10..20]}]", "Random <clr>Param1valueString<clrEnd>"],
   ]) {
     const random = createDetermenisticRandom([5, 6, 7]);
     it(`Substitute '${str}'`, () =>
-      assert.equal(substitute(str, player, [10, 20, 30], [], random, 1), expected));
+      assert.equal(
+        substitute(
+          str,
+          player,
+          [10, 20, 30],
+          [
+            {
+              showingInfo: [
+                {
+                  from: 0,
+                  to: 20,
+                  str: "Param1valueString",
+                },
+              ],
+            },
+            {
+              showingInfo: [
+                {
+                  from: 0,
+                  to: 5,
+                  str: "Fial",
+                },
+                {
+                  from: 5,
+                  to: 21,
+                  str: "Фиал",
+                },
+                {
+                  from: 21,
+                  to: 26,
+                  str: "Bottle",
+                },
+              ],
+            },
+            {
+              showingInfo: [
+                {
+                  from: 30,
+                  to: 30,
+                  str: "Lol [d1]",
+                },
+              ],
+            },
+          ],
+          random,
+          1,
+        ),
+        expected,
+      ));
   }
 });
