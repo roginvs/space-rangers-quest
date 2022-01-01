@@ -1,4 +1,3 @@
-import { createScanner } from "./scanner";
 import {
   Token,
   Expression,

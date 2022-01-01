@@ -9,7 +9,7 @@ import { observer } from "mobx-react";
 import { Store, QUEST_SEARCH_ALL, QUEST_SEARCH_OWN } from "./store";
 
 import { AppNavbar } from "./appNavbar";
-import { substitute } from "../lib/substitution";
+import { getGameTaskText } from "../lib/getGameTaskText";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
 import { SRDateToString } from "../lib/qmplayer/funcs";
 import { QuestReplaceTags } from "./questReplaceTags";
@@ -67,18 +67,7 @@ export class QuestList extends React.Component<
           }
           return true;
         })(),
-        taskText: substitute(
-          quest.taskText,
-          {
-            ...player,
-            Day: `${DEFAULT_DAYS_TO_PASS_QUEST}`,
-            Date: SRDateToString(DEFAULT_DAYS_TO_PASS_QUEST, player.lang),
-            CurDate: SRDateToString(0, player.lang),
-          },
-          [],
-          // tslint:disable-next-line:strict-type-predicates
-          n => (n !== undefined ? Math.floor(Math.random() * n) : Math.random()),
-        ),
+        taskText: getGameTaskText(quest.taskText, player),
       }))
       .filter(quest =>
         store.questsListSearch
