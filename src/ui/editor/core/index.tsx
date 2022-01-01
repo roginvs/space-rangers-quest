@@ -18,6 +18,7 @@ export interface EditorCoreProps {
   //onExit: () => void,
 }
 
+// tslint:disable-next-line:no-useless-cast
 export const EDITOR_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
 export type EditorMode = typeof EDITOR_MODES[number];
 
@@ -91,7 +92,7 @@ function getControlPoints(
           JUMPS_LOOP_CONTROL_POINT_DISTANCE -
           (myIndex * JUMPS_CONTROL_POINT_DISTANCE) / 2,
       };
-
+  // tslint:disable-next-line:no-useless-cast
   return [controlPoint1, controlPoint2] as const;
 }
 
@@ -231,7 +232,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     if (!contextRef.current) {
       return;
     }
-    const context = contextRef.current;
+    // const context = contextRef.current;
   }, [quest]);
 
   console.info(`Editor re-render`);
