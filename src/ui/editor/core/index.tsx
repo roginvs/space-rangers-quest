@@ -189,7 +189,16 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
       ctx.moveTo(startLoc.locX, startLoc.locY);
       if (!controlPoint2) {
-        ctx.quadraticCurveTo(controlPoint1.x, controlPoint1.y, endLoc.locX, endLoc.locY);
+        // Let's use bezierCurveTo for this line
+        // ctx.quadraticCurveTo(controlPoint1.x, controlPoint1.y, endLoc.locX, endLoc.locY);
+        ctx.bezierCurveTo(
+          controlPoint1.x,
+          controlPoint1.y,
+          endLoc.locX,
+          endLoc.locY,
+          endLoc.locX,
+          endLoc.locY,
+        );
       } else {
         ctx.bezierCurveTo(
           controlPoint1.x,
