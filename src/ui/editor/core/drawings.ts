@@ -1,7 +1,7 @@
 import { Bezier } from "bezier-js";
 import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../lib/qmplayer/funcs";
-import { JumpId, Location } from "../../../lib/qmreader";
+import { Jump, JumpId, Location } from "../../../lib/qmreader";
 import { colors } from "../colors";
 import {
   CANVAS_PADDING,
@@ -143,7 +143,7 @@ export function drawJumpArrow(
   endLoc: LocationLocationOnly,
   myIndex: number,
   allJumpsCount: number,
-  jumpId: JumpId,
+  jump: DeepImmutable<Jump>,
 ) {
   const [controlPoint1, controlPoint2] = getControlPoints(startLoc, endLoc, myIndex, allJumpsCount);
 
@@ -183,7 +183,7 @@ export function drawJumpArrow(
     ctx.fillStyle = colorToString(interpolateColor(startColor, endColor, i / LUT.length));
     // ctx.fillRect(LUT[i].x, LUT[i].y, 4, 4);
 
-    hoverZones.push([LUT[i].x, LUT[i].y, JUMP_HOVER_ZONE_WIDTH, null, jumpId]);
+    hoverZones.push([LUT[i].x, LUT[i].y, JUMP_HOVER_ZONE_WIDTH, null, [jump, i < LUT.length / 2]]);
   }
 
   drawArrowEnding(ctx, LUT[LUT.length - 1].x, LUT[LUT.length - 1].y, endLoc.locX, endLoc.locY);
@@ -211,7 +211,7 @@ export function drawLocation(
 
   ctx.fill();
 
-  hoverZones.push([location.locX, location.locY, LOCATION_RADIUS * 2, location.id, null]);
+  hoverZones.push([location.locX, location.locY, LOCATION_RADIUS * 2, location, null]);
 }
 
 export function getCanvasSize(quest: Quest) {
@@ -272,11 +272,11 @@ export function updateMainCanvas(
       endLoc,
       myIndex,
       allJumpsCount,
-      jump.id,
+      jump,
     );
   });
 
-  const DRAW_DEBUG_HOVER_ZONES = true;
+  const DRAW_DEBUG_HOVER_ZONES = false;
   if (DRAW_DEBUG_HOVER_ZONES) {
     for (const hoverZone of hoverZones) {
       ctx.strokeStyle = "black";

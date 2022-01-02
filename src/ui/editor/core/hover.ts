@@ -1,11 +1,12 @@
-import { JumpId, LocationId } from "../../../lib/qmreader";
+import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
+import { Jump, JumpId, Location, LocationId } from "../../../lib/qmreader";
 
 export type HoverZone = [
   x: number,
   y: number,
   radius: number,
-  locationId: LocationId | null,
-  jumpId: JumpId | null,
+  location: DeepImmutable<Location> | null,
+  jump: [jump: DeepImmutable<Jump>, isBeginning: boolean] | null,
 ];
 
 export type HoverZones = HoverZone[];
