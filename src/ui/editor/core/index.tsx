@@ -7,7 +7,7 @@ import { Jump, Location } from "../../../lib/qmreader";
 import { colors } from "../colors";
 import { CANVAS_PADDING, LOCATION_RADIUS } from "../consts";
 import { drawLocation, getCanvasSize, updateMainCanvas } from "./drawings";
-import { HoverZones } from "./hover";
+import { HoverZone, HoverZones } from "./hover";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -27,14 +27,18 @@ type Hovered = null | DeepImmutable<Location> | DeepImmutable<Jump>;
 export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const [mode, setMode] = React.useState<EditorMode>("select");
 
-  const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  const contextRef = React.useRef<CanvasRenderingContext2D | null>(null);
+  const mainCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
+  const mainContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
+
+  const hoverCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
+  const hoverContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
 
   const canvasSize = React.useMemo(() => getCanvasSize(quest), [quest]);
   const [hoverZones, setHoverZones] = React.useState<HoverZones>([]);
+  const [hoverZone, setHoverZone] = React.useState<HoverZone | null>(null);
 
   React.useEffect(() => {
-    const ctx = contextRef.current;
+    const ctx = mainContextRef.current;
     if (!ctx) {
       return;
     }
@@ -48,13 +52,28 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   }, [quest, canvasSize]);
 
   React.useEffect(() => {
-    if (!canvasRef.current) {
+    if (!hoverCanvasRef.current) {
       return;
     }
-    //const canvas = canvasRef.current;
+    const canvas = hoverCanvasRef.current;
+    const context = hoverContextRef.current;
+    if (!context) {
+      return;
+    }
     const onMove = (e: MouseEvent) => {
-      //const mouseX = e.pageX - canvas.offsetLeft;
-      //const mouseX = e.pageY - canvas.offsetTop;
+      const mouseX = e.pageX - canvas.offsetLeft;
+      const mouseY = e.pageY - canvas.offsetTop;
+      console.info(mouseX, mouseY);
+
+      const hoverZone = hoverZones.find((hoverCandidate) =>
+        isDistanceLower(mouseX, mouseY, hoverCandidate[0], hoverCandidate[1], hoverCandidate[2]),
+      );
+      if (hoverZone) {
+        console.info(hoverZone);
+        context.font = "12px serif";
+        context.strokeText(`${mouseX}, ${mouseY}`, mouseX, mouseY);
+      }
+      console.info(mouseX, mouseY);
       // drawOnCanvas();
     };
     document.addEventListener("mousemove", onMove);
@@ -62,10 +81,10 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     return () => {
       document.removeEventListener("mousemove", onMove);
     };
-  }, []);
+  }, [hoverZones]);
 
   React.useEffect(() => {
-    if (!contextRef.current) {
+    if (!mainContextRef.current) {
       return;
     }
     // const context = contextRef.current;
@@ -114,20 +133,45 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
           overflow: "scroll",
         }}
       >
-        <canvas
-          width={canvasSize.canvasWidth}
-          height={canvasSize.canvasHeight}
-          ref={(element) => {
-            canvasRef.current = element;
-            if (element && !contextRef.current) {
-              const context = element.getContext("2d");
-              contextRef.current = context;
-            }
-            if (!element && contextRef.current) {
-              contextRef.current = null;
-            }
+        <div
+          style={{
+            flexGrow: 1,
+            alignSelf: "stretch",
+            overflow: "scroll",
           }}
-        />
+        >
+          <canvas
+            style={{ position: "absolute" }}
+            width={canvasSize.canvasWidth}
+            height={canvasSize.canvasHeight}
+            ref={(element) => {
+              mainCanvasRef.current = element;
+              if (element && !mainContextRef.current) {
+                const context = element.getContext("2d");
+                mainContextRef.current = context;
+              }
+              if (!element && mainContextRef.current) {
+                mainContextRef.current = null;
+              }
+            }}
+          />
+
+          <canvas
+            style={{ position: "absolute" }}
+            width={canvasSize.canvasWidth}
+            height={canvasSize.canvasHeight}
+            ref={(element) => {
+              hoverCanvasRef.current = element;
+              if (element && !hoverContextRef.current) {
+                const context = element.getContext("2d");
+                hoverContextRef.current = context;
+              }
+              if (!element && hoverCanvasRef.current) {
+                hoverCanvasRef.current = null;
+              }
+            }}
+          />
+        </div>
       </div>
     </div>
   );
