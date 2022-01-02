@@ -103,6 +103,34 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     };
   }, [hoverZones, isDragging]);
 
+  const snapToGrid = React.useCallback(
+    (x: number, y: number) => {
+      const gridX = Math.floor(quest.screenSizeX / quest.widthSize);
+      const gridY = Math.floor(quest.screenSizeY / quest.heightSize);
+      const grixXoffset = Math.floor(gridX / 2);
+      const grixYoffset = Math.floor(gridY / 2);
+      return {
+        x: Math.round((x - grixXoffset) / gridX) * gridX + grixXoffset,
+        y: Math.round((y - grixYoffset) / gridY) * gridY + grixYoffset,
+      };
+    },
+    [quest],
+  );
+
+  const isPlaceBusy = React.useCallback(
+    (x: number, y: number) => {
+      return quest.locations.some((location) =>
+        isDistanceLower(x, y, location.locX, location.locY, LOCATION_RADIUS),
+      );
+    },
+    [quest],
+  );
+
+  const notifyUser = React.useCallback((msg: string) => {
+    // TODO: Use toast
+    console.error(msg);
+  }, []);
+
   React.useEffect(() => {
     const onMouseDown = (e: MouseEvent) => {
       if (mode === "move") {
@@ -123,13 +151,18 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         if (hoverZone) {
           const location = hoverZone.zone[3];
           if (location) {
-            onChange(
-              updateLocation(quest, {
-                ...location,
-                locX: mouseInCanvas.x,
-                locY: mouseInCanvas.y,
-              }),
-            );
+            const griddedLocation = snapToGrid(mouseInCanvas.x, mouseInCanvas.y);
+            if (isPlaceBusy(griddedLocation.x, griddedLocation.y)) {
+              notifyUser("Location is busy");
+            } else {
+              onChange(
+                updateLocation(quest, {
+                  ...location,
+                  locX: griddedLocation.x,
+                  locY: griddedLocation.y,
+                }),
+              );
+            }
           }
         }
         setHoverZone(undefined);
