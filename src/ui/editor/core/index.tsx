@@ -21,11 +21,11 @@ export interface EditorCoreProps {
 }
 
 // tslint:disable-next-line:no-useless-cast
-export const EDITOR_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
-export type EditorMode = typeof EDITOR_MODES[number];
+export const EDITOR_MOUSE_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
+export type EditorMouseMode = typeof EDITOR_MOUSE_MODES[number];
 
 export function EditorCore({ quest, onChange }: EditorCoreProps) {
-  const [mouseMode, setMouseMode] = React.useState<EditorMode>("move");
+  const [mouseMode, setMouseMode] = React.useState<EditorMouseMode>("move");
 
   const mainCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const mainContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
@@ -205,7 +205,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       }}
     >
       <div>
-        {EDITOR_MODES.map((candidateMode) => (
+        {EDITOR_MOUSE_MODES.map((candidateMode) => (
           <button
             key={candidateMode}
             className={classNames("btn", mouseMode === candidateMode ? "btn-info" : "btn-light")}
