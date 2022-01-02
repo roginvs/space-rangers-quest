@@ -67,7 +67,7 @@ export function getSummaryForParamsChangeAndConditions(
           conditionString += " ";
         }
       }
-      if (!changeString && !showHideString && !conditionString) {
+      if (!param.active || (!changeString && !showHideString && !conditionString)) {
         return {
           key: `changeandcondition-${paramId}`,
           leftText: "",
