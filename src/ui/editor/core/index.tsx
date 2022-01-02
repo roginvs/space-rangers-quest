@@ -11,6 +11,9 @@ import { colorToString, interpolateColor } from "./color";
 import { drawArrowEnding, drawLocation, getCanvasSize, updateMainCanvas } from "./drawings";
 import { HoverZone, HoverZones } from "./hover";
 import { HoverPopup } from "./hoverPopup";
+import { ToastContainer, toast } from "react-toastify";
+
+import "react-toastify/dist/ReactToastify.css";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -127,8 +130,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   );
 
   const notifyUser = React.useCallback((msg: string) => {
-    // TODO: Use toast
-    console.error(msg);
+    toast(msg);
   }, []);
 
   React.useEffect(() => {
@@ -350,6 +352,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
           )}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }
