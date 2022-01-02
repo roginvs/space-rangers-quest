@@ -6,7 +6,7 @@ import { Quest } from "../../../lib/qmplayer/funcs";
 import { Jump, Location } from "../../../lib/qmreader";
 import { colors } from "../colors";
 import { CANVAS_PADDING, LOCATION_RADIUS } from "../consts";
-import { drawJumpArrow, drawLocation, getCanvasSize, updateMainCanvas } from "./drawings";
+import { drawLocation, getCanvasSize, updateMainCanvas } from "./drawings";
 import { HoverZones } from "./hover";
 
 export interface EditorCoreProps {

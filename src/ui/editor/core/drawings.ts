@@ -12,7 +12,8 @@ import {
   JUMP_HOVER_ZONE_WIDTH,
   LOCATION_RADIUS,
 } from "../consts";
-import { HoverZones } from "./hover";
+import { Color, colorToString, interpolateColor } from "./color";
+import { HoverDrawJump, HoverZones } from "./hover";
 
 interface LocationLocationOnly {
   locX: number;
@@ -84,20 +85,6 @@ function getControlPoints(
   return [controlPoint1, controlPoint2] as const;
 }
 
-export type Color = [r: number, g: number, b: number];
-
-export function colorToString(color: Color) {
-  return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
-}
-
-function interpolateColor(c1: Color, c2: Color, t: number): Color {
-  return [
-    Math.round(c1[0] * (1 - t) + c2[0] * t),
-    Math.round(c1[1] * (1 - t) + c2[1] * t),
-    Math.round(c1[2] * (1 - t) + c2[2] * t),
-  ];
-}
-
 function rotateVector(x: number, y: number, radians: number) {
   return {
     x: x * Math.cos(radians) - y * Math.sin(radians),
@@ -112,8 +99,6 @@ function drawArrowEnding(
   pointToX: number,
   pointToY: number,
 ) {
-  ctx.strokeStyle = "red";
-
   const backVectorNotNormalizedX = x - pointToX;
   const backVectorNotNormalizedY = y - pointToY;
 
@@ -134,19 +119,15 @@ function drawArrowEnding(
   ctx.stroke();
 }
 
-export function drawJumpArrow(
-  ctx: CanvasRenderingContext2D,
-  hoverZones: HoverZones,
-  startColor: Color,
-  endColor: Color,
+function getJumpLookupTable(
   startLoc: LocationLocationOnly,
   endLoc: LocationLocationOnly,
   myIndex: number,
   allJumpsCount: number,
-  jump: DeepImmutable<Jump>,
 ) {
-  const [controlPoint1, controlPoint2] = getControlPoints(startLoc, endLoc, myIndex, allJumpsCount);
-
+  const controlPoints = getControlPoints(startLoc, endLoc, myIndex, allJumpsCount);
+  const controlPoint1 = controlPoints[0];
+  const controlPoint2 = controlPoints[1];
   const bezierOriginal = controlPoint2
     ? new Bezier(
         startLoc.locX,
@@ -173,6 +154,49 @@ export function drawJumpArrow(
 
   const STEPS = Math.round(originalLength / JUMP_HOVER_ZONE_WIDTH);
   const LUT = bezier.getLUT(STEPS);
+  return LUT;
+}
+
+function getJumpArrowColors(
+  jump: DeepImmutable<Jump>,
+  startLoc: LocationLocationOnly,
+  endLoc: LocationLocationOnly,
+  myIndex: number,
+  allJumpsCount: number,
+  haveOtherJumpsWithSameText: boolean,
+) {
+  const startColor: Color = [255, 255, 255];
+  const endColor: Color = [0, 0, 255];
+  return [startColor, endColor];
+}
+
+function drawJumpArrow(
+  ctx: CanvasRenderingContext2D,
+  hoverZones: HoverZones,
+  jump: DeepImmutable<Jump>,
+  startLoc: LocationLocationOnly,
+  endLoc: LocationLocationOnly,
+  myIndex: number,
+  allJumpsCount: number,
+  haveOtherJumpsWithSameText: boolean,
+) {
+  const [startColor, endColor] = getJumpArrowColors(
+    jump,
+    startLoc,
+    endLoc,
+    myIndex,
+    allJumpsCount,
+    haveOtherJumpsWithSameText,
+  );
+
+  const LUT = getJumpLookupTable(startLoc, endLoc, myIndex, allJumpsCount);
+  ctx.lineWidth = 1;
+
+  const hoverDraw: HoverDrawJump = {
+    LUT,
+    startColor,
+    endColor,
+  };
 
   for (let i = 1; i < LUT.length; i++) {
     ctx.beginPath();
@@ -183,9 +207,16 @@ export function drawJumpArrow(
     ctx.fillStyle = colorToString(interpolateColor(startColor, endColor, i / LUT.length));
     // ctx.fillRect(LUT[i].x, LUT[i].y, 4, 4);
 
-    hoverZones.push([LUT[i].x, LUT[i].y, JUMP_HOVER_ZONE_WIDTH, null, [jump, i < LUT.length / 2]]);
+    hoverZones.push([
+      LUT[i].x,
+      LUT[i].y,
+      JUMP_HOVER_ZONE_WIDTH,
+      null,
+      [jump, i < LUT.length / 2, hoverDraw],
+    ]);
   }
 
+  ctx.strokeStyle = colorToString(endColor);
   drawArrowEnding(ctx, LUT[LUT.length - 1].x, LUT[LUT.length - 1].y, endLoc.locX, endLoc.locY);
 }
 
@@ -236,7 +267,6 @@ export function updateMainCanvas(
   });
 
   // Jumps
-  ctx.lineWidth = 1;
   quest.jumps.forEach((jump) => {
     const startLoc = quest.locations.find((loc) => loc.id === jump.fromLocationId);
     const endLoc = quest.locations.find((loc) => loc.id === jump.toLocationId);
@@ -262,17 +292,18 @@ export function updateMainCanvas(
       });
     const allJumpsCount = allJumpsBetweenThisLocations.length;
     const myIndex = allJumpsBetweenThisLocations.indexOf(jump);
+    const haveOtherJumpsWithSameText =
+      allJumpsBetweenThisLocations.filter((candidate) => jump.text === candidate.text).length > 1;
 
     drawJumpArrow(
       ctx,
       hoverZones,
-      [255, 255, 255],
-      [0, 0, 255],
+      jump,
       startLoc,
       endLoc,
       myIndex,
       allJumpsCount,
-      jump,
+      haveOtherJumpsWithSameText,
     );
   });
 
