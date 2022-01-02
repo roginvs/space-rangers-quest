@@ -202,6 +202,11 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
               kind: "location",
               location: hoverZone.zone[3],
             });
+          } else if (hoverZone.zone[4]) {
+            setOverlayMode({
+              kind: "jump",
+              jump: hoverZone.zone[4][0],
+            });
           }
         }
       } else {
