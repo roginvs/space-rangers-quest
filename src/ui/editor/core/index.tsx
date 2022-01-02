@@ -4,7 +4,7 @@ import { assertNever } from "../../../assertNever";
 import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../lib/qmplayer/funcs";
 import { LOCATION_DROP_RADIUS, LOCATION_RADIUS } from "../consts";
-import { updateJump, updateLocation } from "./actions";
+import { createLocation, updateJump, updateLocation } from "./actions";
 import { colorToString, interpolateColor } from "./color";
 import { drawHovers, getCanvasSize, updateMainCanvas } from "./drawings/index";
 import { HoverZone, HoverZones } from "./hover";
@@ -228,7 +228,21 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         } else if (mouseMode === "newJump") {
           // TODO
         } else if (mouseMode === "newLocation") {
-          // TODO
+          const griddedLocation = snapToGrid(quest, mouseInCanvas.x, mouseInCanvas.y);
+          const locationAtThisPosition = whatLocationIsAlreadyAtThisPosition(
+            quest,
+            griddedLocation.x,
+            griddedLocation.y,
+          );
+          if (locationAtThisPosition) {
+            notifyUser("There is already location at this position");
+          } else {
+            const newPossibleLocation = createLocation(quest, griddedLocation.x, griddedLocation.y);
+            setOverlayMode({
+              kind: "location",
+              location: newPossibleLocation,
+            });
+          }
         }
       }
     };
