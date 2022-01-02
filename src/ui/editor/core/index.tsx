@@ -3,17 +3,17 @@ import * as React from "react";
 import { assertNever } from "../../../assertNever";
 import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../lib/qmplayer/funcs";
-import { Jump, Location } from "../../../lib/qmreader";
-import { colors } from "../colors";
-import { CANVAS_PADDING, LOCATION_DROP_RADIUS, LOCATION_RADIUS } from "../consts";
+import { LOCATION_DROP_RADIUS, LOCATION_RADIUS } from "../consts";
 import { updateJump, updateLocation } from "./actions";
 import { colorToString, interpolateColor } from "./color";
-import { drawArrowEnding, drawLocation, getCanvasSize, updateMainCanvas } from "./drawings";
+import { getCanvasSize, updateMainCanvas } from "./drawings/index";
 import { HoverZone, HoverZones } from "./hover";
 import { HoverPopup } from "./hoverPopup";
 import { ToastContainer, toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
+import { isDistanceLower, isPlaceBusy, snapToGrid } from "./utils";
+import { drawArrowEnding } from "./drawings/jumps";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -24,10 +24,6 @@ export interface EditorCoreProps {
 // tslint:disable-next-line:no-useless-cast
 export const EDITOR_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
 export type EditorMode = typeof EDITOR_MODES[number];
-
-function isDistanceLower(x1: number, y1: number, x2: number, y2: number, distance: number) {
-  return (x1 - x2) ** 2 + (y1 - y2) ** 2 < distance ** 2;
-}
 
 export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const [mode, setMode] = React.useState<EditorMode>("move");
@@ -106,29 +102,6 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     };
   }, [hoverZones, isDragging]);
 
-  const snapToGrid = React.useCallback(
-    (x: number, y: number) => {
-      const gridX = Math.floor(quest.screenSizeX / quest.widthSize);
-      const gridY = Math.floor(quest.screenSizeY / quest.heightSize);
-      const grixXoffset = Math.floor(gridX / 2);
-      const grixYoffset = Math.floor(gridY / 2);
-      return {
-        x: Math.round((x - grixXoffset) / gridX) * gridX + grixXoffset,
-        y: Math.round((y - grixYoffset) / gridY) * gridY + grixYoffset,
-      };
-    },
-    [quest],
-  );
-
-  const isPlaceBusy = React.useCallback(
-    (x: number, y: number) => {
-      return quest.locations.some((location) =>
-        isDistanceLower(x, y, location.locX, location.locY, LOCATION_RADIUS),
-      );
-    },
-    [quest],
-  );
-
   const notifyUser = React.useCallback((msg: string) => {
     toast(msg);
   }, []);
@@ -155,8 +128,8 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         if (hoverZone) {
           const location = hoverZone.zone[3];
           if (location) {
-            const griddedLocation = snapToGrid(mouseInCanvas.x, mouseInCanvas.y);
-            if (isPlaceBusy(griddedLocation.x, griddedLocation.y)) {
+            const griddedLocation = snapToGrid(quest, mouseInCanvas.x, mouseInCanvas.y);
+            if (isPlaceBusy(quest, griddedLocation.x, griddedLocation.y)) {
               notifyUser("Location is busy");
             } else {
               onChange(

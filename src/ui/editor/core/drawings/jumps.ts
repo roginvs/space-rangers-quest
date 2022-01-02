@@ -1,8 +1,8 @@
 import { Bezier } from "bezier-js";
-import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
-import { Quest } from "../../../lib/qmplayer/funcs";
-import { Jump, JumpId, Location } from "../../../lib/qmreader";
-import { colors } from "../colors";
+import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
+import { Quest } from "../../../../lib/qmplayer/funcs";
+import { Jump, JumpId, Location } from "../../../../lib/qmreader";
+import { colors } from "../../colors";
 import {
   CANVAS_PADDING,
   JUMPS_CONTROL_POINT_DISTANCE,
@@ -11,9 +11,9 @@ import {
   JUMP_END_LOCATION_RADIUS,
   JUMP_HOVER_ZONE_WIDTH,
   LOCATION_RADIUS,
-} from "../consts";
-import { Color, colorToString, interpolateColor } from "./color";
-import { HoverDrawJump, HoverZones, LocationLocationOnly } from "./hover";
+} from "../../consts";
+import { Color, colorToString, interpolateColor } from "../color";
+import { HoverDrawJump, HoverZones, LocationLocationOnly } from "../hover";
 
 function getControlPoints(
   startLoc: LocationLocationOnly,
@@ -167,7 +167,7 @@ function getJumpArrowColors(
   return [startColor, endColor];
 }
 
-function drawJumpArrow(
+export function drawJumpArrow(
   ctx: CanvasRenderingContext2D,
   hoverZones: HoverZones,
   jump: DeepImmutable<Jump>,
@@ -226,107 +226,4 @@ function drawJumpArrow(
     // This might happen if distance between locations is too short
     drawArrowEnding(ctx, LUT[LUT.length - 1].x, LUT[LUT.length - 1].y, endLoc.locX, endLoc.locY);
   }
-}
-
-export function drawLocation(
-  ctx: CanvasRenderingContext2D,
-  hoverZones: HoverZones,
-  location: DeepImmutable<Location>,
-) {
-  ctx.strokeStyle = "black";
-  ctx.lineWidth = 2;
-  const color = location.isStarting
-    ? colors.location.starting
-    : location.isEmpty
-    ? colors.location.empty
-    : location.isSuccess
-    ? colors.location.final
-    : location.isFaily || location.isFailyDeadly
-    ? colors.location.fail
-    : colors.location.intermediate;
-  ctx.fillStyle = color;
-  ctx.beginPath();
-  ctx.arc(location.locX, location.locY, LOCATION_RADIUS, 0, 2 * Math.PI);
-
-  ctx.fill();
-
-  hoverZones.push([location.locX, location.locY, LOCATION_RADIUS * 2, location, null]);
-}
-
-export function getCanvasSize(quest: Quest) {
-  const canvasWidth = Math.max(...quest.locations.map((l) => l.locX)) + CANVAS_PADDING;
-  const canvasHeight = Math.max(...quest.locations.map((l) => l.locY)) + CANVAS_PADDING;
-  return { canvasWidth, canvasHeight };
-}
-export function updateMainCanvas(
-  ctx: CanvasRenderingContext2D,
-  canvasWidth: number,
-  canvasHeight: number,
-  quest: Quest,
-) {
-  const hoverZones: HoverZones = [];
-
-  ctx.fillStyle = colors.background;
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
-
-  // Locations
-  quest.locations.forEach((location) => {
-    drawLocation(ctx, hoverZones, location);
-  });
-
-  // Jumps
-  quest.jumps.forEach((jump) => {
-    const startLoc = quest.locations.find((loc) => loc.id === jump.fromLocationId);
-    const endLoc = quest.locations.find((loc) => loc.id === jump.toLocationId);
-    if (!endLoc || !startLoc) {
-      console.warn(`No loc from jump id=${jump.id}`);
-      return;
-    }
-
-    const allJumpsBetweenThisLocations = quest.jumps
-      .filter(
-        (candidate) =>
-          (candidate.fromLocationId === jump.fromLocationId &&
-            candidate.toLocationId === jump.toLocationId) ||
-          (candidate.fromLocationId === jump.toLocationId &&
-            candidate.toLocationId === jump.fromLocationId),
-      )
-      .sort((a, b) => {
-        return a.fromLocationId > b.fromLocationId
-          ? 1
-          : a.fromLocationId < b.fromLocationId
-          ? -1
-          : a.showingOrder - b.showingOrder;
-      });
-    const allJumpsCount = allJumpsBetweenThisLocations.length;
-    const myIndex = allJumpsBetweenThisLocations.indexOf(jump);
-    const haveOtherJumpsWithSameText =
-      allJumpsBetweenThisLocations.filter((candidate) => jump.text === candidate.text).length > 1;
-
-    drawJumpArrow(
-      ctx,
-      hoverZones,
-      jump,
-      startLoc,
-      endLoc,
-      myIndex,
-      allJumpsCount,
-      haveOtherJumpsWithSameText,
-    );
-  });
-
-  const DRAW_DEBUG_HOVER_ZONES = false;
-  if (DRAW_DEBUG_HOVER_ZONES) {
-    for (const hoverZone of hoverZones) {
-      ctx.strokeStyle = "black";
-      ctx.lineWidth = 1;
-      ctx.fillStyle = "none";
-      ctx.beginPath();
-      ctx.arc(hoverZone[0], hoverZone[1], hoverZone[2], 0, 2 * Math.PI);
-      ctx.stroke();
-    }
-    console.info(`hoverZones: ${hoverZones.length}`);
-  }
-
-  return hoverZones;
 }
