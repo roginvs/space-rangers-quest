@@ -4,7 +4,7 @@ import { assertNever } from "../../../assertNever";
 import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../lib/qmplayer/funcs";
 import { LOCATION_DROP_RADIUS, LOCATION_RADIUS } from "../consts";
-import { createLocation, updateJump, updateLocation } from "./actions";
+import { createJump, createLocation, updateJump, updateLocation } from "./actions";
 import { colorToString, interpolateColor } from "./color";
 import { drawHovers, getCanvasSize, updateMainCanvas } from "./drawings/index";
 import { HoverZone, HoverZones } from "./hover";
@@ -158,8 +158,6 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     document.addEventListener("mousedown", onMouseDown);
 
     const onMouseUp = (e: MouseEvent) => {
-      setIsDragging(undefined);
-
       const mouseInCanvas = getMouseCoordsInCanvas(e);
 
       if (e.button === 2 /* Right click*/ || mouseMode === "select") {
@@ -224,9 +222,34 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             }
           }
           setHoverZone(undefined);
-          // aasdasd
         } else if (mouseMode === "newJump") {
-          // TODO
+          if (isDragging) {
+            const fromLocation = quest.locations.find((loc) =>
+              isDistanceLower(isDragging.x, isDragging.y, loc.locX, loc.locY, LOCATION_DROP_RADIUS),
+            );
+            const toLocation = quest.locations.find((loc) =>
+              isDistanceLower(
+                mouseInCanvas.x,
+                mouseInCanvas.y,
+                loc.locX,
+                loc.locY,
+                LOCATION_DROP_RADIUS,
+              ),
+            );
+            if (fromLocation) {
+              if (toLocation) {
+                const jump = createJump(quest, fromLocation.id, toLocation.id);
+                onChange(updateJump(quest, jump));
+              } else {
+                notifyUser("No 'to' location");
+              }
+            } else {
+              notifyUser("No 'from' location");
+            }
+          } else {
+            // LOL what?
+            notifyUser("Lol what");
+          }
         } else if (mouseMode === "newLocation") {
           const griddedLocation = snapToGrid(quest, mouseInCanvas.x, mouseInCanvas.y);
           const locationAtThisPosition = whatLocationIsAlreadyAtThisPosition(
@@ -245,13 +268,15 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
           }
         }
       }
+
+      setIsDragging(undefined);
     };
     document.addEventListener("mouseup", onMouseUp);
     return () => {
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousedown", onMouseDown);
     };
-  }, [mouseMode, hoverZone, overlayMode, getMouseCoordsInCanvas]);
+  }, [mouseMode, hoverZone, overlayMode, getMouseCoordsInCanvas, isDragging]);
 
   React.useEffect(() => {
     const context = interactiveContextRef.current;
