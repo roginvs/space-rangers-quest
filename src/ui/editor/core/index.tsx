@@ -60,9 +60,10 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     const canvas = interactiveCanvasRef.current;
 
     const onMove = (e: MouseEvent) => {
-      const mouseX = e.pageX - canvas.offsetLeft;
-      const mouseY = e.pageY - canvas.offsetTop;
-      //console.info(mouseX, mouseY);
+      const canvasRect = canvas.getBoundingClientRect();
+
+      const mouseX = e.clientX - canvasRect.left;
+      const mouseY = e.clientY - canvasRect.top;
 
       const hoverZone = hoverZones.find((hoverCandidate) =>
         isDistanceLower(mouseX, mouseY, hoverCandidate[0], hoverCandidate[1], hoverCandidate[2]),
@@ -117,7 +118,14 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   // console.info(`Editor re-render`);
 
   return (
-    <div style={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column" }}>
+    <div
+      style={{
+        width: "100%",
+        height: "100vh",
+        display: "flex",
+        flexDirection: "column",
+      }}
+    >
       <div>
         {EDITOR_MODES.map((candidateMode) => (
           <button
@@ -159,9 +167,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       >
         <div
           style={{
-            flexGrow: 1,
-            alignSelf: "stretch",
-            overflow: "scroll",
+            position: "relative",
           }}
         >
           <canvas
