@@ -5,12 +5,8 @@ import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../lib/qmplayer/funcs";
 import { Jump, Location } from "../../../lib/qmreader";
 import { colors } from "../colors";
-import {
-  CANVAS_PADDING,
-  JUMPS_CONTROL_POINT_DISTANCE,
-  JUMPS_LOOP_CONTROL_POINT_DISTANCE,
-  LOCATION_RADIUS,
-} from "../consts";
+import { CANVAS_PADDING, LOCATION_RADIUS } from "../consts";
+import { drawJumpArrow } from "./drawings";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -24,76 +20,6 @@ export type EditorMode = typeof EDITOR_MODES[number];
 
 function isDistanceLower(x1: number, y1: number, x2: number, y2: number, distance: number) {
   return (x1 - x2) ** 2 + (y1 - y2) ** 2 < distance ** 2;
-}
-
-interface LocationLocationOnly {
-  locX: number;
-  locY: number;
-}
-function getControlPoints(
-  startLoc: LocationLocationOnly,
-  endLoc: LocationLocationOnly,
-  myIndex: number,
-  allJumpsCount: number,
-) {
-  const orientationIsNormal =
-    endLoc.locX !== startLoc.locX
-      ? endLoc.locX - startLoc.locX > 0
-      : endLoc.locY - startLoc.locY > 0;
-  const startX = orientationIsNormal ? startLoc.locX : endLoc.locX;
-  const endX = orientationIsNormal ? endLoc.locX : startLoc.locX;
-  const startY = orientationIsNormal ? startLoc.locY : endLoc.locY;
-  const endY = orientationIsNormal ? endLoc.locY : startLoc.locY;
-
-  const middleVectorX = (endX - startX) / 2;
-  const middleVectorY = (endY - startY) / 2;
-  const middleX = startX + middleVectorX;
-  const middleY = startY + middleVectorY;
-  const offsetVectorUnnormalizedX = middleVectorY;
-  const offsetVectorUnnormalizedY = -middleVectorX;
-  const offsetVectorLength = Math.sqrt(
-    offsetVectorUnnormalizedX * offsetVectorUnnormalizedX +
-      offsetVectorUnnormalizedY * offsetVectorUnnormalizedY,
-  );
-
-  const isBetweenTwoPoints = offsetVectorLength > 0;
-  const offsetVectorX = isBetweenTwoPoints
-    ? (offsetVectorUnnormalizedX / offsetVectorLength) * JUMPS_CONTROL_POINT_DISTANCE
-    : 0;
-  const offsetVectorY = isBetweenTwoPoints
-    ? (offsetVectorUnnormalizedY / offsetVectorLength) * JUMPS_CONTROL_POINT_DISTANCE
-    : 0;
-
-  const offsetVectorCount = myIndex;
-
-  const shiftMultiplier = allJumpsCount > 1 ? (allJumpsCount - 1) / 2 : 0;
-  const controlPointX =
-    middleX + offsetVectorX * offsetVectorCount - offsetVectorX * shiftMultiplier;
-  const controlPointY =
-    middleY + offsetVectorY * offsetVectorCount - offsetVectorY * shiftMultiplier;
-  const controlPoint1 = isBetweenTwoPoints
-    ? {
-        x: controlPointX,
-        y: controlPointY,
-      }
-    : {
-        x: startLoc.locX + JUMPS_LOOP_CONTROL_POINT_DISTANCE,
-        y:
-          startLoc.locY -
-          JUMPS_LOOP_CONTROL_POINT_DISTANCE -
-          (myIndex * JUMPS_CONTROL_POINT_DISTANCE) / 2,
-      };
-  const controlPoint2 = isBetweenTwoPoints
-    ? undefined
-    : {
-        x: startLoc.locX - JUMPS_LOOP_CONTROL_POINT_DISTANCE,
-        y:
-          startLoc.locY -
-          JUMPS_LOOP_CONTROL_POINT_DISTANCE -
-          (myIndex * JUMPS_CONTROL_POINT_DISTANCE) / 2,
-      };
-  // tslint:disable-next-line:no-useless-cast
-  return [controlPoint1, controlPoint2] as const;
 }
 
 type Hovered = null | DeepImmutable<Location> | DeepImmutable<Jump>;
@@ -152,7 +78,6 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     });
 
     // Jumps
-    ctx.strokeStyle = colors.jump.line;
     ctx.lineWidth = 1;
     quest.jumps.forEach(jump => {
       const startLoc = quest.locations.find(loc => loc.id === jump.fromLocationId);
@@ -180,36 +105,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       const allJumpsCount = allJumpsBetweenThisLocations.length;
       const myIndex = allJumpsBetweenThisLocations.indexOf(jump);
 
-      const [controlPoint1, controlPoint2] = getControlPoints(
-        startLoc,
-        endLoc,
-        myIndex,
-        allJumpsCount,
-      );
-
-      ctx.moveTo(startLoc.locX, startLoc.locY);
-      if (!controlPoint2) {
-        // Let's use bezierCurveTo for this line
-        // ctx.quadraticCurveTo(controlPoint1.x, controlPoint1.y, endLoc.locX, endLoc.locY);
-        ctx.bezierCurveTo(
-          controlPoint1.x,
-          controlPoint1.y,
-          endLoc.locX,
-          endLoc.locY,
-          endLoc.locX,
-          endLoc.locY,
-        );
-      } else {
-        ctx.bezierCurveTo(
-          controlPoint1.x,
-          controlPoint1.y,
-          controlPoint2.x,
-          controlPoint2.y,
-          endLoc.locX,
-          endLoc.locY,
-        );
-      }
-      ctx.stroke();
+      drawJumpArrow(ctx, [255, 255, 255], [0, 0, 255], startLoc, endLoc, myIndex, allJumpsCount);
     });
 
     if (canvasRef.current) {
