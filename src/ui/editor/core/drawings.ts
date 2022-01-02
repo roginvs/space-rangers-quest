@@ -2,6 +2,7 @@ import { Bezier } from "bezier-js";
 import {
   JUMPS_CONTROL_POINT_DISTANCE,
   JUMPS_LOOP_CONTROL_POINT_DISTANCE,
+  JUMP_ARROW_LENGTH,
   JUMP_END_LOCATION_RADIUS,
 } from "../consts";
 
@@ -89,6 +90,47 @@ function interpolateColor(c1: Color, c2: Color, t: number): Color {
   ];
 }
 
+function rotateVector(x: number, y: number, radians: number) {
+  return {
+    x: x * Math.cos(radians) - y * Math.sin(radians),
+    y: x * Math.sin(radians) + y * Math.cos(radians),
+  };
+}
+
+function drawArrowEnding(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  pointToX: number,
+  pointToY: number,
+) {
+  ctx.strokeStyle = "red";
+
+  const backVectorNotNormalizedX = x - pointToX;
+  const backVectorNotNormalizedY = y - pointToY;
+
+  const backVectorLength = Math.hypot(backVectorNotNormalizedX, backVectorNotNormalizedY);
+  console.info(
+    backVectorNotNormalizedX,
+    backVectorNotNormalizedY,
+    JUMP_ARROW_LENGTH,
+    backVectorLength,
+  );
+  const backVectorX = (backVectorNotNormalizedX * JUMP_ARROW_LENGTH) / backVectorLength;
+  const backVectorY = (backVectorNotNormalizedY * JUMP_ARROW_LENGTH) / backVectorLength;
+
+  const arrow1 = rotateVector(backVectorX, backVectorY, -Math.PI / 8);
+  const arrow2 = rotateVector(backVectorX, backVectorY, +Math.PI / 8);
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + arrow1.x, y + arrow1.y);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(x, y);
+  ctx.lineTo(x + arrow2.x, y + arrow2.y);
+  ctx.stroke();
+}
+
 export function drawJumpArrow(
   ctx: CanvasRenderingContext2D,
   startColor: Color,
@@ -142,6 +184,8 @@ export function drawJumpArrow(
     ctx.fillStyle = colorToString(interpolateColor(startColor, endColor, i / LUT.length));
     // ctx.fillRect(LUT[i].x, LUT[i].y, 4, 4);
   }
+
+  drawArrowEnding(ctx, LUT[LUT.length - 1].x, LUT[LUT.length - 1].y, endLoc.locX, endLoc.locY);
 
   /*
   ctx.strokeStyle = colorToString(startColor);
