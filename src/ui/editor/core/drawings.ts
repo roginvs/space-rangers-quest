@@ -204,7 +204,7 @@ function drawJumpArrow(
     ctx.strokeStyle = colorToString(interpolateColor(startColor, endColor, i / LUT.length));
     ctx.lineTo(LUT[i].x, LUT[i].y);
     ctx.stroke();
-    ctx.fillStyle = colorToString(interpolateColor(startColor, endColor, i / LUT.length));
+    // ctx.fillStyle = colorToString(interpolateColor(startColor, endColor, i / LUT.length));
     // ctx.fillRect(LUT[i].x, LUT[i].y, 4, 4);
 
     hoverZones.push([

@@ -6,6 +6,7 @@ import { Quest } from "../../../lib/qmplayer/funcs";
 import { Jump, Location } from "../../../lib/qmreader";
 import { colors } from "../colors";
 import { CANVAS_PADDING, LOCATION_RADIUS } from "../consts";
+import { colorToString, interpolateColor } from "./color";
 import { drawLocation, getCanvasSize, updateMainCanvas } from "./drawings";
 import { HoverZone, HoverZones } from "./hover";
 
@@ -30,12 +31,12 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const mainCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const mainContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
 
-  const hoverCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
-  const hoverContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
+  const interactiveCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
+  const interactiveContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
 
   const canvasSize = React.useMemo(() => getCanvasSize(quest), [quest]);
   const [hoverZones, setHoverZones] = React.useState<HoverZones>([]);
-  const [hoverZone, setHoverZone] = React.useState<HoverZone | null>(null);
+  const [hoverZone, setHoverZone] = React.useState<HoverZone | undefined>(undefined);
 
   React.useEffect(() => {
     const ctx = mainContextRef.current;
@@ -52,14 +53,11 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   }, [quest, canvasSize]);
 
   React.useEffect(() => {
-    if (!hoverCanvasRef.current) {
+    if (!interactiveCanvasRef.current) {
       return;
     }
-    const canvas = hoverCanvasRef.current;
-    const context = hoverContextRef.current;
-    if (!context) {
-      return;
-    }
+    const canvas = interactiveCanvasRef.current;
+
     const onMove = (e: MouseEvent) => {
       const mouseX = e.pageX - canvas.offsetLeft;
       const mouseY = e.pageY - canvas.offsetTop;
@@ -68,13 +66,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       const hoverZone = hoverZones.find((hoverCandidate) =>
         isDistanceLower(mouseX, mouseY, hoverCandidate[0], hoverCandidate[1], hoverCandidate[2]),
       );
-      if (hoverZone) {
-        console.info(hoverZone);
-        context.font = "12px serif";
-        context.strokeText(`${mouseX}, ${mouseY}`, mouseX, mouseY);
-      }
-      console.info(mouseX, mouseY);
-      // drawOnCanvas();
+      setHoverZone(hoverZone);
     };
     document.addEventListener("mousemove", onMove);
 
@@ -84,11 +76,42 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   }, [hoverZones]);
 
   React.useEffect(() => {
-    if (!mainContextRef.current) {
+    const context = interactiveContextRef.current;
+    if (!context) {
       return;
     }
-    // const context = contextRef.current;
-  }, [quest]);
+    // TODO: This is part of Drawings.tsx
+    context.clearRect(0, 0, canvasSize.canvasWidth, canvasSize.canvasHeight);
+    if (hoverZone) {
+      const location = hoverZone[3];
+      if (location) {
+        context.strokeStyle = "black";
+        context.lineWidth = 2;
+        context.fillStyle = "none";
+        context.beginPath();
+        context.arc(location.locX, location.locY, LOCATION_RADIUS, 0, 2 * Math.PI);
+        context.stroke();
+      }
+      const jumpHover = hoverZone[4];
+      if (jumpHover) {
+        const LUT = jumpHover[2].LUT;
+        const startColor = jumpHover[2].startColor;
+        const endColor = jumpHover[2].endColor;
+        context.lineWidth = 3;
+        for (let i = 1; i < LUT.length; i++) {
+          context.beginPath();
+          context.moveTo(LUT[i - 1].x, LUT[i - 1].y);
+          context.strokeStyle = colorToString(
+            interpolateColor(startColor, endColor, i / LUT.length),
+          );
+          context.lineTo(LUT[i].x, LUT[i].y);
+          // context.setLineDash([5, 15]);
+          // TODO: Dash if moving
+          context.stroke();
+        }
+      }
+    }
+  }, [hoverZone, canvasSize]);
 
   console.info(`Editor re-render`);
 
@@ -161,13 +184,13 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             width={canvasSize.canvasWidth}
             height={canvasSize.canvasHeight}
             ref={(element) => {
-              hoverCanvasRef.current = element;
-              if (element && !hoverContextRef.current) {
+              interactiveCanvasRef.current = element;
+              if (element && !interactiveContextRef.current) {
                 const context = element.getContext("2d");
-                hoverContextRef.current = context;
+                interactiveContextRef.current = context;
               }
-              if (!element && hoverCanvasRef.current) {
-                hoverCanvasRef.current = null;
+              if (!element && interactiveCanvasRef.current) {
+                interactiveCanvasRef.current = null;
               }
             }}
           />
