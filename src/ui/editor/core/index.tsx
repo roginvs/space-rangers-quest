@@ -6,7 +6,8 @@ import { Quest } from "../../../lib/qmplayer/funcs";
 import { Jump, Location } from "../../../lib/qmreader";
 import { colors } from "../colors";
 import { CANVAS_PADDING, LOCATION_RADIUS } from "../consts";
-import { drawJumpArrow, drawLocation } from "./drawings";
+import { drawJumpArrow, drawLocation, getCanvasSize, updateMainCanvas } from "./drawings";
+import { HoverZones } from "./hover";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -29,55 +30,24 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const contextRef = React.useRef<CanvasRenderingContext2D | null>(null);
 
-  const canvasWidth = Math.max(...quest.locations.map((l) => l.locX)) + CANVAS_PADDING;
-  const canvasHeight = Math.max(...quest.locations.map((l) => l.locY)) + CANVAS_PADDING;
+  const canvasSize = React.useMemo(() => getCanvasSize(quest), [quest]);
+  const [hoverZones, setHoverZones] = React.useState<HoverZones>([]);
 
-  const drawOnCanvas = React.useCallback(() => {
+  React.useEffect(() => {
     const ctx = contextRef.current;
     if (!ctx) {
       return;
     }
-    ctx.fillStyle = colors.background;
-    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+    const hoverZones = updateMainCanvas(
+      ctx,
+      canvasSize.canvasWidth,
+      canvasSize.canvasHeight,
+      quest,
+    );
+    setHoverZones(hoverZones);
+  }, [quest, canvasSize]);
 
-    // Locations
-    quest.locations.forEach((location) => {
-      drawLocation(ctx, location);
-    });
-
-    // Jumps
-    ctx.lineWidth = 1;
-    quest.jumps.forEach((jump) => {
-      const startLoc = quest.locations.find((loc) => loc.id === jump.fromLocationId);
-      const endLoc = quest.locations.find((loc) => loc.id === jump.toLocationId);
-      if (!endLoc || !startLoc) {
-        console.warn(`No loc from jump id=${jump.id}`);
-        return;
-      }
-
-      const allJumpsBetweenThisLocations = quest.jumps
-        .filter(
-          (candidate) =>
-            (candidate.fromLocationId === jump.fromLocationId &&
-              candidate.toLocationId === jump.toLocationId) ||
-            (candidate.fromLocationId === jump.toLocationId &&
-              candidate.toLocationId === jump.fromLocationId),
-        )
-        .sort((a, b) => {
-          return a.fromLocationId > b.fromLocationId
-            ? 1
-            : a.fromLocationId < b.fromLocationId
-            ? -1
-            : a.showingOrder - b.showingOrder;
-        });
-      const allJumpsCount = allJumpsBetweenThisLocations.length;
-      const myIndex = allJumpsBetweenThisLocations.indexOf(jump);
-
-      drawJumpArrow(ctx, [255, 255, 255], [0, 0, 255], startLoc, endLoc, myIndex, allJumpsCount);
-    });
-  }, [quest, canvasWidth, canvasHeight]);
-
-  React.useEffect(() => drawOnCanvas(), [drawOnCanvas]);
+  console.info(hoverZones);
 
   React.useEffect(() => {
     if (!canvasRef.current) {
@@ -147,8 +117,8 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         }}
       >
         <canvas
-          width={canvasWidth}
-          height={canvasHeight}
+          width={canvasSize.canvasWidth}
+          height={canvasSize.canvasHeight}
           ref={(element) => {
             canvasRef.current = element;
             if (element && !contextRef.current) {

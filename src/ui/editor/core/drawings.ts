@@ -1,14 +1,17 @@
 import { Bezier } from "bezier-js";
 import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
+import { Quest } from "../../../lib/qmplayer/funcs";
 import { Location } from "../../../lib/qmreader";
 import { colors } from "../colors";
 import {
+  CANVAS_PADDING,
   JUMPS_CONTROL_POINT_DISTANCE,
   JUMPS_LOOP_CONTROL_POINT_DISTANCE,
   JUMP_ARROW_LENGTH,
   JUMP_END_LOCATION_RADIUS,
   LOCATION_RADIUS,
 } from "../consts";
+import { HoverZones } from "./hover";
 
 interface LocationLocationOnly {
   locX: number;
@@ -114,12 +117,7 @@ function drawArrowEnding(
   const backVectorNotNormalizedY = y - pointToY;
 
   const backVectorLength = Math.hypot(backVectorNotNormalizedX, backVectorNotNormalizedY);
-  console.info(
-    backVectorNotNormalizedX,
-    backVectorNotNormalizedY,
-    JUMP_ARROW_LENGTH,
-    backVectorLength,
-  );
+
   const backVectorX = (backVectorNotNormalizedX * JUMP_ARROW_LENGTH) / backVectorLength;
   const backVectorY = (backVectorNotNormalizedY * JUMP_ARROW_LENGTH) / backVectorLength;
 
@@ -170,55 +168,27 @@ export function drawJumpArrow(
     (originalLength - JUMP_END_LOCATION_RADIUS) / originalLength,
   ).left;
 
-  //const length = bezier.length();
   const STEPS = 15;
   const LUT = bezier.getLUT(STEPS);
-  //console.info(LUT);
-  //  ctx.moveTo(startLoc.locX, startLoc.locY);
-  //ctx.moveTo(LUT[0].x, LUT[0].y);
+
   for (let i = 1; i < LUT.length; i++) {
     ctx.beginPath();
     ctx.moveTo(LUT[i - 1].x, LUT[i - 1].y);
     ctx.strokeStyle = colorToString(interpolateColor(startColor, endColor, i / LUT.length));
     ctx.lineTo(LUT[i].x, LUT[i].y);
-    //
-    // ctx.strokeStyle = i < STEPS / 2 ? colorToString(startColor) : colorToString(endColor);
     ctx.stroke();
-
     ctx.fillStyle = colorToString(interpolateColor(startColor, endColor, i / LUT.length));
     // ctx.fillRect(LUT[i].x, LUT[i].y, 4, 4);
   }
 
   drawArrowEnding(ctx, LUT[LUT.length - 1].x, LUT[LUT.length - 1].y, endLoc.locX, endLoc.locY);
-
-  /*
-  ctx.strokeStyle = colorToString(startColor);
-
-  ctx.moveTo(startLoc.locX, startLoc.locY);
-  const grd = ctx.createLinearGradient(startLoc.locX, startLoc.locY, endLoc.locX, endLoc.locY);
-  grd.addColorStop(0, "red");
-  //grd.addColorStop(0.5, "blue");
-  grd.addColorStop(1, "green");
-  ///ctx.strokeStyle = grd;
-
-  if (!controlPoint2) {
-    ctx.quadraticCurveTo(controlPoint1.x, controlPoint1.y, endLoc.locX, endLoc.locY);
-  } else {
-    ctx.bezierCurveTo(
-      controlPoint1.x,
-      controlPoint1.y,
-      controlPoint2.x,
-      controlPoint2.y,
-      endLoc.locX,
-      endLoc.locY,
-    );
-  }
-  ctx.stroke();
-
-   */
 }
 
-export function drawLocation(ctx: CanvasRenderingContext2D, location: DeepImmutable<Location>) {
+export function drawLocation(
+  ctx: CanvasRenderingContext2D,
+  hoverZones: HoverZones,
+  location: DeepImmutable<Location>,
+) {
   ctx.strokeStyle = "black";
   ctx.lineWidth = 2;
   const color = location.isStarting
@@ -233,7 +203,62 @@ export function drawLocation(ctx: CanvasRenderingContext2D, location: DeepImmuta
   ctx.fillStyle = color;
   ctx.beginPath();
   ctx.arc(location.locX, location.locY, LOCATION_RADIUS, 0, 2 * Math.PI);
-  //ctx.stroke();
 
   ctx.fill();
+
+  hoverZones.push([location.locX, location.locY, LOCATION_RADIUS * 2, location.id, null]);
+}
+
+export function getCanvasSize(quest: Quest) {
+  const canvasWidth = Math.max(...quest.locations.map((l) => l.locX)) + CANVAS_PADDING;
+  const canvasHeight = Math.max(...quest.locations.map((l) => l.locY)) + CANVAS_PADDING;
+  return { canvasWidth, canvasHeight };
+}
+export function updateMainCanvas(
+  ctx: CanvasRenderingContext2D,
+  canvasWidth: number,
+  canvasHeight: number,
+  quest: Quest,
+) {
+  const hoverZones: HoverZones = [];
+
+  ctx.fillStyle = colors.background;
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+  // Locations
+  quest.locations.forEach((location) => {
+    drawLocation(ctx, hoverZones, location);
+  });
+
+  // Jumps
+  ctx.lineWidth = 1;
+  quest.jumps.forEach((jump) => {
+    const startLoc = quest.locations.find((loc) => loc.id === jump.fromLocationId);
+    const endLoc = quest.locations.find((loc) => loc.id === jump.toLocationId);
+    if (!endLoc || !startLoc) {
+      console.warn(`No loc from jump id=${jump.id}`);
+      return;
+    }
+
+    const allJumpsBetweenThisLocations = quest.jumps
+      .filter(
+        (candidate) =>
+          (candidate.fromLocationId === jump.fromLocationId &&
+            candidate.toLocationId === jump.toLocationId) ||
+          (candidate.fromLocationId === jump.toLocationId &&
+            candidate.toLocationId === jump.fromLocationId),
+      )
+      .sort((a, b) => {
+        return a.fromLocationId > b.fromLocationId
+          ? 1
+          : a.fromLocationId < b.fromLocationId
+          ? -1
+          : a.showingOrder - b.showingOrder;
+      });
+    const allJumpsCount = allJumpsBetweenThisLocations.length;
+    const myIndex = allJumpsBetweenThisLocations.indexOf(jump);
+
+    drawJumpArrow(ctx, [255, 255, 255], [0, 0, 255], startLoc, endLoc, myIndex, allJumpsCount);
+  });
+  return hoverZones;
 }
