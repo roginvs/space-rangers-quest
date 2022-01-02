@@ -45,17 +45,19 @@ type EditorOverlay =
     };
 
 export function EditorCore({ quest, onChange }: EditorCoreProps) {
-  const [mouseMode, setMouseMode] = React.useState<EditorMouseMode>("move");
+  const [mouseMode, setMouseMode] = React.useState<EditorMouseMode>("newJump");
 
   const [overlayMode, setOverlayMode] = React.useState<EditorOverlay | undefined>(undefined);
 
   // DEBUGGING
+  /*
   React.useEffect(() => {
     setOverlayMode({
       kind: "location",
       location: quest.locations.find((l) => l.isStarting)!,
     });
   }, []);
+*/
 
   const mainCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const mainContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
@@ -147,11 +149,44 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     }
     const onMouseDown = (e: MouseEvent) => {
       if (e.button === 0) {
+        const mouseCoords = getMouseCoordsInCanvas(e);
         if (mouseMode === "move") {
-          const mouseCoords = getMouseCoordsInCanvas(e);
           setIsDragging(mouseCoords);
         } else if (mouseMode === "newJump") {
-          // TODO
+          if (hoverZone) {
+            const location = hoverZone.zone[3];
+            if (location) {
+              const newJump = createJump(quest, location.id, location.id);
+              setHoverZone({
+                zone: [
+                  hoverZone.zone[0],
+                  hoverZone.zone[1],
+                  hoverZone.zone[2],
+                  null,
+                  [
+                    newJump,
+                    false,
+                    {
+                      LUT: [],
+                      startLoc: {
+                        locX: location.locX,
+                        locY: location.locY,
+                      },
+                      endLoc: {
+                        locX: location.locX,
+                        locY: location.locY,
+                      },
+                      startColor: [255, 255, 255],
+                      endColor: [0, 0, 255],
+                    },
+                  ],
+                ],
+                clientX: e.clientX,
+                clientY: e.clientY,
+              });
+              setIsDragging(mouseCoords);
+            }
+          }
         }
       }
     };
@@ -223,7 +258,8 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
           }
           setHoverZone(undefined);
         } else if (mouseMode === "newJump") {
-          if (isDragging) {
+          // TODO: Need mousedown coordinates
+          /*
             const fromLocation = quest.locations.find((loc) =>
               isDistanceLower(isDragging.x, isDragging.y, loc.locX, loc.locY, LOCATION_DROP_RADIUS),
             );
@@ -246,10 +282,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             } else {
               notifyUser("No 'from' location");
             }
-          } else {
-            // LOL what?
-            notifyUser("Lol what");
-          }
+     */
         } else if (mouseMode === "newLocation") {
           const griddedLocation = snapToGrid(quest, mouseInCanvas.x, mouseInCanvas.y);
           const locationAtThisPosition = whatLocationIsAlreadyAtThisPosition(
@@ -276,7 +309,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousedown", onMouseDown);
     };
-  }, [mouseMode, hoverZone, overlayMode, getMouseCoordsInCanvas, isDragging]);
+  }, [mouseMode, hoverZone, overlayMode, getMouseCoordsInCanvas]);
 
   React.useEffect(() => {
     const context = interactiveContextRef.current;
