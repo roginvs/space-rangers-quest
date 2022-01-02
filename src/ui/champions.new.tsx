@@ -9,7 +9,7 @@ import { Store } from "./store";
 import { FirebasePublic, WonProofTableRow } from "./db/defs";
 import { DATA_DIR } from "./consts";
 import { WorkerPromise } from "./worker";
-import { assertNever } from "../lib/formula/calculator";
+import { assertNever } from "../assertNever";
 
 @observer
 export class ChampionsTabContainerNew extends React.Component<
@@ -25,14 +25,14 @@ export class ChampionsTabContainerNew extends React.Component<
     () => this.worker.destroy(),
   ];
   componentWillUnmount() {
-    this.onUnmount.forEach(f => f());
+    this.onUnmount.forEach((f) => f());
   }
 
   componentDidMount() {
     this.mounted = true;
     this.props.store.db
       .getRemotePassings()
-      .then(champions => {
+      .then((champions) => {
         if (champions) {
           const orderedKeysByDate = Object.keys(champions).sort((a, b) => {
             return champions[a].createdAt - champions[b].createdAt > 0 ? -1 : 1;
@@ -42,7 +42,7 @@ export class ChampionsTabContainerNew extends React.Component<
           this.champions.set(null);
         }
       })
-      .catch(e => {
+      .catch((e) => {
         this.champions.set(`${e.message || "Error"}`);
       });
   }
@@ -81,7 +81,7 @@ export class ChampionsTabContainerNew extends React.Component<
                 </tr>
               </thead>
               <tbody>
-                {champions.orderedKeysByDate.map(k => {
+                {champions.orderedKeysByDate.map((k) => {
                   const row = champions.champions[k];
                   return (
                     <tr key={k}>

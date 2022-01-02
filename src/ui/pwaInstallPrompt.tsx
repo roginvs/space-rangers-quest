@@ -18,7 +18,7 @@ import { observer } from "mobx-react";
 import { Store } from "./store";
 import { DivFadeinCss } from "./common";
 import { observable } from "mobx";
-import { assertNever } from "../lib/formula/calculator";
+import { assertNever } from "../assertNever";
 
 @observer
 export class PwaInstallPrompt extends React.Component<{
@@ -43,16 +43,16 @@ export class PwaInstallPrompt extends React.Component<{
               <a
                 href="#"
                 className="alert-link"
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault();
                   const savedEvent = store.pwaInstallReadyEvent;
                   if (!savedEvent) {
                     return;
                   }
                   store.pwaInstallReadyEvent = undefined;
-                  savedEvent.prompt().catch(e => console.warn(e));
+                  savedEvent.prompt().catch((e) => console.warn(e));
                   savedEvent.userChoice
-                    .then(choiceResult => {
+                    .then((choiceResult) => {
                       this.pwaInstallResult =
                         choiceResult.outcome === "accepted"
                           ? "success"
@@ -61,7 +61,7 @@ export class PwaInstallPrompt extends React.Component<{
                           : assertNever(choiceResult.outcome);
                       setTimeout(() => (this.pwaInstallResult = undefined), 4000);
                     })
-                    .catch(e => console.warn(e));
+                    .catch((e) => console.warn(e));
                 }}
               >
                 {l.pwaInstallInfoLink}

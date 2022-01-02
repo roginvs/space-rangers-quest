@@ -31,7 +31,7 @@ import {
 } from "reactstrap";
 import { INDEX_JSON } from "./consts";
 import { getLang, guessBrowserLang, LangTexts } from "./lang";
-import { assertNever } from "../lib/formula/calculator";
+import { assertNever } from "../assertNever";
 
 import { OfflineModeTabContainer } from "./offlineMode";
 import { OptionsTabContainer } from "./options";
@@ -64,7 +64,7 @@ class MainLoader extends React.Component<{}> {
     (async () => {
       this.loadingStage = "index";
 
-      const index = await fetch(INDEX_JSON).then(x => x.json());
+      const index = await fetch(INDEX_JSON).then((x) => x.json());
 
       this.loadingStage = "db";
 
@@ -86,7 +86,7 @@ class MainLoader extends React.Component<{}> {
       const store = new Store(index, app, db, player);
       (window as any).store = store;
       autorun(() => {
-        db.setConfigLocal("lastLocation", store.hash).catch(e => console.warn(e));
+        db.setConfigLocal("lastLocation", store.hash).catch((e) => console.warn(e));
       });
       if (lastLocation) {
         /* Disabled this feature
@@ -102,10 +102,10 @@ class MainLoader extends React.Component<{}> {
       //}
       await store.loadWinProofsFromLocal();
       try {
-        app.auth().onAuthStateChanged(user => {
+        app.auth().onAuthStateChanged((user) => {
           store.firebaseLoggedIn = user;
           if (user) {
-            store.syncWithFirebase().catch(e => console.warn(e));
+            store.syncWithFirebase().catch((e) => console.warn(e));
           }
         });
       } catch (e) {
@@ -149,10 +149,10 @@ class MainLoader extends React.Component<{}> {
             updateStore();
           });
 
-          setInterval(() => reg.update().catch(e => console.warn(e)), 1000 * 60 * 60);
-        })().catch(e => console.warn(e));
+          setInterval(() => reg.update().catch((e) => console.warn(e)), 1000 * 60 * 60);
+        })().catch((e) => console.warn(e));
 
-        navigator.serviceWorker.addEventListener("controllerchange", e => {
+        navigator.serviceWorker.addEventListener("controllerchange", (e) => {
           /*
                           Only do a reload if there was a controller and a new controlled appeared.
                           - if there was no controller: this is a first install and 
@@ -196,12 +196,12 @@ class MainLoader extends React.Component<{}> {
             store.storageIsPersisted = requestedPersist;
           }
         }
-      })().catch(e => console.warn(e));
+      })().catch((e) => console.warn(e));
       runInAction(() => {
         this.loadingStage = undefined;
         this.store = store;
       });
-    })().catch(e => (this.error = `${e.message || "Error"}`));
+    })().catch((e) => (this.error = `${e.message || "Error"}`));
   }
   render() {
     if (this.error) {

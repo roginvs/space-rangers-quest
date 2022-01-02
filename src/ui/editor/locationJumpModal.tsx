@@ -13,7 +13,7 @@ import { observer } from "mobx-react";
 import { observable, computed, runInAction, keys, toJS, reaction } from "mobx";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 import { EditorStore, EDITOR_MODES } from "./store";
-import { assertNever } from "../../lib/formula/calculator";
+import { assertNever } from "../../assertNever";
 import { colors } from "./colors";
 import { JumpArrow } from "./jumpArrow";
 import { LocationPoint } from "./locationPoint";
@@ -70,7 +70,7 @@ class LocationTexts extends React.Component<{
                 className="form-check-input"
                 type="radio"
                 checked={!loc.isTextByFormula}
-                onChange={e => {
+                onChange={(e) => {
                   if (e.target.checked) {
                     loc.isTextByFormula = false;
                   }
@@ -85,7 +85,7 @@ class LocationTexts extends React.Component<{
                 className="form-check-input"
                 type="radio"
                 checked={loc.isTextByFormula}
-                onChange={e => {
+                onChange={(e) => {
                   if (e.target.checked) {
                     loc.isTextByFormula = true;
                   }
@@ -100,18 +100,18 @@ class LocationTexts extends React.Component<{
                 isFormulaIncorrect(loc.textSelectFormula) ? "is-invalid" : ""
               }`}
               value={loc.textSelectFormula}
-              onChange={e => (loc.textSelectFormula = e.target.value)}
+              onChange={(e) => (loc.textSelectFormula = e.target.value)}
             />
           ) : null}
         </div>
 
         <ul className="nav nav-tabs">
-          {range(loc.texts.length).map(textId => (
+          {range(loc.texts.length).map((textId) => (
             <li className="nav-item" key={textId}>
               <a
                 className={`nav-link ${textId === this.currentTextId ? "active" : ""}`}
                 href="#"
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault();
                   this.currentTextId = textId;
                 }}
@@ -128,7 +128,7 @@ class LocationTexts extends React.Component<{
                   ? "disabled"
                   : ""
               }`}
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 const idToRemove = this.currentTextId;
                 this.currentTextId = Math.max(0, this.currentTextId - 1);
@@ -142,7 +142,7 @@ class LocationTexts extends React.Component<{
           <li className="nav-item">
             <a
               className={`nav-link`}
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 loc.texts.push("");
                 loc.media.push({
@@ -164,7 +164,7 @@ class LocationTexts extends React.Component<{
               <textarea
                 style={{ width: "100%", height: "10em" }}
                 value={loc.texts[this.currentTextId]}
-                onChange={e => (loc.texts[this.currentTextId] = e.target.value)}
+                onChange={(e) => (loc.texts[this.currentTextId] = e.target.value)}
               />
 
               <div className="row">
@@ -175,7 +175,7 @@ class LocationTexts extends React.Component<{
                     title="Иллюстрация"
                     className="form-control form-control-sm"
                     value={loc.media[this.currentTextId].img}
-                    onChange={e => (loc.media[this.currentTextId].img = e.target.value)}
+                    onChange={(e) => (loc.media[this.currentTextId].img = e.target.value)}
                   />
                 </div>
                 <div className="col-4 form-group">
@@ -185,7 +185,7 @@ class LocationTexts extends React.Component<{
                     type="text"
                     className="form-control form-control-sm"
                     value={loc.media[this.currentTextId].track}
-                    onChange={e => (loc.media[this.currentTextId].track = e.target.value)}
+                    onChange={(e) => (loc.media[this.currentTextId].track = e.target.value)}
                   />
                 </div>
                 <div className="col-4 form-group">
@@ -195,7 +195,7 @@ class LocationTexts extends React.Component<{
                     type="text"
                     className="form-control form-control-sm"
                     value={loc.media[this.currentTextId].sound}
-                    onChange={e => (loc.media[this.currentTextId].sound = e.target.value)}
+                    onChange={(e) => (loc.media[this.currentTextId].sound = e.target.value)}
                   />
                 </div>
               </div>
@@ -223,7 +223,7 @@ class JumpTexts extends React.Component<{
         <textarea
           style={{ width: "100%", height: "3em" }}
           value={j.text}
-          onChange={e => (j.text = e.target.value)}
+          onChange={(e) => (j.text = e.target.value)}
         />
         <div className="row">
           <div className="col-9">
@@ -231,7 +231,7 @@ class JumpTexts extends React.Component<{
             <textarea
               style={{ width: "100%", height: "6em" }}
               value={j.description}
-              onChange={e => (j.description = e.target.value)}
+              onChange={(e) => (j.description = e.target.value)}
             />
           </div>
           <div className="col-3">
@@ -242,7 +242,7 @@ class JumpTexts extends React.Component<{
                 title="Иллюстрация"
                 className="form-control"
                 value={j.img}
-                onChange={e => (j.img = e.target.value)}
+                onChange={(e) => (j.img = e.target.value)}
               />
             </div>
             <div className="form-group">
@@ -252,7 +252,7 @@ class JumpTexts extends React.Component<{
                 type="text"
                 className="form-control"
                 value={j.track}
-                onChange={e => (j.track = e.target.value)}
+                onChange={(e) => (j.track = e.target.value)}
               />
             </div>
             <div className="form-group">
@@ -262,7 +262,7 @@ class JumpTexts extends React.Component<{
                 type="text"
                 className="form-control"
                 value={j.sound}
-                onChange={e => (j.sound = e.target.value)}
+                onChange={(e) => (j.sound = e.target.value)}
               />
             </div>
           </div>
@@ -275,7 +275,7 @@ class JumpTexts extends React.Component<{
               isFormulaIncorrect(j.formulaToPass) ? "is-invalid" : ""
             }`}
             value={j.formulaToPass}
-            onChange={e => (j.formulaToPass = e.target.value)}
+            onChange={(e) => (j.formulaToPass = e.target.value)}
           />
         </div>
       </>
@@ -404,10 +404,10 @@ export class LocationJumpParamsModal extends React.Component<{
       <ModalInside
         key={`${selected.type}-${selected.id}`}
         target={target}
-        onClose={newTarget => {
+        onClose={(newTarget) => {
           if (newTarget) {
             if (selected.type === "location" && isLocation(newTarget)) {
-              const idx = quest.locations.findIndex(x => x.id === newTarget.id);
+              const idx = quest.locations.findIndex((x) => x.id === newTarget.id);
               if (idx > -1) {
                 quest.locations[idx] = newTarget;
               }
@@ -415,7 +415,7 @@ export class LocationJumpParamsModal extends React.Component<{
               (selected.type === "jump_end" || selected.type === "jump_start") &&
               isJump(newTarget)
             ) {
-              const idx = quest.jumps.findIndex(x => x.id === newTarget.id);
+              const idx = quest.jumps.findIndex((x) => x.id === newTarget.id);
               if (idx > -1) {
                 quest.jumps[idx] = newTarget;
               }

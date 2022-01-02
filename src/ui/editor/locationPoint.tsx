@@ -13,7 +13,7 @@ import { observer } from "mobx-react";
 import { observable, computed, runInAction } from "mobx";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 import { EditorStore } from "./store";
-import { assertNever } from "../../lib/formula/calculator";
+import { assertNever } from "../../assertNever";
 import { LOCATION_RADIUS } from "./consts";
 import { InfoPopup, LocationPopupBody } from "./infopopup";
 import { colors } from "./colors";
@@ -61,10 +61,10 @@ export class LocationPoint extends React.Component<{
             // console.info(`Leave location=${location.id}`);
             this.hovered = false;
           }}
-          onClick={e => {
+          onClick={(e) => {
             // e.stopPropagation();
           }}
-          onMouseDown={e => {
+          onMouseDown={(e) => {
             store.selected = {
               type: "location",
               id: location.id,
@@ -96,7 +96,7 @@ export class LocationPoint extends React.Component<{
           style={{
             cursor: store.mouseMode === "select" ? "pointer" : undefined,
           }}
-          ref={e => {
+          ref={(e) => {
             if (!this.ref) {
               this.ref = e;
             }
@@ -106,9 +106,7 @@ export class LocationPoint extends React.Component<{
           <InfoPopup anchorEl={this.ref}>
             <LocationPopupBody store={this.props.store} location={location} />
           </InfoPopup>
-        ) : (
-          undefined
-        )}
+        ) : undefined}
       </>
     );
   }

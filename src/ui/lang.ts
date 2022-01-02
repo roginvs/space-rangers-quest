@@ -1,5 +1,5 @@
 import { Lang } from "../lib/qmplayer/player";
-import { assertNever } from "../lib/formula/calculator";
+import { assertNever } from "../assertNever";
 
 const RUS = {
   hi: "Привет, ",

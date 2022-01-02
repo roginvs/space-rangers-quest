@@ -13,7 +13,7 @@ import { observer } from "mobx-react";
 import { observable, computed, runInAction } from "mobx";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 import { EditorStore } from "./store";
-import { assertNever } from "../../lib/formula/calculator";
+import { assertNever } from "../../assertNever";
 import {
   JUMPS_CONTROL_POINT_DISTANCE,
   JUMP_MARGIN,
@@ -84,7 +84,7 @@ class JumpArrowReal extends React.Component<{
             //console.info(`Leave jump=${jump.id}`);
             this.hovered = false;
           }}
-          onMouseDown={e => {
+          onMouseDown={(e) => {
             const startLoc = this.props.store.locationById(jump.fromLocationId);
 
             const endLoc = this.props.store.locationById(jump.toLocationId);
@@ -118,10 +118,10 @@ class JumpArrowReal extends React.Component<{
               opened: false,
             };
           }}
-          onClick={e => {
+          onClick={(e) => {
             // console.info(`Click jump=${jump.id}`);
           }}
-          ref={r => {
+          ref={(r) => {
             if (this.popupRef) {
               return;
             }
@@ -133,9 +133,7 @@ class JumpArrowReal extends React.Component<{
           <InfoPopup anchorEl={this.popupRef}>
             <JumpPopupBody store={this.props.store} jump={jump} />
           </InfoPopup>
-        ) : (
-          undefined
-        )}
+        ) : undefined}
       </>
     );
   }
@@ -165,7 +163,7 @@ export class IdleJumpArrow extends React.Component<{
 
     const allJumpFromThisLocations = quest.jumps
       .filter(
-        x =>
+        (x) =>
           (x.fromLocationId === jump.fromLocationId && x.toLocationId === jump.toLocationId) ||
           (x.fromLocationId === jump.toLocationId && x.toLocationId === jump.fromLocationId),
       )
@@ -176,7 +174,7 @@ export class IdleJumpArrow extends React.Component<{
           ? -1
           : a.showingOrder - b.showingOrder;
       });
-    const myIndex = allJumpFromThisLocations.findIndex(x => x.id === jump.id);
+    const myIndex = allJumpFromThisLocations.findIndex((x) => x.id === jump.id);
     if (myIndex < 0) {
       console.error(`Wrong index for jump id=${jump.id}`);
       return null;
@@ -254,7 +252,7 @@ export class IdleJumpArrow extends React.Component<{
           stroke="transparent"
           strokeWidth={1}
           fill="none"
-          ref={lineRef => {
+          ref={(lineRef) => {
             // console.info(`Got lineRef=`, lineRef);
             if (!lineRef) {
               return;

@@ -18,7 +18,7 @@ import { observer } from "mobx-react";
 import { Store } from "./store";
 import { DivFadeinCss } from "./common";
 import { observable } from "mobx";
-import { assertNever } from "../lib/formula/calculator";
+import { assertNever } from "../assertNever";
 
 @observer
 export class AppNavbar extends React.Component<{

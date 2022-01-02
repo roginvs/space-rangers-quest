@@ -18,7 +18,7 @@ import { DeepImmutable } from "./deepImmutable";
 import { RandomFunc } from "../randomFunc";
 import { substitute } from "../substitution";
 import { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP, DEFAULT_DAYS_TO_PASS_QUEST } from "./defs";
-import { assertNever } from "../formula/calculator";
+import { assertNever } from "../../assertNever";
 import * as assert from "assert";
 import { Player, Lang, DEFAULT_RUS_PLAYER } from "./player";
 
@@ -81,7 +81,7 @@ export interface PlayerState {
 export function initGame(quest: Quest, seed: string): GameState {
   const alea = new Alea(seed);
 
-  const startLocation = quest.locations.find(x => x.isStarting);
+  const startLocation = quest.locations.find((x) => x.isStarting);
   if (!startLocation) {
     throw new Error("No start location!");
   }
@@ -216,7 +216,7 @@ function calculateLocationShowingTextId(
     .map((text, i) => {
       return { text, i };
     })
-    .filter(x => x.text);
+    .filter((x) => x.text);
 
   if (location.isTextByFormula) {
     if (location.textSelectFormula) {
@@ -283,7 +283,7 @@ export function getUIState(
       imageFileName: null,
     };
   } else if (state.state === "jump") {
-    const jump = quest.jumps.find(x => x.id === state.lastJumpId);
+    const jump = quest.jumps.find((x) => x.id === state.lastJumpId);
     if (!jump) {
       throw new Error(`Internal error: no last jump id=${state.lastJumpId}`);
     }
@@ -301,7 +301,7 @@ export function getUIState(
       imageFileName: state.imageFilename,
     };
   } else if (state.state === "location" || state.state === "critonlocation") {
-    const location = quest.locations.find(x => x.id === state.locationId);
+    const location = quest.locations.find((x) => x.id === state.locationId);
     if (!location) {
       throw new Error(`Internal error: no state loc id=${state.locationId}`);
     }
@@ -309,7 +309,7 @@ export function getUIState(
     const locTextId = calculateLocationShowingTextId(location, state, random, showDebug);
     const locationOwnText = location.texts[locTextId] || "";
 
-    const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
+    const lastJump = quest.jumps.find((x) => x.id === state.lastJumpId);
 
     const text =
       location.isEmpty && lastJump && lastJump.description ? lastJump.description : locationOwnText;
@@ -329,8 +329,8 @@ export function getUIState(
                   active: true,
                 },
               ]
-            : state.possibleJumps.map(x => {
-                const jump = quest.jumps.find(y => y.id === x.id);
+            : state.possibleJumps.map((x) => {
+                const jump = quest.jumps.find((y) => y.id === x.id);
                 if (!jump) {
                   throw new Error(`Internal error: no jump ${x.id} in possible jumps`);
                 }
@@ -355,7 +355,7 @@ export function getUIState(
     };
   } else if (state.state === "critonjump") {
     const critId = state.critParamId;
-    const jump = quest.jumps.find(x => x.id === state.lastJumpId);
+    const jump = quest.jumps.find((x) => x.id === state.lastJumpId);
 
     if (critId === null || !jump) {
       throw new Error(`Internal error: crit=${critId} lastjump=${state.lastJumpId}`);
@@ -391,7 +391,7 @@ export function getUIState(
     };
   } else if (state.state === "jumpandnextcrit") {
     const critId = state.critParamId;
-    const jump = quest.jumps.find(x => x.id === state.lastJumpId);
+    const jump = quest.jumps.find((x) => x.id === state.lastJumpId);
     if (critId === null || !jump) {
       throw new Error(`Internal error: crit=${critId} lastjump=${state.lastJumpId}`);
     }
@@ -412,7 +412,7 @@ export function getUIState(
     };
   } else if (state.state === "critonlocationlastmessage") {
     const critId = state.critParamId;
-    const location = quest.locations.find(x => x.id === state.locationId);
+    const location = quest.locations.find((x) => x.id === state.locationId);
 
     if (critId === null) {
       throw new Error(`Internal error: no critId`);
@@ -572,13 +572,13 @@ function performJumpInternal(
   }
 
   let state = stateOriginal;
-  const jumpForImg = quest.jumps.find(x => x.id === state.lastJumpId);
+  const jumpForImg = quest.jumps.find((x) => x.id === state.lastJumpId);
   const image =
     jumpForImg && jumpForImg.img
       ? jumpForImg.img.toLowerCase() + ".jpg"
       : images
-          .filter(x => !!x.jumpIds && x.jumpIds.indexOf(jumpId) > -1)
-          .map(x => x.filename)
+          .filter((x) => !!x.jumpIds && x.jumpIds.indexOf(jumpId) > -1)
+          .map((x) => x.filename)
           .shift();
   if (image) {
     state = {
@@ -594,7 +594,7 @@ function performJumpInternal(
     };
     state = calculateLocation(quest, state, images, random, showDebug);
   } else if (state.state === "jump") {
-    const jump = quest.jumps.find(x => x.id === state.lastJumpId);
+    const jump = quest.jumps.find((x) => x.id === state.lastJumpId);
     if (!jump) {
       throw new Error(`Internal error: no jump ${state.lastJumpId}`);
     }
@@ -605,14 +605,14 @@ function performJumpInternal(
     };
     state = calculateLocation(quest, state, images, random, showDebug);
   } else if (state.state === "location") {
-    if (!state.possibleJumps.find(x => x.id === jumpId)) {
+    if (!state.possibleJumps.find((x) => x.id === jumpId)) {
       throw new Error(
         `Jump ${jumpId} is not in list in that location. Possible jumps=${state.possibleJumps
-          .map(x => `${x.id}(${x.active})`)
+          .map((x) => `${x.id}(${x.active})`)
           .join(",")}`,
       );
     }
-    const jump = quest.jumps.find(x => x.id === jumpId);
+    const jump = quest.jumps.find((x) => x.id === jumpId);
     if (!jump) {
       throw new Error(`"Internal Error: no jump id=${jumpId} from possible jump list`);
     }
@@ -638,7 +638,7 @@ function performJumpInternal(
     state = paramsUpdate.state;
     const critParamsTriggered = paramsUpdate.critParamsTriggered;
 
-    const nextLocation = quest.locations.find(x => x.id === jump.toLocationId);
+    const nextLocation = quest.locations.find((x) => x.id === jump.toLocationId);
     if (!nextLocation) {
       throw new Error(`Internal error: no next location ${jump.toLocationId}`);
     }
@@ -658,8 +658,10 @@ function performJumpInternal(
         const image = qmmImage
           ? qmmImage.toLowerCase() + ".jpg"
           : images
-              .filter(x => !!x.critParams && x.critParams.indexOf(state.critParamId as number) > -1)
-              .map(x => x.filename)
+              .filter(
+                (x) => !!x.critParams && x.critParams.indexOf(state.critParamId as number) > -1,
+              )
+              .map((x) => x.filename)
               .shift();
         if (image) {
           state = {
@@ -701,7 +703,7 @@ function performJumpInternal(
       ...state,
       state: "critonjump",
     };
-    const jump = quest.jumps.find(x => x.id === state.lastJumpId);
+    const jump = quest.jumps.find((x) => x.id === state.lastJumpId);
     const qmmImg =
       (state.critParamId !== null && jump && jump.paramsChanges[state.critParamId].img) ||
       (state.critParamId !== null && quest.params[state.critParamId].img);
@@ -709,12 +711,12 @@ function performJumpInternal(
       ? qmmImg.toLowerCase() + ".jpg"
       : images
           .filter(
-            x =>
+            (x) =>
               !!x.critParams &&
               state.critParamId !== null &&
               x.critParams.indexOf(state.critParamId) > -1,
           )
-          .map(x => x.filename)
+          .map((x) => x.filename)
           .shift();
 
     if (image) {
@@ -759,7 +761,7 @@ function calculateLocation(
     },
   };
 
-  const location = quest.locations.find(x => x.id === state.locationId);
+  const location = quest.locations.find((x) => x.id === state.locationId);
   if (!location) {
     throw new Error(`Internal error: no state location ${state.locationId}`);
   }
@@ -767,7 +769,7 @@ function calculateLocation(
   const locImgId = calculateLocationShowingTextId(location, state, random, showDebug);
   const imageFromQmm = location.media[locImgId] && location.media[locImgId].img;
   const imageFromPQI = images.find(
-    x => !!x.locationIds && x.locationIds.indexOf(state.locationId) > -1,
+    (x) => !!x.locationIds && x.locationIds.indexOf(state.locationId) > -1,
   );
   const image = imageFromQmm
     ? imageFromQmm.toLowerCase() + ".jpg"
@@ -793,10 +795,10 @@ function calculateLocation(
     quest.header === HEADER_QM_2 || quest.header === HEADER_QM_3 || quest.header === HEADER_QM_4;
 
   const allJumpsFromThisLocation = quest.jumps
-    .filter(x => x.fromLocationId === state.locationId)
-    .filter(jump => {
+    .filter((x) => x.fromLocationId === state.locationId)
+    .filter((jump) => {
       // Сразу выкинуть переходы в локации с превышенным лимитом
-      const toLocation = quest.locations.find(x => x.id === jump.toLocationId);
+      const toLocation = quest.locations.find((x) => x.id === jump.toLocationId);
       if (toLocation) {
         if (
           toLocation.maxVisits &&
@@ -812,7 +814,7 @@ function calculateLocation(
         // Это вообще дикость какая-то, потому как там вполне может быть
         // критичный параметр завершить квест
         const jumpsFromDestination = quest.jumps.filter(
-          x => x.fromLocationId === jump.toLocationId,
+          (x) => x.fromLocationId === jump.toLocationId,
         );
         if (jumpsFromDestination.length === 0) {
           // Но если там вообще переходов не было, то всё ок
@@ -820,7 +822,7 @@ function calculateLocation(
         }
         if (
           jumpsFromDestination.filter(
-            x => x.jumpingCountLimit && state.jumpedCount[x.id] >= x.jumpingCountLimit,
+            (x) => x.jumpingCountLimit && state.jumpedCount[x.id] >= x.jumpingCountLimit,
           ).length === jumpsFromDestination.length
         ) {
           return false;
@@ -843,7 +845,7 @@ function calculateLocation(
         }
         if (jump.paramsConditions[i].mustEqualValues.length > 0) {
           const isEqual = jump.paramsConditions[i].mustEqualValues.filter(
-            x => x === state.paramValues[i],
+            (x) => x === state.paramValues[i],
           );
           if (jump.paramsConditions[i].mustEqualValuesEqual && isEqual.length === 0) {
             return false;
@@ -854,7 +856,7 @@ function calculateLocation(
         }
         if (jump.paramsConditions[i].mustModValues.length > 0) {
           const isMod = jump.paramsConditions[i].mustModValues.filter(
-            x => state.paramValues[i] % x === 0,
+            (x) => state.paramValues[i] % x === 0,
           );
           if (jump.paramsConditions[i].mustModValuesMod && isMod.length === 0) {
             return false;
@@ -888,7 +890,7 @@ function calculateLocation(
     console.info('sorted', allJumpsFromThisLocationSortered.map(x => `id=${x.id} prio=${x.showingOrder}`).join(', '));
     */
 
-  const allPossibleJumps = allJumpsFromThisLocationSortered.map(jump => {
+  const allPossibleJumps = allJumpsFromThisLocationSortered.map((jump) => {
     return {
       jump,
       active: isJumpActive(jump),
@@ -906,7 +908,7 @@ function calculateLocation(
   for (const j of allPossibleJumps) {
     if (!seenTexts[j.jump.text]) {
       seenTexts[j.jump.text] = true;
-      const jumpsWithSameText = allPossibleJumps.filter(x => x.jump.text === j.jump.text);
+      const jumpsWithSameText = allPossibleJumps.filter((x) => x.jump.text === j.jump.text);
       if (jumpsWithSameText.length === 1) {
         if (j.jump.priority < 1 && j.active) {
           const ACCURACY = 1000;
@@ -917,17 +919,17 @@ function calculateLocation(
           possibleJumpsWithSameTextGrouped.push(j);
         }
       } else {
-        const jumpsActiveWithSameText = jumpsWithSameText.filter(x => x.active);
+        const jumpsActiveWithSameText = jumpsWithSameText.filter((x) => x.active);
         if (jumpsActiveWithSameText.length > 0) {
           const maxPrio = jumpsActiveWithSameText.reduce(
             (max, jump) => (jump.jump.priority > max ? jump.jump.priority : max),
             0,
           );
           const jumpsWithNotSoLowPrio = jumpsActiveWithSameText.filter(
-            x => x.jump.priority * 100 >= maxPrio,
+            (x) => x.jump.priority * 100 >= maxPrio,
           );
           const prioSum = jumpsWithNotSoLowPrio
-            .map(x => x.jump.priority)
+            .map((x) => x.jump.priority)
             .reduce((sum, i) => i + sum, 0);
           const ACCURACY = 1000000;
           let rnd = (random(ACCURACY) / ACCURACY) * prioSum;
@@ -940,7 +942,9 @@ function calculateLocation(
             }
           }
         } else {
-          const alLeastOneWithAlwaysShow = jumpsWithSameText.filter(x => x.jump.alwaysShow).shift();
+          const alLeastOneWithAlwaysShow = jumpsWithSameText
+            .filter((x) => x.jump.alwaysShow)
+            .shift();
           if (alLeastOneWithAlwaysShow) {
             possibleJumpsWithSameTextGrouped.push(alLeastOneWithAlwaysShow);
           }
@@ -963,17 +967,16 @@ function calculateLocation(
             }
         })
         */
-  const newJumpsWithoutEmpty = possibleJumpsWithSameTextGrouped.filter(x => x.jump.text);
+  const newJumpsWithoutEmpty = possibleJumpsWithSameTextGrouped.filter((x) => x.jump.text);
   const newActiveJumpsOnlyEmpty = possibleJumpsWithSameTextGrouped.filter(
-    x => x.active && !x.jump.text,
+    (x) => x.active && !x.jump.text,
   );
   const newActiveJumpsOnlyOneEmpty =
     newActiveJumpsOnlyEmpty.length > 0 ? [newActiveJumpsOnlyEmpty[0]] : [];
 
-  const statePossibleJumps = (newJumpsWithoutEmpty.length > 0
-    ? newJumpsWithoutEmpty
-    : newActiveJumpsOnlyOneEmpty
-  ).map(x => {
+  const statePossibleJumps = (
+    newJumpsWithoutEmpty.length > 0 ? newJumpsWithoutEmpty : newActiveJumpsOnlyOneEmpty
+  ).map((x) => {
     return {
       active: x.active,
       id: x.jump.id,
@@ -988,11 +991,11 @@ function calculateLocation(
     const gotFailyCritWithChoices =
       (quest.params[critParam].type === ParamType.Провальный ||
         quest.params[critParam].type === ParamType.Смертельный) &&
-      state.possibleJumps.filter(x => x.active).length > 0;
+      state.possibleJumps.filter((x) => x.active).length > 0;
     if (oldTgeBehaviour && gotFailyCritWithChoices) {
       // Do nothing because some jumps allows this
     } else {
-      const lastjump = quest.jumps.find(x => x.id === state.lastJumpId);
+      const lastjump = quest.jumps.find((x) => x.id === state.lastJumpId);
 
       state = {
         ...state,
@@ -1008,8 +1011,8 @@ function calculateLocation(
       const image = qmmImg
         ? qmmImg.toLowerCase() + ".jpg"
         : images
-            .filter(x => !!x.critParams && x.critParams.indexOf(critParam) > -1)
-            .map(x => x.filename)
+            .filter((x) => !!x.critParams && x.critParams.indexOf(critParam) > -1)
+            .map((x) => x.filename)
             .shift();
       if (image) {
         state = {
@@ -1026,11 +1029,11 @@ function calculateLocation(
   /* А это дикий костыль для пустых локаций и переходов */
   if (state.state === "location" && state.possibleJumps.length === 1) {
     const lonenyCurrentJumpInPossible = state.possibleJumps[0];
-    const lonenyCurrentJump = quest.jumps.find(x => x.id === lonenyCurrentJumpInPossible.id);
+    const lonenyCurrentJump = quest.jumps.find((x) => x.id === lonenyCurrentJumpInPossible.id);
     if (!lonenyCurrentJump) {
       throw new Error(`Unable to find jump id=${lonenyCurrentJumpInPossible.id}`);
     }
-    const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
+    const lastJump = quest.jumps.find((x) => x.id === state.lastJumpId);
 
     const locTextId = calculateLocationShowingTextId(location, state, random, showDebug);
     const locationOwnText = location.texts[locTextId] || "";
@@ -1053,7 +1056,7 @@ function calculateLocation(
     }
   } else if (state.state === "critonlocation") {
     // Little bit copy-paste from branch above
-    const lastJump = quest.jumps.find(x => x.id === state.lastJumpId);
+    const lastJump = quest.jumps.find((x) => x.id === state.lastJumpId);
     const locTextId = calculateLocationShowingTextId(location, state, random, showDebug);
     const locationOwnText = location.texts[locTextId] || "";
     const locationDoNotHaveText = location.isEmpty
@@ -1073,8 +1076,8 @@ function calculateLocation(
 }
 
 export function getAllImagesToPreload(quest: Quest, images: PQImages) {
-  const imagesPQI = images.map(x => x.filename);
-  const imagesQmm = getImagesListFromQmm(quest as QM).map(x => x.toLowerCase() + ".jpg");
+  const imagesPQI = images.map((x) => x.filename);
+  const imagesQmm = getImagesListFromQmm(quest as QM).map((x) => x.toLowerCase() + ".jpg");
   const uniq: { [name: string]: boolean } = {};
   for (const img of [...imagesPQI, ...imagesQmm]) {
     uniq[img] = true;
@@ -1120,7 +1123,7 @@ export function validateWinningLog(quest: Quest, gameLog: GameLog, showDebug = t
   for (const performedJump of gameLog.performedJumps) {
     const uiState = getUIState(quest, state, DEFAULT_RUS_PLAYER, showDebug);
 
-    if (uiState.choices.find(x => x.jumpId === performedJump.jumpId)) {
+    if (uiState.choices.find((x) => x.jumpId === performedJump.jumpId)) {
       if (showDebug) {
         console.info(`Validate jumping jumpId=${performedJump.jumpId}`);
       }
@@ -1156,7 +1159,7 @@ export function validateWinningLog(quest: Quest, gameLog: GameLog, showDebug = t
 export function _sortJumps<
   T extends {
     showingOrder: number;
-  }
+  },
 >(input: T[], random: RandomFunc): T[] {
   const output = input.slice();
   for (let i = 0; i < output.length; i++) {

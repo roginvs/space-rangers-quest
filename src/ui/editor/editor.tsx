@@ -13,7 +13,7 @@ import { observer } from "mobx-react";
 import { observable, computed, runInAction, keys } from "mobx";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 import { EditorStore, EDITOR_MODES } from "./store";
-import { assertNever } from "../../lib/formula/calculator";
+import { assertNever } from "../../assertNever";
 import { colors } from "./colors";
 import { JumpArrow } from "./jumpArrow";
 import { LocationPoint } from "./locationPoint";
@@ -32,7 +32,7 @@ export class Editor extends React.Component<{
     return (
       <div style={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column" }}>
         <div>
-          {EDITOR_MODES.map(mode => (
+          {EDITOR_MODES.map((mode) => (
             <button
               key={mode}
               className={classnames("btn", store.mouseMode === mode ? "btn-info" : "btn-light")}
@@ -87,12 +87,12 @@ export class Editor extends React.Component<{
                   ? "url('/fa/remove.svg') 12 12, pointer"
                   : assertNever(store.mouseMode),
             }}
-            onClick={e => {
+            onClick={(e) => {
               if (e.target === e.currentTarget) {
                 store.selected = undefined;
               }
             }}
-            onMouseMove={e => {
+            onMouseMove={(e) => {
               const selected = store.selected;
               if (!selected) {
                 return;
@@ -121,7 +121,7 @@ export class Editor extends React.Component<{
                 const griddedY =
                   Math.round((selected.currentY - store.grixYoffset) / store.gridY) * store.gridY +
                   store.grixYoffset;
-                if (!quest.locations.find(x => x.locX === griddedX && x.locY === griddedY)) {
+                if (!quest.locations.find((x) => x.locX === griddedX && x.locY === griddedY)) {
                   runInAction(() => {
                     loc.locX = griddedX;
                     loc.locY = griddedY;
@@ -145,7 +145,7 @@ export class Editor extends React.Component<{
                 }
                 selected.moving = false;
                 const newLocation = quest.locations.find(
-                  loc =>
+                  (loc) =>
                     (loc.locX - selected.currentX) ** 2 + (loc.locY - selected.currentY) ** 2 <
                     LOCATION_DROP_RADIUS ** 2,
                 );
@@ -170,9 +170,9 @@ export class Editor extends React.Component<{
                   }
                   runInAction(() => {
                     quest.jumps = quest.jumps.filter(
-                      j => !(j.fromLocationId === loc.id || j.toLocationId === loc.id),
+                      (j) => !(j.fromLocationId === loc.id || j.toLocationId === loc.id),
                     );
-                    quest.locations = quest.locations.filter(l => !(l.id === loc.id));
+                    quest.locations = quest.locations.filter((l) => !(l.id === loc.id));
                     store.selected = undefined;
                     store.pushUndo();
                   });
@@ -184,7 +184,7 @@ export class Editor extends React.Component<{
                     return;
                   }
                   runInAction(() => {
-                    quest.jumps = quest.jumps.filter(j => j.id !== jump.id);
+                    quest.jumps = quest.jumps.filter((j) => j.id !== jump.id);
                     store.selected = undefined;
                     store.pushUndo();
                   });
@@ -210,10 +210,10 @@ export class Editor extends React.Component<{
                 <path d="M0,0 L0,6 L9,3 z" fill={colors.jump.arrow} />
               </marker>
             </defs>
-            {quest.jumps.map(j => (
+            {quest.jumps.map((j) => (
               <JumpArrow store={store} jump={j} key={j.id} />
             ))}
-            {quest.locations.map(l => (
+            {quest.locations.map((l) => (
               <LocationPoint store={store} location={l} key={l.id} />
             ))}
           </svg>

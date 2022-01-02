@@ -161,6 +161,7 @@ function getJumpArrowColors(
   allJumpsCount: number,
   haveOtherJumpsWithSameText: boolean,
 ) {
+  // TODO
   const startColor: Color = [255, 255, 255];
   const endColor: Color = [0, 0, 255];
   return [startColor, endColor];

@@ -14,7 +14,7 @@ import { observable, computed, runInAction } from "mobx";
 import { Popper } from "react-popper";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 import { EditorStore } from "./store";
-import { assertNever } from "../../lib/formula/calculator";
+import { assertNever } from "../../assertNever";
 import { range } from "./utils";
 
 const Divider = () => <div className="text-center">---</div>;
@@ -28,7 +28,7 @@ function getSummaryForParamsChangeAndConditions(
 ): React.ReactNode[] {
   const quest = store.quest;
   return range(quest.paramsCount)
-    .map(paramId => {
+    .map((paramId) => {
       const change = target.paramsChanges[paramId];
       const showHideString =
         change.showingType === ParameterShowingType.НеТрогать
@@ -66,12 +66,12 @@ function getSummaryForParamsChangeAndConditions(
         }
         if (conditions.mustEqualValues.length > 0) {
           conditionString += conditions.mustEqualValuesEqual ? "==" : "!==";
-          conditions.mustEqualValues.forEach(v => (conditionString += `${v}`));
+          conditions.mustEqualValues.forEach((v) => (conditionString += `${v}`));
           conditionString += " ";
         }
         if (conditions.mustModValues.length > 0) {
           conditionString += conditions.mustModValuesMod ? "%" : "!%";
-          conditions.mustModValues.forEach(v => (conditionString += `${v}`));
+          conditions.mustModValues.forEach((v) => (conditionString += `${v}`));
           conditionString += " ";
         }
       }
@@ -87,7 +87,7 @@ function getSummaryForParamsChangeAndConditions(
         </div>
       );
     })
-    .filter(x => x !== null);
+    .filter((x) => x !== null);
 }
 
 export class JumpPopupBody extends React.Component<{
@@ -97,7 +97,7 @@ export class JumpPopupBody extends React.Component<{
   render() {
     const jump = this.props.jump;
     const conflictingJumps = this.props.store.quest.jumps.filter(
-      x => x.fromLocationId === jump.fromLocationId && x.text === jump.text && x.id !== jump.id,
+      (x) => x.fromLocationId === jump.fromLocationId && x.text === jump.text && x.id !== jump.id,
     );
 
     const conflictoryString =
@@ -159,7 +159,7 @@ export class LocationPopupBody extends React.Component<{
 }> {
   render() {
     const location = this.props.location;
-    const texts = location.texts.filter(x => x);
+    const texts = location.texts.filter((x) => x);
     const shortInfo = location.isStarting
       ? "Стартовая локация"
       : location.isSuccess

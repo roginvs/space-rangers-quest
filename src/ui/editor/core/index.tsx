@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import * as React from "react";
-import { assertNever } from "../../../lib/formula/calculator";
+import { assertNever } from "../../../assertNever";
 import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../lib/qmplayer/funcs";
 import { Jump, Location } from "../../../lib/qmreader";
@@ -218,33 +218,37 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     }
     // TODO: This is part of Drawings.tsx
     context.clearRect(0, 0, canvasSize.canvasWidth, canvasSize.canvasHeight);
-    context.setLineDash(isDragging ? [5, 5] : []);
+
     if (hoverZone) {
       const location = hoverZone.zone[3];
       if (location) {
+        context.setLineDash(isDragging ? [2, 2] : []);
+
         context.strokeStyle = "black";
         context.lineWidth = 2;
         context.fillStyle = "none";
         context.beginPath();
         context.arc(location.locX, location.locY, LOCATION_RADIUS, 0, 2 * Math.PI);
         context.stroke();
+        context.setLineDash([]);
 
         if (isDragging) {
           context.strokeStyle = "black";
           context.lineWidth = 2;
           context.fillStyle = "none";
           context.beginPath();
-          context.setLineDash([]);
+
           context.arc(isDragging.x, isDragging.y, LOCATION_RADIUS, 0, 2 * Math.PI);
           context.stroke();
         }
       }
       const jumpHover = hoverZone.zone[4];
       if (jumpHover) {
+        context.setLineDash(isDragging ? [5, 2] : []);
         const LUT = jumpHover[2].LUT;
         const startColor = jumpHover[2].startColor;
         const endColor = jumpHover[2].endColor;
-        context.lineWidth = 2;
+        context.lineWidth = 3;
         for (let i = 1; i < LUT.length; i++) {
           context.beginPath();
           context.moveTo(LUT[i - 1].x, LUT[i - 1].y);
@@ -252,18 +256,15 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             interpolateColor(startColor, endColor, i / LUT.length),
           );
           context.lineTo(LUT[i].x, LUT[i].y);
-          // context.setLineDash([5, 15]);
-          // TODO: Dash if moving
           context.stroke();
         }
+        context.setLineDash([]);
 
         if (isDragging) {
           context.strokeStyle = "black";
           context.lineWidth = 1;
           context.fillStyle = "none";
           context.beginPath();
-
-          context.setLineDash([]);
 
           const isBegining = jumpHover[1];
 
@@ -281,7 +282,6 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         }
       }
     }
-    context.setLineDash([]);
   }, [hoverZone, canvasSize, isDragging]);
 
   // console.info(`Editor re-render`);
@@ -372,7 +372,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             onContextMenu={(e) => e.preventDefault()}
           />
 
-          {hoverZone && (
+          {hoverZone && !isDragging && (
             <HoverPopup clientX={hoverZone.clientX} clientY={hoverZone.clientY}>
               todoto
             </HoverPopup>

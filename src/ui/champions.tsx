@@ -9,7 +9,7 @@ import { Store } from "./store";
 import { FirebasePublic } from "./db/defs";
 import { DATA_DIR } from "./consts";
 import { WorkerPromise } from "./worker";
-import { assertNever } from "../lib/formula/calculator";
+import { assertNever } from "../assertNever";
 
 import "./champions.css";
 
@@ -34,9 +34,9 @@ export class ChampionsTabContainer extends React.Component<
   @computed
   get validationIsInProgress() {
     return this.champions
-      ? this.champions.filter(champion => {
+      ? this.champions.filter((champion) => {
           const validatingQuests = champion.validatedQuests.filter(
-            x => x.validateStatus === "inprogress",
+            (x) => x.validateStatus === "inprogress",
           );
           return validatingQuests.length > 0;
         }).length > 0
@@ -46,9 +46,9 @@ export class ChampionsTabContainer extends React.Component<
   @computed
   get haveValidationFailed() {
     return this.champions
-      ? this.champions.filter(champion => {
+      ? this.champions.filter((champion) => {
           const validateFailedQuests = champion.validatedQuests.filter(
-            x => x.validateStatus === "failed",
+            (x) => x.validateStatus === "failed",
           );
           return validateFailedQuests.length > 0;
         }).length > 0
@@ -62,7 +62,7 @@ export class ChampionsTabContainer extends React.Component<
     () => this.worker.destroy(),
   ];
   componentWillUnmount() {
-    this.onUnmount.forEach(f => f());
+    this.onUnmount.forEach((f) => f());
   }
 
   componentDidMount() {
@@ -71,30 +71,30 @@ export class ChampionsTabContainer extends React.Component<
     const validatedUnknown: QuestValidateStatus = "unknown";
     this.props.store.db
       .getFirebasePublicHighscores()
-      .catch(e => {
+      .catch((e) => {
         console.warn(e);
         return null;
       })
-      .then(champions => {
+      .then((champions) => {
         this.champions = champions
           ? champions
               .filter(
-                champion =>
+                (champion) =>
                   champion.gamesWonCount > 0 &&
                   // tslint:disable-next-line:strict-type-predicates
                   typeof champion.gamesWonProofs === "object",
               )
-              .map(champion => ({
+              .map((champion) => ({
                 ...champion,
-                validatedQuests: Object.keys(champion.gamesWonProofs).map(gameName => ({
+                validatedQuests: Object.keys(champion.gamesWonProofs).map((gameName) => ({
                   gameName,
                   validateStatus: validatedUnknown,
                 })),
               }))
           : null;
-        this.validateAll().catch(e => console.warn(e));
+        this.validateAll().catch((e) => console.warn(e));
       })
-      .catch(e => console.error(e));
+      .catch((e) => console.error(e));
   }
 
   async validateAll() {
@@ -108,7 +108,7 @@ export class ChampionsTabContainer extends React.Component<
     for (const champion of champions) {
       for (const questToValidate of champion.validatedQuests) {
         const game = this.props.store.index.quests.find(
-          x => x.gameName === questToValidate.gameName,
+          (x) => x.gameName === questToValidate.gameName,
         );
         if (!game) {
           questToValidate.validateStatus = "failed";
@@ -170,20 +170,20 @@ export class ChampionsTabContainer extends React.Component<
                   .slice()
                   .sort((a, b) => {
                     return (
-                      b.validatedQuests.filter(x => x.validateStatus !== "failed").length -
-                      a.validatedQuests.filter(x => x.validateStatus !== "failed").length
+                      b.validatedQuests.filter((x) => x.validateStatus !== "failed").length -
+                      a.validatedQuests.filter((x) => x.validateStatus !== "failed").length
                     );
                   })
-                  .map(champion => {
+                  .map((champion) => {
                     try {
                       const nonFailedValidatedCount = champion.validatedQuests.filter(
-                        x => x.validateStatus !== "failed",
+                        (x) => x.validateStatus !== "failed",
                       ).length;
                       const championIsValidating =
-                        champion.validatedQuests.filter(x => x.validateStatus === "inprogress")
+                        champion.validatedQuests.filter((x) => x.validateStatus === "inprogress")
                           .length > 0;
                       const championHaveValidatedQuests =
-                        champion.validatedQuests.filter(x => x.validateStatus === "validated")
+                        champion.validatedQuests.filter((x) => x.validateStatus === "validated")
                           .length > 0;
                       const itIsYou =
                         store.firebaseLoggedIn && champion.userId === store.firebaseLoggedIn.uid;

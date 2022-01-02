@@ -1,10 +1,7 @@
 import { SyntaxKind, ExpressionType, Expression, Params } from "./types";
 import { MAX_NUMBER } from "./consts";
 import { RandomFunc } from "../randomFunc";
-
-export function assertNever(x: never): never {
-  throw new Error(`Unexpected object: ${x}`);
-}
+import { assertNever } from "../../assertNever";
 
 function numberMinMax(n: number) {
   return Math.min(Math.max(n, -MAX_NUMBER), MAX_NUMBER);
@@ -78,11 +75,11 @@ export function calculateAst(ast: Expression, params: Params = [], random: Rando
         ? calculateRange(right)
         : valToRanges(floorCeil(calculateAst(right, params, random)));
 
-    const leftRangeMax = Math.max(...leftRanges.map(x => x.to), 0);
-    const rightRangeMax = Math.max(...rightRanges.map(x => x.to), 0);
+    const leftRangeMax = Math.max(...leftRanges.map((x) => x.to), 0);
+    const rightRangeMax = Math.max(...rightRanges.map((x) => x.to), 0);
 
-    const leftRangeMin = Math.min(...leftRanges.map(x => x.from), MAX_NUMBER);
-    const rightRangeMin = Math.min(...rightRanges.map(x => x.from), MAX_NUMBER);
+    const leftRangeMin = Math.min(...leftRanges.map((x) => x.from), MAX_NUMBER);
+    const rightRangeMin = Math.min(...rightRanges.map((x) => x.from), MAX_NUMBER);
     const newRangeMax = Math.max(leftRangeMax, rightRangeMax);
     const newRangeMin = Math.min(leftRangeMin, rightRangeMin);
     const newRanges = [
@@ -97,7 +94,7 @@ export function calculateAst(ast: Expression, params: Params = [], random: Rando
     if (node.type !== "range") {
       throw new Error("Wrong usage");
     }
-    return node.ranges.map(range => {
+    return node.ranges.map((range) => {
       const from = floorCeil(calculateAst(range.from, params, random));
       const to = range.to ? floorCeil(calculateAst(range.to, params, random)) : from;
       const reversed = from > to;
