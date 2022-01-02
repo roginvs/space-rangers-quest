@@ -25,7 +25,6 @@ function isDistanceLower(x1: number, y1: number, x2: number, y2: number, distanc
   return (x1 - x2) ** 2 + (y1 - y2) ** 2 < distance ** 2;
 }
 
-type Hovered = null | DeepImmutable<Location> | DeepImmutable<Jump>;
 export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const [mode, setMode] = React.useState<EditorMode>("select");
 
@@ -105,20 +104,34 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
   React.useEffect(() => {
     const onMouseDown = (e: MouseEvent) => {
-      const mouseCoords = getMouseCoordsInCanvas(e);
-      setIsDragging(mouseCoords);
-    };
-    const onMouseUp = () => {
-      setIsDragging(null);
-      setHoverZone(undefined);
+      if (mode === "move") {
+        const mouseCoords = getMouseCoordsInCanvas(e);
+        setIsDragging(mouseCoords);
+      } else if (mode === "newJump") {
+        // TODO
+      }
     };
     document.addEventListener("mousedown", onMouseDown);
+
+    const onMouseUp = (e: MouseEvent) => {
+      setIsDragging(null);
+
+      if (mode === "move") {
+        setHoverZone(undefined);
+      } else if (mode === "select" || e.button === 2 /* Right click*/) {
+        // TODO
+      } else if (mode === "newJump") {
+        // TODO
+      } else if (mode === "newLocation") {
+        // TODO
+      }
+    };
     document.addEventListener("mouseup", onMouseUp);
     return () => {
-      document.removeEventListener("mousedown", onMouseDown);
       document.removeEventListener("mouseup", onMouseUp);
+      document.removeEventListener("mousedown", onMouseDown);
     };
-  }, []);
+  }, [mode]);
 
   React.useEffect(() => {
     const context = interactiveContextRef.current;
@@ -278,6 +291,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
                 interactiveCanvasRef.current = null;
               }
             }}
+            onContextMenu={(e) => e.preventDefault()}
           />
 
           {hoverZone && (
