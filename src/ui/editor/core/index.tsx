@@ -14,6 +14,8 @@ import "react-toastify/dist/ReactToastify.css";
 import { isDistanceLower, isPlaceBusy, snapToGrid } from "./utils";
 import { Jump, Location } from "../../../lib/qmreader";
 import { LocationHover } from "./hovers/location";
+import { Overlay } from "./overlay";
+import { LocationOverlayContent } from "./overlays/location";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -338,18 +340,21 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         </div>
 
         {overlayMode ? (
-          <div
-            style={{
-              position: "absolute",
-              left: 0,
-              right: 0,
-              top: 0,
-              bottom: 0,
-              background: "rgba(0,0,0,0.5)",
-            }}
-          >
-            todo
-          </div>
+          <Overlay>
+            {overlayMode.kind === "location" ? (
+              <LocationOverlayContent
+                location={overlayMode.location}
+                setLocation={(location) => {
+                  setOverlayMode(undefined);
+                  if (location) {
+                    onChange(updateLocation(quest, location));
+                  }
+                }}
+              />
+            ) : (
+              "TODO"
+            )}
+          </Overlay>
         ) : null}
       </div>
 
