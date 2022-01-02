@@ -13,12 +13,8 @@ import {
   LOCATION_RADIUS,
 } from "../consts";
 import { Color, colorToString, interpolateColor } from "./color";
-import { HoverDrawJump, HoverZones } from "./hover";
+import { HoverDrawJump, HoverZones, LocationLocationOnly } from "./hover";
 
-interface LocationLocationOnly {
-  locX: number;
-  locY: number;
-}
 function getControlPoints(
   startLoc: LocationLocationOnly,
   endLoc: LocationLocationOnly,
@@ -92,7 +88,7 @@ function rotateVector(x: number, y: number, radians: number) {
   };
 }
 
-function drawArrowEnding(
+export function drawArrowEnding(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
@@ -196,6 +192,14 @@ function drawJumpArrow(
     LUT,
     startColor,
     endColor,
+    startLoc: {
+      locX: startLoc.locX,
+      locY: startLoc.locY,
+    },
+    endLoc: {
+      locX: endLoc.locX,
+      locY: endLoc.locY,
+    },
   };
 
   for (let i = 1; i < LUT.length; i++) {

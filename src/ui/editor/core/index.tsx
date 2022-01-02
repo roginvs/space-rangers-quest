@@ -7,7 +7,7 @@ import { Jump, Location } from "../../../lib/qmreader";
 import { colors } from "../colors";
 import { CANVAS_PADDING, LOCATION_RADIUS } from "../consts";
 import { colorToString, interpolateColor } from "./color";
-import { drawLocation, getCanvasSize, updateMainCanvas } from "./drawings";
+import { drawArrowEnding, drawLocation, getCanvasSize, updateMainCanvas } from "./drawings";
 import { HoverZone, HoverZones } from "./hover";
 import { HoverPopup } from "./hoverPopup";
 
@@ -46,6 +46,8 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     | undefined
   >(undefined);
 
+  const [isDragging, setIsDragging] = React.useState<{ x: number; y: number } | null>(null);
+
   React.useEffect(() => {
     const ctx = mainContextRef.current;
     if (!ctx) {
@@ -61,32 +63,62 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     console.info(`Main canvas re-render`);
   }, [quest, canvasSize]);
 
-  React.useEffect(() => {
-    if (!interactiveCanvasRef.current) {
-      return;
-    }
+  const getMouseCoordsInCanvas = React.useCallback((e: MouseEvent) => {
     const canvas = interactiveCanvasRef.current;
+    if (!canvas) {
+      throw new Error("Canvas is not defined");
+    }
+    const canvasRect = canvas.getBoundingClientRect();
+    const x = e.clientX - canvasRect.left;
+    const y = e.clientY - canvasRect.top;
+    return { x, y };
+  }, []);
 
+  React.useEffect(() => {
     // TODO: This do not work well when scrolling
     const onMove = (e: MouseEvent) => {
-      const canvasRect = canvas.getBoundingClientRect();
+      const mouseCoords = getMouseCoordsInCanvas(e);
 
-      const mouseX = e.clientX - canvasRect.left;
-      const mouseY = e.clientY - canvasRect.top;
+      if (isDragging) {
+        setIsDragging(mouseCoords);
+        return;
+      }
 
       const hoverZone = hoverZones.find((hoverCandidate) =>
-        isDistanceLower(mouseX, mouseY, hoverCandidate[0], hoverCandidate[1], hoverCandidate[2]),
+        isDistanceLower(
+          mouseCoords.x,
+          mouseCoords.y,
+          hoverCandidate[0],
+          hoverCandidate[1],
+          hoverCandidate[2],
+        ),
       );
       setHoverZone(
         hoverZone ? { zone: hoverZone, clientX: e.clientX, clientY: e.clientY } : undefined,
       );
     };
     document.addEventListener("mousemove", onMove);
-
     return () => {
       document.removeEventListener("mousemove", onMove);
     };
-  }, [hoverZones]);
+  }, [hoverZones, isDragging]);
+
+  React.useEffect(() => {
+    const onMouseDown = (e: MouseEvent) => {
+      const mouseCoords = getMouseCoordsInCanvas(e);
+      setIsDragging(mouseCoords);
+    };
+    const onMouseUp = () => {
+      setIsDragging(null);
+      setHoverZone(undefined);
+    };
+    document.addEventListener("mousedown", onMouseDown);
+    document.addEventListener("mouseup", onMouseUp);
+    return () => {
+      document.removeEventListener("mousedown", onMouseDown);
+      document.removeEventListener("mouseup", onMouseUp);
+    };
+  }, []);
 
   React.useEffect(() => {
     const context = interactiveContextRef.current;
@@ -95,6 +127,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     }
     // TODO: This is part of Drawings.tsx
     context.clearRect(0, 0, canvasSize.canvasWidth, canvasSize.canvasHeight);
+    context.setLineDash(isDragging ? [5, 5] : []);
     if (hoverZone) {
       const location = hoverZone.zone[3];
       if (location) {
@@ -104,6 +137,16 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         context.beginPath();
         context.arc(location.locX, location.locY, LOCATION_RADIUS, 0, 2 * Math.PI);
         context.stroke();
+
+        if (isDragging) {
+          context.strokeStyle = "black";
+          context.lineWidth = 2;
+          context.fillStyle = "none";
+          context.beginPath();
+          context.setLineDash([]);
+          context.arc(isDragging.x, isDragging.y, LOCATION_RADIUS, 0, 2 * Math.PI);
+          context.stroke();
+        }
       }
       const jumpHover = hoverZone.zone[4];
       if (jumpHover) {
@@ -122,9 +165,33 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
           // TODO: Dash if moving
           context.stroke();
         }
+
+        if (isDragging) {
+          context.strokeStyle = "black";
+          context.lineWidth = 1;
+          context.fillStyle = "none";
+          context.beginPath();
+
+          context.setLineDash([]);
+
+          const isBegining = jumpHover[1];
+
+          const startX = isBegining ? isDragging.x : jumpHover[2].startLoc.locX;
+          const startY = isBegining ? isDragging.y : jumpHover[2].startLoc.locY;
+          context.moveTo(startX, startY);
+
+          const endX = isBegining ? jumpHover[2].endLoc.locX : isDragging.x;
+          const endY = isBegining ? jumpHover[2].endLoc.locY : isDragging.y;
+
+          context.lineTo(endX, endY);
+          context.stroke();
+
+          drawArrowEnding(context, endX, endY, endX - startX + endX, endY - startY + endY);
+        }
       }
     }
-  }, [hoverZone, canvasSize]);
+    context.setLineDash([]);
+  }, [hoverZone, canvasSize, isDragging]);
 
   // console.info(`Editor re-render`);
 
