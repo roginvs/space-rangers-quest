@@ -20,6 +20,11 @@ export const HoverPopup: React.FC<{
         right: isLeft ? undefined : windowX - clientX + DISTANCE,
         top: isTop ? clientY + DISTANCE : undefined,
         bottom: isTop ? undefined : windowY - clientY + DISTANCE,
+        backgroundColor: "#e7e298",
+        borderRadius: 5,
+        margin: 30,
+        padding: 10,
+        boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
       }}
     >
       {children}

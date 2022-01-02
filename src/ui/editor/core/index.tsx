@@ -10,9 +10,10 @@ import { drawHovers, getCanvasSize, updateMainCanvas } from "./drawings/index";
 import { HoverZone, HoverZones } from "./hover";
 import { HoverPopup } from "./hoverPopup";
 import { ToastContainer, toast } from "react-toastify";
-
 import "react-toastify/dist/ReactToastify.css";
 import { isDistanceLower, isPlaceBusy, snapToGrid } from "./utils";
+import { Jump, Location } from "../../../lib/qmreader";
+import { LocationHover } from "./hovers/location";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -24,8 +25,23 @@ export interface EditorCoreProps {
 export const EDITOR_MOUSE_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
 export type EditorMouseMode = typeof EDITOR_MOUSE_MODES[number];
 
+type EditorOverlay =
+  | {
+      kind: "location";
+      location: DeepImmutable<Location>;
+    }
+  | {
+      kind: "jump";
+      jump: DeepImmutable<Jump>;
+    }
+  | {
+      kind: "questsettings";
+    };
+
 export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const [mouseMode, setMouseMode] = React.useState<EditorMouseMode>("move");
+
+  const [overlayMode, setOverlayMode] = React.useState<EditorOverlay | undefined>(undefined);
 
   const mainCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const mainContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
@@ -297,7 +313,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
           {hoverZone && !isDragging && (
             <HoverPopup clientX={hoverZone.clientX} clientY={hoverZone.clientY}>
-              todoto
+              {hoverZone.zone[3] ? <LocationHover location={hoverZone.zone[3]} /> : "TODO"}
             </HoverPopup>
           )}
         </div>
