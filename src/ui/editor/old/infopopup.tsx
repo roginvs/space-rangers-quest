@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Store } from "../store";
+import { Store } from "../../store";
 import {
   QM,
   Location,
@@ -8,13 +8,13 @@ import {
   JumpParameterCondition,
   ParameterChange,
   ParameterShowingType,
-} from "../../lib/qmreader";
+} from "../../../lib/qmreader";
 import { observer } from "mobx-react";
 import { observable, computed, runInAction } from "mobx";
 import { Popper } from "react-popper";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 import { EditorStore } from "./store";
-import { assertNever } from "../../assertNever";
+import { assertNever } from "../../../assertNever";
 import { range } from "./utils";
 
 const Divider = () => <div className="text-center">---</div>;
@@ -220,6 +220,7 @@ export class LocationPopupBody extends React.Component<{
   }
 }
 
+/*
 function addPaddingToPopper(e: ReferenceObject | null): ReferenceObject | null {
   if (!e) {
     return null;
@@ -241,6 +242,7 @@ function addPaddingToPopper(e: ReferenceObject | null): ReferenceObject | null {
     },
   };
 }
+*/
 
 @observer
 export class InfoPopup extends React.Component<{

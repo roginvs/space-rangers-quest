@@ -1,5 +1,5 @@
 import { observable, computed, reaction, toJS, runInAction } from "mobx";
-import { QM, JumpId, LocationId } from "../../lib/qmreader";
+import { QM, JumpId, LocationId } from "../../../lib/qmreader";
 import { CANVAS_PADDING } from "./consts";
 import { computedFn } from "mobx-utils";
 
@@ -39,11 +39,11 @@ export class EditorStore {
 
   @computed
   get svgWidth() {
-    return Math.max(...this.quest.locations.map(l => l.locX)) + CANVAS_PADDING;
+    return Math.max(...this.quest.locations.map((l) => l.locX)) + CANVAS_PADDING;
   }
   @computed
   get svgHeight() {
-    return Math.max(...this.quest.locations.map(l => l.locY)) + CANVAS_PADDING;
+    return Math.max(...this.quest.locations.map((l) => l.locY)) + CANVAS_PADDING;
   }
 
   @observable
@@ -123,9 +123,9 @@ export class EditorStore {
     });
   }
 
-  readonly jumpById = computedFn((jumpId: JumpId) => this.quest.jumps.find(j => j.id === jumpId));
+  readonly jumpById = computedFn((jumpId: JumpId) => this.quest.jumps.find((j) => j.id === jumpId));
 
   readonly locationById = computedFn((locationId: LocationId) =>
-    this.quest.locations.find(l => l.id === locationId),
+    this.quest.locations.find((l) => l.id === locationId),
   );
 }

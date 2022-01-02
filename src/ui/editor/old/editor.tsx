@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Store } from "../store";
+import { Store } from "../../store";
 import {
   QM,
   Location,
@@ -8,12 +8,12 @@ import {
   JumpParameterCondition,
   ParameterChange,
   ParameterShowingType,
-} from "../../lib/qmreader";
+} from "../../../lib/qmreader";
 import { observer } from "mobx-react";
 import { observable, computed, runInAction, keys } from "mobx";
 import { ReferenceObject, PopperOptions, Modifiers } from "popper.js";
 import { EditorStore, EDITOR_MODES } from "./store";
-import { assertNever } from "../../assertNever";
+import { assertNever } from "../../../assertNever";
 import { colors } from "./colors";
 import { JumpArrow } from "./jumpArrow";
 import { LocationPoint } from "./locationPoint";

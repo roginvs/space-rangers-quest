@@ -45,7 +45,7 @@ import { AboutTabContainer } from "./about";
 import { ChampionsTabContainer } from "./champions";
 import { firebaseConfig } from "./firebaseConfig";
 import { ChampionsTabContainerNew } from "./champions.new";
-import { EditorContainer, EditorContainerOld } from "./editor";
+import { EditorContainer } from "./editor";
 console.info("starting");
 
 const app = firebase.initializeApp(firebaseConfig);
@@ -264,8 +264,6 @@ class MainLoader extends React.Component<{}> {
       );
     } else if (tab0 === "editor") {
       return <EditorContainer />;
-    } else if (tab0 === "editorold") {
-      return <EditorContainerOld store={store} />;
     } else if (tab0 === "quests") {
       if (!tab1) {
         return <QuestList store={store} />;
