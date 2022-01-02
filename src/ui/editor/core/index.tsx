@@ -5,8 +5,8 @@ import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../lib/qmplayer/funcs";
 import { Jump, Location } from "../../../lib/qmreader";
 import { colors } from "../colors";
-import { CANVAS_PADDING, LOCATION_RADIUS } from "../consts";
-import { updateLocation } from "./actions";
+import { CANVAS_PADDING, LOCATION_DROP_RADIUS, LOCATION_RADIUS } from "../consts";
+import { updateJump, updateLocation } from "./actions";
 import { colorToString, interpolateColor } from "./color";
 import { drawArrowEnding, drawLocation, getCanvasSize, updateMainCanvas } from "./drawings";
 import { HoverZone, HoverZones } from "./hover";
@@ -135,11 +135,13 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
   React.useEffect(() => {
     const onMouseDown = (e: MouseEvent) => {
-      if (mode === "move") {
-        const mouseCoords = getMouseCoordsInCanvas(e);
-        setIsDragging(mouseCoords);
-      } else if (mode === "newJump") {
-        // TODO
+      if (e.button === 0) {
+        if (mode === "move") {
+          const mouseCoords = getMouseCoordsInCanvas(e);
+          setIsDragging(mouseCoords);
+        } else if (mode === "newJump") {
+          // TODO
+        }
       }
     };
     document.addEventListener("mousedown", onMouseDown);
@@ -162,6 +164,31 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
                   ...location,
                   locX: griddedLocation.x,
                   locY: griddedLocation.y,
+                }),
+              );
+            }
+          }
+
+          const jumpMoving = hoverZone.zone[4];
+          if (jumpMoving) {
+            const [jump, isBeginning] = jumpMoving;
+            const newLocation = quest.locations.find((loc) =>
+              isDistanceLower(
+                mouseInCanvas.x,
+                mouseInCanvas.y,
+                loc.locX,
+                loc.locY,
+                LOCATION_DROP_RADIUS,
+              ),
+            );
+            if (!newLocation) {
+              notifyUser("No location here");
+            } else {
+              onChange(
+                updateJump(quest, {
+                  ...jump,
+                  fromLocationId: isBeginning ? newLocation.id : jump.fromLocationId,
+                  toLocationId: isBeginning ? jump.toLocationId : newLocation.id,
                 }),
               );
             }
