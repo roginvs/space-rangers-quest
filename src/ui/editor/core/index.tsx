@@ -6,7 +6,7 @@ import { Quest } from "../../../lib/qmplayer/funcs";
 import { Jump, Location } from "../../../lib/qmreader";
 import { colors } from "../colors";
 import { CANVAS_PADDING, LOCATION_RADIUS } from "../consts";
-import { drawJumpArrow } from "./drawings";
+import { drawJumpArrow, drawLocation } from "./drawings";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -28,12 +28,9 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
   const canvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const contextRef = React.useRef<CanvasRenderingContext2D | null>(null);
-  const mouseXref = React.useRef(0);
-  const mouseYref = React.useRef(0);
-  const hoveredRef = React.useRef<Hovered>(null);
 
-  const canvasWidth = Math.max(...quest.locations.map(l => l.locX)) + CANVAS_PADDING;
-  const canvasHeight = Math.max(...quest.locations.map(l => l.locY)) + CANVAS_PADDING;
+  const canvasWidth = Math.max(...quest.locations.map((l) => l.locX)) + CANVAS_PADDING;
+  const canvasHeight = Math.max(...quest.locations.map((l) => l.locY)) + CANVAS_PADDING;
 
   const drawOnCanvas = React.useCallback(() => {
     const ctx = contextRef.current;
@@ -43,45 +40,16 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     ctx.fillStyle = colors.background;
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-    //console.info("draw");
-    const mouseX = mouseXref.current;
-    const mouseY = mouseYref.current;
-
-    let newHovered: Hovered = null;
-
     // Locations
-    ctx.strokeStyle = "black";
-    ctx.lineWidth = 2;
-    quest.locations.forEach(location => {
-      const color = location.isStarting
-        ? colors.location.starting
-        : location.isEmpty
-        ? colors.location.empty
-        : location.isSuccess
-        ? colors.location.final
-        : location.isFaily || location.isFailyDeadly
-        ? colors.location.fail
-        : colors.location.intermediate;
-      ctx.fillStyle = color;
-      ctx.beginPath();
-      ctx.arc(location.locX, location.locY, LOCATION_RADIUS, 0, 2 * Math.PI);
-      //ctx.stroke();
-
-      if (!newHovered) {
-        if (isDistanceLower(location.locX, location.locY, mouseX, mouseY, LOCATION_RADIUS)) {
-          newHovered = location;
-          ctx.stroke();
-        }
-      }
-
-      ctx.fill();
+    quest.locations.forEach((location) => {
+      drawLocation(ctx, location);
     });
 
     // Jumps
     ctx.lineWidth = 1;
-    quest.jumps.forEach(jump => {
-      const startLoc = quest.locations.find(loc => loc.id === jump.fromLocationId);
-      const endLoc = quest.locations.find(loc => loc.id === jump.toLocationId);
+    quest.jumps.forEach((jump) => {
+      const startLoc = quest.locations.find((loc) => loc.id === jump.fromLocationId);
+      const endLoc = quest.locations.find((loc) => loc.id === jump.toLocationId);
       if (!endLoc || !startLoc) {
         console.warn(`No loc from jump id=${jump.id}`);
         return;
@@ -89,7 +57,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
       const allJumpsBetweenThisLocations = quest.jumps
         .filter(
-          candidate =>
+          (candidate) =>
             (candidate.fromLocationId === jump.fromLocationId &&
               candidate.toLocationId === jump.toLocationId) ||
             (candidate.fromLocationId === jump.toLocationId &&
@@ -107,11 +75,6 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
       drawJumpArrow(ctx, [255, 255, 255], [0, 0, 255], startLoc, endLoc, myIndex, allJumpsCount);
     });
-
-    if (canvasRef.current) {
-      canvasRef.current.style.cursor = newHovered ? "pointer" : "";
-    }
-    hoveredRef.current = newHovered;
   }, [quest, canvasWidth, canvasHeight]);
 
   React.useEffect(() => drawOnCanvas(), [drawOnCanvas]);
@@ -120,11 +83,11 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     if (!canvasRef.current) {
       return;
     }
-    const canvas = canvasRef.current;
+    //const canvas = canvasRef.current;
     const onMove = (e: MouseEvent) => {
-      mouseXref.current = e.pageX - canvas.offsetLeft;
-      mouseYref.current = e.pageY - canvas.offsetTop;
-      drawOnCanvas();
+      //const mouseX = e.pageX - canvas.offsetLeft;
+      //const mouseX = e.pageY - canvas.offsetTop;
+      // drawOnCanvas();
     };
     document.addEventListener("mousemove", onMove);
 
@@ -145,7 +108,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   return (
     <div style={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column" }}>
       <div>
-        {EDITOR_MODES.map(candidateMode => (
+        {EDITOR_MODES.map((candidateMode) => (
           <button
             key={candidateMode}
             className={classNames("btn", mode === candidateMode ? "btn-info" : "btn-light")}
@@ -186,7 +149,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         <canvas
           width={canvasWidth}
           height={canvasHeight}
-          ref={element => {
+          ref={(element) => {
             canvasRef.current = element;
             if (element && !contextRef.current) {
               const context = element.getContext("2d");
