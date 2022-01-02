@@ -356,7 +356,21 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
           />
 
           <canvas
-            style={{ position: "absolute" }}
+            style={{
+              position: "absolute",
+              cursor:
+                mode === "move"
+                  ? "move"
+                  : mode === "select"
+                  ? "default"
+                  : mode === "newLocation"
+                  ? "crosshair"
+                  : mode === "newJump"
+                  ? "e-resize"
+                  : mode === "remove"
+                  ? "url('/fa/remove.svg') 12 12, pointer"
+                  : assertNever(mode),
+            }}
             width={canvasSize.canvasWidth}
             height={canvasSize.canvasHeight}
             ref={(element) => {
