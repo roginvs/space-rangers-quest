@@ -50,6 +50,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       quest,
     );
     setHoverZones(hoverZones);
+    console.info(`Main canvas re-render`);
   }, [quest, canvasSize]);
 
   React.useEffect(() => {
@@ -61,7 +62,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     const onMove = (e: MouseEvent) => {
       const mouseX = e.pageX - canvas.offsetLeft;
       const mouseY = e.pageY - canvas.offsetTop;
-      console.info(mouseX, mouseY);
+      //console.info(mouseX, mouseY);
 
       const hoverZone = hoverZones.find((hoverCandidate) =>
         isDistanceLower(mouseX, mouseY, hoverCandidate[0], hoverCandidate[1], hoverCandidate[2]),
@@ -113,7 +114,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     }
   }, [hoverZone, canvasSize]);
 
-  console.info(`Editor re-render`);
+  // console.info(`Editor re-render`);
 
   return (
     <div style={{ width: "100%", height: "100vh", display: "flex", flexDirection: "column" }}>
