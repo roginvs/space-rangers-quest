@@ -2,7 +2,7 @@ import * as React from "react";
 import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../../lib/qmplayer/funcs";
 import { Location } from "../../../../lib/qmreader";
-import { ParamSummary } from "./common";
+import { ParamsSummaryColumns, ParamSummary } from "./common";
 import { getSummaryForParamsChangeAndConditions } from "./paramsAndChangeConditionsSummary";
 
 export function LocationHover({
@@ -33,7 +33,13 @@ export function LocationHover({
   const MAX_TEXT_CHARS = 300;
 
   const paramsSummary = getSummaryForParamsChangeAndConditions(quest, location.paramsChanges, null);
-
+  /*
+  paramsSummary.unshift({
+    key: "lol",
+    leftText: "blablafasd  asd 3 asd asd asd aqweadszxcxvv",
+    rightText: "AAAA",
+  });
+  */
   return (
     <div
       style={{
@@ -68,9 +74,7 @@ export function LocationHover({
       {divider}
       {paramsSummary.length > 0 && (
         <>
-          {paramsSummary.map((summary) => (
-            <ParamSummary key={summary.key} summary={summary} />
-          ))}
+          <ParamsSummaryColumns paramsSummary={paramsSummary} />
           {divider}
         </>
       )}

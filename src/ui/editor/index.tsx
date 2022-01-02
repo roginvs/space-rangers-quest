@@ -66,7 +66,8 @@ export function EditorContainer() {
   const [quest, setQuest] = React.useState<Quest | null>(null);
 
   React.useEffect(() => {
-    fetch(DATA_DIR + "qm/Xenolog.qmm.gz")
+    //fetch(DATA_DIR + "qm/Xenolog.qmm.gz")
+    fetch(DATA_DIR + "qm/Domoclan.qmm.gz")
       .then((x) => x.arrayBuffer())
       .then((questArrayBuffer) => {
         const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer))));

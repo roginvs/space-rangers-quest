@@ -3,9 +3,56 @@ import { JumpLocationParameterConditionSummary } from "./paramsAndChangeConditio
 
 export function ParamSummary({ summary }: { summary: JumpLocationParameterConditionSummary }) {
   return (
-    <div style={{ display: "flex", width: "100%", maxWidth: 300 }}>
-      <span>{summary.leftText}</span>
-      <span style={{ marginLeft: "auto", flexShrink: 0 }}>{summary.rightText}</span>
+    <div style={{ display: "flex", maxWidth: 400, overflow: "hidden" }}>
+      <div
+        style={{
+          whiteSpace: "pre",
+          flexShrink: 100,
+          overflow: "hidden",
+          marginRight: 4,
+        }}
+      >
+        {summary.leftText}
+      </div>
+      <div style={{ marginLeft: "auto", flexShrink: 0 }}>{summary.rightText}</div>
+    </div>
+  );
+}
+
+export function ParamsSummaryColumns({
+  paramsSummary,
+}: {
+  paramsSummary: JumpLocationParameterConditionSummary[];
+}) {
+  if (paramsSummary.length <= 6) {
+    return (
+      <>
+        {paramsSummary.map((summary) => (
+          <ParamSummary key={summary.key} summary={summary} />
+        ))}
+      </>
+    );
+  }
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        width: "100%",
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+      }}
+    >
+      <div>
+        {paramsSummary.map((summary, index) =>
+          index % 2 === 0 ? <ParamSummary key={summary.key} summary={summary} /> : null,
+        )}
+      </div>
+      <div>
+        {paramsSummary.map((summary, index) =>
+          index % 2 !== 0 ? <ParamSummary key={summary.key} summary={summary} /> : null,
+        )}
+      </div>
     </div>
   );
 }
