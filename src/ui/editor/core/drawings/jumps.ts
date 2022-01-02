@@ -94,14 +94,15 @@ export function drawArrowEnding(
   y: number,
   pointToX: number,
   pointToY: number,
+  size: number,
 ) {
   const backVectorNotNormalizedX = x - pointToX;
   const backVectorNotNormalizedY = y - pointToY;
 
   const backVectorLength = Math.hypot(backVectorNotNormalizedX, backVectorNotNormalizedY);
 
-  const backVectorX = (backVectorNotNormalizedX * JUMP_ARROW_LENGTH) / backVectorLength;
-  const backVectorY = (backVectorNotNormalizedY * JUMP_ARROW_LENGTH) / backVectorLength;
+  const backVectorX = (backVectorNotNormalizedX * size) / backVectorLength;
+  const backVectorY = (backVectorNotNormalizedY * size) / backVectorLength;
 
   const arrow1 = rotateVector(backVectorX, backVectorY, -Math.PI / 8);
   const arrow2 = rotateVector(backVectorX, backVectorY, +Math.PI / 8);
@@ -224,6 +225,13 @@ export function drawJumpArrow(
   ctx.strokeStyle = colorToString(endColor);
   if (LUT.length > 0) {
     // This might happen if distance between locations is too short
-    drawArrowEnding(ctx, LUT[LUT.length - 1].x, LUT[LUT.length - 1].y, endLoc.locX, endLoc.locY);
+    drawArrowEnding(
+      ctx,
+      LUT[LUT.length - 1].x,
+      LUT[LUT.length - 1].y,
+      endLoc.locX,
+      endLoc.locY,
+      JUMP_ARROW_LENGTH,
+    );
   }
 }

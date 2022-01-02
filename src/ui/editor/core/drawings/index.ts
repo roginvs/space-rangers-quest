@@ -1,6 +1,6 @@
 import { Quest } from "../../../../lib/qmplayer/funcs";
 import { colors } from "../../colors";
-import { CANVAS_PADDING, LOCATION_RADIUS } from "../../consts";
+import { CANVAS_PADDING, JUMP_ARROW_LENGTH, LOCATION_RADIUS } from "../../consts";
 import { colorToString, interpolateColor } from "../color";
 import { HoverZone, HoverZones } from "../hover";
 import { drawArrowEnding, drawJumpArrow } from "./jumps";
@@ -160,7 +160,14 @@ export function drawHovers(
         context.lineTo(endX, endY);
         context.stroke();
 
-        drawArrowEnding(context, endX, endY, endX - startX + endX, endY - startY + endY);
+        drawArrowEnding(
+          context,
+          endX,
+          endY,
+          endX - startX + endX,
+          endY - startY + endY,
+          JUMP_ARROW_LENGTH * 3,
+        );
       }
     }
   }

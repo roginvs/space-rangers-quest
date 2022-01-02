@@ -258,11 +258,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
           }
           setHoverZone(undefined);
         } else if (mouseMode === "newJump") {
-          // TODO: Need mousedown coordinates
-          /*
-            const fromLocation = quest.locations.find((loc) =>
-              isDistanceLower(isDragging.x, isDragging.y, loc.locX, loc.locY, LOCATION_DROP_RADIUS),
-            );
+          if (hoverZone && hoverZone.zone[4]) {
             const toLocation = quest.locations.find((loc) =>
               isDistanceLower(
                 mouseInCanvas.x,
@@ -272,17 +268,21 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
                 LOCATION_DROP_RADIUS,
               ),
             );
-            if (fromLocation) {
-              if (toLocation) {
-                const jump = createJump(quest, fromLocation.id, toLocation.id);
-                onChange(updateJump(quest, jump));
-              } else {
-                notifyUser("No 'to' location");
-              }
+
+            if (toLocation) {
+              const jump: DeepImmutable<Jump> = {
+                ...hoverZone.zone[4][0],
+                toLocationId: toLocation.id,
+              };
+              setOverlayMode({
+                kind: "jump",
+                jump,
+              });
             } else {
-              notifyUser("No 'from' location");
+              notifyUser("No location here");
             }
-     */
+          }
+          setHoverZone(undefined);
         } else if (mouseMode === "newLocation") {
           const griddedLocation = snapToGrid(quest, mouseInCanvas.x, mouseInCanvas.y);
           const locationAtThisPosition = whatLocationIsAlreadyAtThisPosition(
