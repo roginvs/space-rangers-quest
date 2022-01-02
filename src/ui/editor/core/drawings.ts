@@ -1,5 +1,9 @@
 import { Bezier } from "bezier-js";
-import { JUMPS_CONTROL_POINT_DISTANCE, JUMPS_LOOP_CONTROL_POINT_DISTANCE } from "../consts";
+import {
+  JUMPS_CONTROL_POINT_DISTANCE,
+  JUMPS_LOOP_CONTROL_POINT_DISTANCE,
+  JUMP_END_LOCATION_RADIUS,
+} from "../consts";
 
 interface LocationLocationOnly {
   locX: number;
@@ -96,7 +100,7 @@ export function drawJumpArrow(
 ) {
   const [controlPoint1, controlPoint2] = getControlPoints(startLoc, endLoc, myIndex, allJumpsCount);
 
-  const bezier = controlPoint2
+  const bezierOriginal = controlPoint2
     ? new Bezier(
         startLoc.locX,
         startLoc.locY,
@@ -115,6 +119,10 @@ export function drawJumpArrow(
         endLoc.locX,
         endLoc.locY,
       );
+  const originalLength = bezierOriginal.length();
+  const bezier = bezierOriginal.split(
+    (originalLength - JUMP_END_LOCATION_RADIUS) / originalLength,
+  ).left;
 
   //const length = bezier.length();
   const STEPS = 15;
