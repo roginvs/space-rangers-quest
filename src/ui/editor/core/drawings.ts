@@ -1,3 +1,4 @@
+import { Bezier } from "bezier-js";
 import { JUMPS_CONTROL_POINT_DISTANCE, JUMPS_LOOP_CONTROL_POINT_DISTANCE } from "../consts";
 
 interface LocationLocationOnly {
@@ -70,11 +71,7 @@ function getControlPoints(
   return [controlPoint1, controlPoint2] as const;
 }
 
-export type Color= [
-  r: number,
-  g: number,
-  b: number,
-]
+export type Color = [r: number, g: number, b: number];
 
 export function colorToString(color: Color) {
   return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
@@ -94,6 +91,16 @@ export function drawJumpArrow(
   const [controlPoint1, controlPoint2] = getControlPoints(startLoc, endLoc, myIndex, allJumpsCount);
 
   ctx.moveTo(startLoc.locX, startLoc.locY);
+
+  const b = new Bezier(
+    controlPoint1.x,
+    controlPoint1.y,
+    controlPoint2 ? controlPoint2.x : endLoc.locX,
+    controlPoint2 ? controlPoint2.y : endLoc.locY,
+    endLoc.locX,
+    endLoc.locY,
+  );
+
   if (!controlPoint2) {
     // Let's use bezierCurveTo for this line
     // ctx.quadraticCurveTo(controlPoint1.x, controlPoint1.y, endLoc.locX, endLoc.locY);
