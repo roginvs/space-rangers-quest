@@ -9,5 +9,15 @@ export function LocationPopup({
   location: DeepImmutable<Location>;
   setLocation: (location: DeepImmutable<Location> | undefined) => void;
 }) {
-  return <div> TODO</div>;
+  return (
+    <div>
+      <textarea
+        value={location.texts[0]}
+        onChange={(e) => {
+          const newLocation = { ...location, texts: [e.target.value, ...location.texts.slice(1)] };
+          setLocation(newLocation);
+        }}
+      />
+    </div>
+  );
 }

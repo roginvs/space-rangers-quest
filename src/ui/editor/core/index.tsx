@@ -43,6 +43,14 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
   const [overlayMode, setOverlayMode] = React.useState<EditorOverlay | undefined>(undefined);
 
+  // DEBUGGING
+  React.useEffect(() => {
+    setOverlayMode({
+      kind: "location",
+      location: quest.locations.find((l) => l.isStarting)!,
+    });
+  }, []);
+
   const mainCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const mainContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
 
@@ -141,57 +149,67 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
       const mouseInCanvas = getMouseCoordsInCanvas(e);
 
-      if (mouseMode === "move") {
+      if (e.button === 2 /* Right click*/ || mouseMode === "select") {
         if (hoverZone) {
-          const location = hoverZone.zone[3];
-          if (location) {
-            const griddedLocation = snapToGrid(quest, mouseInCanvas.x, mouseInCanvas.y);
-            if (isPlaceBusy(quest, griddedLocation.x, griddedLocation.y)) {
-              notifyUser("Location is busy");
-            } else {
-              onChange(
-                updateLocation(quest, {
-                  ...location,
-                  locX: griddedLocation.x,
-                  locY: griddedLocation.y,
-                }),
-              );
-            }
-          }
-
-          const jumpMoving = hoverZone.zone[4];
-          if (jumpMoving) {
-            const [jump, isBeginning] = jumpMoving;
-            const newLocation = quest.locations.find((loc) =>
-              isDistanceLower(
-                mouseInCanvas.x,
-                mouseInCanvas.y,
-                loc.locX,
-                loc.locY,
-                LOCATION_DROP_RADIUS,
-              ),
-            );
-            if (!newLocation) {
-              notifyUser("No location here");
-            } else {
-              onChange(
-                updateJump(quest, {
-                  ...jump,
-                  fromLocationId: isBeginning ? newLocation.id : jump.fromLocationId,
-                  toLocationId: isBeginning ? jump.toLocationId : newLocation.id,
-                }),
-              );
-            }
+          if (hoverZone.zone[3]) {
+            setOverlayMode({
+              kind: "location",
+              location: hoverZone.zone[3],
+            });
           }
         }
-        setHoverZone(undefined);
-        // aasdasd
-      } else if (mouseMode === "select" || e.button === 2 /* Right click*/) {
-        // TODO
-      } else if (mouseMode === "newJump") {
-        // TODO
-      } else if (mouseMode === "newLocation") {
-        // TODO
+      } else {
+        // Left click
+        if (mouseMode === "move") {
+          if (hoverZone) {
+            const location = hoverZone.zone[3];
+            if (location) {
+              const griddedLocation = snapToGrid(quest, mouseInCanvas.x, mouseInCanvas.y);
+              if (isPlaceBusy(quest, griddedLocation.x, griddedLocation.y)) {
+                notifyUser("Location is busy");
+              } else {
+                onChange(
+                  updateLocation(quest, {
+                    ...location,
+                    locX: griddedLocation.x,
+                    locY: griddedLocation.y,
+                  }),
+                );
+              }
+            }
+
+            const jumpMoving = hoverZone.zone[4];
+            if (jumpMoving) {
+              const [jump, isBeginning] = jumpMoving;
+              const newLocation = quest.locations.find((loc) =>
+                isDistanceLower(
+                  mouseInCanvas.x,
+                  mouseInCanvas.y,
+                  loc.locX,
+                  loc.locY,
+                  LOCATION_DROP_RADIUS,
+                ),
+              );
+              if (!newLocation) {
+                notifyUser("No location here");
+              } else {
+                onChange(
+                  updateJump(quest, {
+                    ...jump,
+                    fromLocationId: isBeginning ? newLocation.id : jump.fromLocationId,
+                    toLocationId: isBeginning ? jump.toLocationId : newLocation.id,
+                  }),
+                );
+              }
+            }
+          }
+          setHoverZone(undefined);
+          // aasdasd
+        } else if (mouseMode === "newJump") {
+          // TODO
+        } else if (mouseMode === "newLocation") {
+          // TODO
+        }
       }
     };
     document.addEventListener("mouseup", onMouseUp);
@@ -257,6 +275,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
           flexGrow: 1,
           alignSelf: "stretch",
           overflow: "scroll",
+          position: "relative",
         }}
       >
         <div
@@ -311,13 +330,29 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             onContextMenu={(e) => e.preventDefault()}
           />
 
-          {hoverZone && !isDragging && (
+          {hoverZone && !isDragging && !overlayMode && (
             <HoverPopup clientX={hoverZone.clientX} clientY={hoverZone.clientY}>
               {hoverZone.zone[3] ? <LocationHover location={hoverZone.zone[3]} /> : "TODO"}
             </HoverPopup>
           )}
         </div>
+
+        {overlayMode ? (
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              background: "rgba(0,0,0,0.5)",
+            }}
+          >
+            todo
+          </div>
+        ) : null}
       </div>
+
       <ToastContainer />
     </div>
   );
