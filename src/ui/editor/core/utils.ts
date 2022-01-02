@@ -21,3 +21,7 @@ export function isLocationAtThisPosition(quest: Quest, x: number, y: number) {
     isDistanceLower(x, y, location.locX, location.locY, LOCATION_RADIUS),
   );
 }
+
+export function range(n: number) {
+  return new Array(n).fill(0).map((zero, index) => index);
+}

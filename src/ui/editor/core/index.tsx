@@ -429,7 +429,11 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
           {hoverZone && !isDragging && !overlayMode && (
             <HoverPopup clientX={hoverZone.clientX} clientY={hoverZone.clientY}>
-              {hoverZone.zone[3] ? <LocationHover location={hoverZone.zone[3]} /> : "TODO"}
+              {hoverZone.zone[3] ? (
+                <LocationHover quest={quest} location={hoverZone.zone[3]} />
+              ) : (
+                "TODO"
+              )}
             </HoverPopup>
           )}
         </div>
