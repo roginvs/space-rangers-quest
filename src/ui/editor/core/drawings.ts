@@ -77,6 +77,14 @@ export function colorToString(color: Color) {
   return `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
 }
 
+function interpolateColor(c1: Color, c2: Color, t: number): Color {
+  return [
+    Math.round(c1[0] * (1 - t) + c2[0] * t),
+    Math.round(c1[1] * (1 - t) + c2[1] * t),
+    Math.round(c1[2] * (1 - t) + c2[2] * t),
+  ];
+}
+
 export function drawJumpArrow(
   ctx: CanvasRenderingContext2D,
   startColor: Color,
@@ -86,32 +94,59 @@ export function drawJumpArrow(
   myIndex: number,
   allJumpsCount: number,
 ) {
-  ctx.strokeStyle = colorToString(startColor);
-
   const [controlPoint1, controlPoint2] = getControlPoints(startLoc, endLoc, myIndex, allJumpsCount);
 
-  ctx.moveTo(startLoc.locX, startLoc.locY);
+  const bezier = controlPoint2
+    ? new Bezier(
+        startLoc.locX,
+        startLoc.locY,
+        controlPoint1.x,
+        controlPoint1.y,
+        controlPoint2.x,
+        controlPoint2.y,
+        endLoc.locX,
+        endLoc.locY,
+      )
+    : new Bezier(
+        startLoc.locX,
+        startLoc.locY,
+        controlPoint1.x,
+        controlPoint1.y,
+        endLoc.locX,
+        endLoc.locY,
+      );
 
-  const b = new Bezier(
-    controlPoint1.x,
-    controlPoint1.y,
-    controlPoint2 ? controlPoint2.x : endLoc.locX,
-    controlPoint2 ? controlPoint2.y : endLoc.locY,
-    endLoc.locX,
-    endLoc.locY,
-  );
+  //const length = bezier.length();
+  const STEPS = 15;
+  const LUT = bezier.getLUT(STEPS);
+  //console.info(LUT);
+  //  ctx.moveTo(startLoc.locX, startLoc.locY);
+  //ctx.moveTo(LUT[0].x, LUT[0].y);
+  for (let i = 1; i < LUT.length; i++) {
+    ctx.beginPath();
+    ctx.moveTo(LUT[i - 1].x, LUT[i - 1].y);
+    ctx.strokeStyle = colorToString(interpolateColor(startColor, endColor, i / LUT.length));
+    ctx.lineTo(LUT[i].x, LUT[i].y);
+    //
+    // ctx.strokeStyle = i < STEPS / 2 ? colorToString(startColor) : colorToString(endColor);
+    ctx.stroke();
+
+    ctx.fillStyle = colorToString(interpolateColor(startColor, endColor, i / LUT.length));
+    // ctx.fillRect(LUT[i].x, LUT[i].y, 4, 4);
+  }
+
+  /*
+  ctx.strokeStyle = colorToString(startColor);
+
+  ctx.moveTo(startLoc.locX, startLoc.locY);
+  const grd = ctx.createLinearGradient(startLoc.locX, startLoc.locY, endLoc.locX, endLoc.locY);
+  grd.addColorStop(0, "red");
+  //grd.addColorStop(0.5, "blue");
+  grd.addColorStop(1, "green");
+  ///ctx.strokeStyle = grd;
 
   if (!controlPoint2) {
-    // Let's use bezierCurveTo for this line
-    // ctx.quadraticCurveTo(controlPoint1.x, controlPoint1.y, endLoc.locX, endLoc.locY);
-    ctx.bezierCurveTo(
-      controlPoint1.x,
-      controlPoint1.y,
-      endLoc.locX,
-      endLoc.locY,
-      endLoc.locX,
-      endLoc.locY,
-    );
+    ctx.quadraticCurveTo(controlPoint1.x, controlPoint1.y, endLoc.locX, endLoc.locY);
   } else {
     ctx.bezierCurveTo(
       controlPoint1.x,
@@ -123,4 +158,6 @@ export function drawJumpArrow(
     );
   }
   ctx.stroke();
+
+   */
 }
