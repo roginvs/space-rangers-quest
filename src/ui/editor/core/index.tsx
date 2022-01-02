@@ -25,7 +25,7 @@ export const EDITOR_MODES = ["select", "move", "newLocation", "newJump", "remove
 export type EditorMode = typeof EDITOR_MODES[number];
 
 export function EditorCore({ quest, onChange }: EditorCoreProps) {
-  const [mode, setMode] = React.useState<EditorMode>("move");
+  const [mouseMode, setMouseMode] = React.useState<EditorMode>("move");
 
   const mainCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const mainContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
@@ -110,10 +110,10 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   React.useEffect(() => {
     const onMouseDown = (e: MouseEvent) => {
       if (e.button === 0) {
-        if (mode === "move") {
+        if (mouseMode === "move") {
           const mouseCoords = getMouseCoordsInCanvas(e);
           setIsDragging(mouseCoords);
-        } else if (mode === "newJump") {
+        } else if (mouseMode === "newJump") {
           // TODO
         }
       }
@@ -125,7 +125,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
       const mouseInCanvas = getMouseCoordsInCanvas(e);
 
-      if (mode === "move") {
+      if (mouseMode === "move") {
         if (hoverZone) {
           const location = hoverZone.zone[3];
           if (location) {
@@ -170,11 +170,11 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         }
         setHoverZone(undefined);
         // aasdasd
-      } else if (mode === "select" || e.button === 2 /* Right click*/) {
+      } else if (mouseMode === "select" || e.button === 2 /* Right click*/) {
         // TODO
-      } else if (mode === "newJump") {
+      } else if (mouseMode === "newJump") {
         // TODO
-      } else if (mode === "newLocation") {
+      } else if (mouseMode === "newLocation") {
         // TODO
       }
     };
@@ -183,7 +183,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousedown", onMouseDown);
     };
-  }, [mode, hoverZone, getMouseCoordsInCanvas]);
+  }, [mouseMode, hoverZone, getMouseCoordsInCanvas]);
 
   React.useEffect(() => {
     const context = interactiveContextRef.current;
@@ -208,8 +208,8 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         {EDITOR_MODES.map((candidateMode) => (
           <button
             key={candidateMode}
-            className={classNames("btn", mode === candidateMode ? "btn-info" : "btn-light")}
-            onClick={() => setMode(candidateMode)}
+            className={classNames("btn", mouseMode === candidateMode ? "btn-info" : "btn-light")}
+            onClick={() => setMouseMode(candidateMode)}
           >
             {candidateMode === "move" ? (
               <i className="fa fa-arrows" title="Двигать (2)" />
@@ -268,17 +268,17 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             style={{
               position: "absolute",
               cursor:
-                mode === "move"
+                mouseMode === "move"
                   ? "move"
-                  : mode === "select"
+                  : mouseMode === "select"
                   ? "default"
-                  : mode === "newLocation"
+                  : mouseMode === "newLocation"
                   ? "crosshair"
-                  : mode === "newJump"
+                  : mouseMode === "newJump"
                   ? "e-resize"
-                  : mode === "remove"
+                  : mouseMode === "remove"
                   ? "url('/fa/remove.svg') 12 12, pointer"
-                  : assertNever(mode),
+                  : assertNever(mouseMode),
             }}
             width={canvasSize.canvasWidth}
             height={canvasSize.canvasHeight}
