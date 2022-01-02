@@ -21,7 +21,7 @@ function jumpTo(text: string = "") {
   // const saving = player.getSaving();
   //console.info(`jumpto='${text}' state=${saving.state} locId=${saving.locationId} jumps=${saving.possibleJumps
   //    .map(j =>`id=${j.id}${j.active}`).join(', ')} locs=`,saving.locationVisitCount);
-  const jump = state.choices.filter(x => x.text.indexOf(text) > -1 && x.active).shift();
+  const jump = state.choices.filter((x) => x.text.indexOf(text) > -1 && x.active).shift();
   //console.info(`jump=${jump ? jump.jumpId : "!"}`);
   if (!jump) {
     // const saving = player.getSaving();
@@ -32,7 +32,7 @@ function jumpTo(text: string = "") {
   return player.getState();
 }
 
-describe("test11-critonlocation.qm", function() {
+describe("test11-critonlocation.qm", function () {
   beforeEach(`Reads and parses quest`, () => {
     const data = fs.readFileSync(__dirname + "/../../src/test/test11-critonlocation.qm");
     const qm = parse(data);
@@ -88,7 +88,7 @@ describe("test11-critonlocation.qm", function() {
 });
 
 for (const ext of ["qm", "qmm"]) {
-  describe(`Player on test10-locationtexts.${ext}`, function() {
+  describe(`Player on test10-locationtexts.${ext}`, function () {
     before(`Reads and parses quest`, () => {
       const data = fs.readFileSync(__dirname + `/../../src/test/test10-locationtexts.${ext}`);
       const qm = parse(data);
@@ -157,7 +157,7 @@ for (const ext of ["qm", "qmm"]) {
   });
 }
 
-describe("Player on test10-deadly-loc.qmm", function() {
+describe("Player on test10-deadly-loc.qmm", function () {
   let save: GameState;
   it(`Reads and parses quest`, () => {
     const data = fs.readFileSync(__dirname + "/../../src/test/test10-deadly-loc.qmm");
@@ -200,7 +200,7 @@ describe("Player on test10-deadly-loc.qmm", function() {
   });
 });
 
-describe("Player on limitedLocation.qmm", function() {
+describe("Player on limitedLocation.qmm", function () {
   it(`Reads and parses quest`, () => {
     const data = fs.readFileSync(__dirname + "/../../src/test/limitedLocation.qmm");
     const qm = parse(data);
@@ -223,7 +223,7 @@ describe("Player on limitedLocation.qmm", function() {
   });
 });
 
-describe("Player on test4-forqmm.qm", function() {
+describe("Player on test4-forqmm.qm", function () {
   describe("Old behaviour", () => {
     it(`Reads and parses quest`, () => {
       const data = fs.readFileSync(__dirname + "/../../src/test/test4-forqmm.qm");
@@ -272,7 +272,7 @@ describe("Player on test4-forqmm.qm", function() {
   });
 });
 
-describe("Player on test8-emptyloc.qmm", function() {
+describe("Player on test8-emptyloc.qmm", function () {
   describe("New behaviour", () => {
     beforeEach(`Reads and parses quest`, () => {
       const data = fs.readFileSync(__dirname + "/../../src/test/test8-emptyloc.qmm");
@@ -303,7 +303,7 @@ describe("Player on test8-emptyloc.qmm", function() {
   });
 });
 
-describe("Player on test9-loop-qm.qm", function() {
+describe("Player on test9-loop-qm.qm", function () {
   beforeEach(`Reads and parses quest`, () => {
     const data = fs.readFileSync(__dirname + "/../../src/test/test9-loop-qm.qm");
     const qm = parse(data);
@@ -330,7 +330,7 @@ describe("Player on test9-loop-qm.qm", function() {
         */
 });
 
-describe("Player on test9-loop.qmm", function() {
+describe("Player on test9-loop.qmm", function () {
   beforeEach(`Reads and parses quest`, () => {
     const data = fs.readFileSync(__dirname + "/../../src/test/test9-loop.qmm");
     const qm = parse(data);

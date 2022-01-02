@@ -18,7 +18,7 @@ const player: PlayerSubstitute = {
   lang: "rus",
 };
 
-describe("Checking substitute", function() {
+describe("Checking substitute", function () {
   for (const [str, expected] of [
     ["", ""],
     ["lol kek", "lol kek"],

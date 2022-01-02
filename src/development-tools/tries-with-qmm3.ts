@@ -38,12 +38,12 @@ for (const fileName of fs.readdirSync(qmmDir)) {
   });
 
   for (const l of qmmQuest.locations) {
-    l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id}`));
-    tracks = [...tracks, ...l.media.map(x => x.track)];
-    sounds = [...sounds, ...l.media.map(x => x.sound)];
+    l.media.map((x) => x.img).forEach((x) => addImg(x, `Loc ${l.id}`));
+    tracks = [...tracks, ...l.media.map((x) => x.track)];
+    sounds = [...sounds, ...l.media.map((x) => x.sound)];
 
     l.paramsChanges.forEach((p, pid) => {
-      l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id} p${pid + 1}`));
+      l.media.map((x) => x.img).forEach((x) => addImg(x, `Loc ${l.id} p${pid + 1}`));
       tracks.push(p.track);
       sounds.push(p.sound);
     });
@@ -62,8 +62,8 @@ for (const fileName of fs.readdirSync(qmmDir)) {
     });
   });
 
-  tracks = tracks.filter(x => x);
-  sounds = sounds.filter(x => x);
+  tracks = tracks.filter((x) => x);
+  sounds = sounds.filter((x) => x);
 
   /*
     if (Object.keys(images).length === 0) {

@@ -969,12 +969,12 @@ export function getImagesListFromQmm(qmmQuest: QM) {
   });
 
   for (const l of qmmQuest.locations) {
-    l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id}`));
-    l.media.map(x => x.track).forEach(x => (x ? tracks.push(x) : undefined));
-    l.media.map(x => x.sound).forEach(x => (x ? sounds.push(x) : undefined));
+    l.media.map((x) => x.img).forEach((x) => addImg(x, `Loc ${l.id}`));
+    l.media.map((x) => x.track).forEach((x) => (x ? tracks.push(x) : undefined));
+    l.media.map((x) => x.sound).forEach((x) => (x ? sounds.push(x) : undefined));
 
     l.paramsChanges.forEach((p, pid) => {
-      l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id} p${pid + 1}`));
+      l.media.map((x) => x.img).forEach((x) => addImg(x, `Loc ${l.id} p${pid + 1}`));
       tracks.push(p.track);
       sounds.push(p.sound);
     });
@@ -993,8 +993,8 @@ export function getImagesListFromQmm(qmmQuest: QM) {
     });
   });
 
-  tracks = tracks.filter(x => x);
-  sounds = sounds.filter(x => x);
+  tracks = tracks.filter((x) => x);
+  sounds = sounds.filter((x) => x);
 
   return Object.keys(images);
 }

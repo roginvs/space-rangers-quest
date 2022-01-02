@@ -66,7 +66,7 @@ export class QuestPlay extends React.Component<
 
   componentDidMount() {
     window.addEventListener("resize", this.onResize);
-    this.loadData().catch(e => this.setState({ error: e }));
+    this.loadData().catch((e) => this.setState({ error: e }));
   }
   componentWillUnmount() {
     window.removeEventListener("resize", this.onResize);
@@ -77,7 +77,7 @@ export class QuestPlay extends React.Component<
   }
 
   async loadData() {
-    const game = this.props.store.index.quests.find(x => x.gameName === this.props.gameName);
+    const game = this.props.store.index.quests.find((x) => x.gameName === this.props.gameName);
     if (!game) {
       location.hash = "#";
       return;
@@ -97,7 +97,7 @@ export class QuestPlay extends React.Component<
 
       xhr.responseType = "arraybuffer";
 
-      xhr.onload = e => {
+      xhr.onload = (e) => {
         if (xhr.status <= 299) {
           resolv(xhr.response);
         } else {
@@ -105,11 +105,11 @@ export class QuestPlay extends React.Component<
         }
       };
 
-      xhr.onerror = e => {
+      xhr.onerror = (e) => {
         reject(new Error(`${xhr.statusText}`));
       };
 
-      xhr.onprogress = e => {
+      xhr.onprogress = (e) => {
         this.setState({
           questLoadProgress: e.loaded / e.total,
         });
@@ -143,13 +143,13 @@ export class QuestPlay extends React.Component<
     });
     this.props.store.db
       .saveGame(this.props.gameName, gameState)
-      .catch(e => console.warn(e))
+      .catch((e) => console.warn(e))
       .then(() =>
         this.setState({
           thinkingSavingGame: false,
         }),
       )
-      .catch(e => console.error(e));
+      .catch((e) => console.error(e));
   }
   render() {
     const { l, player } = this.props.store;
@@ -182,7 +182,7 @@ export class QuestPlay extends React.Component<
 
     const imageUrl = uistate.imageFileName ? DATA_DIR + "img/" + uistate.imageFileName : null;
 
-    const imagesPreloaded = getAllImagesToPreload(quest, game.images).map(x => {
+    const imagesPreloaded = getAllImagesToPreload(quest, game.images).map((x) => {
       return <img key={x} src={DATA_DIR + "img/" + x} style={{ display: "none" }} />;
     });
 
@@ -194,12 +194,12 @@ export class QuestPlay extends React.Component<
 
     const choices = (
       <DivFadeinCss key={`#${gameState.performedJumps.length}`}>
-        {uistate.choices.map(choice => {
+        {uistate.choices.map((choice) => {
           return (
             <div key={choice.jumpId} className="mb-4">
               <a
                 href={`#/quests/${game.gameName}/play/gameStep`}
-                onClick={e => {
+                onClick={(e) => {
                   e.preventDefault();
 
                   const newState = performJump(choice.jumpId, quest, gameState, game.images);
@@ -213,13 +213,13 @@ export class QuestPlay extends React.Component<
                     this.props.store.db
                       .setGamePassing(this.props.gameName, getGameLog(newState))
                       .then(() => this.props.store.loadWinProofsFromLocal())
-                      .catch(e => console.warn(e))
+                      .catch((e) => console.warn(e))
                       .then(() =>
                         this.setState({
                           thinkingSavingWin: false,
                         }),
                       )
-                      .catch(e => console.warn(e));
+                      .catch((e) => console.warn(e));
                   }
 
                   this.setState({
@@ -238,7 +238,9 @@ export class QuestPlay extends React.Component<
       </DivFadeinCss>
     );
 
-    const paramsStrings = ([] as string[]).concat(...uistate.paramsState.map(x => x.split("<br>")));
+    const paramsStrings = ([] as string[]).concat(
+      ...uistate.paramsState.map((x) => x.split("<br>")),
+    );
 
     const params = (
       <>
@@ -298,7 +300,7 @@ export class QuestPlay extends React.Component<
               () => {
                 this.props.store.db
                   .setConfigBoth("noMusic", !!this.state.noMusic)
-                  .catch(e => console.warn(e));
+                  .catch((e) => console.warn(e));
               },
             );
           }}
@@ -318,12 +320,14 @@ export class QuestPlay extends React.Component<
           }}
         >
           {/*<i className="fa fa-share-square-o fa-fw" />*/}
-          {/* this.state.thinkingSavingGame || */
-          this.state.thinkingSavingWin ? (
-            <i className="fa fa-refresh fa-spin fa-fw" />
-          ) : (
-            <i className="fa fa-external-link fa-fw" />
-          )}
+          {
+            /* this.state.thinkingSavingGame || */
+            this.state.thinkingSavingWin ? (
+              <i className="fa fa-refresh fa-spin fa-fw" />
+            ) : (
+              <i className="fa fa-external-link fa-fw" />
+            )
+          }
         </button>
       </>
     );
@@ -333,8 +337,8 @@ export class QuestPlay extends React.Component<
         {!this.state.noMusic ? (
           <Music
             urls={this.props.store.index.dir.music.files
-              .map(fileInfo => fileInfo.path)
-              .map(fileName => DATA_DIR + fileName)}
+              .map((fileInfo) => fileInfo.path)
+              .map((fileName) => DATA_DIR + fileName)}
           />
         ) : null}
         <div
@@ -507,12 +511,7 @@ export class QuestPlay extends React.Component<
 function initRandomGameAndDoFirstStep(quest: Quest, images: PQImages) {
   let gameState = initGame(
     quest,
-    Math.random()
-      .toString(36)
-      .slice(2) +
-      Math.random()
-        .toString(36)
-        .slice(2),
+    Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2),
   );
   gameState = performJump(JUMP_I_AGREE, quest, gameState, images, new Date().getTime());
   return gameState;

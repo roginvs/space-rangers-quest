@@ -32,7 +32,7 @@ class StorageUsedInfo extends React.Component<
       navigator.storage
         .estimate()
         .then(({ quota, usage }) => this.setState({ quota, usage }))
-        .catch(e =>
+        .catch((e) =>
           this.setState({
             error: e instanceof Error ? e : new Error(`${e}`),
           }),
@@ -96,7 +96,7 @@ export class OfflineModeTabContainer extends React.Component<
               <h6>
                 <a
                   href="#"
-                  onClick={e => {
+                  onClick={(e) => {
                     e.preventDefault();
                     if (store.waitingServiceWorker) {
                       store.waitingServiceWorker.postMessage(SKIP_WAITING_MESSAGE_DATA);
@@ -116,7 +116,7 @@ export class OfflineModeTabContainer extends React.Component<
           <h5>
             <a
               href="#"
-              onClick={e => {
+              onClick={(e) => {
                 e.preventDefault();
                 location.reload();
               }}

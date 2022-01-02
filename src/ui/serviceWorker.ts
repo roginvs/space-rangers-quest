@@ -33,10 +33,10 @@ const engineUrls = [
 console.info(`${new Date()} Service version ${__VERSION__} worker engine urls: `, engineUrls);
 
 function getIndex() {
-  return fetch(INDEX_JSON).then(data => data.json()) as Promise<Index>;
+  return fetch(INDEX_JSON).then((data) => data.json()) as Promise<Index>;
 }
 
-self.addEventListener("install", event => {
+self.addEventListener("install", (event) => {
   // Perform install steps
   console.info(`${new Date()} Serviceworker got install event.`);
   event.waitUntil(
@@ -55,7 +55,7 @@ self.addEventListener("install", event => {
         `${new Date()} Serviceworker opened quests cache='${CACHE_QUESTS_NAME}', ` +
           `downloading quests size=${data.dir.quests.totalSize}`,
       );
-      await cacheQuests.addAll(data.dir.quests.files.map(quest => DATA_DIR + quest.path));
+      await cacheQuests.addAll(data.dir.quests.files.map((quest) => DATA_DIR + quest.path));
 
       /*
             await Promise.all((async quest => {
@@ -73,14 +73,14 @@ self.addEventListener("install", event => {
       // await new Promise(resolve => setTimeout(resolve, 30 *1000));
 
       console.info(`${new Date()} Catching done`);
-    })().catch(e => {
+    })().catch((e) => {
       console.error(`${new Date()} Error in sw`, e);
       throw e;
     }),
   );
 });
 
-self.addEventListener("activate", event => {
+self.addEventListener("activate", (event) => {
   console.info(`${new Date()} ServiceWorker activation started`);
 
   event.waitUntil(
@@ -99,8 +99,8 @@ self.addEventListener("activate", event => {
         await caches.delete(CACHE_MUSIC_NAME_OGG_OLD);
       }
       for (const cacheKey of (await caches.keys())
-        .filter(cacheKey => cacheKey.indexOf(CACHE_ENGINE_PREFIX) === 0)
-        .filter(cacheKey => cacheKey !== CACHE_ENGINE_NAME)) {
+        .filter((cacheKey) => cacheKey.indexOf(CACHE_ENGINE_PREFIX) === 0)
+        .filter((cacheKey) => cacheKey !== CACHE_ENGINE_NAME)) {
         console.info(`${new Date()} Removing old engine cache ${cacheKey}`);
         await caches.delete(cacheKey);
       }
@@ -124,14 +124,14 @@ self.addEventListener("activate", event => {
   );
 });
 
-self.addEventListener("fetch", event => {
+self.addEventListener("fetch", (event) => {
   event.respondWith(
     (async () => {
       const cacheHit =
-        (await caches.open(CACHE_ENGINE_NAME).then(cache => cache.match(event.request.url))) ||
-        (await caches.open(CACHE_QUESTS_NAME).then(cache => cache.match(event.request.url))) ||
-        (await caches.open(CACHE_IMAGES_NAME).then(cache => cache.match(event.request.url))) ||
-        (await caches.open(CACHE_MUSIC_NAME_MP3).then(cache => cache.match(event.request.url)));
+        (await caches.open(CACHE_ENGINE_NAME).then((cache) => cache.match(event.request.url))) ||
+        (await caches.open(CACHE_QUESTS_NAME).then((cache) => cache.match(event.request.url))) ||
+        (await caches.open(CACHE_IMAGES_NAME).then((cache) => cache.match(event.request.url))) ||
+        (await caches.open(CACHE_MUSIC_NAME_MP3).then((cache) => cache.match(event.request.url)));
 
       const headersRange = event.request.headers.get("range");
       if (headersRange) {
@@ -179,7 +179,7 @@ self.addEventListener("fetch", event => {
   );
 });
 
-self.addEventListener("message", messageEvent => {
+self.addEventListener("message", (messageEvent) => {
   console.info(`${new Date()} Got a message=${messageEvent.data}`);
   if (messageEvent.data === SKIP_WAITING_MESSAGE_DATA) {
     console.info(`${new Date()} service worker will skipWaiting and start to activate`);

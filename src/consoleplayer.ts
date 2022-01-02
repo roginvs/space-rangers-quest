@@ -21,9 +21,9 @@ player.start();
 function showAndAsk() {
   const state = player.getState();
   console.info(state);
-  rl.question("> ", answer => {
+  rl.question("> ", (answer) => {
     const id = parseInt(answer);
-    if (!isNaN(id) && state.choices.find(x => x.jumpId === id)) {
+    if (!isNaN(id) && state.choices.find((x) => x.jumpId === id)) {
       player.performJump(id);
     } else {
       console.info(`Wrong input!`);

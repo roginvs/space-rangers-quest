@@ -48,21 +48,21 @@ export class QuestInfo extends React.Component<
   componentDidMount() {
     this.props.store.db
       .getLocalSaving(this.props.gameName)
-      .then(x => x || null)
-      .catch(e => null)
-      .then(lastSavedGameState =>
+      .then((x) => x || null)
+      .catch((e) => null)
+      .then((lastSavedGameState) =>
         this.setState({
           lastSavedGameState,
         }),
       )
-      .catch(e => console.warn(e));
+      .catch((e) => console.warn(e));
     window.scrollTo(0, 0);
   }
   render() {
     const { l, player, index, db } = this.props.store;
 
     const gameName = this.props.gameName;
-    const game = index.quests.find(x => x.gameName === gameName);
+    const game = index.quests.find((x) => x.gameName === gameName);
     if (!game) {
       return <Redirect to="#/" />;
     }
@@ -94,7 +94,7 @@ export class QuestInfo extends React.Component<
                   return;
                 }
                 return Object.keys(passedQuest)
-                  .map(k => {
+                  .map((k) => {
                     const log = passedQuest[k];
                     const firstStep = log.performedJumps.slice(0).shift();
                     const lastStep = log.performedJumps.slice(-1).shift();
@@ -113,7 +113,7 @@ export class QuestInfo extends React.Component<
                       k,
                     };
                   })
-                  .filter(x => x)
+                  .filter((x) => x)
                   .sort((a, b) => {
                     if (a === null || b === null) {
                       return 0;
@@ -121,7 +121,7 @@ export class QuestInfo extends React.Component<
                       return a.started - b.started;
                     }
                   })
-                  .map(x =>
+                  .map((x) =>
                     x ? (
                       <div key={x.k}>
                         {l.passed} {new Date(x.end).toLocaleString()} ({x.durationsMins}{" "}

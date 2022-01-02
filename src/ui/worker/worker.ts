@@ -2,7 +2,7 @@ import "../lib.webworker";
 import { WorkerMsgRequest, WorkerMsgResponce, METHOD_CHECK_QUEST } from "./defs";
 import { checkQuest } from "./workerCheckQuest";
 
-self.addEventListener("message", e => {
+self.addEventListener("message", (e) => {
   const msg = JSON.parse(e.data) as WorkerMsgRequest;
   (async () => {
     if (msg.method === METHOD_CHECK_QUEST) {
@@ -11,7 +11,7 @@ self.addEventListener("message", e => {
       throw new Error(`Unknown method ${msg.method}`);
     }
   })()
-    .then(resultData => {
+    .then((resultData) => {
       // console.info(msg, resultData);
       const result: WorkerMsgResponce = {
         id: msg.id,
@@ -20,7 +20,7 @@ self.addEventListener("message", e => {
       };
       (self.postMessage as any)(JSON.stringify(result));
     })
-    .catch(e => {
+    .catch((e) => {
       const result: WorkerMsgResponce = {
         id: msg.id,
         method: msg.method,

@@ -5,7 +5,7 @@ import * as assert from "assert";
 import { parse, MAX_NUMBER } from "../lib/formula";
 import { randomFromMathRandom } from "../lib/randomFunc";
 
-describe("Formula parser test throws", function() {
+describe("Formula parser test throws", function () {
   const throwingFormulas = [
     "2+",
     "2 + 2 {",

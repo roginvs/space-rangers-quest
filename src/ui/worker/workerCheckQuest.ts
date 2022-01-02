@@ -15,7 +15,7 @@ import {
 } from "../../lib/qmplayer/funcs";
 
 export async function checkQuest(data: CheckQuestRequest): Promise<CheckQuestResponce> {
-  const questArrayBuffer = await fetch(data.questUrl).then(x => x.arrayBuffer());
+  const questArrayBuffer = await fetch(data.questUrl).then((x) => x.arrayBuffer());
   const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))) as Quest;
 
   for (const proofSeed of Object.keys(data.logs)) {

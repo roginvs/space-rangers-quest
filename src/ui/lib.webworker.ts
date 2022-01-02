@@ -1167,7 +1167,7 @@ interface Crypto {
       | Float32Array
       | Float64Array
       | DataView
-      | null
+      | null,
   >(
     array: T,
   ): T;
@@ -6922,9 +6922,10 @@ interface WritableStream<W = any> {
 
 declare var WritableStream: {
   prototype: WritableStream;
-  new <W = any>(underlyingSink?: UnderlyingSink<W>, strategy?: QueuingStrategy<W>): WritableStream<
-    W
-  >;
+  new <W = any>(
+    underlyingSink?: UnderlyingSink<W>,
+    strategy?: QueuingStrategy<W>,
+  ): WritableStream<W>;
 };
 
 /** This Streams API interface represents a controller allowing control of a WritableStream's state. When constructing a WritableStream, the underlying sink is given a corresponding WritableStreamDefaultController instance to manipulate. */

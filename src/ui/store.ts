@@ -64,14 +64,14 @@ export class Store {
     this.setPath();
     this.player = player;
 
-    this.queryCacheInfo().catch(e => console.warn(e));
+    this.queryCacheInfo().catch((e) => console.warn(e));
 
     this.pwaAlreadyInstalled = window.matchMedia("(display-mode: standalone)").matches;
-    window.addEventListener("beforeinstallprompt", e => {
+    window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
       this.pwaInstallReadyEvent = e as BeforeInstallPromptEvent;
     });
-    window.addEventListener("appinstalled", evt => {
+    window.addEventListener("appinstalled", (evt) => {
       this.pwaAlreadyInstalled = true;
     });
   }
@@ -119,7 +119,7 @@ export class Store {
   async loadWinProofsFromLocal() {
     const m = new Map<string, GameWonProofs | undefined>();
     await Promise.all(
-      this.index.quests.map(async quest => {
+      this.index.quests.map(async (quest) => {
         const passed = await this.db.isGamePassedLocal(quest.gameName);
         m.set(quest.gameName, passed);
       }),
@@ -233,7 +233,7 @@ export class Store {
       const DOWNLOADING_THREADS = 20;
       const filesBuckets = splitByBuckets(this.index.dir.images.files, DOWNLOADING_THREADS);
       await Promise.all(
-        filesBuckets.map(async filesBucket => {
+        filesBuckets.map(async (filesBucket) => {
           for (const file of filesBucket) {
             const url = DATA_DIR + file.path;
             const data = await fetch(url);

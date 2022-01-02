@@ -10,13 +10,13 @@ export class WorkerPromise {
   private readonly worker = new Worker(this.workerUrl);
   private id = 0;
   constructor(private readonly workerUrl: string) {
-    this.worker.addEventListener("error", e => {
+    this.worker.addEventListener("error", (e) => {
       const msg = `${e.message} at ${e.lineno}:${e.colno}`;
       const err = new Error(msg);
       this.waiters.forEach(({ reject }) => reject(err));
       this.waiters.clear();
     });
-    this.worker.addEventListener("message", e => {
+    this.worker.addEventListener("message", (e) => {
       const result = JSON.parse(e.data) as WorkerMsgResponce;
       const waiter = this.waiters.get(result.id);
       this.waiters.delete(result.id);

@@ -13,7 +13,7 @@ import * as assert from "assert";
 import "mocha";
 
 for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
-  describe(`Player on qmreader-1.${ext}`, function() {
+  describe(`Player on qmreader-1.${ext}`, function () {
     let qm: QM;
     before(() => {
       const data = fs.readFileSync(__dirname + `/../../src/test/qmreader-1.${ext}`);
@@ -132,14 +132,14 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
 
       describe("Locations", () => {
         it("Starting loc id=2", () => {
-          const loc = qm.locations.find(x => x.id === 2);
+          const loc = qm.locations.find((x) => x.id === 2);
           assert.strictEqual(loc!.texts[0], "loc2start");
           assert.ok(loc!.isStarting);
           assert.strictEqual(loc!.maxVisits, 0);
         });
 
         it("Text and sounds", () => {
-          const loc = qm.locations.find(x => x.id === 1);
+          const loc = qm.locations.find((x) => x.id === 1);
           if (!loc) {
             throw new Error("Location not found!");
           }
@@ -166,7 +166,7 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
           assert.strictEqual(loc.isTextByFormula, false);
         });
         it("Text and sounds by formula", () => {
-          const loc = qm.locations.find(x => x.id === 3);
+          const loc = qm.locations.find((x) => x.id === 3);
           if (!loc) {
             throw new Error("Location not found!");
           }
@@ -175,29 +175,29 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
         });
 
         it("Empty loc", () => {
-          assert.ok(qm.locations.find(x => x.id === 5)!.isEmpty);
+          assert.ok(qm.locations.find((x) => x.id === 5)!.isEmpty);
         });
         it("Success loc", () => {
-          assert.ok(qm.locations.find(x => x.id === 6)!.isSuccess);
+          assert.ok(qm.locations.find((x) => x.id === 6)!.isSuccess);
         });
         it("Fail loc", () => {
-          assert.ok(qm.locations.find(x => x.id === 7)!.isFaily);
+          assert.ok(qm.locations.find((x) => x.id === 7)!.isFaily);
         });
         it("Dead loc", () => {
-          assert.ok(qm.locations.find(x => x.id === 8)!.isFailyDeadly);
+          assert.ok(qm.locations.find((x) => x.id === 8)!.isFailyDeadly);
         });
         it("Daypassed loc", () => {
-          assert.ok(qm.locations.find(x => x.id === 9)!.dayPassed);
+          assert.ok(qm.locations.find((x) => x.id === 9)!.dayPassed);
         });
         it("Visit limit loc id=10", () => {
           assert.strictEqual(
-            qm.locations.find(x => x.id === 10)!.maxVisits,
+            qm.locations.find((x) => x.id === 10)!.maxVisits,
             ext === "qmm" ? 78 : 0,
           );
         });
         it("Visit limit loc id=5", () => {
           assert.strictEqual(
-            qm.locations.find(x => x.id === 5)!.maxVisits,
+            qm.locations.find((x) => x.id === 5)!.maxVisits,
             ext === "qmm" ? 312 : 0,
           );
         });
@@ -205,7 +205,7 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
         describe("Location param change", () => {
           let loc: Location;
           before(() => {
-            const loc4 = qm.locations.find(x => x.id === 4);
+            const loc4 = qm.locations.find((x) => x.id === 4);
             if (!loc4) {
               throw new Error("Location id=4 not found");
             }
@@ -264,7 +264,7 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
       });
       describe("Jumps", () => {
         it("Jump id=2", () => {
-          const jump = qm.jumps.find(x => x.id === 2);
+          const jump = qm.jumps.find((x) => x.id === 2);
           if (!jump) {
             throw new Error(`Jump not found`);
           }
@@ -280,7 +280,7 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
           assert.strictEqual(jump.showingOrder, 4);
         });
         it("Jump id=3", () => {
-          const jump = qm.jumps.find(x => x.id === 3);
+          const jump = qm.jumps.find((x) => x.id === 3);
           if (!jump) {
             throw new Error(`Jump not found`);
           }
@@ -305,7 +305,7 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
           assert.strictEqual(jump.showingOrder, 5);
         });
         it("Jump id=4", () => {
-          const jump = qm.jumps.find(x => x.id === 4);
+          const jump = qm.jumps.find((x) => x.id === 4);
           if (!jump) {
             throw new Error(`Jump not found`);
           }
@@ -319,7 +319,7 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
         describe("Jump params requirenments at jump5", () => {
           let jump: Jump;
           before(() => {
-            const jump5 = qm.jumps.find(x => x.id === 5);
+            const jump5 = qm.jumps.find((x) => x.id === 5);
             if (!jump5) {
               throw new Error(`Jump not found`);
             }
@@ -365,7 +365,7 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
         describe("Jump params change at jump6", () => {
           let jump: Jump;
           before(() => {
-            const jump6 = qm.jumps.find(x => x.id === 6);
+            const jump6 = qm.jumps.find((x) => x.id === 6);
             if (!jump6) {
               throw new Error(`Jump not found`);
             }

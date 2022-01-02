@@ -13,7 +13,7 @@ import { getGameTaskText } from "../lib/getGameTaskText";
 // tslint:disable:no-invalid-this
 
 const srcDir = __dirname + `/../../borrowed/qm/`;
-describe(`Checking all quests for formulas and params substitution`, function() {
+describe(`Checking all quests for formulas and params substitution`, function () {
   this.timeout(60 * 1000);
   for (const origin of fs.readdirSync(srcDir)) {
     for (const f of fs.readdirSync(srcDir + origin)) {
@@ -50,26 +50,11 @@ describe(`Checking all quests for formulas and params substitution`, function() 
         }
         function checkFormula(str: string, place = "") {
           const staticRandomGenerated = [
-            0.8098721706321894,
-            0.7650745137670785,
-            0.5122628148859116,
-            0.7001314250579083,
-            0.9777148783782501,
-            0.6484951526791192,
-            0.6277520602629139,
-            0.6271209273581702,
-            0.5929518455455183,
-            0.555114104030954,
-            0.8769248658117874,
-            0.9012611135928128,
-            0.9887903872842161,
-            0.9032020764410791,
-            0.09244706438405847,
-            0.6841815116128189,
-            0.26661520895002355,
-            0.95424331893931,
-            0.8900907263092355,
-            0.9796112746203975,
+            0.8098721706321894, 0.7650745137670785, 0.5122628148859116, 0.7001314250579083,
+            0.9777148783782501, 0.6484951526791192, 0.6277520602629139, 0.6271209273581702,
+            0.5929518455455183, 0.555114104030954, 0.8769248658117874, 0.9012611135928128,
+            0.9887903872842161, 0.9032020764410791, 0.09244706438405847, 0.6841815116128189,
+            0.26661520895002355, 0.95424331893931, 0.8900907263092355, 0.9796112746203975,
           ];
 
           try {
@@ -99,7 +84,7 @@ describe(`Checking all quests for formulas and params substitution`, function() 
           getGameTaskText(quest.taskText, player);
         });
         it(`Locations texts and formulas`, () => {
-          quest.locations.forEach(loc => {
+          quest.locations.forEach((loc) => {
             if (
               (f === "Doomino.qm" && loc.id === 28) ||
               (f === "Kiberrazum.qm" && loc.id === 134)
@@ -108,7 +93,7 @@ describe(`Checking all quests for formulas and params substitution`, function() 
               // Kiberrazum: просто локация без переходов в неё
               // Вообще-то это можно и автоматически фильтровать
             } else {
-              loc.texts.forEach(x => x && check(x, `Loc ${loc.id}`));
+              loc.texts.forEach((x) => x && check(x, `Loc ${loc.id}`));
             }
             loc.paramsChanges.forEach((p, i) => {
               if (p.critText !== quest.params[i].critValueString) {
@@ -124,7 +109,7 @@ describe(`Checking all quests for formulas and params substitution`, function() 
           });
         });
         it(`Jumps texts and formulas`, () => {
-          quest.jumps.forEach(jump => {
+          quest.jumps.forEach((jump) => {
             if (jump.text) {
               check(jump.text, `Jump ${jump.id} text`);
             }
@@ -146,7 +131,7 @@ describe(`Checking all quests for formulas and params substitution`, function() 
         });
         it(`Params ranges`, () => {
           quest.params.forEach((p, i) => {
-            p.showingInfo.forEach(range => {
+            p.showingInfo.forEach((range) => {
               check(range.str, `Param ${i} range`, true);
             });
           });

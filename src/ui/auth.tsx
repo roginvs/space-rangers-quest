@@ -32,12 +32,12 @@ export class AuthTabContainer extends React.Component<
     const userGoogleAuth =
       firebaseLoggedIn &&
       firebaseLoggedIn.providerData.find(
-        x => !!x && x.providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID,
+        (x) => !!x && x.providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID,
       );
     const userGithubAuth =
       firebaseLoggedIn &&
       firebaseLoggedIn.providerData.find(
-        x => !!x && x.providerId === firebase.auth.GithubAuthProvider.PROVIDER_ID,
+        (x) => !!x && x.providerId === firebase.auth.GithubAuthProvider.PROVIDER_ID,
       );
 
     return firebaseLoggedIn === undefined ? (
@@ -63,7 +63,7 @@ export class AuthTabContainer extends React.Component<
                   .linkWithPopup(provider)
                   .then(() => this.forceUpdate())
                   // TODO: What should happen if it failed?
-                  .catch(e => console.error(e));
+                  .catch((e) => console.error(e));
               }}
             >
               <i className="fa fa-google fa-fw" />
@@ -87,7 +87,7 @@ export class AuthTabContainer extends React.Component<
                   .linkWithPopup(provider)
                   .then(() => this.forceUpdate())
                   // TODO: What should happen if it failed?
-                  .catch(e => console.error(e));
+                  .catch((e) => console.error(e));
               }}
             >
               <i className="fa fa-github fa-fw" />
@@ -125,7 +125,7 @@ export class AuthTabContainer extends React.Component<
               this.props.store.app
                 .auth()
                 .signOut()
-                .catch(e => undefined);
+                .catch((e) => undefined);
             }}
           >
             <i className="fa fa-sign-out" /> {l.logout}
@@ -144,7 +144,7 @@ export class AuthTabContainer extends React.Component<
                 this.props.store.app
                   .auth()
                   .signInWithPopup(authProvider)
-                  .catch(e => undefined);
+                  .catch((e) => undefined);
               }}
             >
               <i className="fa fa-google fa-fw" />
@@ -160,7 +160,7 @@ export class AuthTabContainer extends React.Component<
                 this.props.store.app
                   .auth()
                   .signInWithRedirect(authProvider)
-                  .catch(e => undefined);
+                  .catch((e) => undefined);
               }}
             >
               <i className="fa fa-github fa-fw" />

@@ -49,15 +49,15 @@ for (const fileName of fs.readdirSync(qmmDir)) {
         !(
           (x.kind === "A" &&
             x.item.kind === "N" &&
-            ((x.path[0] === "params" || x.path[2] === "params") &&
-              x.index >= qmmQuest.paramsCount)) ||
+            (x.path[0] === "params" || x.path[2] === "params") &&
+            x.index >= qmmQuest.paramsCount) ||
           (x.path.length === 1 && x.path[0] === "paramsCount") ||
           //  (x.path[2] === 'img' || x.path[2] === 'sound' || x.path[2] === 'track') ||
           x.path[0] === "header" ||
-          ((x.path[0] === "strings" && (x.path[1] === "Parsec" || x.path[1] === "Artefact")) ||
-            (x.path[x.path.length - 1] === "img" ||
-              x.path[x.path.length - 1] === "sound" ||
-              x.path[x.path.length - 1] === "track")) ||
+          (x.path[0] === "strings" && (x.path[1] === "Parsec" || x.path[1] === "Artefact")) ||
+          x.path[x.path.length - 1] === "img" ||
+          x.path[x.path.length - 1] === "sound" ||
+          x.path[x.path.length - 1] === "track" ||
           (x.kind === "A" &&
             x.item.kind === "A" &&
             (x.item.path[x.item.path.length - 1] === "img" ||

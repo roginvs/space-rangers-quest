@@ -12,7 +12,7 @@ let player: QMPlayer;
 
 function jumpTo(text: string = "") {
   const state = player.getState();
-  const jump = state.choices.filter(x => x.text.indexOf(text) > -1 && x.active).shift();
+  const jump = state.choices.filter((x) => x.text.indexOf(text) > -1 && x.active).shift();
   if (!jump) {
     throw new Error(`OLOLO: No jump ${text} in ` + JSON.stringify(state, null, 4));
   }
@@ -20,7 +20,7 @@ function jumpTo(text: string = "") {
   // console.info(player.getState());
   return player.getState();
 }
-describe("Player on test6-empty.qm", function() {
+describe("Player on test6-empty.qm", function () {
   let save: GameState;
   it(`Reads and parses quest`, () => {
     const data = fs.readFileSync(__dirname + "/../../src/test/test6-empty.qm");
@@ -146,7 +146,7 @@ describe("Player on test6-empty.qm", function() {
   });
 });
 
-describe("Player on test6.qm", function() {
+describe("Player on test6.qm", function () {
   let save: GameState;
   it(`Reads and parses quest`, () => {
     const data = fs.readFileSync(__dirname + "/../../src/test/test6.qm");
@@ -353,7 +353,7 @@ describe("Player on test6.qm", function() {
   });
 });
 
-describe("Player on test6.qm with permitLiveAfterDeath=false", function() {
+describe("Player on test6.qm with permitLiveAfterDeath=false", function () {
   let save: GameState;
   it(`Reads and parses quest`, () => {
     const data = fs.readFileSync(__dirname + "/../../src/test/test6.qmm");
@@ -462,7 +462,7 @@ describe("Player on test6.qm with permitLiveAfterDeath=false", function() {
   });
 });
 
-describe("Player on test5.qm", function() {
+describe("Player on test5.qm", function () {
   it(`Reads and parses quest`, () => {
     const data = fs.readFileSync(__dirname + "/../../src/test/test5.qm");
     const qm = parse(data);
@@ -475,7 +475,7 @@ describe("Player on test5.qm", function() {
   });
 });
 
-describe("Player on test5-emptystart-usingformula.qm", function() {
+describe("Player on test5-emptystart-usingformula.qm", function () {
   it(`Reads and parses quest`, () => {
     const data = fs.readFileSync(__dirname + "/../../src/test/test5-emptystart-usingformula.qm");
     const qm = parse(data);
@@ -487,7 +487,7 @@ describe("Player on test5-emptystart-usingformula.qm", function() {
     assert.strictEqual(player.getState().text, "L2");
   });
 });
-describe("Player on test5-emptystart-usingorder.qm", function() {
+describe("Player on test5-emptystart-usingorder.qm", function () {
   it(`Reads and parses quest`, () => {
     const data = fs.readFileSync(__dirname + "/../../src/test/test5-emptystart-usingorder.qm");
     const qm = parse(data);
@@ -500,7 +500,7 @@ describe("Player on test5-emptystart-usingorder.qm", function() {
     assert.strictEqual(player.getState().text, "L2");
   });
 });
-describe("Player on test5-emptyloctext-emptyloc-autojump.qm", function() {
+describe("Player on test5-emptyloctext-emptyloc-autojump.qm", function () {
   it(`Reads and parses quest`, () => {
     const data = fs.readFileSync(
       __dirname + "/../../src/test/test5-emptyloctext-emptyloc-autojump.qm",
@@ -514,7 +514,7 @@ describe("Player on test5-emptyloctext-emptyloc-autojump.qm", function() {
     assert.strictEqual(player.getState().text, "L2");
   });
 });
-describe("Player on test5-emptyloctext-emptyloc-noautojump.qm doing 1-8", function() {
+describe("Player on test5-emptyloctext-emptyloc-noautojump.qm doing 1-8", function () {
   beforeEach(() => {
     const data = fs.readFileSync(
       __dirname + "/../../src/test/test5-emptyloctext-emptyloc-noautojump.qm",
@@ -594,7 +594,7 @@ describe("Player on test5-emptyloctext-emptyloc-noautojump.qm doing 1-8", functi
      */
 });
 
-describe("Player on test5-emptyloctext-emptyloc-autojump.qm doing 9-16", function() {
+describe("Player on test5-emptyloctext-emptyloc-autojump.qm doing 9-16", function () {
   beforeEach(() => {
     const data = fs.readFileSync(
       __dirname + "/../../src/test/test5-emptyloctext-emptyloc-autojump.qm",
@@ -652,7 +652,7 @@ describe("Player on test5-emptyloctext-emptyloc-autojump.qm doing 9-16", functio
   });
 });
 
-describe("Player on test5-emptyloctext-emptyloc-noautojump.qmm", function() {
+describe("Player on test5-emptyloctext-emptyloc-noautojump.qmm", function () {
   it("Loads quest", () => {
     const data = fs.readFileSync(
       __dirname + "/../../src/test/test5-emptyloctext-emptyloc-noautojump.qmm",
@@ -669,7 +669,7 @@ describe("Player on test5-emptyloctext-emptyloc-noautojump.qmm", function() {
   });
 });
 
-describe.skip("Player on test5-emptyloctext-emptyloc-noautojump.qmm doing 1-8", function() {
+describe.skip("Player on test5-emptyloctext-emptyloc-noautojump.qmm doing 1-8", function () {
   beforeEach(() => {
     const data = fs.readFileSync(
       __dirname + "/../../src/test/test5-emptyloctext-emptyloc-noautojump.qmm",
@@ -750,7 +750,7 @@ describe.skip("Player on test5-emptyloctext-emptyloc-noautojump.qmm doing 1-8", 
      */
 });
 
-describe.skip("Player on test5-emptyloctext-emptyloc-autojump.qmm doing 9-16", function() {
+describe.skip("Player on test5-emptyloctext-emptyloc-autojump.qmm doing 9-16", function () {
   beforeEach(() => {
     const data = fs.readFileSync(
       __dirname + "/../../src/test/test5-emptyloctext-emptyloc-autojump.qmm",
@@ -811,7 +811,7 @@ describe.skip("Player on test5-emptyloctext-emptyloc-autojump.qmm doing 9-16", f
   });
 });
 
-describe("Player on test4.qm", function() {
+describe("Player on test4.qm", function () {
   this.timeout(20 * 1000);
 
   let save: GameState;
@@ -876,7 +876,7 @@ describe("Player on test4.qm", function() {
       player.loadSaving(save);
       jumpTo("-> L18");
       assert.strictEqual(
-        player.getState().choices.filter(x => x.active).length,
+        player.getState().choices.filter((x) => x.active).length,
         0,
         "L18 is dead end",
       );
@@ -889,7 +889,7 @@ describe("Player on test4.qm", function() {
     });
   });
 });
-describe("Player on test3.qm", function() {
+describe("Player on test3.qm", function () {
   this.timeout(20 * 1000);
 
   let save: GameState;
@@ -993,14 +993,14 @@ describe("Player on test3.qm", function() {
     });
   });
 
-  after(function() {
+  after(function () {
     if (!lastTestOk) {
       console.info(player.getState());
     }
   });
 });
 
-describe("Player on test2.qm", function() {
+describe("Player on test2.qm", function () {
   this.timeout(20 * 1000);
 
   let save: GameState;
@@ -1093,7 +1093,11 @@ describe("Player on test2.qm", function() {
     it(`loc0text_0empty_jump0text_param=0`, () => {
       assert.strictEqual(jumpTo("loc0text_0empty_jump0text_param=0").text, "");
       assert.strictEqual(player.getState().choices.length, 1, "One choise");
-      assert.strictEqual(player.getState().choices.filter(x => x.active).length, 0, "But inactive");
+      assert.strictEqual(
+        player.getState().choices.filter((x) => x.active).length,
+        0,
+        "But inactive",
+      );
       assert.strictEqual(player.getState().choices[0].text, "neverActive");
     });
     it(`loc0text_0empty_jump0text_param=1`, () => {
@@ -1105,7 +1109,11 @@ describe("Player on test2.qm", function() {
     it(`loc1text_0empty_jump0text_param=0`, () => {
       assert.ok(jumpTo("loc1text_0empty_jump0text_param=0").text, "Text");
       assert.strictEqual(player.getState().choices.length, 1, "One choise");
-      assert.strictEqual(player.getState().choices.filter(x => x.active).length, 0, "But inactive");
+      assert.strictEqual(
+        player.getState().choices.filter((x) => x.active).length,
+        0,
+        "But inactive",
+      );
       assert.strictEqual(player.getState().choices[0].text, "neverActive");
     });
     it(`loc1text_0empty_jump0text_param=1`, () => {
@@ -1116,7 +1124,11 @@ describe("Player on test2.qm", function() {
     it(`loc0text_1empty_jump0text_param=0`, () => {
       assert.strictEqual(jumpTo("loc0text_1empty_jump0text_param=0").text, "");
       assert.strictEqual(player.getState().choices.length, 1, "One choise");
-      assert.strictEqual(player.getState().choices.filter(x => x.active).length, 0, "But inactive");
+      assert.strictEqual(
+        player.getState().choices.filter((x) => x.active).length,
+        0,
+        "But inactive",
+      );
       assert.strictEqual(player.getState().choices[0].text, "neverActive");
     });
     it(`loc0text_1empty_jump0text_param=1`, () => {
@@ -1127,7 +1139,11 @@ describe("Player on test2.qm", function() {
     it(`loc0text_1empty_jump1text_locparam=0`, () => {
       assert.strictEqual(jumpTo("loc0text_1empty_jump1text_locparam=0").text, "jumpTextX");
       assert.strictEqual(player.getState().choices.length, 1, "One choise");
-      assert.strictEqual(player.getState().choices.filter(x => x.active).length, 0, "But inactive");
+      assert.strictEqual(
+        player.getState().choices.filter((x) => x.active).length,
+        0,
+        "But inactive",
+      );
       assert.strictEqual(player.getState().choices[0].text, "neverActive");
     });
     it(`loc0text_1empty_jump1text_locparam=1`, () => {
@@ -1158,14 +1174,14 @@ describe("Player on test2.qm", function() {
     });
   });
 
-  after(function() {
+  after(function () {
     if (!lastTestOk) {
       console.info(player.getState());
     }
   });
 });
 
-describe("Player on test.qm", function() {
+describe("Player on test.qm", function () {
   this.timeout(20 * 1000);
 
   let save1: GameState;
@@ -1189,8 +1205,8 @@ describe("Player on test.qm", function() {
   it(`Starting location jumps count`, () => {
     const state2 = player.getState();
     // console.info(JSON.stringify(state2, null, 4));
-    assert.strictEqual(state2.choices.filter(x => x.active).length, 2);
-    assert.strictEqual(state2.choices.filter(x => !x.active).length, 5);
+    assert.strictEqual(state2.choices.filter((x) => x.active).length, 2);
+    assert.strictEqual(state2.choices.filter((x) => !x.active).length, 5);
 
     assert.ok(state2.choices[0].text.indexOf("p2 / 5") > -1, `Choices have p2/5`);
     assert.ok(state2.choices[6].text.indexOf("Видно активен по формуле") > -1, "Have formula seen");
@@ -1198,7 +1214,7 @@ describe("Player on test.qm", function() {
   it(`Jumps on jumpid > 2`, () => {
     const state2 = player.getState();
 
-    player.performJump(state2.choices.filter(x => x.jumpId > 2)[0].jumpId);
+    player.performJump(state2.choices.filter((x) => x.jumpId > 2)[0].jumpId);
     const state3 = player.getState();
     //console.info(JSON.stringify(state3, null, 4));
 
@@ -1229,7 +1245,7 @@ describe("Player on test.qm", function() {
     const st8 = jumpTo("пустой проверка");
     assert.strictEqual(st8.text, "HangsHere");
     assert.strictEqual(st8.choices.length, 1, "One choice");
-    assert.strictEqual(st8.choices.filter(x => x.active).length, 0, "Inactive");
+    assert.strictEqual(st8.choices.filter((x) => x.active).length, 0, "Inactive");
     player.loadSaving(save);
   });
   it(`EmptyJumps`, () => {
@@ -1298,8 +1314,9 @@ describe("Player on test.qm", function() {
     for (let i = 0; i < 700; i++) {
       // console.info(`i=${i}, f=${((i+2) % 3) + 1} val=${parseInt(player.getState().text)}`);
       assert.strictEqual(((i + 2) % 3) + 1, parseInt(player.getState().text), "X1"); // + JSON.stringify(player.getSaving(), null, 4));
-      randomJumpCount += player.getState().choices.filter(x => x.text.indexOf("random") > -1)
-        .length;
+      randomJumpCount += player
+        .getState()
+        .choices.filter((x) => x.text.indexOf("random") > -1).length;
       jumpTo("oooo");
       // console.info(`~~~~~~~~~~~~~~~~~~~~~~~~~~ i=${i} f=${((i) % 6) + 3} state=${parseInt(player.getState().text)}`)
       assert.strictEqual((i % 6) + 3, parseInt(player.getState().text), "X2");

@@ -5,7 +5,7 @@ import * as assert from "assert";
 import { parse, MAX_NUMBER } from "../lib/formula";
 import { randomFromMathRandom } from "../lib/randomFunc";
 
-describe("Formula parser test", function() {
+describe("Formula parser test", function () {
   const testEquations = {
     "2 + 2 * 2": 6,
     "2 +  2 * 2 +2+2": 10,
@@ -147,7 +147,7 @@ describe("Formula parser test", function() {
     );
   });
 
-  describe("Randomness check ", function() {
+  describe("Randomness check ", function () {
     this.timeout(5000);
     it(`Check randomness of ranges`, () => {
       for (let i = 0; i < 10000; i++) {
@@ -182,7 +182,7 @@ describe("Formula parser test", function() {
           values[random] = 0;
         }
       }
-      for (const x of Object.keys(values).map(x => parseInt(x))) {
+      for (const x of Object.keys(values).map((x) => parseInt(x))) {
         assert.ok(values[x] > (10000 / 6) * 0.9, `Values=${JSON.stringify(values, null, 4)}`);
         assert.ok(values[x] < (10000 / 6) * 1.1, `Values=${JSON.stringify(values, null, 4)}`);
       }

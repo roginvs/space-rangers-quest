@@ -44,7 +44,7 @@ export class OptionsTabContainer extends React.Component<
                 className="form-control"
                 placeholder=""
                 value={this.state.Ranger}
-                onChange={e => this.setState({ Ranger: e.target.value })}
+                onChange={(e) => this.setState({ Ranger: e.target.value })}
               />
             </div>
 
@@ -53,7 +53,7 @@ export class OptionsTabContainer extends React.Component<
               <select
                 className="form-control"
                 value={this.state.lang}
-                onChange={e => this.setState({ lang: e.target.value as Lang })}
+                onChange={(e) => this.setState({ lang: e.target.value as Lang })}
               >
                 <option value="rus">{l.rus}</option>
                 <option value="eng">{l.eng}</option>
@@ -67,7 +67,7 @@ export class OptionsTabContainer extends React.Component<
                 className="form-control"
                 placeholder=""
                 value={this.state.FromPlanet}
-                onChange={e => this.setState({ FromPlanet: e.target.value })}
+                onChange={(e) => this.setState({ FromPlanet: e.target.value })}
               />
             </div>
 
@@ -78,7 +78,7 @@ export class OptionsTabContainer extends React.Component<
                 className="form-control"
                 placeholder=""
                 value={this.state.FromStar}
-                onChange={e => this.setState({ FromStar: e.target.value })}
+                onChange={(e) => this.setState({ FromStar: e.target.value })}
               />
             </div>
 
@@ -89,7 +89,7 @@ export class OptionsTabContainer extends React.Component<
                 className="form-control"
                 placeholder=""
                 value={this.state.ToPlanet}
-                onChange={e => this.setState({ ToPlanet: e.target.value })}
+                onChange={(e) => this.setState({ ToPlanet: e.target.value })}
               />
             </div>
 
@@ -100,7 +100,7 @@ export class OptionsTabContainer extends React.Component<
                 className="form-control"
                 placeholder=""
                 value={this.state.ToStar}
-                onChange={e => this.setState({ ToStar: e.target.value })}
+                onChange={(e) => this.setState({ ToStar: e.target.value })}
               />
             </div>
           </div>
@@ -133,7 +133,7 @@ export class OptionsTabContainer extends React.Component<
                 this.setState({
                   busy: false,
                 });
-              })().catch(e => location.reload());
+              })().catch((e) => location.reload());
             }}
           >
             <i className="fa fa-save" /> {l.save}

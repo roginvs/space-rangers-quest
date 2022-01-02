@@ -17,6 +17,6 @@ export function getGameTaskText(taskText: string, player: Player) {
     [],
     [],
     // tslint:disable-next-line:strict-type-predicates
-    n => (n !== undefined ? Math.floor(Math.random() * n) : Math.random()),
+    (n) => (n !== undefined ? Math.floor(Math.random() * n) : Math.random()),
   );
 }

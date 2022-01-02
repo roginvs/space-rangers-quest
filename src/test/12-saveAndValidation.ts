@@ -27,7 +27,7 @@ const date2 = new Date("2018-07-22T22:21:36.761Z").getTime();
 const date3 = new Date("2018-07-22T22:22:36.761Z").getTime();
 const date4 = new Date("2018-07-22T22:30:36.761Z").getTime();
 
-describe(`Using saveAndValidaton.qm, seed 1`, function() {
+describe(`Using saveAndValidaton.qm, seed 1`, function () {
   const images: PQImages = [];
   const data = fs.readFileSync(__dirname + `/../../src/test/saveAndValidation.qm`);
   const quest = parse(data);
@@ -68,7 +68,7 @@ describe(`Using saveAndValidaton.qm, seed 1`, function() {
   });
 });
 
-describe(`Using saveAndValidaton.qm, seed 2`, function() {
+describe(`Using saveAndValidaton.qm, seed 2`, function () {
   const images: PQImages = [];
   const data = fs.readFileSync(__dirname + `/../../src/test/saveAndValidation.qm`);
   const quest = parse(data);

@@ -4,7 +4,7 @@ import "mocha";
 import { _sortJumps } from "../lib/qmplayer/funcs";
 import { createDetermenisticRandom } from "../lib/randomFunc";
 
-describe("Checking _sortJumps", function() {
+describe("Checking _sortJumps", function () {
   it(`Empty list returns empty`, () => {
     const r = _sortJumps([], () => assert.fail("no random"));
     assert.deepStrictEqual([], r);

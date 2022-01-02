@@ -46,16 +46,16 @@ export class QuestList extends React.Component<
     const store = this.props.store;
 
     const origins = index.quests
-      .filter(x => x.lang === player.lang)
-      .map(x => x.questOrigin)
+      .filter((x) => x.lang === player.lang)
+      .map((x) => x.questOrigin)
       .reduce((acc, d) => (acc.indexOf(d) > -1 ? acc : acc.concat(d)), [] as string[]);
 
     const questsToShow = index.quests
-      .filter(quest => quest.lang === player.lang)
-      .filter(quest =>
+      .filter((quest) => quest.lang === player.lang)
+      .filter((quest) =>
         store.questsListTab !== QUEST_SEARCH_ALL ? quest.questOrigin === store.questsListTab : true,
       )
-      .map(quest => ({
+      .map((quest) => ({
         ...quest,
         passed: (() => {
           if (!passedQuests) {
@@ -69,13 +69,13 @@ export class QuestList extends React.Component<
         })(),
         taskText: getGameTaskText(quest.taskText, player),
       }))
-      .filter(quest =>
+      .filter((quest) =>
         store.questsListSearch
           ? quest.gameName.toLowerCase().indexOf(store.questsListSearch.toLowerCase()) > -1 ||
             quest.taskText.toLowerCase().indexOf(store.questsListSearch.toLowerCase()) > -1
           : true,
       );
-    const questsToShowUnpassed = questsToShow.filter(x => x.passed === false);
+    const questsToShowUnpassed = questsToShow.filter((x) => x.passed === false);
 
     return (
       <AppNavbar store={this.props.store}>
@@ -108,7 +108,7 @@ export class QuestList extends React.Component<
                     {l.all}
                   </DropdownItem>
                   <DropdownItem divider />
-                  {origins.map(originName => (
+                  {origins.map((originName) => (
                     <DropdownItem
                       key={originName}
                       onClick={() => (store.questsListTab = originName)}
@@ -136,8 +136,8 @@ export class QuestList extends React.Component<
               <input
                 className="form-control"
                 value={store.questsListSearch}
-                onChange={e => (store.questsListSearch = e.target.value)}
-                onKeyUp={e =>
+                onChange={(e) => (store.questsListSearch = e.target.value)}
+                onKeyUp={(e) =>
                   e.which === 27 /* ESC */ ? (store.questsListSearch = "") : undefined
                 }
                 placeholder={l.search}
@@ -168,7 +168,7 @@ export class QuestList extends React.Component<
               ) : null}
 
               <div className="list-group">
-                {questsToShow.map(quest => (
+                {questsToShow.map((quest) => (
                   <a
                     href={`#/quests/${quest.gameName}`}
                     key={quest.gameName}

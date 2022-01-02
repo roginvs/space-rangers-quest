@@ -62,13 +62,10 @@ function readPqi(filename: string) {
   let currentName = "";
   for (const line of content
     .split(/\r\n|\n/)
-    .map(x => x.replace(/ /g, ""))
-    .filter(x => x)) {
+    .map((x) => x.replace(/ /g, ""))
+    .filter((x) => x)) {
     if (line.startsWith("//")) {
-      currentName = line
-        .slice(2)
-        .replace(/\.qm$/, "")
-        .toLowerCase();
+      currentName = line.slice(2).replace(/\.qm$/, "").toLowerCase();
       continue;
     }
     const [data1, data2] = line.split("=");
@@ -80,7 +77,7 @@ function readPqi(filename: string) {
     const d = data1.split(",");
     d.shift();
     const type = d.shift() as "L" | "P" | "PAR";
-    const indexes = d.map(x => parseInt(x)).map(x => (type === "PAR" ? x - 1 : x));
+    const indexes = d.map((x) => parseInt(x)).map((x) => (type === "PAR" ? x - 1 : x));
     if (!result[currentName]) {
       result[currentName] = [];
     }
@@ -102,13 +99,13 @@ function readPqi(filename: string) {
       newResult[k].push({
         filename: image,
         critParams: ([] as number[]).concat(
-          ...result[k].filter(x => x.filename === image).map(x => x.critParams || []),
+          ...result[k].filter((x) => x.filename === image).map((x) => x.critParams || []),
         ),
         locationIds: ([] as number[]).concat(
-          ...result[k].filter(x => x.filename === image).map(x => x.locationIds || []),
+          ...result[k].filter((x) => x.filename === image).map((x) => x.locationIds || []),
         ),
         jumpIds: ([] as number[]).concat(
-          ...result[k].filter(x => x.filename === image).map(x => x.jumpIds || []),
+          ...result[k].filter((x) => x.filename === image).map((x) => x.jumpIds || []),
         ),
       });
     }
@@ -141,12 +138,12 @@ function areThereAnyQmmImages(qmmQuest: QM) {
   });
 
   for (const l of qmmQuest.locations) {
-    l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id}`));
-    tracks = tracks.concat(...l.media.map(x => x.track));
-    sounds = sounds.concat(...l.media.map(x => x.sound));
+    l.media.map((x) => x.img).forEach((x) => addImg(x, `Loc ${l.id}`));
+    tracks = tracks.concat(...l.media.map((x) => x.track));
+    sounds = sounds.concat(...l.media.map((x) => x.sound));
 
     l.paramsChanges.forEach((p, pid) => {
-      l.media.map(x => x.img).forEach(x => addImg(x, `Loc ${l.id} p${pid + 1}`));
+      l.media.map((x) => x.img).forEach((x) => addImg(x, `Loc ${l.id} p${pid + 1}`));
       tracks.push(p.track);
       sounds.push(p.sound);
     });
@@ -165,8 +162,8 @@ function areThereAnyQmmImages(qmmQuest: QM) {
     });
   });
 
-  tracks = tracks.filter(x => x);
-  sounds = sounds.filter(x => x);
+  tracks = tracks.filter((x) => x);
+  sounds = sounds.filter((x) => x);
 
   return Object.keys(images);
 }
@@ -195,8 +192,8 @@ const DEBUG_SPEEDUP_SKIP_COPING = false;
 console.info(`Scan and copy images`);
 const allImages = fs
   .readdirSync(dataSrcPath + "/img")
-  .filter(x => fs.statSync(dataSrcPath + "/img/" + x).isFile())
-  .map(imgShortName => {
+  .filter((x) => fs.statSync(dataSrcPath + "/img/" + x).isFile())
+  .map((imgShortName) => {
     const filePath = "img/" + imgShortName.toLowerCase();
     if (!DEBUG_SPEEDUP_SKIP_COPING) {
       fs.writeFileSync(
@@ -214,14 +211,14 @@ const allImages = fs
 console.info(`Copying music`);
 const music = fs
   .readdirSync(dataSrcPath + "/music")
-  .filter(x => {
+  .filter((x) => {
     const fullName = dataSrcPath + "/music/" + x;
     return (
       fs.statSync(fullName).isFile() &&
       (fullName.toLowerCase().endsWith(".ogg") || fullName.toLowerCase().endsWith(".mp3"))
     );
   })
-  .map(x => {
+  .map((x) => {
     const name = `music/${x}`;
     if (!DEBUG_SPEEDUP_SKIP_COPING) {
       fs.writeFileSync(dataDstPath + "/" + name, fs.readFileSync(dataSrcPath + "/" + name));
@@ -265,15 +262,15 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
     const player = new QMPlayer(quest, undefined, lang); // oldTge
     player.start();
 
-    const probablyThisQuestImages = allImages.filter(x =>
+    const probablyThisQuestImages = allImages.filter((x) =>
       x.toLowerCase().startsWith(gameName.toLowerCase()),
     );
     const randomImages = probablyThisQuestImages.map((filename, fileIndex) => {
       return {
         filename,
         locationIds: quest.locations
-          .map(loc => loc.id)
-          .filter(id => (id - 1) % probablyThisQuestImages.length === fileIndex),
+          .map((loc) => loc.id)
+          .filter((id) => (id - 1) % probablyThisQuestImages.length === fileIndex),
       };
     });
 

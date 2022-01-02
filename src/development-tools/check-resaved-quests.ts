@@ -38,8 +38,8 @@ for (const fileName of fs.readdirSync(gameDir)) {
           !(
             (x.kind === "A" &&
               x.item.kind === "N" &&
-              ((x.path[0] === "params" || x.path[2] === "params") &&
-                x.index >= origQuest.paramsCount)) ||
+              (x.path[0] === "params" || x.path[2] === "params") &&
+              x.index >= origQuest.paramsCount) ||
             (x.path.length === 1 && x.path[0] === "paramsCount")
           ),
       );

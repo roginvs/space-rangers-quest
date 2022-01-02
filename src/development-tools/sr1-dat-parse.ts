@@ -419,8 +419,8 @@ Prison,P,87,89=Bm.PQI.Bank_09
 const questIdToName: { [id: string]: string } = {};
 questRawNames
   .split("\n")
-  .filter(x => x)
-  .forEach(line => {
+  .filter((x) => x)
+  .forEach((line) => {
     const id = line.split("=").shift();
     const name = line.split("\\").pop();
     if (!id || !name) {
@@ -434,8 +434,8 @@ const imagesPerQuest: {
 } = {};
 questRawPQI
   .split("\n")
-  .filter(x => x)
-  .forEach(line => {
+  .filter((x) => x)
+  .forEach((line) => {
     // 16,L,16,17,18,19,20,21,22,23,24=Bm.PQI.Hachball_03
     const [left, right] = line.split("=");
     const [questId, type, ...ids] = left.split(",");
@@ -459,17 +459,17 @@ questRawPQI
       filename: imageName.toLowerCase() + ".jpg",
       ...(type === "L"
         ? {
-            locationIds: ids.map(x => parseInt(x)),
+            locationIds: ids.map((x) => parseInt(x)),
           }
         : undefined),
       ...(type === "P"
         ? {
-            jumpIds: ids.map(x => parseInt(x)),
+            jumpIds: ids.map((x) => parseInt(x)),
           }
         : undefined),
       ...(type === "PAR"
         ? {
-            critParams: ids.map(x => parseInt(x)),
+            critParams: ids.map((x) => parseInt(x)),
           }
         : undefined),
     });

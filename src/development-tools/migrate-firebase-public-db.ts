@@ -53,7 +53,7 @@ async function createRow(key: string, row: WonProofTableRow) {
     for (const gameName of Object.keys(userData.gamesWonProofs || {})) {
       const gameProofs = userData.gamesWonProofs[gameName];
       console.info(`  Validating game=${gameName}`);
-      const gameInfo = questIndex.quests.find(x => x.gameName === gameName);
+      const gameInfo = questIndex.quests.find((x) => x.gameName === gameName);
       if (!gameInfo) {
         console.warn(`  Game ${gameInfo} not found`);
         continue;
@@ -87,7 +87,7 @@ async function createRow(key: string, row: WonProofTableRow) {
 
   console.info("Done");
   process.exit(0);
-})().catch(e => {
+})().catch((e) => {
   console.error(e);
   process.exit(1);
 });

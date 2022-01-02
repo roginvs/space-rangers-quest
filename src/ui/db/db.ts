@@ -77,7 +77,7 @@ export async function getDb(app: firebase.app.App) {
     ? await new Promise<IDBDatabase>((resolve, reject) => {
         const idb = window.indexedDB.open(INDEXEDDB_NAME, 7);
         console.info("idb opened");
-        idb.onerror = e =>
+        idb.onerror = (e) =>
           reject(
             new Error(
               idb.error ? `IndexedDB error: ${idb.error.name} ${idb.error.message}` : "Unknown",
@@ -116,10 +116,11 @@ export async function getDb(app: firebase.app.App) {
       const objectStore = trx.objectStore(storeName);
       const getReq = objectStore.get(key);
       const localResult = await new Promise<any>((resolve, reject) => {
-        getReq.onsuccess = e => {
+        getReq.onsuccess = (e) => {
           resolve(getReq.result);
         };
-        getReq.onerror = e => reject(new Error(getReq.error ? getReq.error.toString() : "Unknown"));
+        getReq.onerror = (e) =>
+          reject(new Error(getReq.error ? getReq.error.toString() : "Unknown"));
       });
       return localResult;
     } else {
@@ -141,7 +142,7 @@ export async function getDb(app: firebase.app.App) {
           [key: string]: any;
         } = {};
         const openCursor = objectStore.openCursor();
-        openCursor.onsuccess = function(event: any) {
+        openCursor.onsuccess = function (event: any) {
           const cursor = event.target.result;
           if (cursor) {
             if (cursor.value) {
@@ -153,7 +154,7 @@ export async function getDb(app: firebase.app.App) {
             resolve(data);
           }
         };
-        openCursor.onerror = e => {
+        openCursor.onerror = (e) => {
           reject(new Error(openCursor.error ? openCursor.error.toString() : "Unknown"));
         };
       });
@@ -184,8 +185,8 @@ export async function getDb(app: firebase.app.App) {
 
       const req = value ? objectStore.put(value, key) : objectStore.delete(key);
       await new Promise<void>((resolve, reject) => {
-        req.onsuccess = e => resolve();
-        req.onerror = e => {
+        req.onsuccess = (e) => resolve();
+        req.onerror = (e) => {
           console.warn("Indexeddb error", req.error);
           reject(
             new Error(
@@ -265,7 +266,7 @@ export async function getDb(app: firebase.app.App) {
     }
   }
   try {
-    app.auth().onAuthStateChanged(function(user) {
+    app.auth().onAuthStateChanged(function (user) {
       firebaseUser = user;
       console.info(`on auth changed = ${firebaseUser ? firebaseUser.uid : "<null>"}`);
     });
@@ -273,7 +274,7 @@ export async function getDb(app: firebase.app.App) {
     app
       .database()
       .ref(".info/connected")
-      .on("value", snap => {
+      .on("value", (snap) => {
         const firebaseOnline = snap && snap.val();
         console.info(`Firebase online=${firebaseOnline}`);
       });
@@ -299,11 +300,8 @@ export async function getDb(app: firebase.app.App) {
         const fullRefPath = `${store}/${firebaseUser.uid}/${userPath}`;
         console.info(`Firebase SET fullRefPath=${fullRefPath} value=${JSON.stringify(value)}`);
         await Promise.race([
-          app
-            .database()
-            .ref(fullRefPath)
-            .set(value),
-          new Promise<void>(r => setTimeout(r, 10000)),
+          app.database().ref(fullRefPath).set(value),
+          new Promise<void>((r) => setTimeout(r, 10000)),
         ]);
       }
     } catch (e) {
@@ -322,12 +320,12 @@ export async function getDb(app: firebase.app.App) {
     try {
       firebaseGoOnline();
       const firebaseResult = await Promise.race([
-        new Promise<any | null>(resolve =>
+        new Promise<any | null>((resolve) =>
           firebaseUser
             ? app
                 .database()
                 .ref(`${store}/${firebaseUser.uid}/${userPath}`)
-                .once("value", snapshot => {
+                .once("value", (snapshot) => {
                   const value = snapshot ? snapshot.val() : null;
                   console.info(
                     `Firebase GET path=${store}/${
@@ -338,7 +336,7 @@ export async function getDb(app: firebase.app.App) {
                 })
             : resolve(null),
         ),
-        new Promise<null>(r => setTimeout(() => r(null), 10000)),
+        new Promise<null>((r) => setTimeout(() => r(null), 10000)),
       ]);
 
       return firebaseResult;
@@ -362,10 +360,10 @@ export async function getDb(app: firebase.app.App) {
         allUsersRef
           .orderByChild("gamesWonCount")
           .limitToLast(100)
-          .once("value", snapshot => {
+          .once("value", (snapshot) => {
             if (snapshot) {
               const champions: FirebasePublic[] = [];
-              snapshot.forEach(champion => {
+              snapshot.forEach((champion) => {
                 champions.push({
                   ...champion.val(),
                   userId: champion.key,
@@ -377,7 +375,7 @@ export async function getDb(app: firebase.app.App) {
               resolve(null);
             }
           })
-          .catch(e => reject(e));
+          .catch((e) => reject(e));
       });
       return data;
     } catch (e) {
@@ -638,7 +636,7 @@ orderByChild('createdAt').once("value")).val();
               console.info(`Pushing ${aleaSeed} into remote wons`);
               await setRemoteWon(aleaSeed, {
                 rangerName,
-                createdAt: (firebase.database.ServerValue.TIMESTAMP as any) as number,
+                createdAt: firebase.database.ServerValue.TIMESTAMP as any as number,
                 gameName,
                 proof,
                 userId,
@@ -717,7 +715,7 @@ orderByChild('createdAt').once("value")).val();
     if (userId) {
       await setRemoteWon(proof.aleaSeed, {
         rangerName,
-        createdAt: (firebase.database.ServerValue.TIMESTAMP as any) as number,
+        createdAt: firebase.database.ServerValue.TIMESTAMP as any as number,
         gameName,
         proof,
         userId,
