@@ -1,6 +1,13 @@
 import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../lib/qmplayer/funcs";
-import { Jump, Location, LocationId, ParameterShowingType } from "../../../lib/qmreader";
+import {
+  Jump,
+  JumpId,
+  Location,
+  LocationId,
+  ParameterChange,
+  ParameterShowingType,
+} from "../../../lib/qmreader";
 
 export function removeLocation(quest: Quest, location: DeepImmutable<Location>): Quest {
   throw new Error("TODO");
@@ -20,6 +27,20 @@ export function updateJump(quest: Quest, newJump: DeepImmutable<Jump>): Quest {
   };
 }
 
+function createDefaultParamChange(): ParameterChange {
+  return {
+    change: 0,
+    changingFormula: "",
+    critText: "",
+    isChangeFormula: false,
+    isChangePercentage: false,
+    isChangeValue: false,
+    showingType: ParameterShowingType.НеТрогать,
+    sound: undefined,
+    track: undefined,
+    img: undefined,
+  };
+}
 export function createLocation(quest: Quest, locX: number, locY: number) {
   let newLocationId = 1;
   while (quest.locations.find((l) => l.id === newLocationId)) {
@@ -46,19 +67,40 @@ export function createLocation(quest: Quest, locX: number, locY: number) {
       },
     ],
     textSelectFormula: "",
-    paramsChanges: quest.params.map(() => ({
-      change: 0,
-      changingFormula: "",
-      critText: "",
-      critTextFormula: "",
-      isChangeFormula: false,
-      isChangePercentage: false,
-      isChangeValue: false,
-      showingType: ParameterShowingType.НеТрогать,
-      sound: undefined,
-      track: undefined,
-      img: undefined,
-    })),
+    paramsChanges: quest.params.map(() => createDefaultParamChange()),
   };
   return newLocation;
+}
+
+export function createJump(quest: Quest, fromLocationId: LocationId, toLocationId: LocationId) {
+  let newJumpId = 1;
+  while (quest.jumps.find((j) => j.id === newJumpId)) {
+    newJumpId++;
+  }
+  const newJump: DeepImmutable<Jump> = {
+    id: newJumpId as JumpId,
+    alwaysShow: false,
+    dayPassed: false,
+    description: "",
+    formulaToPass: "",
+    fromLocationId: fromLocationId,
+    toLocationId: toLocationId,
+    img: undefined,
+    sound: undefined,
+    track: undefined,
+    jumpingCountLimit: 0,
+    priority: 0,
+    showingOrder: 0,
+    text: "",
+    paramsConditions: quest.params.map((param) => ({
+      mustEqualValues: [],
+      mustEqualValuesEqual: false,
+      mustFrom: param.min,
+      mustTo: param.max,
+      mustModValues: [],
+      mustModValuesMod: false,
+    })),
+    paramsChanges: quest.params.map(() => createDefaultParamChange()),
+  };
+  return newJump;
 }
