@@ -98,7 +98,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         const LUT = jumpHover[2].LUT;
         const startColor = jumpHover[2].startColor;
         const endColor = jumpHover[2].endColor;
-        context.lineWidth = 3;
+        context.lineWidth = 2;
         for (let i = 1; i < LUT.length; i++) {
           context.beginPath();
           context.moveTo(LUT[i - 1].x, LUT[i - 1].y);
