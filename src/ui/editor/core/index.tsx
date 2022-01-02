@@ -6,6 +6,7 @@ import { Quest } from "../../../lib/qmplayer/funcs";
 import { Jump, Location } from "../../../lib/qmreader";
 import { colors } from "../colors";
 import { CANVAS_PADDING, LOCATION_RADIUS } from "../consts";
+import { updateLocation } from "./actions";
 import { colorToString, interpolateColor } from "./color";
 import { drawArrowEnding, drawLocation, getCanvasSize, updateMainCanvas } from "./drawings";
 import { HoverZone, HoverZones } from "./hover";
@@ -26,7 +27,7 @@ function isDistanceLower(x1: number, y1: number, x2: number, y2: number, distanc
 }
 
 export function EditorCore({ quest, onChange }: EditorCoreProps) {
-  const [mode, setMode] = React.useState<EditorMode>("select");
+  const [mode, setMode] = React.useState<EditorMode>("move");
 
   const mainCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const mainContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
@@ -116,8 +117,23 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     const onMouseUp = (e: MouseEvent) => {
       setIsDragging(null);
 
+      const mouseInCanvas = getMouseCoordsInCanvas(e);
+
       if (mode === "move") {
+        if (hoverZone) {
+          const location = hoverZone.zone[3];
+          if (location) {
+            onChange(
+              updateLocation(quest, {
+                ...location,
+                locX: mouseInCanvas.x,
+                locY: mouseInCanvas.y,
+              }),
+            );
+          }
+        }
         setHoverZone(undefined);
+        // aasdasd
       } else if (mode === "select" || e.button === 2 /* Right click*/) {
         // TODO
       } else if (mode === "newJump") {
@@ -131,7 +147,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousedown", onMouseDown);
     };
-  }, [mode]);
+  }, [mode, hoverZone, getMouseCoordsInCanvas]);
 
   React.useEffect(() => {
     const context = interactiveContextRef.current;

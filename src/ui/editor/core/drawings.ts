@@ -221,7 +221,10 @@ function drawJumpArrow(
   }
 
   ctx.strokeStyle = colorToString(endColor);
-  drawArrowEnding(ctx, LUT[LUT.length - 1].x, LUT[LUT.length - 1].y, endLoc.locX, endLoc.locY);
+  if (LUT.length > 0) {
+    // This might happen if distance between locations is too short
+    drawArrowEnding(ctx, LUT[LUT.length - 1].x, LUT[LUT.length - 1].y, endLoc.locX, endLoc.locY);
+  }
 }
 
 export function drawLocation(
