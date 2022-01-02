@@ -11,7 +11,11 @@ import { HoverZone, HoverZones } from "./hover";
 import { HoverPopup } from "./hoverPopup";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { isDistanceLower, isPlaceBusy, snapToGrid } from "./utils";
+import {
+  isDistanceLower,
+  isLocationAtThisPosition as whatLocationIsAlreadyAtThisPosition,
+  snapToGrid,
+} from "./utils";
 import { Jump, Location } from "../../../lib/qmreader";
 import { LocationHover } from "./hovers/location";
 import { Overlay } from "./overlay";
@@ -101,6 +105,10 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   }, []);
 
   React.useEffect(() => {
+    if (overlayMode) {
+      return;
+    }
+
     // TODO: This do not work well when scrolling
     const onMove = (e: MouseEvent) => {
       const mouseCoords = getMouseCoordsInCanvas(e);
@@ -127,13 +135,16 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     return () => {
       document.removeEventListener("mousemove", onMove);
     };
-  }, [hoverZones, isDragging]);
+  }, [hoverZones, isDragging, overlayMode]);
 
   const notifyUser = React.useCallback((msg: string) => {
     toast(msg);
   }, []);
 
   React.useEffect(() => {
+    if (overlayMode) {
+      return;
+    }
     const onMouseDown = (e: MouseEvent) => {
       if (e.button === 0) {
         if (mouseMode === "move") {
@@ -167,8 +178,15 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             const location = hoverZone.zone[3];
             if (location) {
               const griddedLocation = snapToGrid(quest, mouseInCanvas.x, mouseInCanvas.y);
-              if (isPlaceBusy(quest, griddedLocation.x, griddedLocation.y)) {
-                notifyUser("Location is busy");
+              const locationAtThisPosition = whatLocationIsAlreadyAtThisPosition(
+                quest,
+                griddedLocation.x,
+                griddedLocation.y,
+              );
+              if (locationAtThisPosition) {
+                if (locationAtThisPosition.id !== location.id) {
+                  notifyUser("This position is busy");
+                }
               } else {
                 onChange(
                   updateLocation(quest, {
@@ -219,7 +237,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       document.removeEventListener("mouseup", onMouseUp);
       document.removeEventListener("mousedown", onMouseDown);
     };
-  }, [mouseMode, hoverZone, getMouseCoordsInCanvas]);
+  }, [mouseMode, hoverZone, overlayMode, getMouseCoordsInCanvas]);
 
   React.useEffect(() => {
     const context = interactiveContextRef.current;

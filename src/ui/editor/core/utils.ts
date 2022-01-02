@@ -16,8 +16,8 @@ export function snapToGrid(quest: Quest, x: number, y: number) {
   };
 }
 
-export function isPlaceBusy(quest: Quest, x: number, y: number) {
-  return quest.locations.some((location) =>
+export function isLocationAtThisPosition(quest: Quest, x: number, y: number) {
+  return quest.locations.find((location) =>
     isDistanceLower(x, y, location.locX, location.locY, LOCATION_RADIUS),
   );
 }
