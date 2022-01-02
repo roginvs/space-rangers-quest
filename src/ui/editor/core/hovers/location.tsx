@@ -32,7 +32,12 @@ export function LocationHover({
 
   const MAX_TEXT_CHARS = 300;
 
-  const paramsSummary = getSummaryForParamsChangeAndConditions(quest, location.paramsChanges, null);
+  const paramsSummary = getSummaryForParamsChangeAndConditions(
+    quest.params,
+    quest.paramsCount,
+    location.paramsChanges,
+    null,
+  );
   /*
   paramsSummary.unshift({
     key: "lol",

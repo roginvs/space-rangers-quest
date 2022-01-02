@@ -5,6 +5,7 @@ import {
   JumpParameterCondition,
   ParameterChange,
   ParameterShowingType,
+  QMParam,
 } from "../../../../lib/qmreader";
 import { range } from "../utils";
 
@@ -15,11 +16,12 @@ export interface JumpLocationParameterConditionSummary {
 }
 
 export function getSummaryForParamsChangeAndConditions(
-  quest: Quest,
+  params: DeepImmutable<QMParam[]>,
+  paramsCount: number,
   paramsChanges: DeepImmutable<ParameterChange[]>,
   paramsConditions: JumpParameterCondition[] | null,
 ): JumpLocationParameterConditionSummary[] {
-  return range(quest.paramsCount)
+  return range(paramsCount)
     .map((paramId) => {
       const change = paramsChanges[paramId];
       const showHideString =
@@ -46,7 +48,7 @@ export function getSummaryForParamsChangeAndConditions(
         ? `${change.change}`
         : "";
       let conditionString = "";
-      const param = quest.params[paramId];
+      const param = params[paramId];
 
       if (paramsConditions) {
         const conditions = paramsConditions[paramId];
