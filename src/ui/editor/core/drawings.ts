@@ -1,7 +1,7 @@
 import { Bezier } from "bezier-js";
 import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../lib/qmplayer/funcs";
-import { Location } from "../../../lib/qmreader";
+import { JumpId, Location } from "../../../lib/qmreader";
 import { colors } from "../colors";
 import {
   CANVAS_PADDING,
@@ -9,6 +9,7 @@ import {
   JUMPS_LOOP_CONTROL_POINT_DISTANCE,
   JUMP_ARROW_LENGTH,
   JUMP_END_LOCATION_RADIUS,
+  JUMP_HOVER_ZONE_WIDTH,
   LOCATION_RADIUS,
 } from "../consts";
 import { HoverZones } from "./hover";
@@ -135,12 +136,14 @@ function drawArrowEnding(
 
 export function drawJumpArrow(
   ctx: CanvasRenderingContext2D,
+  hoverZones: HoverZones,
   startColor: Color,
   endColor: Color,
   startLoc: LocationLocationOnly,
   endLoc: LocationLocationOnly,
   myIndex: number,
   allJumpsCount: number,
+  jumpId: JumpId,
 ) {
   const [controlPoint1, controlPoint2] = getControlPoints(startLoc, endLoc, myIndex, allJumpsCount);
 
@@ -168,7 +171,7 @@ export function drawJumpArrow(
     (originalLength - JUMP_END_LOCATION_RADIUS) / originalLength,
   ).left;
 
-  const STEPS = 15;
+  const STEPS = Math.round(originalLength / JUMP_HOVER_ZONE_WIDTH);
   const LUT = bezier.getLUT(STEPS);
 
   for (let i = 1; i < LUT.length; i++) {
@@ -179,6 +182,8 @@ export function drawJumpArrow(
     ctx.stroke();
     ctx.fillStyle = colorToString(interpolateColor(startColor, endColor, i / LUT.length));
     // ctx.fillRect(LUT[i].x, LUT[i].y, 4, 4);
+
+    hoverZones.push([LUT[i].x, LUT[i].y, JUMP_HOVER_ZONE_WIDTH, null, jumpId]);
   }
 
   drawArrowEnding(ctx, LUT[LUT.length - 1].x, LUT[LUT.length - 1].y, endLoc.locX, endLoc.locY);
@@ -258,7 +263,31 @@ export function updateMainCanvas(
     const allJumpsCount = allJumpsBetweenThisLocations.length;
     const myIndex = allJumpsBetweenThisLocations.indexOf(jump);
 
-    drawJumpArrow(ctx, [255, 255, 255], [0, 0, 255], startLoc, endLoc, myIndex, allJumpsCount);
+    drawJumpArrow(
+      ctx,
+      hoverZones,
+      [255, 255, 255],
+      [0, 0, 255],
+      startLoc,
+      endLoc,
+      myIndex,
+      allJumpsCount,
+      jump.id,
+    );
   });
+
+  const DRAW_DEBUG_HOVER_ZONES = true;
+  if (DRAW_DEBUG_HOVER_ZONES) {
+    for (const hoverZone of hoverZones) {
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = 1;
+      ctx.fillStyle = "none";
+      ctx.beginPath();
+      ctx.arc(hoverZone[0], hoverZone[1], hoverZone[2], 0, 2 * Math.PI);
+      ctx.stroke();
+    }
+    console.info(`hoverZones: ${hoverZones.length}`);
+  }
+
   return hoverZones;
 }

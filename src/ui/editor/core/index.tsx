@@ -47,8 +47,6 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     setHoverZones(hoverZones);
   }, [quest, canvasSize]);
 
-  console.info(hoverZones);
-
   React.useEffect(() => {
     if (!canvasRef.current) {
       return;
