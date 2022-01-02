@@ -1,11 +1,16 @@
 import { Quest } from "../../../../lib/qmplayer/funcs";
 import { colors } from "../../colors";
-import { CANVAS_PADDING } from "../../consts";
-import { HoverZones } from "../hover";
-import { drawJumpArrow } from "./jumps";
+import { CANVAS_PADDING, LOCATION_RADIUS } from "../../consts";
+import { colorToString, interpolateColor } from "../color";
+import { HoverZone, HoverZones } from "../hover";
+import { drawArrowEnding, drawJumpArrow } from "./jumps";
 import { drawLocation } from "./locations";
 
-export function getCanvasSize(quest: Quest) {
+interface CanvasSize {
+  canvasWidth: number;
+  canvasHeight: number;
+}
+export function getCanvasSize(quest: Quest): CanvasSize {
   const canvasWidth = Math.max(...quest.locations.map((l) => l.locX)) + CANVAS_PADDING;
   const canvasHeight = Math.max(...quest.locations.map((l) => l.locY)) + CANVAS_PADDING;
   return { canvasWidth, canvasHeight };
@@ -81,4 +86,82 @@ export function updateMainCanvas(
   }
 
   return hoverZones;
+}
+
+export function drawHovers(
+  context: CanvasRenderingContext2D,
+  canvasSize: CanvasSize,
+  hoverZone:
+    | {
+        zone: HoverZone;
+        clientX: number;
+        clientY: number;
+      }
+    | undefined,
+  isDragging: { x: number; y: number } | undefined,
+) {
+  // TODO: This is part of Drawings.tsx
+  context.clearRect(0, 0, canvasSize.canvasWidth, canvasSize.canvasHeight);
+
+  if (hoverZone) {
+    const location = hoverZone.zone[3];
+    if (location) {
+      context.setLineDash(isDragging ? [2, 2] : []);
+
+      context.strokeStyle = "black";
+      context.lineWidth = 2;
+      context.fillStyle = "none";
+      context.beginPath();
+      context.arc(location.locX, location.locY, LOCATION_RADIUS, 0, 2 * Math.PI);
+      context.stroke();
+      context.setLineDash([]);
+
+      if (isDragging) {
+        context.strokeStyle = "black";
+        context.lineWidth = 2;
+        context.fillStyle = "none";
+        context.beginPath();
+
+        context.arc(isDragging.x, isDragging.y, LOCATION_RADIUS, 0, 2 * Math.PI);
+        context.stroke();
+      }
+    }
+    const jumpHover = hoverZone.zone[4];
+    if (jumpHover) {
+      context.setLineDash(isDragging ? [5, 2] : []);
+      const LUT = jumpHover[2].LUT;
+      const startColor = jumpHover[2].startColor;
+      const endColor = jumpHover[2].endColor;
+      context.lineWidth = 3;
+      for (let i = 1; i < LUT.length; i++) {
+        context.beginPath();
+        context.moveTo(LUT[i - 1].x, LUT[i - 1].y);
+        context.strokeStyle = colorToString(interpolateColor(startColor, endColor, i / LUT.length));
+        context.lineTo(LUT[i].x, LUT[i].y);
+        context.stroke();
+      }
+      context.setLineDash([]);
+
+      if (isDragging) {
+        context.strokeStyle = "black";
+        context.lineWidth = 1;
+        context.fillStyle = "none";
+        context.beginPath();
+
+        const isBegining = jumpHover[1];
+
+        const startX = isBegining ? isDragging.x : jumpHover[2].startLoc.locX;
+        const startY = isBegining ? isDragging.y : jumpHover[2].startLoc.locY;
+        context.moveTo(startX, startY);
+
+        const endX = isBegining ? jumpHover[2].endLoc.locX : isDragging.x;
+        const endY = isBegining ? jumpHover[2].endLoc.locY : isDragging.y;
+
+        context.lineTo(endX, endY);
+        context.stroke();
+
+        drawArrowEnding(context, endX, endY, endX - startX + endX, endY - startY + endY);
+      }
+    }
+  }
 }

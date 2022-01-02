@@ -6,14 +6,13 @@ import { Quest } from "../../../lib/qmplayer/funcs";
 import { LOCATION_DROP_RADIUS, LOCATION_RADIUS } from "../consts";
 import { updateJump, updateLocation } from "./actions";
 import { colorToString, interpolateColor } from "./color";
-import { getCanvasSize, updateMainCanvas } from "./drawings/index";
+import { drawHovers, getCanvasSize, updateMainCanvas } from "./drawings/index";
 import { HoverZone, HoverZones } from "./hover";
 import { HoverPopup } from "./hoverPopup";
 import { ToastContainer, toast } from "react-toastify";
 
 import "react-toastify/dist/ReactToastify.css";
 import { isDistanceLower, isPlaceBusy, snapToGrid } from "./utils";
-import { drawArrowEnding } from "./drawings/jumps";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -45,7 +44,9 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     | undefined
   >(undefined);
 
-  const [isDragging, setIsDragging] = React.useState<{ x: number; y: number } | null>(null);
+  const [isDragging, setIsDragging] = React.useState<{ x: number; y: number } | undefined>(
+    undefined,
+  );
 
   React.useEffect(() => {
     const ctx = mainContextRef.current;
@@ -120,7 +121,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     document.addEventListener("mousedown", onMouseDown);
 
     const onMouseUp = (e: MouseEvent) => {
-      setIsDragging(null);
+      setIsDragging(undefined);
 
       const mouseInCanvas = getMouseCoordsInCanvas(e);
 
@@ -189,72 +190,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     if (!context) {
       return;
     }
-    // TODO: This is part of Drawings.tsx
-    context.clearRect(0, 0, canvasSize.canvasWidth, canvasSize.canvasHeight);
-
-    if (hoverZone) {
-      const location = hoverZone.zone[3];
-      if (location) {
-        context.setLineDash(isDragging ? [2, 2] : []);
-
-        context.strokeStyle = "black";
-        context.lineWidth = 2;
-        context.fillStyle = "none";
-        context.beginPath();
-        context.arc(location.locX, location.locY, LOCATION_RADIUS, 0, 2 * Math.PI);
-        context.stroke();
-        context.setLineDash([]);
-
-        if (isDragging) {
-          context.strokeStyle = "black";
-          context.lineWidth = 2;
-          context.fillStyle = "none";
-          context.beginPath();
-
-          context.arc(isDragging.x, isDragging.y, LOCATION_RADIUS, 0, 2 * Math.PI);
-          context.stroke();
-        }
-      }
-      const jumpHover = hoverZone.zone[4];
-      if (jumpHover) {
-        context.setLineDash(isDragging ? [5, 2] : []);
-        const LUT = jumpHover[2].LUT;
-        const startColor = jumpHover[2].startColor;
-        const endColor = jumpHover[2].endColor;
-        context.lineWidth = 3;
-        for (let i = 1; i < LUT.length; i++) {
-          context.beginPath();
-          context.moveTo(LUT[i - 1].x, LUT[i - 1].y);
-          context.strokeStyle = colorToString(
-            interpolateColor(startColor, endColor, i / LUT.length),
-          );
-          context.lineTo(LUT[i].x, LUT[i].y);
-          context.stroke();
-        }
-        context.setLineDash([]);
-
-        if (isDragging) {
-          context.strokeStyle = "black";
-          context.lineWidth = 1;
-          context.fillStyle = "none";
-          context.beginPath();
-
-          const isBegining = jumpHover[1];
-
-          const startX = isBegining ? isDragging.x : jumpHover[2].startLoc.locX;
-          const startY = isBegining ? isDragging.y : jumpHover[2].startLoc.locY;
-          context.moveTo(startX, startY);
-
-          const endX = isBegining ? jumpHover[2].endLoc.locX : isDragging.x;
-          const endY = isBegining ? jumpHover[2].endLoc.locY : isDragging.y;
-
-          context.lineTo(endX, endY);
-          context.stroke();
-
-          drawArrowEnding(context, endX, endY, endX - startX + endX, endY - startY + endY);
-        }
-      }
-    }
+    drawHovers(context, canvasSize, hoverZone, isDragging);
   }, [hoverZone, canvasSize, isDragging]);
 
   // console.info(`Editor re-render`);
