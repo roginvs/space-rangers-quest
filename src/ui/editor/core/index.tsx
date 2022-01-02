@@ -9,6 +9,7 @@ import { CANVAS_PADDING, LOCATION_RADIUS } from "../consts";
 import { colorToString, interpolateColor } from "./color";
 import { drawLocation, getCanvasSize, updateMainCanvas } from "./drawings";
 import { HoverZone, HoverZones } from "./hover";
+import { HoverPopup } from "./hoverPopup";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -36,7 +37,14 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
   const canvasSize = React.useMemo(() => getCanvasSize(quest), [quest]);
   const [hoverZones, setHoverZones] = React.useState<HoverZones>([]);
-  const [hoverZone, setHoverZone] = React.useState<HoverZone | undefined>(undefined);
+  const [hoverZone, setHoverZone] = React.useState<
+    | {
+        zone: HoverZone;
+        clientX: number;
+        clientY: number;
+      }
+    | undefined
+  >(undefined);
 
   React.useEffect(() => {
     const ctx = mainContextRef.current;
@@ -59,6 +67,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     }
     const canvas = interactiveCanvasRef.current;
 
+    // TODO: This do not work well when scrolling
     const onMove = (e: MouseEvent) => {
       const canvasRect = canvas.getBoundingClientRect();
 
@@ -68,7 +77,9 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       const hoverZone = hoverZones.find((hoverCandidate) =>
         isDistanceLower(mouseX, mouseY, hoverCandidate[0], hoverCandidate[1], hoverCandidate[2]),
       );
-      setHoverZone(hoverZone);
+      setHoverZone(
+        hoverZone ? { zone: hoverZone, clientX: e.clientX, clientY: e.clientY } : undefined,
+      );
     };
     document.addEventListener("mousemove", onMove);
 
@@ -85,7 +96,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     // TODO: This is part of Drawings.tsx
     context.clearRect(0, 0, canvasSize.canvasWidth, canvasSize.canvasHeight);
     if (hoverZone) {
-      const location = hoverZone[3];
+      const location = hoverZone.zone[3];
       if (location) {
         context.strokeStyle = "black";
         context.lineWidth = 2;
@@ -94,7 +105,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         context.arc(location.locX, location.locY, LOCATION_RADIUS, 0, 2 * Math.PI);
         context.stroke();
       }
-      const jumpHover = hoverZone[4];
+      const jumpHover = hoverZone.zone[4];
       if (jumpHover) {
         const LUT = jumpHover[2].LUT;
         const startColor = jumpHover[2].startColor;
@@ -201,6 +212,12 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
               }
             }}
           />
+
+          {hoverZone && (
+            <HoverPopup clientX={hoverZone.clientX} clientY={hoverZone.clientY}>
+              todoto
+            </HoverPopup>
+          )}
         </div>
       </div>
     </div>
