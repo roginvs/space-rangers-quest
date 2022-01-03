@@ -55,7 +55,8 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   React.useEffect(() => {
     setOverlayMode({
       kind: "location",
-      location: quest.locations.find((l) => l.isStarting)!,
+      //location: quest.locations.find((l) => l.isStarting)!,
+      location: quest.locations.find((l) => l.id === 204)!,
     });
   }, []);
   //*/
@@ -454,8 +455,8 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         {overlayMode ? (
           overlayMode.kind === "location" ? (
             <LocationOverlay
-              location={overlayMode.location}
-              setLocation={(location) => {
+              initialLocation={overlayMode.location}
+              onClose={(location) => {
                 setOverlayMode(undefined);
                 if (location) {
                   onChange(updateLocation(quest, location));
