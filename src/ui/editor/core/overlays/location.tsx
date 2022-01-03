@@ -31,13 +31,12 @@ export function LocationOverlay({
     <Overlay
       wide
       position="absolute"
-      headerText="Редактирование локации"
+      headerText={`Редактирование локации L ${location.id}`}
       onClose={onCloseWithPrompt}
     >
       <div>
         <div className="row mb-4">
           <div className="col-6">
-            <div className="text-center mb-2">L {location.id}</div>
             <form className="form-inline  d-flex flex-nowrap">
               <select
                 className="form-control ml-2"
@@ -75,20 +74,42 @@ export function LocationOverlay({
               </button>
             </form>
           </div>
-          <div className="col-6">todo</div>
+          <div className="col-6">
+            <form className="form-inline  d-flex flex-nowrap">
+              <select
+                className="form-control ml-2"
+                value={location.isTextByFormula ? "formula" : "serial"}
+                onChange={(e) =>
+                  setLocation({ ...location, isTextByFormula: e.target.value === "formula" })
+                }
+              >
+                <option value={"serial"}>Выбирать по порядку</option>
+                <option value={"formula"}>Выбирать по формуле</option>
+              </select>
+              {location.isTextByFormula && (
+                <input
+                  className="form-control ml-2 flex-fill"
+                  value={location.textSelectFormula}
+                  onChange={(e) => setLocation({ ...location, textSelectFormula: e.target.value })}
+                />
+              )}
+            </form>
+          </div>
         </div>
-        {/*
+
         <textarea
-          value={localLocation.texts[0]}
+          className="form-control"
+          rows={10}
+          value={location.texts[0]}
           onChange={(e) => {
             const newLocation = {
-              ...localLocation,
+              ...location,
               texts: [e.target.value, ...location.texts.slice(1)],
             };
-            setLocalLocation(newLocation);
+            setLocation(newLocation);
           }}
         />
-        */}
+
         <button onClick={onCloseWithPrompt}>Закрыть</button>
         <button onClick={() => onClose(location)}>Сохранить</button>
       </div>
