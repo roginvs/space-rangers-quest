@@ -2,7 +2,7 @@ import * as React from "react";
 import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../../lib/qmplayer/funcs";
 import { Location } from "../../../../lib/qmreader";
-import { ParamsSummaryColumns, ParamSummary } from "./common";
+import { Divider, ParamsSummaryColumns, ParamSummary } from "./common";
 import { getSummaryForParamsChangeAndConditions } from "./paramsAndChangeConditionsSummary";
 
 export function LocationHover({
@@ -25,8 +25,6 @@ export function LocationHover({
     : location.texts.length === 0
     ? "Пустая локация (нет теста)"
     : "Промежуточная локация";
-
-  const divider = <div>----------------------------------------------</div>;
 
   const firstNotEmptyText = location.texts.find((text) => text);
 
@@ -64,23 +62,27 @@ export function LocationHover({
         <span>{location.texts.length > 1 ? "M" : ""}</span>
         <span>L {location.id}</span>
       </div>
-      {divider}
+      <Divider />
       <div>- {shortInfo} -</div>
-      {divider}
-      <div
-        style={{
-          textAlign: "center",
-          color: "#0000EE",
-        }}
-      >
-        {firstNotEmptyText ? firstNotEmptyText.slice(0, MAX_TEXT_CHARS) : ""}{" "}
-        {firstNotEmptyText && firstNotEmptyText.length > MAX_TEXT_CHARS ? "..." : ""}
-      </div>
-      {divider}
+      <Divider />
+      {firstNotEmptyText ? (
+        <>
+          <div
+            style={{
+              textAlign: "center",
+              color: "#0000EE",
+            }}
+          >
+            {firstNotEmptyText.slice(0, MAX_TEXT_CHARS)}{" "}
+            {firstNotEmptyText.length > MAX_TEXT_CHARS ? "..." : ""}
+          </div>
+          <Divider />
+        </>
+      ) : null}
       {paramsSummary.length > 0 && (
         <>
           <ParamsSummaryColumns paramsSummary={paramsSummary} />
-          {divider}
+          <Divider />
         </>
       )}
     </div>

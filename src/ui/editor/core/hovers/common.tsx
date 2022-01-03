@@ -19,6 +19,10 @@ export function ParamSummary({ summary }: { summary: JumpLocationParameterCondit
   );
 }
 
+export function Divider() {
+  return <div>----------------------------------------------</div>;
+}
+
 export function ParamsSummaryColumns({
   paramsSummary,
 }: {
