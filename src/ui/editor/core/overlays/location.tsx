@@ -4,6 +4,7 @@ import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../../lib/qmplayer/funcs";
 import { Location } from "../../../../lib/qmreader";
 import { checkFormula } from "../checkFormula";
+import { getParamStringInfo } from "../hovers/paramsAndChangeConditionsSummary";
 import { Overlay } from "../overlay";
 import { range } from "../utils";
 import { MediaEdit } from "./common";
@@ -145,11 +146,15 @@ export function LocationOverlay({
                 size={10}
                 onChange={(e) => setParamId(parseInt(e.target.value))}
               >
-                {quest.params.map((param, idx) => (
-                  <option className={param.active ? "" : "text-muted"} value={idx}>
-                    [p{idx + 1}] {param.name}
-                  </option>
-                ))}
+                {quest.params.map((param, idx) => {
+                  const summary = getParamStringInfo(idx, param, location.paramsChanges[idx], null);
+                  return (
+                    <option className={param.active ? "" : "text-muted"} value={idx}>
+                      {summary.textName}
+                      {summary.leftText} {summary.rightText}
+                    </option>
+                  );
+                })}
               </select>
             </div>
           </div>
