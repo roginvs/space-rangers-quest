@@ -19,7 +19,7 @@ export function getSummaryForParamsChangeAndConditions(
   params: DeepImmutable<QMParam[]>,
   paramsCount: number,
   paramsChanges: DeepImmutable<ParameterChange[]>,
-  paramsConditions: JumpParameterCondition[] | null,
+  paramsConditions: DeepImmutable<JumpParameterCondition[]> | null,
 ): JumpLocationParameterConditionSummary[] {
   return range(paramsCount)
     .map((paramId) => {
