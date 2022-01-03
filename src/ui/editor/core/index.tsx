@@ -387,7 +387,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             ref={(element) => {
               mainCanvasRef.current = element;
               if (element && !mainContextRef.current) {
-                const context = element.getContext("2d");
+                const context = element.getContext("2d", { alpha: false });
                 mainContextRef.current = context;
               }
               if (!element && mainContextRef.current) {
@@ -417,7 +417,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             ref={(element) => {
               interactiveCanvasRef.current = element;
               if (element && !interactiveContextRef.current) {
-                const context = element.getContext("2d");
+                const context = element.getContext("2d", { alpha: true });
                 interactiveContextRef.current = context;
               }
               if (!element && interactiveCanvasRef.current) {
