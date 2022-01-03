@@ -12,7 +12,7 @@ export function ParamSummary({ summary }: { summary: JumpLocationParameterCondit
           marginRight: 4,
         }}
       >
-        {summary.leftText}
+        {summary.textName} {summary.leftText}
       </div>
       <div style={{ marginLeft: "auto", flexShrink: 0 }}>{summary.rightText}</div>
     </div>

@@ -19,9 +19,12 @@ export function LocationOverlay({
 }) {
   const [location, setLocation] = React.useState<DeepImmutable<Location> | undefined>(undefined);
   const [textIndex, setTextIndex] = React.useState(0);
+  const [paramId, setParamId] = React.useState(0);
+
   React.useEffect(() => {
     setLocation(initialLocation);
     setTextIndex(0);
+    setParamId(0);
   }, [initialLocation]);
 
   const onCloseWithPrompt = React.useCallback(() => {
@@ -132,6 +135,25 @@ export function LocationOverlay({
             })
           }
         />
+
+        <div className="row">
+          <div className="col-6">
+            <div className="overflow-auto" style={{ minHeight: 200 }}>
+              <select
+                className="form-control"
+                value={paramId}
+                size={10}
+                onChange={(e) => setParamId(parseInt(e.target.value))}
+              >
+                {quest.params.map((param, idx) => (
+                  <option className={param.active ? "" : "text-muted"} value={idx}>
+                    [p{idx + 1}] {param.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
 
         <button onClick={onCloseWithPrompt}>Закрыть</button>
         <button onClick={() => onClose(location)}>Сохранить</button>
