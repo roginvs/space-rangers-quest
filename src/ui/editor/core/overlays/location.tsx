@@ -35,22 +35,21 @@ export function LocationOverlay({
       onClose={onCloseWithPrompt}
     >
       <div>
-        <div className="row mb-2">
+        <div className="row mb-4">
           <div className="col-6">
-            <div className="text-center">L {location.id}</div>
+            <div className="text-center mb-2">L {location.id}</div>
             <form className="form-inline  d-flex flex-nowrap">
-              <label>Описание</label>
               <select
                 className="form-control ml-2"
                 value={textIndex}
                 onChange={(e) => setTextIndex(parseInt(e.target.value))}
               >
                 {range(location.texts.length).map((i) => (
-                  <option value={i}>{i + 1}</option>
+                  <option value={i}>Описание {i + 1}</option>
                 ))}
               </select>
               <button
-                className="btn btn-light ml-auto"
+                className="btn btn-light ml-2"
                 onClick={() => {
                   setLocation({
                     ...location,
