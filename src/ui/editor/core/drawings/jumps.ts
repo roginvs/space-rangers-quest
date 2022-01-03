@@ -162,10 +162,17 @@ function getJumpArrowColors(
   allJumpsCount: number,
   haveOtherJumpsWithSameText: boolean,
 ) {
-  // TODO
-  const startColor: Color = [255, 255, 255];
-  const endColor: Color = [0, 0, 255];
-  return [startColor, endColor];
+  const jumpColors = !jump.text
+    ? colors.jump.empty
+    : haveOtherJumpsWithSameText
+    ? jump.description
+      ? colors.jump.sameTextWithDescription
+      : colors.jump.sameTextWithoutDescription
+    : jump.description
+    ? colors.jump.withDescription
+    : colors.jump.withoutDescription;
+
+  return [jumpColors.begin, jumpColors.end];
 }
 
 export function drawJumpArrow(

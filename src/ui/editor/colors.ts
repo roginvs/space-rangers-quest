@@ -1,3 +1,5 @@
+import { parseHexRgb } from "./core/color";
+
 export const colors = {
   background: "#aaaaaa",
   location: {
@@ -8,27 +10,25 @@ export const colors = {
     fail: "#d20000",
   },
   jump: {
-    //line: "black",
-    // arrow: "black",
     withDescription: {
-      begin: "#ffffff",
-      end: "#0000ff",
+      begin: parseHexRgb("#ffffff"),
+      end: parseHexRgb("#0000ff"),
     },
     withoutDescription: {
-      begin: "#00ddff",
-      end: "#00aaaa",
+      begin: parseHexRgb("#00ddff"),
+      end: parseHexRgb("#00aaaa"),
     },
     sameTextWithDescription: {
-      begin: "#ffffff",
-      end: "#800000",
+      begin: parseHexRgb("#ffffff"),
+      end: parseHexRgb("#800000"),
     },
     sameTextWithoutDescription: {
-      begin: "#f5c896",
-      end: "#800000",
+      begin: parseHexRgb("#f5c896"),
+      end: parseHexRgb("#800000"),
     },
     empty: {
-      begin: "#ffffff",
-      end: "#004000",
+      begin: parseHexRgb("#ffffff"),
+      end: parseHexRgb("#004000"),
     },
     /* what's this? sometimes jump arrow is painted so */
     arrow: "#0000ff",
