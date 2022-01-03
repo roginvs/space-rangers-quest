@@ -3,9 +3,10 @@ import * as React from "react";
 // TODO: Use maybe readymade component?
 export const Overlay: React.FC<{
   position: "fixed" | "absolute";
+  wide: boolean;
   headerText: string;
   onClose: () => void;
-}> = ({ position, headerText, onClose, children }) => {
+}> = ({ position, headerText, onClose, children, wide }) => {
   return (
     <div
       style={{
@@ -26,15 +27,9 @@ export const Overlay: React.FC<{
       }}
     >
       <div
-        style={
-          {
-            // borderRadius: 5,
-            // margin: 30,
-            // padding: 10,
-            // boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
-            //background: "white",
-          }
-        }
+        style={{
+          width: wide ? "90%" : undefined,
+        }}
         className="card"
       >
         <h5 className="card-header d-flex flex-row justify-content-between">

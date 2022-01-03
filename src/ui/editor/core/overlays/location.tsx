@@ -27,8 +27,27 @@ export function LocationOverlay({
   }
 
   return (
-    <Overlay position="absolute" headerText="Редактирование локации" onClose={onClose}>
+    <Overlay wide position="absolute" headerText="Редактирование локации" onClose={onClose}>
       <div>
+        <div className="row">
+          <div className="col-6">
+            <div className="text-center">L {location.id}</div>
+            <form className="form-inline  d-flex flex-nowrap">
+              <label>Описание</label>
+              <select className="form-control">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+              </select>
+              <button className="btn btn-light">Submit</button>
+              <button className="btn btn-light">Submit</button>
+            </form>
+          </div>
+          <div className="col-6">todo</div>
+        </div>
+        {/*
         <textarea
           value={localLocation.texts[0]}
           onChange={(e) => {
@@ -39,6 +58,7 @@ export function LocationOverlay({
             setLocalLocation(newLocation);
           }}
         />
+        */}
         <button onClick={onClose}>Закрыть</button>
         <button onClick={() => setLocation(localLocation)}>Сохранить</button>
       </div>
