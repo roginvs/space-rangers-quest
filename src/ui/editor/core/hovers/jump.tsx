@@ -27,5 +27,47 @@ export function JumpHover({ quest, jump }: { quest: Quest; jump: DeepImmutable<J
     jump.paramsConditions,
   );
 
-  // TODO
+  return (
+    <div className="d-flex flex-column align-items-center">
+      <div className="w-100 d-flex flex-row justify-content-between">
+        <span> </span>
+        <span>P {jump.id}</span>
+      </div>
+      <div>- {shortInfo} -</div>
+      <div>{conflictoryString}</div>
+      <Divider />
+      {jump.text || jump.description ? (
+        <>
+          <div className="text-center text-primary">{jump.text}</div>
+          {jump.description ? (
+            <>
+              <div className="text-center text-primary">{"->"}</div>
+              <div className="text-center text-primary">{jump.description}</div>
+            </>
+          ) : null}
+          <Divider />
+        </>
+      ) : null}
+      {jump.formulaToPass ? (
+        <>
+          <div className="text-center">{jump.formulaToPass}</div>
+          <Divider />
+        </>
+      ) : null}
+      {paramsSummary.length > 0 && (
+        <>
+          <ParamsSummaryColumns paramsSummary={paramsSummary} />
+          <Divider />
+        </>
+      )}
+
+      {jump.dayPassed && <div>Прошел один день</div>}
+      {jump.jumpingCountLimit > 0 ? (
+        <div>Проходимость: {jump.jumpingCountLimit}</div>
+      ) : (
+        <div>Проходимость неограниченная</div>
+      )}
+      {jump.alwaysShow && <div>Всегда показывать</div>}
+    </div>
+  );
 }

@@ -20,6 +20,7 @@ import { Jump, Location } from "../../../lib/qmreader";
 import { LocationHover } from "./hovers/location";
 import { Overlay } from "./overlay";
 import { LocationOverlayContent } from "./overlays/location";
+import { JumpHover } from "./hovers/jump";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -431,8 +432,10 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             <HoverPopup clientX={hoverZone.clientX} clientY={hoverZone.clientY}>
               {hoverZone.zone[3] ? (
                 <LocationHover quest={quest} location={hoverZone.zone[3]} />
+              ) : hoverZone.zone[4] ? (
+                <JumpHover quest={quest} jump={hoverZone.zone[4][0]} />
               ) : (
-                "TODO"
+                "Unknown state"
               )}
             </HoverPopup>
           )}
