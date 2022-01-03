@@ -56,6 +56,7 @@ export function LocationOverlay({
                   setLocation({
                     ...location,
                     texts: [...location.texts, ""],
+                    media: [...location.media, { img: "", track: "", sound: "" }],
                   });
                   setTextIndex(location.texts.length);
                 }}
@@ -69,6 +70,7 @@ export function LocationOverlay({
                   setLocation({
                     ...location,
                     texts: location.texts.slice(0, location.texts.length - 1),
+                    media: location.media.slice(0, location.media.length - 1),
                   });
                   setTextIndex(location.texts.length - 2);
                 }}
