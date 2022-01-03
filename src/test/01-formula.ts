@@ -2,7 +2,7 @@
 
 import "mocha";
 import * as assert from "assert";
-import { parse, MAX_NUMBER } from "../lib/formula";
+import { calculate, MAX_NUMBER } from "../lib/formula";
 import { randomFromMathRandom } from "../lib/randomFunc";
 
 describe("Formula parser test", function () {
@@ -122,21 +122,21 @@ describe("Formula parser test", function () {
 
   for (const eq of Object.keys(testEquations) as (keyof typeof testEquations)[]) {
     it(`Calculates '${eq}' into ${testEquations[eq]}`, () => {
-      assert.strictEqual(parse(eq, params, randomFromMathRandom), testEquations[eq]);
+      assert.strictEqual(calculate(eq, params, randomFromMathRandom), testEquations[eq]);
     });
   }
 
   for (const withRandom of ["[p48]+[0..1]*[0..1]*[-1..1]+([p48]=0)*[1..8]", "[1..0]"]) {
     it(`Calculates '${withRandom}'`, () => {
-      parse(withRandom, params, randomFromMathRandom);
+      calculate(withRandom, params, randomFromMathRandom);
     });
   }
   it(`Formula with new lines`, () => {
-    assert.strictEqual(parse(` 1 \n + \r\n 1`, [], randomFromMathRandom), 2);
+    assert.strictEqual(calculate(` 1 \n + \r\n 1`, [], randomFromMathRandom), 2);
   });
   it(`Calculates scary formula from Codebox`, () => {
     assert.strictEqual(
-      parse(
+      calculate(
         `(-(([p4] div 1000) mod 10)*1000*(([p1] div 10)=1)-
             (([p4] div 100) mod 10)*100*(([p1] div 10)=2)-
             (([p4] div 10) mod 10)*10*(([p1] div 10)=3)-(([p4] div 1) mod 10)*1*(([p1] div 10)=4))`,
@@ -151,19 +151,19 @@ describe("Formula parser test", function () {
     this.timeout(5000);
     it(`Check randomness of ranges`, () => {
       for (let i = 0; i < 10000; i++) {
-        const random = parse("3 + [4;9;  10..20]", [], randomFromMathRandom);
+        const random = calculate("3 + [4;9;  10..20]", [], randomFromMathRandom);
         assert.ok(random === 7 || random === 12 || (random >= 13 && random <= 23));
       }
     });
     it(`Check randomness of ranges with negative values`, () => {
       for (let i = 0; i < 10000; i++) {
-        const random = parse("3 + [ -20..-10]", [], randomFromMathRandom);
+        const random = calculate("3 + [ -20..-10]", [], randomFromMathRandom);
         assert.ok(random >= -20 + 3 && random <= -10 + 3);
       }
     });
     it(`Check randomness of ranges with negative and reversed values`, () => {
       for (let i = 0; i < 10000; i++) {
-        const random = parse("3 + [ -10 ..  -12; -3]", [], randomFromMathRandom);
+        const random = calculate("3 + [ -10 ..  -12; -3]", [], randomFromMathRandom);
         assert.ok(random === 0 || (random >= -12 + 3 && random <= -10 + 3));
       }
     });
@@ -171,7 +171,7 @@ describe("Formula parser test", function () {
     it(`Check randomness distribution`, () => {
       const values: { [val: number]: number } = {};
       for (let i = 0; i < 10000; i++) {
-        const random = parse("3 + [1;3;6..9] - 3", [], randomFromMathRandom);
+        const random = calculate("3 + [1;3;6..9] - 3", [], randomFromMathRandom);
         assert.ok(
           random === 1 || random === 3 || (random >= 6 && random <= 9),
           `Random value=${random}`,

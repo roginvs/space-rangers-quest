@@ -234,7 +234,7 @@ interface QMParamShowInfoPart {
   str: string;
 }
 
-interface Media {
+export interface Media {
   img: string | undefined;
   sound: string | undefined;
   track: string | undefined;

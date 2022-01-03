@@ -1,4 +1,4 @@
-import { parse } from "./formula";
+import { calculate } from "./formula";
 import { RandomFunc } from "./randomFunc";
 import { PlayerSubstitute } from "./qmplayer/playerSubstitute";
 import { QMParamShowInfo } from "./qmreader";
@@ -117,7 +117,7 @@ export function substitute(
         formula = insideCurlyBracketsMatch[1];
       }
 
-      paramValue = parse(formula, paramValues, random);
+      paramValue = calculate(formula, paramValues, random);
     } else {
       console.warn(`Unknown symbol in '${str}' at ${scanIndex}`);
       break;
@@ -148,7 +148,7 @@ export function substitute(
       break;
     }
     const formulaWithBrackets = m[0];
-    const result = parse(
+    const result = calculate(
       formulaWithBrackets.slice(1, formulaWithBrackets.length - 1),
       paramValues,
       random,

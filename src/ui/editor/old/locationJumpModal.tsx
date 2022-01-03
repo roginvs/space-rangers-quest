@@ -23,13 +23,13 @@ import { Hotkeys } from "./hotkeys";
 import { Modal, ModalHeader, ModalBody, ModalFooter } from "reactstrap";
 import { range } from "./utils";
 import { parseExpression } from "../../../lib/formula/parser";
-import { parse } from "../../../lib/formula";
+import { calculate } from "../../../lib/formula";
 
 /** Return undefined if fine, return string with description if something is wrong */
 function isFormulaIncorrect(s: string) {
   try {
     // Just to check that it is not throws
-    parse(s, [], () => 0);
+    calculate(s, [], () => 0);
     return undefined;
   } catch (e: any) {
     return `${e.message || "error"}`;

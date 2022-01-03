@@ -2,7 +2,7 @@
 
 import "mocha";
 import * as assert from "assert";
-import { parse, MAX_NUMBER } from "../lib/formula";
+import { calculate, MAX_NUMBER } from "../lib/formula";
 import { randomFromMathRandom } from "../lib/randomFunc";
 
 describe("Formula parser test throws", function () {
@@ -22,7 +22,7 @@ describe("Formula parser test throws", function () {
   ];
   for (const t of throwingFormulas) {
     it(`Throws at '${t}'`, () => {
-      assert.throws(() => parse(t, [0, 0, 0, 0, 0], () => 0));
+      assert.throws(() => calculate(t, [0, 0, 0, 0, 0], () => 0));
     });
   }
 });

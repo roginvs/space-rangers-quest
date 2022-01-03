@@ -58,7 +58,7 @@ describe(`Checking all quests for formulas and params substitution`, function ()
           ];
 
           try {
-            const formulaResult = formula.parse(
+            const formulaResult = formula.calculate(
               str,
               paramValues,
               createDetermenisticRandom(staticRandomGenerated),

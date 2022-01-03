@@ -1,8 +1,11 @@
+import classNames from "classnames";
 import * as React from "react";
 import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
 import { Location } from "../../../../lib/qmreader";
+import { checkFormula } from "../checkFormula";
 import { Overlay } from "../overlay";
 import { range } from "../utils";
+import { MediaEdit } from "./common";
 
 export function LocationOverlay({
   initialLocation: initialLocation,
@@ -35,7 +38,7 @@ export function LocationOverlay({
       onClose={onCloseWithPrompt}
     >
       <div>
-        <div className="row mb-4">
+        <div className="row mb-2">
           <div className="col-6">
             <form className="form-inline  d-flex flex-nowrap">
               <select
@@ -88,7 +91,10 @@ export function LocationOverlay({
               </select>
               {location.isTextByFormula && (
                 <input
-                  className="form-control ml-2 flex-fill"
+                  className={classNames(
+                    "form-control ml-2 flex-fill",
+                    checkFormula(location.textSelectFormula) ? "is-invalid" : "",
+                  )}
                   value={location.textSelectFormula}
                   onChange={(e) => setLocation({ ...location, textSelectFormula: e.target.value })}
                 />
@@ -98,16 +104,28 @@ export function LocationOverlay({
         </div>
 
         <textarea
-          className="form-control"
+          className="form-control mb-1"
           rows={10}
-          value={location.texts[0]}
+          value={location.texts[textIndex]}
           onChange={(e) => {
             const newLocation = {
               ...location,
-              texts: [e.target.value, ...location.texts.slice(1)],
+              texts: location.texts.map((text, index) =>
+                index === textIndex ? e.target.value : text,
+              ),
             };
             setLocation(newLocation);
           }}
+        />
+
+        <MediaEdit
+          media={location.media[textIndex]}
+          setMedia={(newMedia) =>
+            setLocation({
+              ...location,
+              media: location.media.map((media, i) => (i === textIndex ? newMedia : media)),
+            })
+          }
         />
 
         <button onClick={onCloseWithPrompt}>Закрыть</button>

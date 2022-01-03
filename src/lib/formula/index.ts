@@ -7,11 +7,15 @@ import { RandomFunc } from "../randomFunc";
 
 export { MAX_NUMBER } from "./consts";
 
-export function parse(str: string, params: Params = [], random: RandomFunc) {
+export function parse(str: string) {
   const strNoLineBreaks = str.replace(/\r|\n/g, " ");
   const scanner = createScanner(strNoLineBreaks);
   const ast = parseExpression(scanner);
   // console.info(JSON.stringify(ast, null, 4));
+  return ast;
+}
+export function calculate(str: string, params: Params = [], random: RandomFunc) {
+  const ast = parse(str);
   const value = calculateAst(ast, params, random);
   return Math.round(value);
 }

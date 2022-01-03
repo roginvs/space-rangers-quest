@@ -13,7 +13,7 @@ import {
   getImagesListFromQmm,
 } from "../qmreader";
 import { AleaState, Alea } from "../alea";
-import { parse } from "../formula";
+import { calculate } from "../formula";
 import { DeepImmutable } from "./deepImmutable";
 import { RandomFunc } from "../randomFunc";
 import { substitute } from "../substitution";
@@ -93,9 +93,9 @@ export function initGame(quest: Quest, seed: string): GameState {
       const giveMoney = 2000;
       const money = param.max > giveMoney ? giveMoney : param.max;
       const starting = `[${money}]`;
-      return parse(starting, [], alea.random);
+      return calculate(starting, [], alea.random);
     }
-    return parse(param.starting.replace("h", ".."), [], alea.random);
+    return calculate(param.starting.replace("h", ".."), [], alea.random);
   });
   const startingShowing = quest.params.map(() => true);
 
@@ -220,7 +220,7 @@ function calculateLocationShowingTextId(
 
   if (location.isTextByFormula) {
     if (location.textSelectFormula) {
-      const id = parse(location.textSelectFormula, state.paramValues, random) - 1;
+      const id = calculate(location.textSelectFormula, state.paramValues, random) - 1;
       if (location.texts[id]) {
         return id;
       } else {
@@ -498,7 +498,7 @@ function calculateParamsUpdate(
       newValues[i] = Math.round((oldValues[i] * (100 + change.change)) / 100);
     } else if (change.isChangeFormula) {
       if (change.changingFormula) {
-        newValues[i] = parse(change.changingFormula, oldValues, random);
+        newValues[i] = calculate(change.changingFormula, oldValues, random);
       }
     } else {
       newValues[i] = oldValues[i] + change.change;
@@ -868,7 +868,7 @@ function calculateLocation(
       }
     }
     if (jump.formulaToPass) {
-      if (parse(jump.formulaToPass, state.paramValues, random) === 0) {
+      if (calculate(jump.formulaToPass, state.paramValues, random) === 0) {
         return false;
       }
     }
