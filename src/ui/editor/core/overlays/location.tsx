@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import * as React from "react";
 import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
+import { Quest } from "../../../../lib/qmplayer/funcs";
 import { Location } from "../../../../lib/qmreader";
 import { checkFormula } from "../checkFormula";
 import { Overlay } from "../overlay";
@@ -8,9 +9,11 @@ import { range } from "../utils";
 import { MediaEdit } from "./common";
 
 export function LocationOverlay({
-  initialLocation: initialLocation,
-  onClose: onClose,
+  quest,
+  initialLocation,
+  onClose,
 }: {
+  quest: Quest;
   initialLocation: DeepImmutable<Location>;
   onClose: (location: DeepImmutable<Location> | undefined) => void;
 }) {

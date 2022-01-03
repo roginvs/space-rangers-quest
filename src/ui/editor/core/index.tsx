@@ -455,6 +455,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         {overlayMode ? (
           overlayMode.kind === "location" ? (
             <LocationOverlay
+              quest={quest}
               initialLocation={overlayMode.location}
               onClose={(location) => {
                 setOverlayMode(undefined);
