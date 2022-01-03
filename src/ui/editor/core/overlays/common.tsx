@@ -35,7 +35,7 @@ export function MediaEdit({ media, setMedia }: { media: Media; setMedia: (media:
             className="form-control"
             placeholder="Звуковой эффект"
             value={media.sound}
-            onChange={(e) => setMedia({ ...sound, track: e.target.value })}
+            onChange={(e) => setMedia({ ...media, track: e.target.value })}
           />
         </div>
       </div>
