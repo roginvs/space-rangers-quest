@@ -1,8 +1,9 @@
 import * as React from "react";
 import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
 import { Location } from "../../../../lib/qmreader";
+import { Overlay } from "../overlay";
 
-export function LocationOverlayContent({
+export function LocationOverlay({
   location,
   setLocation,
 }: {
@@ -16,23 +17,31 @@ export function LocationOverlayContent({
     setLocalLocation(location);
   }, [location]);
 
+  const onClose = React.useCallback(() => {
+    //TODO promt to save changes
+    setLocation(undefined);
+  }, []);
+
   if (!localLocation) {
     return null;
   }
+
   return (
-    <div>
-      <textarea
-        value={localLocation.texts[0]}
-        onChange={(e) => {
-          const newLocation = {
-            ...localLocation,
-            texts: [e.target.value, ...location.texts.slice(1)],
-          };
-          setLocalLocation(newLocation);
-        }}
-      />
-      <button onClick={() => setLocation(undefined)}>Закрыть</button>
-      <button onClick={() => setLocation(localLocation)}>Сохранить</button>
-    </div>
+    <Overlay position="absolute" headerText="Редактирование локации" onClose={onClose}>
+      <div>
+        <textarea
+          value={localLocation.texts[0]}
+          onChange={(e) => {
+            const newLocation = {
+              ...localLocation,
+              texts: [e.target.value, ...location.texts.slice(1)],
+            };
+            setLocalLocation(newLocation);
+          }}
+        />
+        <button onClick={onClose}>Закрыть</button>
+        <button onClick={() => setLocation(localLocation)}>Сохранить</button>
+      </div>
+    </Overlay>
   );
 }

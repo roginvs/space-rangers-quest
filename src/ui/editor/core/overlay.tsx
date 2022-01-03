@@ -1,7 +1,11 @@
 import * as React from "react";
 
 // TODO: Use maybe readymade component?
-export const Overlay: React.FC<{ position: "fixed" | "absolute" }> = ({ position, children }) => {
+export const Overlay: React.FC<{
+  position: "fixed" | "absolute";
+  headerText: string;
+  onClose: () => void;
+}> = ({ position, headerText, onClose, children }) => {
   return (
     <div
       style={{
@@ -22,15 +26,22 @@ export const Overlay: React.FC<{ position: "fixed" | "absolute" }> = ({ position
       }}
     >
       <div
-        style={{
-          borderRadius: 5,
-          margin: 30,
-          padding: 10,
-          boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
-          background: "white",
-        }}
+        style={
+          {
+            // borderRadius: 5,
+            // margin: 30,
+            // padding: 10,
+            // boxShadow: "0 4px 8px 0 rgba(0,0,0,0.2)",
+            //background: "white",
+          }
+        }
+        className="card"
       >
-        {children}
+        <h5 className="card-header d-flex flex-row justify-content-between">
+          <span>{headerText}</span>
+          <i className="fa fa-times" style={{ cursor: "pointer" }} onClick={onClose} />
+        </h5>
+        <div className="card-body">{children}</div>
       </div>
     </div>
   );

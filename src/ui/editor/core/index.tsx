@@ -19,7 +19,7 @@ import {
 import { Jump, Location } from "../../../lib/qmreader";
 import { LocationHover } from "./hovers/location";
 import { Overlay } from "./overlay";
-import { LocationOverlayContent } from "./overlays/location";
+import { LocationOverlay } from "./overlays/location";
 import { JumpHover } from "./hovers/jump";
 
 export interface EditorCoreProps {
@@ -51,14 +51,14 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const [overlayMode, setOverlayMode] = React.useState<EditorOverlay | undefined>(undefined);
 
   // DEBUGGING
-  /*
+  ///*
   React.useEffect(() => {
     setOverlayMode({
       kind: "location",
       location: quest.locations.find((l) => l.isStarting)!,
     });
   }, []);
-*/
+  //*/
 
   const mainCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const mainContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
@@ -452,21 +452,17 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
           </div>
         </div>
         {overlayMode ? (
-          <Overlay position="absolute">
-            {overlayMode.kind === "location" ? (
-              <LocationOverlayContent
-                location={overlayMode.location}
-                setLocation={(location) => {
-                  setOverlayMode(undefined);
-                  if (location) {
-                    onChange(updateLocation(quest, location));
-                  }
-                }}
-              />
-            ) : (
-              "TODO"
-            )}
-          </Overlay>
+          overlayMode.kind === "location" ? (
+            <LocationOverlay
+              location={overlayMode.location}
+              setLocation={(location) => {
+                setOverlayMode(undefined);
+                if (location) {
+                  onChange(updateLocation(quest, location));
+                }
+              }}
+            />
+          ) : null
         ) : null}
       </div>
 
