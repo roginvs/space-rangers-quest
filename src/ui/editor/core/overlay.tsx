@@ -1,11 +1,11 @@
 import * as React from "react";
 
 // TODO: Use maybe readymade component?
-export const Overlay: React.FC = ({ children }) => {
+export const Overlay: React.FC<{ position: "fixed" | "absolute" }> = ({ position, children }) => {
   return (
     <div
       style={{
-        position: "fixed",
+        position,
         left: 0,
         right: 0,
         top: 0,

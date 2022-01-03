@@ -370,79 +370,89 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       </div>
       <div
         style={{
-          flexGrow: 1,
+          // Some flex magic, TODO make it better
+          flexGrow: 100,
+          flexShrink: 100,
+          height: 100,
           alignSelf: "stretch",
-          overflow: "scroll",
           position: "relative",
         }}
       >
         <div
           style={{
-            position: "relative",
+            overflow: "scroll",
+            height: "100%",
           }}
         >
-          <canvas
-            style={{ position: "absolute" }}
-            width={canvasSize.canvasWidth}
-            height={canvasSize.canvasHeight}
-            ref={(element) => {
-              mainCanvasRef.current = element;
-              if (element && !mainContextRef.current) {
-                const context = element.getContext("2d", { alpha: false });
-                mainContextRef.current = context;
-              }
-              if (!element && mainContextRef.current) {
-                mainContextRef.current = null;
-              }
-            }}
-          />
-
-          <canvas
+          <div
             style={{
-              position: "absolute",
-              cursor:
-                mouseMode === "move"
-                  ? "move"
-                  : mouseMode === "select"
-                  ? "default"
-                  : mouseMode === "newLocation"
-                  ? "crosshair"
-                  : mouseMode === "newJump"
-                  ? "e-resize"
-                  : mouseMode === "remove"
-                  ? "url('/fa/remove.svg') 12 12, pointer"
-                  : assertNever(mouseMode),
+              position: "relative",
+              width: canvasSize.canvasWidth,
+              height: canvasSize.canvasHeight,
             }}
-            width={canvasSize.canvasWidth}
-            height={canvasSize.canvasHeight}
-            ref={(element) => {
-              interactiveCanvasRef.current = element;
-              if (element && !interactiveContextRef.current) {
-                const context = element.getContext("2d", { alpha: true });
-                interactiveContextRef.current = context;
-              }
-              if (!element && interactiveCanvasRef.current) {
-                interactiveCanvasRef.current = null;
-              }
-            }}
-            onContextMenu={(e) => e.preventDefault()}
-          />
+          >
+            <canvas
+              style={{ position: "absolute" }}
+              width={canvasSize.canvasWidth}
+              height={canvasSize.canvasHeight}
+              ref={(element) => {
+                mainCanvasRef.current = element;
+                if (element && !mainContextRef.current) {
+                  const context = element.getContext("2d", { alpha: false });
+                  mainContextRef.current = context;
+                }
+                if (!element && mainContextRef.current) {
+                  mainContextRef.current = null;
+                }
+              }}
+            />
 
-          {hoverZone && !isDragging && !overlayMode && (
-            <HoverPopup clientX={hoverZone.clientX} clientY={hoverZone.clientY}>
-              {hoverZone.zone[3] ? (
-                <LocationHover quest={quest} location={hoverZone.zone[3]} />
-              ) : hoverZone.zone[4] ? (
-                <JumpHover quest={quest} jump={hoverZone.zone[4][0]} />
-              ) : (
-                "Unknown state"
-              )}
-            </HoverPopup>
-          )}
+            <canvas
+              style={{
+                position: "absolute",
+                cursor:
+                  mouseMode === "move"
+                    ? "move"
+                    : mouseMode === "select"
+                    ? "default"
+                    : mouseMode === "newLocation"
+                    ? "crosshair"
+                    : mouseMode === "newJump"
+                    ? "e-resize"
+                    : mouseMode === "remove"
+                    ? "url('/fa/remove.svg') 12 12, pointer"
+                    : assertNever(mouseMode),
+              }}
+              width={canvasSize.canvasWidth}
+              height={canvasSize.canvasHeight}
+              ref={(element) => {
+                interactiveCanvasRef.current = element;
+                if (element && !interactiveContextRef.current) {
+                  const context = element.getContext("2d", { alpha: true });
+                  interactiveContextRef.current = context;
+                }
+                if (!element && interactiveCanvasRef.current) {
+                  interactiveCanvasRef.current = null;
+                }
+              }}
+              onContextMenu={(e) => e.preventDefault()}
+            />
+
+            {hoverZone && !isDragging && !overlayMode && (
+              <HoverPopup clientX={hoverZone.clientX} clientY={hoverZone.clientY}>
+                {hoverZone.zone[3] ? (
+                  <LocationHover quest={quest} location={hoverZone.zone[3]} />
+                ) : hoverZone.zone[4] ? (
+                  <JumpHover quest={quest} jump={hoverZone.zone[4][0]} />
+                ) : (
+                  "Unknown state"
+                )}
+              </HoverPopup>
+            )}
+          </div>
         </div>
-
         {overlayMode ? (
-          <Overlay>
+          <Overlay position="absolute">
             {overlayMode.kind === "location" ? (
               <LocationOverlayContent
                 location={overlayMode.location}
