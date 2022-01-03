@@ -44,21 +44,8 @@ export function LocationHover({
   });
   */
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          width: "100%",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
+    <div className="d-flex flex-column align-items-center">
+      <div className="w-100 d-flex flex-row justify-content-between">
         <span>{location.texts.length > 1 ? "M" : ""}</span>
         <span>L {location.id}</span>
       </div>
@@ -67,12 +54,7 @@ export function LocationHover({
       <Divider />
       {firstNotEmptyText ? (
         <>
-          <div
-            style={{
-              textAlign: "center",
-              color: "#0000EE",
-            }}
-          >
+          <div className="text-center text-primary">
             {firstNotEmptyText.slice(0, MAX_TEXT_CHARS)}{" "}
             {firstNotEmptyText.length > MAX_TEXT_CHARS ? "..." : ""}
           </div>

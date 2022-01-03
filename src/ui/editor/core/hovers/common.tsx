@@ -3,7 +3,7 @@ import { JumpLocationParameterConditionSummary } from "./paramsAndChangeConditio
 
 export function ParamSummary({ summary }: { summary: JumpLocationParameterConditionSummary }) {
   return (
-    <div style={{ display: "flex", maxWidth: 400, overflow: "hidden" }}>
+    <div className="d-flex" style={{ display: "flex", maxWidth: 400, overflow: "hidden" }}>
       <div
         style={{
           whiteSpace: "pre",
