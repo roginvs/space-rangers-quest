@@ -85,6 +85,12 @@ export function LocationHover({
           <Divider />
         </>
       )}
+      {location.dayPassed && <div>Прошел один день</div>}
+      {location.maxVisits > 0 ? (
+        <div>Проходимость: {location.maxVisits}</div>
+      ) : (
+        <div>Проходимость неограниченная</div>
+      )}
     </div>
   );
 }
