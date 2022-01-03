@@ -56,6 +56,7 @@ export function getParamStringInfo(
     if (conditions.mustTo < param.max) {
       conditionString += `<=${conditions.mustTo} `;
     }
+    // TODO: Make it slightly prettier
     if (conditions.mustEqualValues.length > 0) {
       conditionString += conditions.mustEqualValuesEqual ? "==" : "!==";
       conditions.mustEqualValues.forEach((v) => (conditionString += `${v}`));
