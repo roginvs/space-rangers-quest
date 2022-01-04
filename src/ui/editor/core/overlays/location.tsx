@@ -30,10 +30,17 @@ export function LocationOverlay({
     setParamId(0);
   }, [initialLocation]);
 
+  const needPrompt = location !== initialLocation;
   const onCloseWithPrompt = React.useCallback(() => {
-    //TODO promt to save changes
-    onClose(undefined);
-  }, []);
+    //TODO promt to save changes using DOM
+    if (needPrompt) {
+      if (confirm("Отменить изменения?")) {
+        onClose(undefined);
+      }
+    } else {
+      onClose(undefined);
+    }
+  }, [needPrompt]);
 
   if (!location) {
     return null;
