@@ -1,13 +1,15 @@
 import classNames from "classnames";
 import * as React from "react";
+import { assertNever } from "../../../../assertNever";
 import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../../lib/qmplayer/funcs";
-import { Location } from "../../../../lib/qmreader";
+import { Location, LocationType } from "../../../../lib/qmreader";
 import { checkFormula } from "../checkFormula";
 import { getParamStringInfo } from "../hovers/paramsAndChangeConditionsSummary";
 import { Overlay } from "../overlay";
 import { range } from "../utils";
 import { MediaEdit, ParamChangeTypeEdit } from "./common";
+import { toast } from "react-toastify";
 
 export function LocationOverlay({
   quest,
@@ -137,7 +139,7 @@ export function LocationOverlay({
           }
         />
 
-        <div className="row">
+        <div className="row mb-3">
           <div className="col-6">
             <div className="overflow-auto" style={{ minHeight: 200 }}>
               <select
@@ -174,8 +176,103 @@ export function LocationOverlay({
           </div>
         </div>
 
-        <button onClick={onCloseWithPrompt}>Закрыть</button>
-        <button onClick={() => onClose(location)}>Сохранить</button>
+        <div className="form-inline">
+          <label className="mr-1">Тип локации </label>
+          <select
+            className="form-control"
+            value={(location.isStarting
+              ? LocationType.Starting
+              : location.isSuccess
+              ? LocationType.Success
+              : location.isEmpty
+              ? LocationType.Empty
+              : location.isFailyDeadly
+              ? LocationType.Deadly
+              : location.isFaily
+              ? LocationType.Faily
+              : LocationType
+            ).toString()}
+            onChange={(e) => {
+              const newLocationType = parseInt(e.target.value) as LocationType;
+              if (newLocationType === LocationType.Ordinary) {
+                setLocation({
+                  ...location,
+                  isStarting: false,
+                  isSuccess: false,
+                  isEmpty: false,
+                  isFaily: false,
+                  isFailyDeadly: false,
+                });
+              } else if (newLocationType === LocationType.Success) {
+                setLocation({
+                  ...location,
+                  isStarting: false,
+                  isSuccess: true,
+                  isEmpty: false,
+                  isFaily: false,
+                  isFailyDeadly: false,
+                });
+              } else if (newLocationType === LocationType.Starting) {
+                const alreadyExistingStarting = quest.locations.find((loc) => loc.isStarting);
+                if (alreadyExistingStarting && alreadyExistingStarting.id !== location.id) {
+                  toast(`Уже есть локация с типом "Начало" id: ${alreadyExistingStarting.id}`);
+                } else {
+                  setLocation({
+                    ...location,
+                    isStarting: true,
+                    isSuccess: false,
+                    isEmpty: false,
+                    isFaily: false,
+                    isFailyDeadly: false,
+                  });
+                }
+              } else if (newLocationType === LocationType.Deadly) {
+                setLocation({
+                  ...location,
+                  isStarting: false,
+                  isSuccess: false,
+                  isEmpty: false,
+                  isFaily: true, // Yes, this should be set
+                  isFailyDeadly: true,
+                });
+              } else if (newLocationType === LocationType.Faily) {
+                setLocation({
+                  ...location,
+                  isStarting: false,
+                  isSuccess: false,
+                  isEmpty: false,
+                  isFaily: true,
+                  isFailyDeadly: false,
+                });
+              } else if (newLocationType === LocationType.Empty) {
+                setLocation({
+                  ...location,
+                  isStarting: false,
+                  isSuccess: false,
+                  isEmpty: true,
+                  isFaily: false,
+                  isFailyDeadly: false,
+                });
+              } else {
+                assertNever(newLocationType);
+              }
+            }}
+          >
+            <option value={LocationType.Ordinary}>Промежуточная</option>
+            <option value={LocationType.Starting}>Стартовая</option>
+            <option value={LocationType.Empty}>Пустая</option>
+            <option value={LocationType.Success}>Победная</option>
+            <option value={LocationType.Faily}>Провальная</option>
+            <option value={LocationType.Deadly}>Смертельная</option>
+          </select>
+
+          <button className="btn btn-primary ml-auto" onClick={() => onClose(location)}>
+            Сохранить
+          </button>
+          <button className="btn btn-danger" onClick={onCloseWithPrompt}>
+            Закрыть
+          </button>
+        </div>
       </div>
     </Overlay>
   );

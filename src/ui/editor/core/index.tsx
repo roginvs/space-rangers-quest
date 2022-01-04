@@ -141,10 +141,6 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     };
   }, [hoverZones, isDragging, overlayMode]);
 
-  const notifyUser = React.useCallback((msg: string) => {
-    toast(msg);
-  }, []);
-
   React.useEffect(() => {
     if (overlayMode) {
       return;
@@ -225,7 +221,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
               );
               if (locationAtThisPosition) {
                 if (locationAtThisPosition.id !== location.id) {
-                  notifyUser("This position is busy");
+                  toast("This position is busy");
                 }
               } else {
                 onChange(
@@ -251,7 +247,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
                 ),
               );
               if (!newLocation) {
-                notifyUser("No location here");
+                toast("No location here");
               } else {
                 onChange(
                   updateJump(quest, {
@@ -286,7 +282,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
                 jump,
               });
             } else {
-              notifyUser("No location here");
+              toast("No location here");
             }
           }
           setHoverZone(undefined);
@@ -298,7 +294,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             griddedLocation.y,
           );
           if (locationAtThisPosition) {
-            notifyUser("There is already location at this position");
+            toast("There is already location at this position");
           } else {
             const newPossibleLocation = createLocation(quest, griddedLocation.x, griddedLocation.y);
             setOverlayMode({
