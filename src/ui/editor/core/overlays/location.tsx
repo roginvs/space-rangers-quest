@@ -130,13 +130,21 @@ export function LocationOverlay({
         />
 
         <MediaEdit
-          media={location.media[textIndex]}
-          setMedia={(newMedia) =>
+          media={location.media[textIndex] || { img: "", track: "", sound: "" }}
+          setMedia={(newMedia) => {
+            // Doing this way to create missing media (if any)
+            const medias = [...location.media];
+            medias[textIndex] = newMedia;
+            range(textIndex).forEach((i) => {
+              if (!medias[i]) {
+                medias[i] = { img: "", track: "", sound: "" };
+              }
+            });
             setLocation({
               ...location,
-              media: location.media.map((media, i) => (i === textIndex ? newMedia : media)),
-            })
-          }
+              media: medias,
+            });
+          }}
         />
 
         <div className="row mb-3">
@@ -265,6 +273,18 @@ export function LocationOverlay({
             <option value={LocationType.Faily}>Провальная</option>
             <option value={LocationType.Deadly}>Смертельная</option>
           </select>
+
+          <div className="ml-3 form-check form-check-inline">
+            <label className="form-check-label">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                checked={location.dayPassed}
+                onChange={(e) => setLocation({ ...location, dayPassed: e.target.checked })}
+              />
+              Прошел один день
+            </label>
+          </div>
 
           <button className="btn btn-primary ml-auto" onClick={() => onClose(location)}>
             Сохранить
