@@ -37,7 +37,7 @@ export function getParamStringInfo(
     ? paramChange.change > 0
       ? `+${paramChange.change}%`
       : paramChange.change < 0
-      ? `${paramChange.change}%x`
+      ? `${paramChange.change}%`
       : ""
     : paramChange.isChangeFormula
     ? `:= ${paramChange.changingFormula}`

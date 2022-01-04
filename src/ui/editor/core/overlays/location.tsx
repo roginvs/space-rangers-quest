@@ -7,7 +7,7 @@ import { checkFormula } from "../checkFormula";
 import { getParamStringInfo } from "../hovers/paramsAndChangeConditionsSummary";
 import { Overlay } from "../overlay";
 import { range } from "../utils";
-import { MediaEdit } from "./common";
+import { MediaEdit, ParamChangeTypeEdit } from "./common";
 
 export function LocationOverlay({
   quest,
@@ -157,6 +157,20 @@ export function LocationOverlay({
                 })}
               </select>
             </div>
+          </div>
+          <div className="col-6">
+            <ParamChangeTypeEdit
+              change={location.paramsChanges[paramId]}
+              param={quest.params[paramId]}
+              onChange={(newChange) => {
+                setLocation({
+                  ...location,
+                  paramsChanges: location.paramsChanges.map((change, i) =>
+                    i === paramId ? newChange : change,
+                  ),
+                });
+              }}
+            />
           </div>
         </div>
 
