@@ -286,7 +286,27 @@ export function LocationOverlay({
             </label>
           </div>
 
-          <button className="btn btn-primary ml-auto" onClick={() => onClose(location)}>
+          <div className="ml-4 form-check form-check-inline">
+            <label className="form-check-label">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                checked={location.maxVisits === 0}
+                onChange={(e) => setLocation({ ...location, maxVisits: e.target.checked ? 0 : 1 })}
+              />
+              Неограниченная проходимость
+            </label>
+          </div>
+          {location.maxVisits > 0 && (
+            <input
+              className={classNames("form-control ml-2")}
+              type="number"
+              value={location.maxVisits}
+              onChange={(e) => setLocation({ ...location, maxVisits: parseInt(e.target.value) })}
+            />
+          )}
+
+          <button className="btn btn-primary ml-auto mr-2" onClick={() => onClose(location)}>
             Сохранить
           </button>
           <button className="btn btn-danger" onClick={onCloseWithPrompt}>
