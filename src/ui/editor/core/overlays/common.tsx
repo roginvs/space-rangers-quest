@@ -55,7 +55,7 @@ export function ParamChangeTypeEdit({ change, onChange, param }: ParamChangeProp
   return (
     <div className="row">
       <div className="col-6">
-        <div className="row">
+        <div className="row form-group">
           <div className="col-6 form-check xform-check-inline">
             <label className="form-check-label">
               <input
@@ -97,7 +97,7 @@ export function ParamChangeTypeEdit({ change, onChange, param }: ParamChangeProp
             </label>
           </div>
         </div>
-        <div className="row">
+        <div className="row form-group">
           <div className="col-6 form-check xform-check-inline">
             <label className="form-check-label">
               {" "}
