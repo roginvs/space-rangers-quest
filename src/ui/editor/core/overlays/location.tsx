@@ -123,7 +123,10 @@ export function LocationOverlay({
 
         <textarea
           className="form-control mb-1"
-          rows={10}
+          rows={7}
+          style={{
+            resize: "none",
+          }}
           value={location.texts[textIndex]}
           onChange={(e) => {
             const newLocation = {
@@ -159,7 +162,7 @@ export function LocationOverlay({
             <select
               className="form-control"
               value={paramId}
-              size={10}
+              size={16}
               style={{ height: "100%" }}
               onChange={(e) => setParamId(parseInt(e.target.value))}
             >

@@ -10,7 +10,13 @@ import {
 } from "../../../../lib/qmreader";
 import { checkFormula } from "../checkFormula";
 
-export function MediaEdit({ media, setMedia }: { media: Media; setMedia: (media: Media) => void }) {
+export function MediaEdit({
+  media,
+  setMedia,
+}: {
+  media: DeepImmutable<Media>;
+  setMedia: (media: DeepImmutable<Media>) => void;
+}) {
   return (
     <div className="row">
       <div className="col-4">
@@ -59,12 +65,12 @@ interface ParamChangeProps {
 }
 export function ParamChangeTypeEdit({ change, onChange, param }: ParamChangeProps) {
   return (
-    <>
+    <div className="d-flex flex-column h-100">
       <div className="row">
         <div className="col-6">
           <div className="row form-group">
             <div className="col-6 form-check xform-check-inline">
-              <label className="form-check-label">
+              <label className="form-check-label ml-3">
                 <input
                   className="form-check-input"
                   type="radio"
@@ -85,7 +91,7 @@ export function ParamChangeTypeEdit({ change, onChange, param }: ParamChangeProp
               </label>
             </div>
             <div className="col-6 form-check xform-check-inline">
-              <label className="form-check-label">
+              <label className="form-check-label ml-3">
                 <input
                   className="form-check-input"
                   type="radio"
@@ -106,7 +112,7 @@ export function ParamChangeTypeEdit({ change, onChange, param }: ParamChangeProp
           </div>
           <div className="row form-group">
             <div className="col-6 form-check xform-check-inline">
-              <label className="form-check-label">
+              <label className="form-check-label ml-3">
                 {" "}
                 <input
                   className="form-check-input"
@@ -126,7 +132,7 @@ export function ParamChangeTypeEdit({ change, onChange, param }: ParamChangeProp
               </label>
             </div>
             <div className="col-6 form-check xform-check-inline">
-              <label className="form-check-label">
+              <label className="form-check-label ml-3">
                 <input
                   className="form-check-input"
                   type="radio"
@@ -238,7 +244,7 @@ export function ParamChangeTypeEdit({ change, onChange, param }: ParamChangeProp
       </div>
 
       <ParamCritTypeEdit param={param} onChange={onChange} change={change} />
-    </>
+    </div>
   );
 }
 
@@ -249,16 +255,27 @@ export function ParamCritTypeEdit({ change, onChange, param }: ParamChangeProps)
   }
 
   return (
-    <textarea
-      className={classNames(
-        "form-control mb-1",
-        !change.critText || change.critText === param.critValueString ? "text-muted" : "",
-      )}
-      rows={7}
-      value={change.critText || param.critValueString}
-      onChange={(e) => {
-        onChange({ ...change, critText: e.target.value });
-      }}
-    />
+    <div className="h-100 d-flex flex-column">
+      <textarea
+        style={{
+          resize: "none",
+        }}
+        className={classNames(
+          "form-control h-100",
+          !change.critText || change.critText === param.critValueString ? "text-muted" : "",
+        )}
+        //rows={}
+        value={change.critText || param.critValueString}
+        onChange={(e) => {
+          onChange({ ...change, critText: e.target.value });
+        }}
+      />
+      <MediaEdit
+        media={change}
+        setMedia={(media) =>
+          onChange({ ...change, img: media.img, track: media.track, sound: media.sound })
+        }
+      />
+    </div>
   );
 }
