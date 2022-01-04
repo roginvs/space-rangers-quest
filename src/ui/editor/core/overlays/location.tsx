@@ -156,24 +156,23 @@ export function LocationOverlay({
 
         <div className="row mb-3">
           <div className="col-6">
-            <div className="overflow-auto" style={{ minHeight: 200 }}>
-              <select
-                className="form-control"
-                value={paramId}
-                size={10}
-                onChange={(e) => setParamId(parseInt(e.target.value))}
-              >
-                {quest.params.map((param, idx) => {
-                  const summary = getParamStringInfo(idx, param, location.paramsChanges[idx], null);
-                  return (
-                    <option className={param.active ? "" : "text-muted"} value={idx}>
-                      {summary.textName}
-                      {summary.leftText} {summary.rightText}
-                    </option>
-                  );
-                })}
-              </select>
-            </div>
+            <select
+              className="form-control"
+              value={paramId}
+              size={10}
+              style={{ height: "100%" }}
+              onChange={(e) => setParamId(parseInt(e.target.value))}
+            >
+              {quest.params.map((param, idx) => {
+                const summary = getParamStringInfo(idx, param, location.paramsChanges[idx], null);
+                return (
+                  <option className={param.active ? "" : "text-muted"} value={idx}>
+                    {summary.textName}
+                    {summary.leftText} {summary.rightText}
+                  </option>
+                );
+              })}
+            </select>
           </div>
           <div className="col-6">
             <ParamChangeTypeEdit

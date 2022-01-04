@@ -1,7 +1,13 @@
 import classNames from "classnames";
 import * as React from "react";
 import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
-import { Media, ParameterChange, ParameterShowingType, QMParam } from "../../../../lib/qmreader";
+import {
+  Media,
+  ParameterChange,
+  ParameterShowingType,
+  ParamType,
+  QMParam,
+} from "../../../../lib/qmreader";
 import { checkFormula } from "../checkFormula";
 
 export function MediaEdit({ media, setMedia }: { media: Media; setMedia: (media: Media) => void }) {
@@ -192,7 +198,7 @@ export function ParamChangeTypeEdit({ change, onChange, param }: ParamChangeProp
         </div>
       </div>
 
-      <div className="d-flex justify-content-center">
+      <div className="d-flex justify-content-center mb-3">
         <div className="form-check form-check-inline">
           <label className="form-check-label">
             <input
@@ -230,6 +236,29 @@ export function ParamChangeTypeEdit({ change, onChange, param }: ParamChangeProp
           </label>
         </div>
       </div>
+
+      <ParamCritTypeEdit param={param} onChange={onChange} change={change} />
     </>
+  );
+}
+
+export function ParamCritTypeEdit({ change, onChange, param }: ParamChangeProps) {
+  const isCrit = param.type !== ParamType.Обычный;
+  if (!isCrit) {
+    return null;
+  }
+
+  return (
+    <textarea
+      className={classNames(
+        "form-control mb-1",
+        !change.critText || change.critText === param.critValueString ? "text-muted" : "",
+      )}
+      rows={7}
+      value={change.critText || param.critValueString}
+      onChange={(e) => {
+        onChange({ ...change, critText: e.target.value });
+      }}
+    />
   );
 }
