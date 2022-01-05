@@ -64,7 +64,7 @@ interface ParamChangeProps {
 }
 export function ParamChangeTypeEdit({ change, onChange, param, paramsActive }: ParamChangeProps) {
   return (
-    <div className="d-flex flex-column h-100">
+    <div className="d-flex flex-column">
       <div className="row">
         <div className="col-6">
           <div className="row form-group">
@@ -266,7 +266,7 @@ export function ParamCritTypeEdit({ change, onChange, param }: ParamChangeProps)
           "form-control h-100",
           !change.critText || change.critText === param.critValueString ? "text-muted" : "",
         )}
-        //rows={}
+        rows={3}
         value={change.critText || param.critValueString}
         onChange={(e) => {
           onChange({ ...change, critText: e.target.value });

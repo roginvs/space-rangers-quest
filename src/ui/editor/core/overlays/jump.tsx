@@ -142,7 +142,7 @@ export function JumpOverlay({
             <div>Сообщение, выводящееся при выполнении перехода:</div>
             <textarea
               className="form-control mb-1"
-              rows={5}
+              rows={4}
               style={{
                 resize: "none",
               }}
@@ -195,7 +195,7 @@ export function JumpOverlay({
             <select
               className="form-control"
               value={paramId}
-              size={16}
+              size={19}
               style={{ height: "100%" }}
               onChange={(e) => setParamId(parseInt(e.target.value))}
             >
