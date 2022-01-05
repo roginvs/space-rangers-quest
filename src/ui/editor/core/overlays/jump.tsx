@@ -3,7 +3,7 @@ import * as React from "react";
 import { assertNever } from "../../../../assertNever";
 import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../../lib/qmplayer/funcs";
-import { Jump } from "../../../../lib/qmreader";
+import { Jump, JumpParameterCondition, QMParam } from "../../../../lib/qmreader";
 import { getParamStringInfo } from "../hovers/paramsAndChangeConditionsSummary";
 import { Overlay } from "../overlay";
 import { range } from "../utils";
@@ -11,6 +11,54 @@ import { MediaEdit, ParamChangeTypeEdit } from "./common";
 import { toast } from "react-toastify";
 import { useOnDocumentKeyUp } from "../keypress";
 import { FormulaInput } from "../common/formulaInput";
+
+function ParamCondition({
+  condition,
+  onChange,
+  param,
+}: {
+  condition: DeepImmutable<JumpParameterCondition>;
+  param: DeepImmutable<QMParam>;
+  onChange: (newValue: DeepImmutable<JumpParameterCondition>) => void;
+}) {
+  return (
+    <div className="row mb-3">
+      <div className="col-4 overflow-hidden ">
+        <label className="text-nowrap mb-0">Необходимо в диапазоне</label>
+
+        <div className="d-flex align-items-center">
+          <label className="form-check-label">Мин </label>
+          <input
+            className={classNames(
+              "form-control ml-2 w-100",
+              param.min === condition.mustFrom ? "text-muted" : "",
+            )}
+            type="number"
+            value={condition.mustFrom}
+            min={param.min}
+            max={param.max}
+            onChange={(e) => onChange({ ...condition, mustFrom: parseInt(e.target.value) })}
+          />
+        </div>
+
+        <div className="d-flex align-items-center">
+          <label className="form-check-label">Макс </label>
+          <input
+            className={classNames(
+              "form-control ml-2 w-100",
+              param.max === condition.mustTo ? "text-muted" : "",
+            )}
+            type="number"
+            value={condition.mustTo}
+            min={param.min}
+            max={param.max}
+            onChange={(e) => onChange({ ...condition, mustTo: parseInt(e.target.value) })}
+          />
+        </div>
+      </div>
+    </div>
+  );
+}
 
 export function JumpOverlay({
   quest,
@@ -163,7 +211,33 @@ export function JumpOverlay({
             </select>
           </div>
 
-          <div className="col-6">TODO</div>
+          <div className="col-6">
+            <ParamCondition
+              param={quest.params[paramId]}
+              condition={jump.paramsConditions[paramId]}
+              onChange={(newValue) => {
+                setJump({
+                  ...jump,
+                  paramsConditions: jump.paramsConditions.map((change, i) =>
+                    i === paramId ? newValue : change,
+                  ),
+                });
+              }}
+            />
+            <ParamChangeTypeEdit
+              change={jump.paramsChanges[paramId]}
+              param={quest.params[paramId]}
+              onChange={(newChange) => {
+                setJump({
+                  ...jump,
+                  paramsChanges: jump.paramsChanges.map((change, i) =>
+                    i === paramId ? newChange : change,
+                  ),
+                });
+              }}
+              paramsActive={quest.params}
+            />
+          </div>
         </div>
 
         <div className="form-inline">
