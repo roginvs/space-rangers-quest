@@ -243,13 +243,15 @@ export interface Media {
 export interface QMParamShowInfo {
   showingInfo: QMParamShowInfoPart[];
 }
-export interface QMParam extends Media, QMParamShowInfo {
+export interface QMParamIsActive {
+  active: boolean;
+}
+export interface QMParam extends Media, QMParamShowInfo, QMParamIsActive {
   min: number;
   max: number;
   type: ParamType;
   showWhenZero: boolean;
   critType: ParamCritType;
-  active: boolean;
   showingRangesCount: number;
   isMoney: boolean;
   name: string;

@@ -1,19 +1,45 @@
 import classNames from "classnames";
 import * as React from "react";
+import { calculate } from "../../../../lib/formula";
+import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
+import { QMParamIsActive } from "../../../../lib/qmreader";
+import { randomFromMathRandom } from "../../../../lib/randomFunc";
 
-export function FormulaInput({}: {
+function checkFormula(str: string, params: DeepImmutable<QMParamIsActive[]>) {
+  try {
+    // We know that calculate will never fail for all param values, so lets provide some dummy values
+    // If param is not active then we provide undefined to force calculate to fail
+
+    calculate(
+      str,
+      params.map((param) => (param.active ? 0 : undefined)),
+      randomFromMathRandom,
+    );
+  } catch (e: any) {
+    console.info(e);
+    return `${e.message}` || "error";
+  }
+  return null;
+}
+
+export function FormulaInput({
+  className,
+  value,
+  onChange,
+  params,
+}: {
   className: string;
   value: string;
   onChange: (value: string) => void;
+  params: DeepImmutable<QMParamIsActive[]>;
 }) {
+  const isError = checkFormula(value, params);
   return (
     <input
-      className={classNames(
-        "form-control w-100",
-        checkFormula(change.changingFormula) ? "is-invalid" : "",
-      )}
-      value={change.changingFormula}
-      onChange={(e) => onChange({ ...change, changingFormula: e.target.value })}
+      className={classNames(className, isError ? "is-invalid" : "")}
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      title={isError || undefined}
     />
   );
 }
