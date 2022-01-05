@@ -4,13 +4,13 @@ import { assertNever } from "../../../../assertNever";
 import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../../lib/qmplayer/funcs";
 import { Location, LocationType } from "../../../../lib/qmreader";
-import { checkFormula } from "../checkFormula";
 import { getParamStringInfo } from "../hovers/paramsAndChangeConditionsSummary";
 import { Overlay } from "../overlay";
 import { range } from "../utils";
 import { MediaEdit, ParamChangeTypeEdit } from "./common";
 import { toast } from "react-toastify";
 import { useOnDocumentKeyUp } from "../keypress";
+import { FormulaInput } from "../common/formulaInput";
 
 export function LocationOverlay({
   quest,
@@ -128,13 +128,11 @@ export function LocationOverlay({
                 <option value={"formula"}>Выбирать по формуле</option>
               </select>
               {location.isTextByFormula && (
-                <input
-                  className={classNames(
-                    "form-control ml-2 flex-fill",
-                    checkFormula(location.textSelectFormula) ? "is-invalid" : "",
-                  )}
+                <FormulaInput
+                  className="form-control ml-2 flex-fill"
                   value={location.textSelectFormula}
-                  onChange={(e) => setLocation({ ...location, textSelectFormula: e.target.value })}
+                  onChange={(newValue) => setLocation({ ...location, textSelectFormula: newValue })}
+                  paramsActive={quest.params}
                 />
               )}
             </form>
@@ -209,6 +207,7 @@ export function LocationOverlay({
                   ),
                 });
               }}
+              paramsActive={quest.params}
             />
           </div>
         </div>

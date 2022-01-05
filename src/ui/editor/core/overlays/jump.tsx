@@ -4,7 +4,6 @@ import { assertNever } from "../../../../assertNever";
 import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../../lib/qmplayer/funcs";
 import { Jump } from "../../../../lib/qmreader";
-import { checkFormula } from "../checkFormula";
 import { getParamStringInfo } from "../hovers/paramsAndChangeConditionsSummary";
 import { Overlay } from "../overlay";
 import { range } from "../utils";

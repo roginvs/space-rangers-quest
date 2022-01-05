@@ -7,8 +7,9 @@ import {
   ParameterShowingType,
   ParamType,
   QMParam,
+  QMParamIsActive,
 } from "../../../../lib/qmreader";
-import { checkFormula } from "../checkFormula";
+import { FormulaInput } from "../common/formulaInput";
 
 export function MediaEdit({
   media,
@@ -61,9 +62,10 @@ export function MediaEdit({
 interface ParamChangeProps {
   change: DeepImmutable<ParameterChange>;
   param: DeepImmutable<QMParam>;
+  paramsActive: DeepImmutable<QMParamIsActive[]>;
   onChange: (newChange: DeepImmutable<ParameterChange>) => void;
 }
-export function ParamChangeTypeEdit({ change, onChange, param }: ParamChangeProps) {
+export function ParamChangeTypeEdit({ change, onChange, param, paramsActive }: ParamChangeProps) {
   return (
     <div className="d-flex flex-column h-100">
       <div className="row">
@@ -192,13 +194,11 @@ export function ParamChangeTypeEdit({ change, onChange, param }: ParamChangeProp
               onChange={(e) => onChange({ ...change, change: parseInt(e.target.value) })}
             />
           ) : (
-            <input
-              className={classNames(
-                "form-control w-100",
-                checkFormula(change.changingFormula) ? "is-invalid" : "",
-              )}
+            <FormulaInput
+              className="form-control w-100"
               value={change.changingFormula}
-              onChange={(e) => onChange({ ...change, changingFormula: e.target.value })}
+              onChange={(newValue) => onChange({ ...change, changingFormula: newValue })}
+              paramsActive={paramsActive}
             />
           )}
         </div>
@@ -243,7 +243,12 @@ export function ParamChangeTypeEdit({ change, onChange, param }: ParamChangeProp
         </div>
       </div>
 
-      <ParamCritTypeEdit param={param} onChange={onChange} change={change} />
+      <ParamCritTypeEdit
+        param={param}
+        onChange={onChange}
+        change={change}
+        paramsActive={paramsActive}
+      />
     </div>
   );
 }
