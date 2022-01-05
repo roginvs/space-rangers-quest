@@ -21,40 +21,99 @@ function ParamCondition({
   param: DeepImmutable<QMParam>;
   onChange: (newValue: DeepImmutable<JumpParameterCondition>) => void;
 }) {
+  const [mustEqualStr, setMaxEqualStr] = React.useState(condition.mustEqualValues.join(";"));
+  const [mustModStr, setMaxModStr] = React.useState(condition.mustModValues.join(";"));
+  React.useEffect(() => {
+    setMaxEqualStr(condition.mustEqualValues.join(";"));
+    setMaxModStr(condition.mustModValues.join(";"));
+  }, [condition]);
+
   return (
-    <div className="row mb-3">
-      <div className="col-4 overflow-hidden ">
-        <label className="text-nowrap mb-0">Необходимо в диапазоне</label>
+    <div className="mb-3">
+      <div className="d-flex align-items-center mb-1">
+        <label className="form-check-label mr-2">Необходимо: </label>
+        <label className="form-check-label">Мин </label>
+        <input
+          className={classNames(
+            "form-control ml-2 w-100",
+            param.min === condition.mustFrom ? "text-muted" : "",
+          )}
+          type="number"
+          value={condition.mustFrom}
+          min={param.min}
+          max={param.max}
+          onChange={(e) => onChange({ ...condition, mustFrom: parseInt(e.target.value) })}
+        />
+        <label className="form-check-label ml-1">Макс </label>
+        <input
+          className={classNames(
+            "form-control ml-2 w-100",
+            param.max === condition.mustTo ? "text-muted" : "",
+          )}
+          type="number"
+          value={condition.mustTo}
+          min={param.min}
+          max={param.max}
+          onChange={(e) => onChange({ ...condition, mustTo: parseInt(e.target.value) })}
+        />
+      </div>
 
-        <div className="d-flex align-items-center">
-          <label className="form-check-label">Мин </label>
-          <input
-            className={classNames(
-              "form-control ml-2 w-100",
-              param.min === condition.mustFrom ? "text-muted" : "",
-            )}
-            type="number"
-            value={condition.mustFrom}
-            min={param.min}
-            max={param.max}
-            onChange={(e) => onChange({ ...condition, mustFrom: parseInt(e.target.value) })}
-          />
-        </div>
+      <div className="d-flex align-items-center mb-1">
+        <label className="form-check-label text-nowrap mr-1">
+          {condition.mustEqualValuesEqual ? "Равно" : "Не равно"}
+        </label>
 
-        <div className="d-flex align-items-center">
-          <label className="form-check-label">Макс </label>
-          <input
-            className={classNames(
-              "form-control ml-2 w-100",
-              param.max === condition.mustTo ? "text-muted" : "",
-            )}
-            type="number"
-            value={condition.mustTo}
-            min={param.min}
-            max={param.max}
-            onChange={(e) => onChange({ ...condition, mustTo: parseInt(e.target.value) })}
-          />
-        </div>
+        <input
+          className={classNames("form-control ml-2 w-100")}
+          value={mustEqualStr}
+          onChange={(e) => setMaxEqualStr(e.target.value)}
+          onBlur={(e) => {
+            const newValue = e.target.value
+              .replace(/ /g, "")
+              .split(/;|,/)
+              .filter((v) => v !== "")
+              .map((v) => parseInt(v));
+            onChange({ ...condition, mustEqualValues: newValue });
+          }}
+          title="Список значений, например: 1;2;3"
+        />
+        <label
+          className="form-check-label ml-1"
+          style={{ cursor: "pointer" }}
+          onClick={() =>
+            onChange({ ...condition, mustEqualValuesEqual: !condition.mustEqualValuesEqual })
+          }
+        >
+          <i className="fa fa-exchange" />
+        </label>
+      </div>
+
+      <div className="d-flex align-items-center mb-1">
+        <label className="form-check-label text-nowrap mr-1">
+          {condition.mustModValuesMod ? "Кратно" : "Не кратно"}
+        </label>
+
+        <input
+          className={classNames("form-control ml-2 w-100")}
+          value={mustModStr}
+          onChange={(e) => setMaxModStr(e.target.value)}
+          onBlur={(e) => {
+            const newValue = e.target.value
+              .replace(/ /g, "")
+              .split(/;|,/)
+              .filter((v) => v !== "")
+              .map((v) => parseInt(v));
+            onChange({ ...condition, mustModValues: newValue });
+          }}
+          title="Список значений, например: 1;2;3"
+        />
+        <label
+          className="form-check-label ml-1"
+          style={{ cursor: "pointer" }}
+          onClick={() => onChange({ ...condition, mustModValuesMod: !condition.mustModValuesMod })}
+        >
+          <i className="fa fa-exchange" />
+        </label>
       </div>
     </div>
   );
