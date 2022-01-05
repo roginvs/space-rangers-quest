@@ -3,6 +3,7 @@ import { RandomFunc } from "./randomFunc";
 import { PlayerSubstitute } from "./qmplayer/playerSubstitute";
 import { QMParamShowInfo } from "./qmreader";
 import { DeepImmutable } from "./qmplayer/deepImmutable";
+import { ParamValues } from "./formula/types";
 
 export const clr = "<clr>";
 export const clrEnd = "<clrEnd>";
@@ -40,7 +41,7 @@ export const PLAYER_KEYS_TO_REPLACE: (keyof PlayerSubstitute)[] = [
 export function substitute(
   str: string,
   player: PlayerSubstitute,
-  paramValues: ReadonlyArray<number>,
+  paramValues: ParamValues,
   paramShowInfos: DeepImmutable<QMParamShowInfo[]>,
   random: RandomFunc,
   diamondIndex?: number,
@@ -74,11 +75,27 @@ export function substitute(
     }
     const paramIndex = parseInt(paramIndexStr) - 1;
 
-    let paramValue: number | undefined;
-    if (str[scanIndex] === "]") {
+    let paramValue = paramValues[paramIndex];
+
+    // Here we are using paramValues to determine
+    //  if param is enabled and is paramId in param range
+    // This is not very good, maybe better to use paramShowInfos
+    if (paramValue === null) {
       scanIndex++;
-      paramValue = paramValues[paramIndex];
+      str = str.slice(0, dIndex) + clr + "DISABLED_PARAM" + clrEnd + str.slice(scanIndex);
+      continue;
+    }
+    if (paramValue === undefined) {
+      scanIndex++;
+      str = str.slice(0, dIndex) + clr + "UNKNOWN_PARAM" + clrEnd + str.slice(scanIndex);
+      continue;
+    }
+
+    if (str[scanIndex] === "]") {
+      // Just keep param value as is
+      scanIndex++;
     } else if (str[scanIndex] === ":") {
+      // Replace param value with formula
       scanIndex++;
       const formulaStartIndex = scanIndex;
       let formulaEndIndex = formulaStartIndex;

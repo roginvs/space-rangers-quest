@@ -50,6 +50,12 @@ describe("Checking substitute", function () {
     ["Incorrect [d:{3+5] [d1]", "Incorrect [d:{3+5] <clr>Param1valueString<clrEnd>"],
     ["Incorrect [d:4+] [d1]", "Incorrect [d:4+] <clr>Param1valueString<clrEnd>"],
     ["Incorrect [d:4+[[] [d1]", "Incorrect [d:4+[[] <clr>Param1valueString<clrEnd>"],
+
+    ["Disabled param [d4]", "Disabled param <clr>DISABLED_PARAM<clrEnd>"],
+    ["Disabled param [d4:200]", "Disabled param <clr>DISABLED_PARAM<clrEnd>200]"],
+
+    ["Unknown param [d666]", "Unknown param <clr>UNKNOWN_PARAM<clrEnd>"],
+
     //
     //
     // TODO: What if [d1] refers [d2] which refers [d1]? TGE crashes with stack overflow
@@ -62,7 +68,7 @@ describe("Checking substitute", function () {
         substitute(
           str,
           player,
-          [10, 20, 30],
+          [10, 20, 30, null],
           [
             {
               showingInfo: [
@@ -98,6 +104,15 @@ describe("Checking substitute", function () {
                   from: 30,
                   to: 30,
                   str: "Lol [d1]",
+                },
+              ],
+            },
+            {
+              showingInfo: [
+                {
+                  from: 0,
+                  to: 100,
+                  str: "this is disabled param",
                 },
               ],
             },

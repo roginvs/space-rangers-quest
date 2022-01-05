@@ -9,6 +9,7 @@ import * as formula from "../lib/formula";
 import { PlayerSubstitute } from "../lib/qmplayer/playerSubstitute";
 import { createDetermenisticRandom, randomFromMathRandom } from "../lib/randomFunc";
 import { getGameTaskText } from "../lib/getGameTaskText";
+import { ParamValues } from "../lib/formula/types";
 
 // tslint:disable:no-invalid-this
 
@@ -20,7 +21,7 @@ describe(`Checking all quests for formulas and params substitution`, function ()
       const fullname = srcDir + origin + "/" + f;
       describe(`Checking quest ${fullname}`, () => {
         let quest: QM;
-        let paramValues: number[];
+        let paramValues: ParamValues;
         const player: PlayerSubstitute = {
           Ranger: "Ranger",
           Player: "Player",
