@@ -138,6 +138,7 @@ export function JumpOverlay({
             value={jump.formulaToPass}
             onChange={(newValue) => setJump({ ...jump, formulaToPass: newValue })}
             paramsActive={quest.params}
+            allowEmpty
           />
         </div>
 

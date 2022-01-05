@@ -145,7 +145,7 @@ export function LocationOverlay({
           style={{
             resize: "none",
           }}
-          value={location.texts[textIndex]}
+          value={location.texts[textIndex] || ""}
           onChange={(e) => {
             const newLocation = {
               ...location,
