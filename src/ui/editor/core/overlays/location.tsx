@@ -30,17 +30,29 @@ export function LocationOverlay({
     setParamId(0);
   }, [initialLocation]);
 
-  const needPrompt = location !== initialLocation;
-  const onCloseWithPrompt = React.useCallback(() => {
-    //TODO promt to save changes using DOM
-    if (needPrompt) {
-      if (confirm("Отменить изменения?")) {
-        onClose(undefined);
-      }
-    } else {
-      onClose(undefined);
+  const [isPrompting, setIsPrompting] = React.useState(false);
+  React.useEffect(() => {
+    if (!isPrompting) {
+      return;
     }
-  }, [needPrompt]);
+    const timerId = window.setTimeout(() => setIsPrompting(false), 5000);
+    return () => window.clearTimeout(timerId);
+  });
+
+  const isChanged = location !== initialLocation;
+
+  const onCloseWithPrompt = React.useCallback(() => {
+    if (!isChanged) {
+      onClose(undefined);
+      return;
+    }
+
+    if (isPrompting) {
+      onClose(undefined);
+    } else {
+      setIsPrompting(true);
+    }
+  }, [isChanged, isPrompting]);
 
   if (!location) {
     return null;
@@ -315,11 +327,15 @@ export function LocationOverlay({
             />
           )}
 
-          <button className="btn btn-primary ml-auto mr-2" onClick={() => onClose(location)}>
+          <button
+            className="btn btn-primary ml-auto mr-2"
+            disabled={!isChanged}
+            onClick={() => onClose(location)}
+          >
             Сохранить
           </button>
           <button className="btn btn-danger" onClick={onCloseWithPrompt}>
-            Закрыть
+            {!isPrompting ? "Закрыть" : "Точно закрыть?"}
           </button>
         </div>
       </div>
