@@ -10,6 +10,7 @@ import { range } from "../utils";
 import { MediaEdit, ParamChangeTypeEdit } from "./common";
 import { toast } from "react-toastify";
 import { useOnDocumentKeyUp } from "../keypress";
+import { FormulaInput } from "../common/formulaInput";
 
 export function JumpOverlay({
   quest,
@@ -23,6 +24,7 @@ export function JumpOverlay({
   const [jump, setJump] = React.useState<DeepImmutable<Jump> | undefined>(undefined);
 
   const [paramId, setParamId] = React.useState(0);
+  paramId; // To calm down linter, remove me
 
   React.useEffect(() => {
     setJump(initialJump);
@@ -72,7 +74,74 @@ export function JumpOverlay({
       onClose={onCloseWithPrompt}
     >
       <div>
-        //asd
+        <div>Вопрос для совершения перехода:</div>
+        <textarea
+          className="form-control mb-1"
+          rows={2}
+          style={{
+            resize: "none",
+          }}
+          value={jump.text}
+          onChange={(e) => {
+            setJump({
+              ...jump,
+              text: e.target.value,
+            });
+          }}
+        />
+
+        <div className="row mb-2">
+          <div className="col-9">
+            <div>Сообщение, выводящееся при выполнении перехода:</div>
+            <textarea
+              className="form-control mb-1"
+              rows={5}
+              style={{
+                resize: "none",
+              }}
+              value={jump.description}
+              onChange={(e) => {
+                setJump({
+                  ...jump,
+                  description: e.target.value,
+                });
+              }}
+            />
+          </div>
+          <div className="col-3 pt-4">
+            <input
+              className="form-control"
+              placeholder="Иллюстрация"
+              value={jump.img}
+              onChange={(e) => setJump({ ...jump, img: e.target.value })}
+            />
+            <input
+              className="form-control"
+              placeholder="Фоновый трек"
+              value={jump.track}
+              onChange={(e) => setJump({ ...jump, track: e.target.value })}
+            />
+            <input
+              className="form-control"
+              placeholder="Звуковой эффект"
+              value={jump.sound}
+              onChange={(e) => setJump({ ...jump, track: e.target.value })}
+            />
+          </div>
+        </div>
+
+        <div className="d-flex align-items-center">
+          <label className="form-check-label" style={{ flexShrink: 0 }}>
+            Логическое условие
+          </label>
+          <FormulaInput
+            className="form-control w-100 ml-2"
+            value={jump.formulaToPass}
+            onChange={(newValue) => setJump({ ...jump, formulaToPass: newValue })}
+            paramsActive={quest.params}
+          />
+        </div>
+
         <div className="form-inline">
           <div className="ml-3 form-check form-check-inline">
             <label className="form-check-label">

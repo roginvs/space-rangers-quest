@@ -23,7 +23,6 @@ export function MediaEdit({
       <div className="col-4">
         <div className="form-group">
           <input
-            type="email"
             className="form-control"
             placeholder="Иллюстрация"
             value={media.img}
@@ -35,7 +34,6 @@ export function MediaEdit({
       <div className="col-4">
         <div className="form-group">
           <input
-            type="email"
             className="form-control"
             placeholder="Фоновый трек"
             value={media.track}
@@ -47,7 +45,6 @@ export function MediaEdit({
       <div className="col-4">
         <div className="form-group">
           <input
-            type="email"
             className="form-control"
             placeholder="Звуковой эффект"
             value={media.sound}
