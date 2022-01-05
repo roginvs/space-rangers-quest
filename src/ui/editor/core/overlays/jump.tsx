@@ -249,12 +249,12 @@ export function JumpOverlay({
           />
         </div>
 
-        <div className="row mb-3">
-          <div className="col-6">
+        <div className="row mb-1">
+          <div className="col-6 d-flex flex-column">
             <select
               className="form-control"
               value={paramId}
-              size={19}
+              size={17}
               style={{ height: "100%" }}
               onChange={(e) => setParamId(parseInt(e.target.value))}
             >
@@ -268,6 +268,30 @@ export function JumpOverlay({
                 );
               })}
             </select>
+            <div className="mt-3">
+              <div className="d-flex">
+                <div className="mr-2">
+                  <label className="mb-0">Порядок показа: {jump.showingOrder}</label>
+                  <input
+                    type="range"
+                    className="form-range w-100"
+                    min={0}
+                    max={9}
+                    value={jump.showingOrder}
+                    onChange={(e) => setJump({ ...jump, showingOrder: parseInt(e.target.value) })}
+                  />
+                </div>
+                <div className="ml-2 d-flex align-items-center">
+                  <label className="mb-0 mr-1">Приоритет:</label>
+                  <input
+                    className={classNames("form-control w-100")}
+                    type="number"
+                    value={jump.priority}
+                    onChange={(e) => setJump({ ...jump, priority: parseFloat(e.target.value) })}
+                  />
+                </div>
+              </div>
+            </div>
           </div>
 
           <div className="col-6">
@@ -300,6 +324,18 @@ export function JumpOverlay({
         </div>
 
         <div className="form-inline">
+          <div className="ml-3 form-check form-check-inline">
+            <label className="form-check-label">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                checked={jump.alwaysShow}
+                onChange={(e) => setJump({ ...jump, alwaysShow: e.target.checked })}
+              />
+              Всегда показывать
+            </label>
+          </div>
+
           <div className="ml-3 form-check form-check-inline">
             <label className="form-check-label">
               <input
