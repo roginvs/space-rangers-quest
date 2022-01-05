@@ -261,7 +261,16 @@ export function JumpOverlay({
               {quest.params.map((param, idx) => {
                 const summary = getParamStringInfo(idx, param, jump.paramsChanges[idx], null);
                 return (
-                  <option className={param.active ? "" : "text-muted"} value={idx}>
+                  <option
+                    className={
+                      param.active
+                        ? summary.leftText || summary.rightText
+                          ? "font-weight-bold"
+                          : ""
+                        : "text-muted"
+                    }
+                    value={idx}
+                  >
                     {summary.textName}
                     {summary.leftText} {summary.rightText}
                   </option>
