@@ -21,6 +21,7 @@ import { LocationHover } from "./hovers/location";
 import { Overlay } from "./overlay";
 import { LocationOverlay } from "./overlays/location";
 import { JumpHover } from "./hovers/jump";
+import { JumpOverlay } from "./overlays/jump";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -51,12 +52,16 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const [overlayMode, setOverlayMode] = React.useState<EditorOverlay | undefined>(undefined);
 
   // DEBUGGING
-  ///*
+  //*
   React.useEffect(() => {
     setOverlayMode({
       kind: "location",
       //location: quest.locations.find((l) => l.isStarting)!,
       location: quest.locations.find((l) => l.id === 204)!,
+    });
+    setOverlayMode({
+      kind: "jump",
+      jump: quest.jumps.find((l) => l.id === 987)!,
     });
   }, []);
   //*/
@@ -457,6 +462,17 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
                 setOverlayMode(undefined);
                 if (location) {
                   onChange(updateLocation(quest, location));
+                }
+              }}
+            />
+          ) : overlayMode.kind === "jump" ? (
+            <JumpOverlay
+              quest={quest}
+              initialJump={overlayMode.jump}
+              onClose={(jump) => {
+                setOverlayMode(undefined);
+                if (jump) {
+                  onChange(updateJump(quest, jump));
                 }
               }}
             />
