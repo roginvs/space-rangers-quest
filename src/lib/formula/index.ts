@@ -1,5 +1,5 @@
 import * as assert from "assert";
-import { Params, Token, SyntaxKind } from "./types";
+import { ParamValues, Token, SyntaxKind } from "./types";
 import { createScanner } from "./scanner";
 import { parseExpression } from "./parser";
 import { calculateAst } from "./calculator";
@@ -14,7 +14,7 @@ export function parse(str: string) {
   // console.info(JSON.stringify(ast, null, 4));
   return ast;
 }
-export function calculate(str: string, params: Params = [], random: RandomFunc) {
+export function calculate(str: string, params: ParamValues = [], random: RandomFunc) {
   const ast = parse(str);
   const value = calculateAst(ast, params, random);
   return Math.round(value);

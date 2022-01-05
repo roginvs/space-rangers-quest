@@ -1,4 +1,4 @@
-import { SyntaxKind, ExpressionType, Expression, Params } from "./types";
+import { SyntaxKind, ExpressionType, Expression, ParamValues } from "./types";
 import { MAX_NUMBER } from "./consts";
 import { RandomFunc } from "../randomFunc";
 import { assertNever } from "../../assertNever";
@@ -51,7 +51,11 @@ function pickRandomForRanges(ranges: RangeCalculated[], random: RandomFunc) {
   );
 }
 
-export function calculateAst(ast: Expression, params: Params = [], random: RandomFunc): number {
+export function calculateAst(
+  ast: Expression,
+  params: ParamValues = [],
+  random: RandomFunc,
+): number {
   function transformToIntoRanges(node: Expression): RangeCalculated[] {
     if (node.type !== "binary" || node.operator !== "to keyword") {
       throw new Error("Wrong usage");
@@ -108,7 +112,14 @@ export function calculateAst(ast: Expression, params: Params = [], random: Rando
   if (ast.type === "number") {
     return ast.value;
   } else if (ast.type === "parameter") {
-    return params[ast.parameterId];
+    const paramValue = params[ast.parameterId];
+    if (paramValue === null) {
+      throw new Error(`Parameter p${ast.parameterId + 1} is disabled`);
+    }
+    if (paramValue === undefined) {
+      throw new Error(`Parameter p${ast.parameterId + 1} is not defined`);
+    }
+    return paramValue;
   } else if (ast.type === "binary") {
     if (ast.operator === "plus token") {
       const a = calculateAst(ast.left, params, random);

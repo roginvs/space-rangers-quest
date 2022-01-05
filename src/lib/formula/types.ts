@@ -1,4 +1,4 @@
-export type Params = ReadonlyArray<number>;
+export type ParamValues = ReadonlyArray<number | null>;
 
 const MINUS_TOKEN = "minus token";
 type SyntaxKindUnaryToken = typeof MINUS_TOKEN;
