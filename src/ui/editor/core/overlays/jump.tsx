@@ -259,7 +259,12 @@ export function JumpOverlay({
               onChange={(e) => setParamId(parseInt(e.target.value))}
             >
               {quest.params.map((param, idx) => {
-                const summary = getParamStringInfo(idx, param, jump.paramsChanges[idx], null);
+                const summary = getParamStringInfo(
+                  idx,
+                  param,
+                  jump.paramsChanges[idx],
+                  jump.paramsConditions[idx],
+                );
                 return (
                   <option
                     className={
