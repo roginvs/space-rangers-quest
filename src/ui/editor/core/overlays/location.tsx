@@ -10,6 +10,7 @@ import { Overlay } from "../overlay";
 import { range } from "../utils";
 import { MediaEdit, ParamChangeTypeEdit } from "./common";
 import { toast } from "react-toastify";
+import { useOnDocumentKeyUp } from "../keypress";
 
 export function LocationOverlay({
   quest,
@@ -53,6 +54,13 @@ export function LocationOverlay({
       setIsPrompting(true);
     }
   }, [isChanged, isPrompting]);
+
+  useOnDocumentKeyUp((e) => {
+    console.info(e.key);
+    if (e.key === "Escape") {
+      onCloseWithPrompt();
+    }
+  });
 
   if (!location) {
     return null;
