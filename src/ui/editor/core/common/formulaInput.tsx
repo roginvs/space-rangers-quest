@@ -27,13 +27,15 @@ export function FormulaInput({
   value,
   onChange,
   paramsActive,
+  allowEmpty,
 }: {
   className: string;
   value: string;
   onChange: (value: string) => void;
   paramsActive: DeepImmutable<QMParamIsActive[]>;
+  allowEmpty?: boolean;
 }) {
-  const isError = checkFormula(value, paramsActive);
+  const isError = allowEmpty && !value ? null : checkFormula(value, paramsActive);
   return (
     <input
       className={classNames(className, isError ? "is-invalid" : "")}

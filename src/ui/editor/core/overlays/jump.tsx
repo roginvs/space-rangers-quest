@@ -24,7 +24,6 @@ export function JumpOverlay({
   const [jump, setJump] = React.useState<DeepImmutable<Jump> | undefined>(undefined);
 
   const [paramId, setParamId] = React.useState(0);
-  paramId; // To calm down linter, remove me
 
   React.useEffect(() => {
     setJump(initialJump);
@@ -130,7 +129,7 @@ export function JumpOverlay({
           </div>
         </div>
 
-        <div className="d-flex align-items-center">
+        <div className="d-flex align-items-center mb-3">
           <label className="form-check-label" style={{ flexShrink: 0 }}>
             Логическое условие
           </label>
@@ -140,6 +139,30 @@ export function JumpOverlay({
             onChange={(newValue) => setJump({ ...jump, formulaToPass: newValue })}
             paramsActive={quest.params}
           />
+        </div>
+
+        <div className="row mb-3">
+          <div className="col-6">
+            <select
+              className="form-control"
+              value={paramId}
+              size={16}
+              style={{ height: "100%" }}
+              onChange={(e) => setParamId(parseInt(e.target.value))}
+            >
+              {quest.params.map((param, idx) => {
+                const summary = getParamStringInfo(idx, param, jump.paramsChanges[idx], null);
+                return (
+                  <option className={param.active ? "" : "text-muted"} value={idx}>
+                    {summary.textName}
+                    {summary.leftText} {summary.rightText}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+
+          <div className="col-6">TODO</div>
         </div>
 
         <div className="form-inline">
