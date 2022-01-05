@@ -1,4 +1,8 @@
-export type ParamValues = ReadonlyArray<number | null>;
+/**
+ * Undefined is used here to force param range check
+ * Also undefined might be used to indicate that the parameter is disabled
+ */
+export type ParamValues = ReadonlyArray<number | undefined>;
 
 const MINUS_TOKEN = "minus token";
 type SyntaxKindUnaryToken = typeof MINUS_TOKEN;

@@ -113,9 +113,6 @@ export function calculateAst(
     return ast.value;
   } else if (ast.type === "parameter") {
     const paramValue = params[ast.parameterId];
-    if (paramValue === null) {
-      throw new Error(`Parameter p${ast.parameterId + 1} is disabled`);
-    }
     if (paramValue === undefined) {
       throw new Error(`Parameter p${ast.parameterId + 1} is not defined`);
     }

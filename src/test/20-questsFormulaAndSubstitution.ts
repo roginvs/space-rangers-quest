@@ -71,7 +71,17 @@ describe(`Checking all quests for formulas and params substitution`, function ()
         it(`Loads quest and substitute variables`, () => {
           const data = fs.readFileSync(fullname);
           quest = parse(data);
-          paramValues = quest.params.map((p, i) => i * i);
+
+          paramValues = quest.params.map((p, i) => {
+            if (p.active) {
+              // Just an example value
+              return i * i;
+            } else {
+              // There are two quests which have formula with disabled parameters
+              // Let's return some random value instead of undefined just to make this test pass
+              return i * 3;
+            }
+          });
         });
         it(`Creates player and starts (to check init values)`, () => {
           const player = new QMPlayer(quest, [], "rus");

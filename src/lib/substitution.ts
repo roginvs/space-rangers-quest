@@ -77,14 +77,6 @@ export function substitute(
 
     let paramValue = paramValues[paramIndex];
 
-    // Here we are using paramValues to determine
-    //  if param is enabled and is paramId in param range
-    // This is not very good, maybe better to use paramShowInfos
-    if (paramValue === null) {
-      scanIndex++;
-      str = str.slice(0, dIndex) + clr + "DISABLED_PARAM" + clrEnd + str.slice(scanIndex);
-      continue;
-    }
     if (paramValue === undefined) {
       scanIndex++;
       str = str.slice(0, dIndex) + clr + "UNKNOWN_PARAM" + clrEnd + str.slice(scanIndex);
