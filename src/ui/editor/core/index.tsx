@@ -22,6 +22,7 @@ import { Overlay } from "./overlay";
 import { LocationOverlay } from "./overlays/location";
 import { JumpHover } from "./hovers/jump";
 import { JumpOverlay } from "./overlays/jump";
+import { useOnDocumentKeyUp } from "./keypress";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -326,6 +327,27 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     }
     drawHovers(context, canvasSize, hoverZone, isDragging);
   }, [hoverZone, canvasSize, isDragging]);
+
+  const onDocumentKeyUp = React.useCallback(
+    (e: KeyboardEvent) => {
+      if (overlayMode) {
+        return;
+      }
+      if (e.key === "1") {
+        setMouseMode("select");
+      } else if (e.key === "2") {
+        setMouseMode("move");
+      } else if (e.key === "3") {
+        setMouseMode("newLocation");
+      } else if (e.key === "4") {
+        setMouseMode("newJump");
+      } else if (e.key === "5") {
+        setMouseMode("remove");
+      }
+    },
+    [overlayMode],
+  );
+  useOnDocumentKeyUp(onDocumentKeyUp);
 
   // console.info(`Editor re-render`);
 
