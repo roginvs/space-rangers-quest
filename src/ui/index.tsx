@@ -18,7 +18,7 @@ import { initGame } from "../lib/qmplayer";
 import { getUIState, performJump } from "../lib/qmplayer/funcs";
 import { Loader, DivFadeinCss, Redirect, ErrorInfo } from "./common";
 import { observer } from "mobx-react";
-import { autorun, observable, runInAction } from "mobx";
+import { autorun, observable, runInAction, toJS } from "mobx";
 import {
   Navbar,
   NavbarBrand,
@@ -263,7 +263,7 @@ class MainLoader extends React.Component<{}> {
         </AppNavbar>
       );
     } else if (tab0 === "editor") {
-      return <EditorContainer />;
+      return <EditorContainer questsToLoad={toJS(store.index.quests)} />;
     } else if (tab0 === "quests") {
       if (!tab1) {
         return <QuestList store={store} />;

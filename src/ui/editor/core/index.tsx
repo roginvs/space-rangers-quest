@@ -29,6 +29,8 @@ import { initRandomGame, QuestPlay } from "../../questPlay";
 import { getLang } from "../../lang";
 import { useIdb } from "./idb";
 import { emptyQmm } from "./emptyQmm";
+import { Game } from "../../../packGameData";
+import { LoadOverlay } from "./overlays/load/loadOverlay";
 
 // tslint:disable-next-line:no-useless-cast
 export const EDITOR_MOUSE_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
@@ -45,9 +47,12 @@ type EditorOverlay =
     }
   | {
       kind: "questsettings";
+    }
+  | {
+      kind: "load";
     };
 
-export function EditorCore() {
+export function EditorCore({ questsToLoad }: { questsToLoad: Game[] }) {
   const { quest, setQuest: onChange, undo, redo } = useIdb();
 
   const [mouseMode, setMouseMode] = React.useState<EditorMouseMode>("select");
@@ -419,13 +424,21 @@ export function EditorCore() {
     >
       <div>
         <button
-          className={classNames("mr-3", "btn", "btn-light")}
+          className={classNames("mr-1", "btn", "btn-light")}
           onClick={() => {
             const emptyQuest = parse(emptyQmm);
             onChange(emptyQuest);
           }}
         >
           <i className="fa fa-file-o" title="Новый" />
+        </button>
+        <button
+          className={classNames("mr-3", "btn", "btn-light")}
+          onClick={() => {
+            setOverlayMode({ kind: "load" });
+          }}
+        >
+          <i className="fa fa-folder-open-o" title="Открыть" />
         </button>
 
         {EDITOR_MOUSE_MODES.map((candidateMode) => (
@@ -612,6 +625,16 @@ export function EditorCore() {
                   onChange(newQuest);
                 }
               }}
+            />
+          ) : overlayMode.kind === "load" ? (
+            <LoadOverlay
+              onClose={(newQuest) => {
+                setOverlayMode(undefined);
+                if (newQuest) {
+                  onChange(newQuest);
+                }
+              }}
+              questsToLoad={questsToLoad}
             />
           ) : (
             assertNever(overlayMode)
