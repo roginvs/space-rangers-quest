@@ -12,7 +12,7 @@ type QuestNumberFlags<ALL extends keyof Quest = keyof Quest> = Quest[ALL] extend
   ? ALL
   : never;
 */
-type QuestNumberFlags = "givingRace";
+type QuestNumberFlags = "givingRace" | "playerRace" | "playerCareer" | "planetRace";
 function CheckboxFlagsSet<T extends QuestNumberFlags>({
   quest,
   setQuest,
@@ -25,7 +25,7 @@ function CheckboxFlagsSet<T extends QuestNumberFlags>({
   questKey: T;
 }) {
   return (
-    <>
+    <div className="d-flex justify-content-center flex-wrap">
       {labels.map((label, i) => {
         if (label === null) {
           return null;
@@ -49,7 +49,7 @@ function CheckboxFlagsSet<T extends QuestNumberFlags>({
           </div>
         );
       })}
-    </>
+    </div>
   );
 }
 
@@ -130,15 +130,41 @@ export function QuestSettings({
           </Nav>
           <TabContent activeTab={activeTab}>
             <TabPane tabId="main">
-              <h4>Tab 1 Contents</h4>
-              <div className="row">
-                <div className="col-4>">
+              <div className="row mt-3 mb-3">
+                <div className="col-3">
                   <div className="text-center">Раса, дающаяя квест</div>
                   <CheckboxFlagsSet
                     quest={quest}
                     setQuest={setQuest}
                     questKey="givingRace"
                     labels={givingRaceNames}
+                  />
+                </div>
+                <div className="col-3">
+                  <div className="text-center">Раса игрока</div>
+                  <CheckboxFlagsSet
+                    quest={quest}
+                    setQuest={setQuest}
+                    questKey="playerRace"
+                    labels={playerRaceNames}
+                  />
+                </div>
+                <div className="col-3">
+                  <div className="text-center">Статус игрока</div>
+                  <CheckboxFlagsSet
+                    quest={quest}
+                    setQuest={setQuest}
+                    questKey="playerCareer"
+                    labels={playerCareerNames}
+                  />
+                </div>
+                <div className="col-3">
+                  <div className="text-center">На чьей планете выполняется</div>
+                  <CheckboxFlagsSet
+                    quest={quest}
+                    setQuest={setQuest}
+                    questKey="planetRace"
+                    labels={planetRaceNames}
                   />
                 </div>
               </div>
