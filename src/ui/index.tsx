@@ -40,7 +40,7 @@ import { AppNavbar } from "./appNavbar";
 import { AuthTabContainer } from "./auth";
 import { QuestInfo } from "./questInfo";
 import { Store } from "./store";
-import { QuestPlay } from "./questPlay";
+import { QuestPlayController } from "./questPlayController";
 import { AboutTabContainer } from "./about";
 import { ChampionsTabContainer } from "./champions";
 import { firebaseConfig } from "./firebaseConfig";
@@ -275,7 +275,7 @@ class MainLoader extends React.Component<{}> {
             </AppNavbar>
           );
         } else {
-          return <QuestPlay key={tab1} store={store} gameName={tab1} />;
+          return <QuestPlayController key={tab1} store={store} gameName={tab1} />;
         }
       }
     }

@@ -26,7 +26,6 @@ import classnames from "classnames";
 import { DATA_DIR } from "./consts";
 import { parse } from "../lib/qmreader";
 import * as pako from "pako";
-import { QuestPlay } from "./questPlay";
 import { observer } from "mobx-react";
 import { Store } from "./store";
 import { getGameTaskText } from "../lib/getGameTaskText";
