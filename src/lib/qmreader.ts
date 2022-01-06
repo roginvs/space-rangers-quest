@@ -252,7 +252,7 @@ export interface QMParam extends Media, QMParamShowInfo, QMParamIsActive {
   type: ParamType;
   showWhenZero: boolean;
   critType: ParamCritType;
-  showingRangesCount: number;
+  //  showingRangesCount: number;
   isMoney: boolean;
   name: string;
   starting: string;
@@ -278,7 +278,7 @@ function parseParam(r: Reader): QMParam {
     showWhenZero,
     critType,
     active,
-    showingRangesCount,
+    // showingRangesCount,
     isMoney,
     name,
     showingInfo: [],
@@ -335,7 +335,7 @@ function parseParamQmm(r: Reader): QMParam {
     showWhenZero,
     critType,
     active,
-    showingRangesCount,
+    // showingRangesCount,
     isMoney,
     name,
     showingInfo: [],

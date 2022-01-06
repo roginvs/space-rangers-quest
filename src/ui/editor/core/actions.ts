@@ -117,7 +117,6 @@ export function addParameter(quest: Quest): Quest {
     type: ParamType.Обычный,
     showWhenZero: true,
     critType: ParamCritType.Минимум,
-    showingRangesCount: 1,
     isMoney: false,
     name: `Параметр ${quest.paramsCount + 1}`,
     starting: "0",

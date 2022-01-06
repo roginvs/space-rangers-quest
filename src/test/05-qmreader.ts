@@ -107,7 +107,7 @@ for (const ext of ["qm", "qmm"] as ("qm" | "qmm")[]) {
         assert.ok(param.active);
         assert.strictEqual(param.name, "param7showingranges");
 
-        assert.strictEqual(param.showingRangesCount, 3);
+        // assert.strictEqual(param.showingRangesCount, 3);
         assert.strictEqual(param.showingInfo.length, 3);
 
         assert.strictEqual(param.showingInfo[0].from, 0);
