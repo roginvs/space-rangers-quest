@@ -200,7 +200,7 @@ export class QuestPlayController extends React.Component<
         setIsMusic={(newIsMusic) => {
           this.setState(
             {
-              noMusic: newIsMusic,
+              noMusic: !newIsMusic,
             },
             () => {
               this.props.store.db

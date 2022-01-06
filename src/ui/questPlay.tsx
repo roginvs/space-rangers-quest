@@ -120,7 +120,7 @@ export function QuestPlay({
         return (
           <div key={choice.jumpId} className="mb-4">
             <a
-              href={`#`}
+              href={location.href}
               onClick={(e) => {
                 e.preventDefault();
                 const newState = performJump(choice.jumpId, quest, gameState, pqiImages);
