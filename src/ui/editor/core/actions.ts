@@ -180,6 +180,25 @@ export function addParameter(quest: Quest): Quest {
 }
 
 export function removeLastParameter(quest: Quest): Quest {
-  // todo
-  return quest;
+  if (quest.paramsCount === 1) {
+    throw new Error("Нелья удалить последний параметр");
+  }
+  if (quest.paramsCount === 0) {
+    throw new Error(`Нет параметоров вообще`);
+  }
+
+  return {
+    ...quest,
+    paramsCount: quest.paramsCount - 1,
+    params: quest.params.slice(0, quest.paramsCount - 1),
+    locations: quest.locations.map((l) => ({
+      ...l,
+      paramsChanges: l.paramsChanges.slice(0, quest.paramsCount - 1),
+    })),
+    jumps: quest.jumps.map((j) => ({
+      ...j,
+      paramsConditions: j.paramsConditions.slice(0, quest.paramsCount - 1),
+      paramsChanges: j.paramsChanges.slice(0, quest.paramsCount - 1),
+    })),
+  };
 }
