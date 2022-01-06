@@ -11,7 +11,7 @@ import {
   QMParamShowInfoPart,
 } from "../../../../../lib/qmreader";
 import { addParameter, removeLastParameter } from "../../actions";
-import { FormulaInput } from "../../common/formulaInput";
+import { checkFormula, FormulaInput } from "../../common/formulaInput";
 import { getParamStringInfo } from "../../hovers/paramsAndChangeConditionsSummary";
 import { MediaEdit } from "../MediaEdit";
 import { QuestSettingsTabProps } from "./props";
@@ -29,13 +29,8 @@ function StartingValueInput({
 }) {
   const visibleValue = value.replace(/^\[/, "").replace(/\]$/, "");
 
-  // match:
-  //  - [23]
-  //  - [23.45]
-  //  - [   23.45 .. 44  ]
-  //  - [   23.45 .. 44.55   ]
-  // TODO: Should it work with float values at all?
-  const isError = !value.match(/^\[\s*\d+(\.\d+)?\s*(\.\.\s*\d+(\.\d+)?\s*)?\]$/);
+  // No parameters because parameter initial value can not reference other parameters
+  const isError = checkFormula(value, []);
 
   return (
     <input
@@ -49,7 +44,7 @@ function StartingValueInput({
           onChange(`[${e.target.value}]`);
         }
       }}
-      title={isError ? "Формат либо число, либо диапазон например 10..20" : ""}
+      title={(isError ? `${isError}\n` : "") + "Пример: 1; 2; 4; [22..55]; 70"}
     />
   );
 }

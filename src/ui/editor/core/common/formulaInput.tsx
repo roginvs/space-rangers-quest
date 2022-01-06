@@ -5,7 +5,7 @@ import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
 import { QMParamIsActive } from "../../../../lib/qmreader";
 import { randomFromMathRandom } from "../../../../lib/randomFunc";
 
-function checkFormula(str: string, params: DeepImmutable<QMParamIsActive[]>) {
+export function checkFormula(str: string, params: DeepImmutable<QMParamIsActive[]>) {
   try {
     // We know that calculate will never fail for all param values, so lets provide some dummy values
     // If param is not active then we provide undefined to force calculate to fail
