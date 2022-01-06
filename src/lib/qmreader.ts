@@ -228,7 +228,7 @@ export enum ParamCritType {
   Минимум = 1,
 }
 
-interface QMParamShowInfoPart {
+export interface QMParamShowInfoPart {
   from: number;
   to: number;
   str: string;

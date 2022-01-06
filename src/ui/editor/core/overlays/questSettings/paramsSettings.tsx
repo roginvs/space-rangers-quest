@@ -3,7 +3,13 @@ import * as React from "react";
 import { toast } from "react-toastify";
 import { DeepImmutable } from "../../../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../../../lib/qmplayer/funcs";
-import { ParamCritType, ParamType, QMParam } from "../../../../../lib/qmreader";
+import {
+  ParamCritType,
+  ParamType,
+  QMParam,
+  QMParamShowInfo,
+  QMParamShowInfoPart,
+} from "../../../../../lib/qmreader";
 import { addParameter, removeLastParameter } from "../../actions";
 import { FormulaInput } from "../../common/formulaInput";
 import { getParamStringInfo } from "../../hovers/paramsAndChangeConditionsSummary";
@@ -45,6 +51,72 @@ function StartingValueInput({
       }}
       title={isError ? "Формат либо число, либо диапазон например 10..20" : ""}
     />
+  );
+}
+
+function QuestParamShowingRangeSettings({
+  param,
+  setParam,
+}: //quest,
+{
+  param: DeepImmutable<QMParam>;
+  setParam: (newParam: DeepImmutable<QMParam>) => void;
+  // quest: Quest;
+}) {
+  return (
+    <>
+      <div className="d-flex">
+        <div className="w-25 text-center">От</div>
+        <div className="w-25 text-center">До</div>
+        <div className="w-50 text-center" title="<> - значение параметра">
+          Строка вывода
+        </div>
+      </div>
+
+      {param.showingInfo.map((showingInfo, index) => {
+        const fromDisabled = index === 0;
+        const toDisabled = index === param.showingInfo.length - 1;
+
+        const setShowingInfo = (newShowingInfo: DeepImmutable<QMParamShowInfoPart>) => {
+          setParam({
+            ...param,
+            showingInfo: param.showingInfo.map((si, i) => (i === index ? newShowingInfo : si)),
+          });
+        };
+        return (
+          <div className="d-flex">
+            <div className="w-25">
+              <input
+                disabled={!param.active || fromDisabled}
+                className="form-control w-100"
+                type="number"
+                value={showingInfo.from}
+                onChange={(e) => setShowingInfo({ ...showingInfo, from: parseInt(e.target.value) })}
+              />
+            </div>
+
+            <div className="w-25">
+              <input
+                disabled={!param.active || toDisabled}
+                className="form-control w-100"
+                type="number"
+                value={showingInfo.to}
+                onChange={(e) => setShowingInfo({ ...showingInfo, to: parseInt(e.target.value) })}
+              />
+            </div>
+
+            <div className="w-50">
+              <input
+                disabled={!param.active}
+                className="form-control w-100"
+                value={showingInfo.str}
+                onChange={(e) => setShowingInfo({ ...showingInfo, str: e.target.value })}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </>
   );
 }
 
@@ -309,6 +381,17 @@ export function QuestParamsSettings({ quest, setQuest }: QuestSettingsTabProps) 
               });
             }}
             quest={quest}
+          />
+        </div>
+        <div className="col-4">
+          <QuestParamShowingRangeSettings
+            param={quest.params[paramId]}
+            setParam={(newParam) => {
+              setQuest({
+                ...quest,
+                params: quest.params.map((param, idx) => (idx === paramId ? newParam : param)),
+              });
+            }}
           />
         </div>
       </div>
