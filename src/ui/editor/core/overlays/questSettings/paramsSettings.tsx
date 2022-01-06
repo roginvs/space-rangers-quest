@@ -65,57 +65,102 @@ function QuestParamShowingRangeSettings({
 }) {
   return (
     <>
-      <div className="d-flex">
-        <div className="w-25 text-center">От</div>
-        <div className="w-25 text-center">До</div>
-        <div className="w-50 text-center" title="<> - значение параметра">
-          Строка вывода
-        </div>
+      <div
+        style={{
+          overflowY: "scroll",
+          height: 400,
+        }}
+      >
+        {param.showingInfo.map((showingInfo, index) => {
+          const fromDisabled = index === 0;
+          const toDisabled = index === param.showingInfo.length - 1;
+
+          const prevRange = index > 0 ? param.showingInfo[index - 1] : null;
+          const nextRange =
+            index < param.showingInfo.length - 1 ? param.showingInfo[index + 1] : null;
+
+          const setShowingInfo = (newShowingInfo: DeepImmutable<QMParamShowInfoPart>) => {
+            setParam({
+              ...param,
+              showingInfo: param.showingInfo.map((si, i) => (i === index ? newShowingInfo : si)),
+            });
+          };
+          return (
+            <>
+              <div className="d-flex align-items-center">
+                <div className="mr-1">От</div>
+                <input
+                  disabled={!param.active || fromDisabled}
+                  className="form-control w-100 mr-3"
+                  type="number"
+                  value={showingInfo.from}
+                  min={prevRange ? prevRange.to + 1 : param.min}
+                  max={showingInfo.to}
+                  onChange={(e) =>
+                    setShowingInfo({ ...showingInfo, from: parseInt(e.target.value) })
+                  }
+                />
+                <div className="mr-1">До</div>
+                <input
+                  disabled={!param.active || toDisabled}
+                  className="form-control w-100 mr-3"
+                  type="number"
+                  min={showingInfo.from}
+                  max={nextRange ? nextRange.from - 1 : param.max}
+                  value={showingInfo.to}
+                  onChange={(e) => setShowingInfo({ ...showingInfo, to: parseInt(e.target.value) })}
+                />
+                <i
+                  className={classNames(
+                    "fa fa-times ml-auto mr-2",
+                    param.showingInfo.length > 1 ? "" : "text-muted",
+                  )}
+                  style={{ cursor: param.showingInfo.length > 1 ? "pointer" : "not-allowed" }}
+                  onClick={() => {
+                    const newShowingInfos = param.showingInfo.filter((_, i) => i !== index);
+                    const fixedRanges = newShowingInfos
+                      .map((curr, idx) => {
+                        const next =
+                          idx < newShowingInfos.length - 1 ? newShowingInfos[idx + 1] : null;
+                        if (next) {
+                          if (curr.to + 1 < next.from) {
+                            return {
+                              from: curr.from,
+                              to: next.from - 1,
+                              str: curr.str,
+                            };
+                          }
+                        }
+                        return curr;
+                      })
+                      .map((curr, idx) => {
+                        return {
+                          from: idx === 0 ? param.min : curr.from,
+                          to: idx === newShowingInfos.length - 1 ? param.max : curr.to,
+                          str: curr.str,
+                        };
+                      });
+                    setParam({
+                      ...param,
+                      showingInfo: fixedRanges,
+                    });
+                  }}
+                />
+              </div>
+              <div className="d-flex mb-3">
+                <div className="w-100">
+                  <input
+                    disabled={!param.active}
+                    className="form-control w-100"
+                    value={showingInfo.str}
+                    onChange={(e) => setShowingInfo({ ...showingInfo, str: e.target.value })}
+                  />
+                </div>
+              </div>
+            </>
+          );
+        })}
       </div>
-
-      {param.showingInfo.map((showingInfo, index) => {
-        const fromDisabled = index === 0;
-        const toDisabled = index === param.showingInfo.length - 1;
-
-        const setShowingInfo = (newShowingInfo: DeepImmutable<QMParamShowInfoPart>) => {
-          setParam({
-            ...param,
-            showingInfo: param.showingInfo.map((si, i) => (i === index ? newShowingInfo : si)),
-          });
-        };
-        return (
-          <div className="d-flex">
-            <div className="w-25">
-              <input
-                disabled={!param.active || fromDisabled}
-                className="form-control w-100"
-                type="number"
-                value={showingInfo.from}
-                onChange={(e) => setShowingInfo({ ...showingInfo, from: parseInt(e.target.value) })}
-              />
-            </div>
-
-            <div className="w-25">
-              <input
-                disabled={!param.active || toDisabled}
-                className="form-control w-100"
-                type="number"
-                value={showingInfo.to}
-                onChange={(e) => setShowingInfo({ ...showingInfo, to: parseInt(e.target.value) })}
-              />
-            </div>
-
-            <div className="w-50">
-              <input
-                disabled={!param.active}
-                className="form-control w-100"
-                value={showingInfo.str}
-                onChange={(e) => setShowingInfo({ ...showingInfo, str: e.target.value })}
-              />
-            </div>
-          </div>
-        );
-      })}
     </>
   );
 }
