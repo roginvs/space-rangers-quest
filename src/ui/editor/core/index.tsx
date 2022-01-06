@@ -17,7 +17,7 @@ import {
   isLocationAtThisPosition as whatLocationIsAlreadyAtThisPosition,
   snapToGrid,
 } from "./utils";
-import { Jump, Location } from "../../../lib/qmreader";
+import { Jump, Location, parse } from "../../../lib/qmreader";
 import { LocationHover } from "./hovers/location";
 import { Overlay } from "./overlay";
 import { LocationOverlay } from "./overlays/jumpsAndLocations/location";
@@ -28,6 +28,7 @@ import { QuestSettings } from "./overlays/questSettings/questSettings";
 import { initRandomGame, QuestPlay } from "../../questPlay";
 import { getLang } from "../../lang";
 import { useIdb } from "./idb";
+import { emptyQmm } from "./emptyQmm";
 
 // tslint:disable-next-line:no-useless-cast
 export const EDITOR_MOUSE_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
@@ -417,6 +418,16 @@ export function EditorCore() {
       }}
     >
       <div>
+        <button
+          className={classNames("mr-3", "btn", "btn-light")}
+          onClick={() => {
+            const emptyQuest = parse(emptyQmm);
+            onChange(emptyQuest);
+          }}
+        >
+          <i className="fa fa-file-o" title="Новый" />
+        </button>
+
         {EDITOR_MOUSE_MODES.map((candidateMode) => (
           <button
             key={candidateMode}
@@ -460,7 +471,7 @@ export function EditorCore() {
           onClick={redo || undefined}
           disabled={!redo}
         >
-          <i className="fa fa-undo fa-flip-horizontal" title="Повторить" />
+          <i className="fa fa-repeat" title="Повторить" />
         </button>
 
         <button
