@@ -23,6 +23,7 @@ import { LocationOverlay } from "./overlays/location";
 import { JumpHover } from "./hovers/jump";
 import { JumpOverlay } from "./overlays/jump";
 import { useOnDocumentKeyUp } from "./keypress";
+import { QuestSettings } from "./questSettings";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -53,7 +54,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const [overlayMode, setOverlayMode] = React.useState<EditorOverlay | undefined>(undefined);
 
   // DEBUGGING
-  //*
+  ////*
   React.useEffect(() => {
     setOverlayMode({
       kind: "location",
@@ -64,6 +65,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       kind: "jump",
       jump: quest.jumps.find((l) => l.id === 987)!,
     });
+    setOverlayMode({ kind: "questsettings" });
   }, []);
   //*/
 
@@ -382,6 +384,15 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
             )}
           </button>
         ))}
+
+        <button
+          className={classNames("ml-3", "btn", "btn-light")}
+          onClick={() => {
+            setOverlayMode({ kind: "questsettings" });
+          }}
+        >
+          <i className="fa fa-wrench" title="Редактировать общую информацию по квесту" />
+        </button>
         <span className="mx-2" />
         {/*
     <button className="btn btn-light" disabled={!store.canUndo} onClick={() => store.undo()}>
@@ -498,7 +509,19 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
                 }
               }}
             />
-          ) : null
+          ) : overlayMode.kind === "questsettings" ? (
+            <QuestSettings
+              initialQuest={quest}
+              onClose={(newQuest) => {
+                setOverlayMode(undefined);
+                if (newQuest) {
+                  onChange(newQuest);
+                }
+              }}
+            />
+          ) : (
+            assertNever(overlayMode)
+          )
         ) : null}
       </div>
 
