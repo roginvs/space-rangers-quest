@@ -113,6 +113,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     const canvasRect = canvas.getBoundingClientRect();
     const x = e.clientX - canvasRect.left;
     const y = e.clientY - canvasRect.top;
+
     return { x, y };
   }, []);
 
@@ -199,6 +200,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     document.addEventListener("mousedown", onMouseDown);
 
     const onMouseUp = (e: MouseEvent) => {
+      // TODO: This also triggers when clicking on main menu
       const mouseInCanvas = getMouseCoordsInCanvas(e);
 
       if (e.button === 2 /* Right click*/ || mouseMode === "select") {
