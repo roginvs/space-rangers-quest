@@ -32,7 +32,8 @@ function CheckboxFlagsSet<T extends QuestNumberFlags>({
         }
         const isChecked = !!(quest[questKey] & (1 << i));
         const toggle = () => {
-          const newValue = isChecked ? quest[questKey] - (1 << i) : quest[questKey] + (1 << i);
+          const oldValue: number = quest[questKey];
+          const newValue = isChecked ? oldValue - (1 << i) : oldValue + (1 << i);
           setQuest({ ...quest, [questKey]: newValue });
         };
         return (
