@@ -3,10 +3,14 @@ import { Quest } from "../../../lib/qmplayer/funcs";
 import {
   Jump,
   JumpId,
+  JumpParameterCondition,
   Location,
   LocationId,
+  ParamCritType,
   ParameterChange,
   ParameterShowingType,
+  ParamType,
+  QMParam,
 } from "../../../lib/qmreader";
 
 export function removeLocation(quest: Quest, location: DeepImmutable<Location>): Quest {
@@ -103,4 +107,80 @@ export function createJump(quest: Quest, fromLocationId: LocationId, toLocationI
     paramsChanges: quest.params.map(() => createDefaultParamChange()),
   };
   return newJump;
+}
+
+export function addParameter(quest: Quest): Quest {
+  const newParam: DeepImmutable<QMParam> = {
+    active: true,
+    min: 0,
+    max: 100,
+    type: ParamType.Обычный,
+    showWhenZero: true,
+    critType: ParamCritType.Минимум,
+    showingRangesCount: 1,
+    isMoney: false,
+    name: `Параметр ${quest.paramsCount + 1}`,
+    starting: "0",
+    critValueString: `Сообщение достижения критического значения параметром ${
+      quest.paramsCount + 1
+    }`,
+    showingInfo: [
+      {
+        from: 0,
+        to: 100,
+        str: `Параметр ${quest.paramsCount + 1}: <>`,
+      },
+    ],
+    img: undefined,
+    sound: undefined,
+    track: undefined,
+  };
+
+  const createParameterChange = () => {
+    const change: ParameterChange = {
+      change: 0,
+      isChangePercentage: false,
+      isChangeValue: false,
+      isChangeFormula: false,
+      changingFormula: "",
+      showingType: ParameterShowingType.НеТрогать,
+      critText: "",
+      img: undefined,
+      sound: undefined,
+      track: undefined,
+    };
+    return change;
+  };
+
+  const createParameterCondition = () => {
+    const condition: JumpParameterCondition = {
+      mustFrom: 0,
+      mustTo: 0,
+      mustEqualValues: [],
+      mustEqualValuesEqual: true,
+      mustModValues: [],
+      mustModValuesMod: true,
+    };
+    return condition;
+  };
+
+  return {
+    ...quest,
+    paramsCount: quest.paramsCount + 1,
+    params: [...quest.params, newParam],
+    locations: quest.locations.map((l) => ({
+      ...l,
+      paramsChanges: [...l.paramsChanges, createParameterChange()],
+    })),
+    jumps: quest.jumps.map((j) => ({
+      ...j,
+      paramsChanges: [...j.paramsChanges, createParameterChange()],
+      paramsConditions: [...j.paramsConditions, createParameterCondition()],
+    })),
+  };
+}
+
+export function removeLastParameter(quest: Quest): Quest {
+  // todo
+  return quest;
 }

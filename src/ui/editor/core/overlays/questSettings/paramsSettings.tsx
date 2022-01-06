@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import * as React from "react";
 import { Quest } from "../../../../../lib/qmplayer/funcs";
+import { addParameter, removeLastParameter } from "../../actions";
 import { getParamStringInfo } from "../../hovers/paramsAndChangeConditionsSummary";
 import { QuestSettingsTabProps } from "./props";
 
@@ -32,11 +33,14 @@ export function QuestParamsSettings({ quest, setQuest }: QuestSettingsTabProps) 
             <button
               className="btn btn-danger mr-2"
               disabled={quest.params.length === 1 || paramId !== quest.paramsCount - 1}
+              onClick={() => setQuest(removeLastParameter(quest))}
             >
               Удалить параметр
             </button>
 
-            <button className="btn btn-light mr-2">Добавить параметр</button>
+            <button className="btn btn-light mr-2" onClick={() => setQuest(addParameter(quest))}>
+              Добавить параметр
+            </button>
           </div>
         </div>
       </div>
