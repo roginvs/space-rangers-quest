@@ -1,16 +1,16 @@
 import classNames from "classnames";
 import * as React from "react";
-import { assertNever } from "../../../../assertNever";
-import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
-import { Quest } from "../../../../lib/qmplayer/funcs";
-import { Jump, JumpParameterCondition, QMParam } from "../../../../lib/qmreader";
-import { getParamStringInfo } from "../hovers/paramsAndChangeConditionsSummary";
-import { Overlay } from "../overlay";
-import { range } from "../utils";
+import { assertNever } from "../../../../../assertNever";
+import { DeepImmutable } from "../../../../../lib/qmplayer/deepImmutable";
+import { Quest } from "../../../../../lib/qmplayer/funcs";
+import { Jump, JumpParameterCondition, QMParam } from "../../../../../lib/qmreader";
+import { getParamStringInfo } from "../../hovers/paramsAndChangeConditionsSummary";
+import { Overlay } from "../../overlay";
+import { range } from "../../utils";
 import { MediaEdit, ParamChangeTypeEdit } from "./common";
 import { toast } from "react-toastify";
-import { useOnDocumentKeyUp } from "../keypress";
-import { FormulaInput } from "../common/formulaInput";
+import { useOnDocumentKeyUp } from "../../keypress";
+import { FormulaInput } from "../../common/formulaInput";
 
 function ParamCondition({
   condition,

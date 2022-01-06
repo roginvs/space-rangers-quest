@@ -19,11 +19,11 @@ import {
 import { Jump, Location } from "../../../lib/qmreader";
 import { LocationHover } from "./hovers/location";
 import { Overlay } from "./overlay";
-import { LocationOverlay } from "./overlays/location";
+import { LocationOverlay } from "./overlays/jumpsAndLocations/location";
 import { JumpHover } from "./hovers/jump";
-import { JumpOverlay } from "./overlays/jump";
+import { JumpOverlay } from "./overlays/jumpsAndLocations/jump";
 import { useOnDocumentKeyUp } from "./keypress";
-import { QuestSettings } from "./questSettings";
+import { QuestSettings } from "./overlays/questSettings/questSettings";
 
 export interface EditorCoreProps {
   quest: Quest;

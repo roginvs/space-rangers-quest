@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import * as React from "react";
-import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
+import { DeepImmutable } from "../../../../../lib/qmplayer/deepImmutable";
 import {
   Media,
   ParameterChange,
@@ -8,8 +8,8 @@ import {
   ParamType,
   QMParam,
   QMParamIsActive,
-} from "../../../../lib/qmreader";
-import { FormulaInput } from "../common/formulaInput";
+} from "../../../../../lib/qmreader";
+import { FormulaInput } from "../../common/formulaInput";
 
 export function MediaEdit({
   media,

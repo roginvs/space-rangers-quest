@@ -1,9 +1,9 @@
 import classNames from "classnames";
 import * as React from "react";
 import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
-import { Quest } from "../../../lib/qmplayer/funcs";
-import { WhenDone } from "../../../lib/qmreader";
-import { Overlay } from "./overlay";
+import { Quest } from "../../../../../lib/qmplayer/funcs";
+import { WhenDone } from "../../../../../lib/qmreader";
+import { Overlay } from "../../overlay";
 
 // tslint:disable-next-line:no-useless-cast
 const TABS = ["main", "params", "strings", "grid", "jumps", "version"] as const;
