@@ -5,6 +5,7 @@ import { Quest } from "../../../../../lib/qmplayer/funcs";
 import { WhenDone } from "../../../../../lib/qmreader";
 import { Overlay } from "../../overlay";
 import { QuestMainSettings } from "./mainSettings";
+import { QuestParamsSettings } from "./paramsSettings";
 
 // tslint:disable-next-line:no-useless-cast
 const TABS = ["main", "params", "strings", "grid", "jumps", "version"] as const;
@@ -48,6 +49,9 @@ export function QuestSettings({
 
   const [activeTab, setActiveTab] = React.useState<typeof TABS[number]>("main");
 
+  // developing
+  React.useEffect(() => setActiveTab("params"), []);
+
   const tabLabels: Record<typeof TABS[number], string> = {
     main: "Основные",
     params: "Параметры",
@@ -83,7 +87,9 @@ export function QuestSettings({
             <TabPane tabId="main">
               <QuestMainSettings quest={quest} setQuest={setQuest} />
             </TabPane>
-            <TabPane tabId="params">lol2</TabPane>
+            <TabPane tabId="params">
+              <QuestParamsSettings quest={quest} setQuest={setQuest} />
+            </TabPane>
           </TabContent>
         </div>
 
