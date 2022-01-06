@@ -83,11 +83,11 @@ enum PlanetRace {
   Незаселенная = 64,
 }
 
-enum WhenDone {
+export enum WhenDone {
   OnReturn = 0,
   OnFinish = 1,
 }
-enum PlayerCareer {
+export enum PlayerCareer {
   Торговец = 1,
   Пират = 2,
   Воин = 4,

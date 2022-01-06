@@ -2,6 +2,7 @@ import classNames from "classnames";
 import * as React from "react";
 import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { Quest } from "../../../lib/qmplayer/funcs";
+import { WhenDone } from "../../../lib/qmreader";
 import { Overlay } from "./overlay";
 
 // tslint:disable-next-line:no-useless-cast
@@ -167,6 +168,70 @@ export function QuestSettings({
                     questKey="planetRace"
                     labels={planetRaceNames}
                   />
+                </div>
+              </div>
+              <div className="row mb-3">
+                <div className="col-4">
+                  <div className="mr-2">
+                    <label className="mb-0">
+                      <span>Отношение после выполнения: </span>
+                      <span className={quest.reputationChange > 0 ? "text-success" : "text-danger"}>
+                        {quest.reputationChange > 0 ? "+" : ""}
+                        {quest.reputationChange}%
+                      </span>
+                    </label>
+                    <input
+                      type="range"
+                      className="form-range w-100"
+                      min={-100}
+                      max={100}
+                      value={quest.reputationChange}
+                      onChange={(e) =>
+                        setQuest({ ...quest, reputationChange: parseInt(e.target.value) })
+                      }
+                    />
+                  </div>
+                </div>
+
+                <div className="col-4">
+                  <div className="mr-2">
+                    <label className="mb-0">
+                      <span>Сложность квеста: </span>
+                      <span>{quest.hardness}%</span>
+                    </label>
+                    <input
+                      type="range"
+                      className="form-range w-100"
+                      min={0}
+                      max={100}
+                      value={quest.hardness}
+                      onChange={(e) => setQuest({ ...quest, hardness: parseInt(e.target.value) })}
+                    />
+                  </div>
+                </div>
+
+                <div className="col-4">
+                  <div className="mr-2">
+                    <div className="ml-3 form-check form-check-inline">
+                      <label className="form-check-label">
+                        <input
+                          className="form-check-input"
+                          type="checkbox"
+                          checked={quest.whenDone === WhenDone.OnFinish}
+                          onChange={(e) =>
+                            setQuest({
+                              ...quest,
+                              whenDone:
+                                quest.whenDone === WhenDone.OnReturn
+                                  ? WhenDone.OnFinish
+                                  : WhenDone.OnReturn,
+                            })
+                          }
+                        />
+                        Завершение сразу после выполнения
+                      </label>
+                    </div>
+                  </div>
                 </div>
               </div>
             </TabPane>
