@@ -93,8 +93,8 @@ export function createJump(quest: Quest, fromLocationId: LocationId, toLocationI
     sound: undefined,
     track: undefined,
     jumpingCountLimit: quest.defaultJumpCountLimit,
-    priority: 0,
-    showingOrder: 0,
+    priority: 1,
+    showingOrder: 5,
     text: "",
     paramsConditions: quest.params.map((param) => ({
       mustEqualValues: [],

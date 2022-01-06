@@ -7,7 +7,6 @@ import { observer } from "mobx-react";
 import { observable, computed } from "mobx";
 import { Store } from "./store";
 import { FirebasePublic, WonProofTableRow } from "./db/defs";
-import { DATA_DIR } from "./consts";
 import { WorkerPromise } from "./worker";
 import { assertNever } from "../assertNever";
 

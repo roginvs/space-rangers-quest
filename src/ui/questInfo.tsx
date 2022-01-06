@@ -23,9 +23,6 @@ import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
 import { SRDateToString } from "../lib/qmplayer/funcs";
 import classnames from "classnames";
 
-import { DATA_DIR } from "./consts";
-import { parse } from "../lib/qmreader";
-import * as pako from "pako";
 import { observer } from "mobx-react";
 import { Store } from "./store";
 import { getGameTaskText } from "../lib/getGameTaskText";
