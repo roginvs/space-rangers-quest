@@ -399,6 +399,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
       if (isPlaying) {
         return;
       }
+
       if (e.key === "1") {
         setMouseMode("select");
       } else if (e.key === "2") {
@@ -410,8 +411,15 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
       } else if (e.key === "5") {
         setMouseMode("remove");
       }
+
+      if (e.key === "z" && (e.ctrlKey || e.metaKey) && undo) {
+        undo();
+      }
+      if (e.key === "Z" && (e.ctrlKey || e.metaKey) && redo) {
+        redo();
+      }
     },
-    [overlayMode, isPlaying],
+    [overlayMode, isPlaying, undo, redo],
   );
   useOnDocumentKeyUp(onDocumentKeyUp);
 
@@ -525,14 +533,14 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
           onClick={undo || undefined}
           disabled={!undo}
         >
-          <i className="fa fa-undo fa-fw" title="Отменить" />
+          <i className="fa fa-undo fa-fw" title="Отменить (ctrl+z)" />
         </button>
         <button
           className={classNames("btn", "btn-light")}
           onClick={redo || undefined}
           disabled={!redo}
         >
-          <i className="fa fa-repeat fa-fw" title="Повторить" />
+          <i className="fa fa-repeat fa-fw" title="Повторить (ctrl+shift+z)" />
         </button>
 
         <button
