@@ -7,7 +7,8 @@ import { Jump, JumpParameterCondition, QMParam } from "../../../../../lib/qmread
 import { getParamStringInfo } from "../../hovers/paramsAndChangeConditionsSummary";
 import { Overlay } from "../../overlay";
 import { range } from "../../utils";
-import { MediaEdit, ParamChangeTypeEdit } from "./common";
+import { ParamChangeTypeEdit } from "./common";
+import { MediaEdit } from "../MediaEdit";
 import { toast } from "react-toastify";
 import { useOnDocumentKeyUp } from "../../keypress";
 import { FormulaInput } from "../../common/formulaInput";

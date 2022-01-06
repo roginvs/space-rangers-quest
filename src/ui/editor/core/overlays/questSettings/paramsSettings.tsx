@@ -7,7 +7,7 @@ import { ParamCritType, ParamType, QMParam } from "../../../../../lib/qmreader";
 import { addParameter, removeLastParameter } from "../../actions";
 import { FormulaInput } from "../../common/formulaInput";
 import { getParamStringInfo } from "../../hovers/paramsAndChangeConditionsSummary";
-import { MediaEdit } from "../jumpsAndLocations/common";
+import { MediaEdit } from "../MediaEdit";
 import { QuestSettingsTabProps } from "./props";
 
 function StartingValueInput({
