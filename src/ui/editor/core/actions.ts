@@ -13,10 +13,6 @@ import {
   QMParam,
 } from "../../../lib/qmreader";
 
-export function removeLocation(quest: Quest, location: DeepImmutable<Location>): Quest {
-  throw new Error("TODO");
-}
-
 export function updateLocation(quest: Quest, newLocation: DeepImmutable<Location>): Quest {
   return {
     ...quest,
@@ -197,5 +193,22 @@ export function removeLastParameter(quest: Quest): Quest {
       paramsConditions: j.paramsConditions.slice(0, quest.paramsCount - 1),
       paramsChanges: j.paramsChanges.slice(0, quest.paramsCount - 1),
     })),
+  };
+}
+
+export function removeJump(quest: Quest, jumpId: JumpId): Quest {
+  return {
+    ...quest,
+    jumps: quest.jumps.filter((j) => j.id !== jumpId),
+  };
+}
+
+export function removeLocation(quest: Quest, locationId: LocationId): Quest {
+  return {
+    ...quest,
+    locations: quest.locations.filter((l) => l.id !== locationId),
+    jumps: quest.jumps.filter(
+      (j) => j.fromLocationId !== locationId && j.toLocationId !== locationId,
+    ),
   };
 }

@@ -5,7 +5,14 @@ import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../lib/qmplayer/funcs";
 import { GameState } from "../../../lib/qmplayer";
 import { LOCATION_DROP_RADIUS, LOCATION_RADIUS } from "../consts";
-import { createJump, createLocation, updateJump, updateLocation } from "./actions";
+import {
+  createJump,
+  createLocation,
+  removeJump,
+  removeLocation,
+  updateJump,
+  updateLocation,
+} from "./actions";
 import { colorToString, interpolateColor } from "./color";
 import { drawHovers, getCanvasSize, updateMainCanvas } from "./drawings/index";
 import { HoverZone, HoverZones } from "./hover";
@@ -352,6 +359,15 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
               location: newPossibleLocation,
               enableSaveOnNoChanges: true,
             });
+          }
+        } else if (mouseMode === "remove") {
+          if (hoverZone && hoverZone.zone[3]) {
+            const locationToRemove = hoverZone.zone[3];
+            onChange(removeLocation(quest, locationToRemove.id));
+          }
+          if (hoverZone && hoverZone.zone[4]) {
+            const jumpToRemove = hoverZone.zone[4][0];
+            onChange(removeJump(quest, jumpToRemove.id));
           }
         }
       }
