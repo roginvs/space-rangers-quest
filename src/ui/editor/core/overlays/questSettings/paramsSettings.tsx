@@ -87,7 +87,7 @@ function QuestParamShowingRangeSettings({
             });
           };
           return (
-            <>
+            <div key={index}>
               <div className="d-flex align-items-center">
                 <div className="mr-1">От</div>
                 <input
@@ -158,7 +158,7 @@ function QuestParamShowingRangeSettings({
                   />
                 </div>
               </div>
-            </>
+            </div>
           );
         })}
 
@@ -271,7 +271,7 @@ function QuestParamSettings({
 
       <div className="d-flex align-items-center justify-content-around mb-2">
         {paramTypeNames.map((typeName, typeIndex) => (
-          <label className="form-check-label ml-4">
+          <label key={typeIndex} className="form-check-label ml-4">
             <input
               className="form-check-input"
               type="radio"
@@ -410,7 +410,7 @@ export function QuestParamsSettings({ quest, setQuest }: QuestSettingsTabProps) 
           <div className="mt-2 d-flex justify-content-center">
             <button
               className="btn btn-danger mr-2"
-              disabled={quest.params.length <= 1 || paramId !== quest.paramsCount - 1}
+              disabled={quest.params.length === 0 || paramId !== quest.paramsCount - 1}
               onClick={() => {
                 setQuest(removeLastParameter(quest));
                 setParamId(paramId - 1);
@@ -418,8 +418,6 @@ export function QuestParamsSettings({ quest, setQuest }: QuestSettingsTabProps) 
               title={
                 quest.params.length === 0
                   ? "Нет параметров"
-                  : quest.params.length === 1
-                  ? "Нельзя удалить единственный параметр"
                   : paramId !== quest.paramsCount - 1
                   ? "Удалить можно только последний параметр"
                   : ""
@@ -441,27 +439,31 @@ export function QuestParamsSettings({ quest, setQuest }: QuestSettingsTabProps) 
         </div>
 
         <div className="col-4">
-          <QuestParamSettings
-            param={quest.params[paramId]}
-            setParam={(newParam) => {
-              setQuest({
-                ...quest,
-                params: quest.params.map((param, idx) => (idx === paramId ? newParam : param)),
-              });
-            }}
-            quest={quest}
-          />
+          {quest.params[paramId] && (
+            <QuestParamSettings
+              param={quest.params[paramId]}
+              setParam={(newParam) => {
+                setQuest({
+                  ...quest,
+                  params: quest.params.map((param, idx) => (idx === paramId ? newParam : param)),
+                });
+              }}
+              quest={quest}
+            />
+          )}
         </div>
         <div className="col-4">
-          <QuestParamShowingRangeSettings
-            param={quest.params[paramId]}
-            setParam={(newParam) => {
-              setQuest({
-                ...quest,
-                params: quest.params.map((param, idx) => (idx === paramId ? newParam : param)),
-              });
-            }}
-          />
+          {quest.params[paramId] && (
+            <QuestParamShowingRangeSettings
+              param={quest.params[paramId]}
+              setParam={(newParam) => {
+                setQuest({
+                  ...quest,
+                  params: quest.params.map((param, idx) => (idx === paramId ? newParam : param)),
+                });
+              }}
+            />
+          )}
         </div>
       </div>
     </>

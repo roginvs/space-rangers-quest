@@ -180,9 +180,6 @@ export function addParameter(quest: Quest): Quest {
 }
 
 export function removeLastParameter(quest: Quest): Quest {
-  if (quest.paramsCount === 1) {
-    throw new Error("Нелья удалить последний параметр");
-  }
   if (quest.paramsCount === 0) {
     throw new Error(`Нет параметоров вообще`);
   }

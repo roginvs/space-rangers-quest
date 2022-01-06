@@ -74,8 +74,9 @@ export function EditorContainer() {
         const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer))));
 
         // addSampleJumpsToQuest(quest);
-
-        //setQuest(quest);
+        if (1 + 1 === 3) {
+          setQuest(quest);
+        }
       })
       .catch((e) => {
         console.error("Lol");

@@ -13,7 +13,7 @@ export function QuestGridSettings({ quest, setQuest }: QuestSettingsTabProps) {
         <div className="text-center">По ширине</div>
         <div className="d-flex align-items-center justify-content-center mb-2">
           {gridWidths.map((gridValue, gridIndex) => (
-            <label className="form-check-label ml-4 mr-4">
+            <label key={gridIndex} className="form-check-label ml-4 mr-4">
               <input
                 className="form-check-input"
                 type="radio"
@@ -35,7 +35,7 @@ export function QuestGridSettings({ quest, setQuest }: QuestSettingsTabProps) {
         <div className="text-center">По высоте</div>
         <div className="d-flex align-items-center justify-content-center mb-2">
           {gridHeights.map((gridValue, gridIndex) => (
-            <label className="form-check-label ml-4 mr-4">
+            <label key={gridIndex} className="form-check-label ml-4 mr-4">
               <input
                 className="form-check-input"
                 type="radio"
