@@ -163,7 +163,6 @@ export function JumpOverlay({
   }, [isChanged, isPrompting]);
 
   useOnDocumentKeyUp((e) => {
-    console.info(e.key);
     if (e.key === "Escape") {
       onCloseWithPrompt();
     }
