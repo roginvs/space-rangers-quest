@@ -1,5 +1,12 @@
 import { DeepImmutable } from "./qmplayer/deepImmutable";
-import { HEADER_QMM_7, LocationType, ParameterChangeType, QM } from "./qmreader";
+import {
+  HEADER_QMM_7,
+  LocationType,
+  ParameterChange,
+  ParameterChangeType,
+  QM,
+  QMParam,
+} from "./qmreader";
 
 export class Writer {
   private buf = Buffer.alloc(this.chunkSize);
@@ -54,6 +61,28 @@ export class Writer {
     this.buf.writeDoubleLE(val, this.pos);
     this.pos += 8;
   }
+}
+
+function writeParamChange(w: Writer, param: DeepImmutable<ParameterChange>, paramIdx: number) {
+  w.int32(paramIdx + 1);
+  w.int32(param.change);
+  w.byte(param.showingType);
+
+  const changeType = param.isChangeFormula
+    ? ParameterChangeType.Formula
+    : param.isChangeValue
+    ? ParameterChangeType.Value
+    : param.isChangePercentage
+    ? ParameterChangeType.Percentage
+    : ParameterChangeType.Summ;
+  w.byte(changeType);
+
+  w.writeString(param.changingFormula);
+
+  w.writeString(param.critText);
+  w.writeString(param.img);
+  w.writeString(param.sound);
+  w.writeString(param.track);
 }
 
 export function writeQmm(quest: DeepImmutable<QM>) {
@@ -142,30 +171,13 @@ export function writeQmm(quest: DeepImmutable<QM>) {
     w.byte(type);
 
     // TODO: Filter
-    const affectedParams = loc.paramsChanges.map((param, idx) => ({ param, idx }));
+    const affectedParamsChange = loc.paramsChanges.map((param, idx) => ({ param, idx }));
 
-    w.int32(affectedParams.length);
-    for (const { param, idx } of affectedParams) {
-      w.int32(idx + 1);
-      w.int32(param.change);
-      w.byte(param.showingType);
-
-      const changeType = param.isChangeFormula
-        ? ParameterChangeType.Formula
-        : param.isChangeValue
-        ? ParameterChangeType.Value
-        : param.isChangePercentage
-        ? ParameterChangeType.Percentage
-        : ParameterChangeType.Summ;
-      w.byte(changeType);
-
-      w.writeString(param.changingFormula);
-
-      w.writeString(param.critText);
-      w.writeString(param.img);
-      w.writeString(param.sound);
-      w.writeString(param.track);
+    w.int32(affectedParamsChange.length);
+    for (const { param, idx } of affectedParamsChange) {
+      writeParamChange(w, param, idx);
     }
+
     w.int32(loc.texts.length);
     for (let i = 0; i < loc.texts.length; i++) {
       w.writeString(loc.texts[i]);
@@ -190,9 +202,9 @@ export function writeQmm(quest: DeepImmutable<QM>) {
     w.int32(jump.showingOrder);
 
     // TODO: Filter
-    const affectedJumpCondition = jump.paramsConditions.map((cond, idx) => ({ cond, idx }));
-    w.int32(affectedJumpCondition.length);
-    for (const { cond, idx } of affectedJumpCondition) {
+    const affectedJumpConditionParams = jump.paramsConditions.map((cond, idx) => ({ cond, idx }));
+    w.int32(affectedJumpConditionParams.length);
+    for (const { cond, idx } of affectedJumpConditionParams) {
       w.int32(idx + 1);
       w.int32(cond.mustFrom);
       w.int32(cond.mustTo);
@@ -209,6 +221,20 @@ export function writeQmm(quest: DeepImmutable<QM>) {
         w.int32(val);
       }
     }
+
+    // TODO: Filter
+    const affectedParamsChange = jump.paramsChanges.map((param, idx) => ({ param, idx }));
+    w.int32(affectedParamsChange.length);
+    for (const { param, idx } of affectedParamsChange) {
+      writeParamChange(w, param, idx);
+    }
+
+    w.writeString(jump.formulaToPass);
+    w.writeString(jump.text);
+    w.writeString(jump.description);
+    w.writeString(jump.img);
+    w.writeString(jump.sound);
+    w.writeString(jump.track);
   }
 
   return w.export();

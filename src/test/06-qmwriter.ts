@@ -67,6 +67,9 @@ describe("All files here", () => {
     if (!f.endsWith(".qm") && !f.endsWith(".qmm")) {
       continue;
     }
+    if (f !== "qmreader-1.qmm") {
+      continue;
+    }
 
     const fileRaw = fs.readFileSync(`${__dirname}/${f}`);
     /*
