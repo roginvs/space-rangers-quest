@@ -8,6 +8,7 @@ import { LOCATION_DROP_RADIUS, LOCATION_RADIUS } from "../consts";
 import {
   createJump,
   createLocation,
+  fixJumpParamMinMax,
   removeJump,
   removeLocation,
   updateJump,
@@ -684,7 +685,8 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
               onClose={(newQuest) => {
                 setOverlayMode(undefined);
                 if (newQuest) {
-                  onChange(newQuest);
+                  const fixedParamsMinMax = fixJumpParamMinMax(newQuest);
+                  onChange(fixedParamsMinMax);
                 }
               }}
               enableSaveOnNoChanges={overlayMode.enableSaveOnNoChanges}

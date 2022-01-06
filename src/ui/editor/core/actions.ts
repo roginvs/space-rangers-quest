@@ -212,3 +212,17 @@ export function removeLocation(quest: Quest, locationId: LocationId): Quest {
     ),
   };
 }
+
+export function fixJumpParamMinMax(quest: Quest): Quest {
+  return {
+    ...quest,
+    jumps: quest.jumps.map((j) => ({
+      ...j,
+      paramsConditions: j.paramsConditions.map((p, idx) => ({
+        ...p,
+        mustFrom: Math.max(p.mustFrom, quest.params[idx].min),
+        mustTo: Math.min(p.mustTo, quest.params[idx].max),
+      })),
+    })),
+  };
+}
