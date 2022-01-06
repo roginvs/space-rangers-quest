@@ -17,9 +17,11 @@ const TABS = ["main", "params", "strings", "grid", "jumps", "version"] as const;
 export function QuestSettings({
   initialQuest,
   onClose,
+  enableSaveOnNoChanges,
 }: {
   initialQuest: Quest;
   onClose: (newQuest: Quest | undefined) => void;
+  enableSaveOnNoChanges: boolean;
 }) {
   const [quest, setQuest] = React.useState(initialQuest);
 
@@ -113,7 +115,7 @@ export function QuestSettings({
           <div />
           <button
             className="btn btn-primary ml-auto mr-2"
-            disabled={!isChanged}
+            disabled={!isChanged && !enableSaveOnNoChanges}
             onClick={() => onClose(quest)}
           >
             Сохранить

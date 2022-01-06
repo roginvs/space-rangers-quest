@@ -37,21 +37,25 @@ import { writeQmm } from "../../../lib/qmwriter";
 export const EDITOR_MOUSE_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
 export type EditorMouseMode = typeof EDITOR_MOUSE_MODES[number];
 
-type EditorOverlay =
+type EditorOverlay = DeepImmutable<
   | {
       kind: "location";
       location: DeepImmutable<Location>;
+      enableSaveOnNoChanges: boolean;
     }
   | {
       kind: "jump";
       jump: DeepImmutable<Jump>;
+      enableSaveOnNoChanges: boolean;
     }
   | {
       kind: "questsettings";
+      enableSaveOnNoChanges: boolean;
     }
   | {
       kind: "load";
-    };
+    }
+>;
 
 export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onExit: () => void }) {
   const { quest, setQuest: onChange, undo, redo } = useIdb();
@@ -242,11 +246,13 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
             setOverlayMode({
               kind: "location",
               location: hoverZone.zone[3],
+              enableSaveOnNoChanges: false,
             });
           } else if (hoverZone.zone[4]) {
             setOverlayMode({
               kind: "jump",
               jump: hoverZone.zone[4][0],
+              enableSaveOnNoChanges: false,
             });
           }
         }
@@ -323,6 +329,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
               setOverlayMode({
                 kind: "jump",
                 jump,
+                enableSaveOnNoChanges: true,
               });
             } else {
               toast("No location here");
@@ -343,6 +350,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
             setOverlayMode({
               kind: "location",
               location: newPossibleLocation,
+              enableSaveOnNoChanges: true,
             });
           }
         }
@@ -429,6 +437,10 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
           onClick={() => {
             const emptyQuest = parse(emptyQmm);
             onChange(emptyQuest);
+            setOverlayMode({
+              kind: "questsettings",
+              enableSaveOnNoChanges: true,
+            });
           }}
         >
           <i className="fa fa-file-o fa-fw" title="Новый" />
@@ -457,8 +469,6 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
               document.body.removeChild(link);
               URL.revokeObjectURL(url);
             }, 1000);
-
-            //setOverlayMode({ kind: "load" });
           }}
         >
           <i className="fa fa-download fa-fw" title="Скачать" />
@@ -489,7 +499,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
         <button
           className={classNames("ml-3", "btn", "btn-light")}
           onClick={() => {
-            setOverlayMode({ kind: "questsettings" });
+            setOverlayMode({ kind: "questsettings", enableSaveOnNoChanges: false });
           }}
         >
           <i className="fa fa-wrench fa-fw" title="Редактировать общую информацию по квесту" />
@@ -631,6 +641,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
                   onChange(updateLocation(quest, location));
                 }
               }}
+              enableSaveOnNoChanges={overlayMode.enableSaveOnNoChanges}
             />
           ) : overlayMode.kind === "jump" ? (
             <JumpOverlay
@@ -642,6 +653,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
                   onChange(updateJump(quest, jump));
                 }
               }}
+              enableSaveOnNoChanges={overlayMode.enableSaveOnNoChanges}
             />
           ) : overlayMode.kind === "questsettings" ? (
             <QuestSettings
@@ -652,6 +664,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
                   onChange(newQuest);
                 }
               }}
+              enableSaveOnNoChanges={overlayMode.enableSaveOnNoChanges}
             />
           ) : overlayMode.kind === "load" ? (
             <LoadOverlay

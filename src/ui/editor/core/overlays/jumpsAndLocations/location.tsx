@@ -17,10 +17,12 @@ export function LocationOverlay({
   quest,
   initialLocation,
   onClose,
+  enableSaveOnNoChanges,
 }: {
   quest: Quest;
   initialLocation: DeepImmutable<Location>;
   onClose: (location: DeepImmutable<Location> | undefined) => void;
+  enableSaveOnNoChanges: boolean;
 }) {
   const [location, setLocation] = React.useState<DeepImmutable<Location> | undefined>(undefined);
   const [textIndex, setTextIndex] = React.useState(0);
@@ -351,7 +353,7 @@ export function LocationOverlay({
 
           <button
             className="btn btn-primary ml-auto mr-2"
-            disabled={!isChanged}
+            disabled={!isChanged && !enableSaveOnNoChanges}
             onClick={() => onClose(location)}
           >
             Сохранить

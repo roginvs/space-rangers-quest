@@ -124,10 +124,12 @@ export function JumpOverlay({
   quest,
   initialJump,
   onClose,
+  enableSaveOnNoChanges,
 }: {
   quest: Quest;
   initialJump: DeepImmutable<Jump>;
   onClose: (jump: DeepImmutable<Jump> | undefined) => void;
+  enableSaveOnNoChanges: boolean;
 }) {
   const [jump, setJump] = React.useState<DeepImmutable<Jump> | undefined>(undefined);
 
@@ -389,7 +391,7 @@ export function JumpOverlay({
 
           <button
             className="btn btn-primary ml-auto mr-2"
-            disabled={!isChanged}
+            disabled={!isChanged && !enableSaveOnNoChanges}
             onClick={() => onClose(jump)}
           >
             Сохранить
