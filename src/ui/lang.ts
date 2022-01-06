@@ -116,6 +116,8 @@ const RUS = {
   pwaInstallInfoToAddToDesktop: " чтобы закончить установку и создать ярлык на рабочем столе",
   pwaInstallOk: "Установка приложения началась!",
   pwaInstallNotOk: "Не получилось установить",
+
+  editor: "Редактор квестов",
 };
 
 export type LangTexts = typeof RUS;
@@ -234,6 +236,8 @@ const ENG: LangTexts = {
   pwaInstallInfoToAddToDesktop: " to finish installation and to add to homescreen",
   pwaInstallOk: "Application installation started!",
   pwaInstallNotOk: "Failed to install application",
+
+  editor: "Quest editor",
 };
 
 export function getLang(lang: Lang) {

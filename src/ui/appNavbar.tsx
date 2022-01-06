@@ -62,6 +62,12 @@ export class AppNavbar extends React.Component<{
                   <i className="fa fa-fw fa-cogs" /> {l.options}
                 </NavLink>
               </NavItem>
+
+              <NavItem>
+                <NavLink href="#/editor" active={false}>
+                  <i className="fa fa-fw fa-edit" /> {l.editor}
+                </NavLink>
+              </NavItem>
               {/*
                                                 <NavItem>
                                                     <NavLink
