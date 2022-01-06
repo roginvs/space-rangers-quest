@@ -83,7 +83,9 @@ export function LocationOverlay({
                 onChange={(e) => setTextIndex(parseInt(e.target.value))}
               >
                 {range(location.texts.length).map((i) => (
-                  <option value={i}>Описание {i + 1}</option>
+                  <option key={i} value={i}>
+                    Описание {i + 1}
+                  </option>
                 ))}
               </select>
               <button
@@ -196,6 +198,7 @@ export function LocationOverlay({
                         : "text-muted"
                     }
                     value={idx}
+                    key={idx}
                   >
                     {summary.textName}
                     {summary.leftText} {summary.rightText}

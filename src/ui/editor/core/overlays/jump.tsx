@@ -274,6 +274,7 @@ export function JumpOverlay({
                           : ""
                         : "text-muted"
                     }
+                    key={idx}
                     value={idx}
                   >
                     {summary.textName}

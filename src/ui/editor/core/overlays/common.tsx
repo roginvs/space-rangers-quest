@@ -77,7 +77,7 @@ export function ParamChangeTypeEdit({ change, onChange, param, paramsActive }: P
                   checked={
                     !change.isChangePercentage && !change.isChangeValue && !change.isChangeFormula
                   }
-                  onClick={() =>
+                  onChange={() =>
                     onChange({
                       ...change,
                       isChangePercentage: false,
@@ -96,7 +96,7 @@ export function ParamChangeTypeEdit({ change, onChange, param, paramsActive }: P
                   type="radio"
                   value="option2/"
                   checked={change.isChangePercentage}
-                  onClick={() =>
+                  onChange={() =>
                     onChange({
                       ...change,
                       isChangePercentage: true,
@@ -118,7 +118,7 @@ export function ParamChangeTypeEdit({ change, onChange, param, paramsActive }: P
                   type="radio"
                   value="option3"
                   checked={change.isChangeValue}
-                  onClick={() =>
+                  onChange={() =>
                     onChange({
                       ...change,
                       isChangePercentage: false,
@@ -137,7 +137,7 @@ export function ParamChangeTypeEdit({ change, onChange, param, paramsActive }: P
                   type="radio"
                   value="option4"
                   checked={change.isChangeFormula}
-                  onClick={() =>
+                  onChange={() =>
                     onChange({
                       ...change,
                       isChangePercentage: false,
@@ -209,7 +209,7 @@ export function ParamChangeTypeEdit({ change, onChange, param, paramsActive }: P
               type="radio"
               value="option1"
               checked={change.showingType === ParameterShowingType.НеТрогать}
-              onClick={() => onChange({ ...change, showingType: ParameterShowingType.НеТрогать })}
+              onChange={() => onChange({ ...change, showingType: ParameterShowingType.НеТрогать })}
             />
             Не трогать
           </label>
@@ -221,7 +221,7 @@ export function ParamChangeTypeEdit({ change, onChange, param, paramsActive }: P
               type="radio"
               value="option1"
               checked={change.showingType === ParameterShowingType.Скрыть}
-              onClick={() => onChange({ ...change, showingType: ParameterShowingType.Скрыть })}
+              onChange={() => onChange({ ...change, showingType: ParameterShowingType.Скрыть })}
             />
             Скрыть
           </label>
@@ -233,7 +233,7 @@ export function ParamChangeTypeEdit({ change, onChange, param, paramsActive }: P
               type="radio"
               value="option1"
               checked={change.showingType === ParameterShowingType.Показать}
-              onClick={() => onChange({ ...change, showingType: ParameterShowingType.Показать })}
+              onChange={() => onChange({ ...change, showingType: ParameterShowingType.Показать })}
             />
             Показать
           </label>
