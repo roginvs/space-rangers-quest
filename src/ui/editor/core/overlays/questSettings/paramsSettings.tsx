@@ -63,6 +63,7 @@ function QuestParamShowingRangeSettings({
   setParam: (newParam: DeepImmutable<QMParam>) => void;
   // quest: Quest;
 }) {
+  // TODO: This visually do not look very good
   return (
     <>
       <div
