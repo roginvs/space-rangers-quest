@@ -31,6 +31,7 @@ import { useIdb } from "./idb";
 import { emptyQmm } from "./emptyQmm";
 import { Game } from "../../../packGameData";
 import { LoadOverlay } from "./overlays/load/loadOverlay";
+import { writeQmm } from "../../../lib/qmwriter";
 
 // tslint:disable-next-line:no-useless-cast
 export const EDITOR_MOUSE_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
@@ -433,12 +434,34 @@ export function EditorCore({ questsToLoad }: { questsToLoad: Game[] }) {
           <i className="fa fa-file-o" title="Новый" />
         </button>
         <button
-          className={classNames("mr-3", "btn", "btn-light")}
+          className={classNames("mr-1", "btn", "btn-light")}
           onClick={() => {
             setOverlayMode({ kind: "load" });
           }}
         >
           <i className="fa fa-folder-open-o" title="Открыть" />
+        </button>
+
+        <button
+          className={classNames("mr-3", "btn", "btn-light")}
+          onClick={() => {
+            const arrayBuffer = writeQmm(quest);
+            const blob = new Blob([arrayBuffer], { type: "application/octet-stream" });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement("a");
+            link.href = url;
+            link.download = "quest.qmm";
+            document.body.appendChild(link);
+            link.click();
+            setTimeout(() => {
+              document.body.removeChild(link);
+              URL.revokeObjectURL(url);
+            }, 1000);
+
+            //setOverlayMode({ kind: "load" });
+          }}
+        >
+          <i className="fa fa-download" title="Скачать" />
         </button>
 
         {EDITOR_MOUSE_MODES.map((candidateMode) => (
