@@ -92,7 +92,7 @@ export function createJump(quest: Quest, fromLocationId: LocationId, toLocationI
     img: undefined,
     sound: undefined,
     track: undefined,
-    jumpingCountLimit: 0,
+    jumpingCountLimit: quest.defaultJumpCountLimit,
     priority: 0,
     showingOrder: 0,
     text: "",

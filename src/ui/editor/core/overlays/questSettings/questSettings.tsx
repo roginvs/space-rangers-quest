@@ -5,9 +5,11 @@ import { Quest } from "../../../../../lib/qmplayer/funcs";
 import { WhenDone } from "../../../../../lib/qmreader";
 import { Overlay } from "../../overlay";
 import { QuestGridSettings } from "./gridSettings";
+import { QuestJumpSettings } from "./jumpsSettings";
 import { QuestMainSettings } from "./mainSettings";
 import { QuestParamsSettings } from "./paramsSettings";
 import { QuestStringsSettings } from "./stringsSettings";
+import { QuestVersionSettings } from "./versionSettings";
 
 // tslint:disable-next-line:no-useless-cast
 const TABS = ["main", "params", "strings", "grid", "jumps", "version"] as const;
@@ -97,6 +99,12 @@ export function QuestSettings({
             </TabPane>
             <TabPane tabId="grid">
               <QuestGridSettings quest={quest} setQuest={setQuest} />
+            </TabPane>
+            <TabPane tabId="jumps">
+              <QuestJumpSettings quest={quest} setQuest={setQuest} />
+            </TabPane>
+            <TabPane tabId="version">
+              <QuestVersionSettings quest={quest} setQuest={setQuest} />
             </TabPane>
           </TabContent>
         </div>
