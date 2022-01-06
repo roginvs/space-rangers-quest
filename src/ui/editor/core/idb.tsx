@@ -182,13 +182,68 @@ export function useIdb() {
     });
   }, [db, setInitialDefaultState]);
 
+  const undo = React.useMemo(() => {
+    if (!db || !state || !state.undoQuest) {
+      return null;
+    }
+    const undoQuest = state.undoQuest;
+
+    return () => {
+      setState({
+        quest: undoQuest,
+        undoQuest: null,
+        redoQuest: state.quest,
+        currentIndex: state.currentIndex - 1,
+      });
+      // Read one more quest to be able to undo
+      readQuest(db, state.currentIndex - 2)
+        .then((undoQuest) => {
+          setState((oldState) =>
+            oldState
+              ? {
+                  ...oldState,
+                  undoQuest: undoQuest,
+                }
+              : null,
+          );
+        })
+        .catch((e) => toast(e.message));
+    };
+  }, [db, state]);
+
+  const redo = React.useMemo(() => {
+    if (!db || !state || !state.redoQuest) {
+      return null;
+    }
+    const redoQuest = state.redoQuest;
+
+    return () => {
+      setState({
+        quest: redoQuest,
+        undoQuest: state.quest,
+        redoQuest: null,
+        currentIndex: state.currentIndex + 1,
+      });
+      // Read one more quest to be able to redo
+      readQuest(db, state.currentIndex + 2)
+        .then((redoQuest) => {
+          setState((oldState) =>
+            oldState
+              ? {
+                  ...oldState,
+                  redoQuest: redoQuest,
+                }
+              : null,
+          );
+        })
+        .catch((e) => toast(e.message));
+    };
+  }, [db, state]);
+
   return {
     quest: state?.quest,
     setQuest: saveQuest,
-
-    //canUndo,
-    //  undo,
-    // canRedo,
-    //redo,
+    undo,
+    redo,
   };
 }
