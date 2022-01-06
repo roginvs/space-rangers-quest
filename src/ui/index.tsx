@@ -263,7 +263,14 @@ class MainLoader extends React.Component<{}> {
         </AppNavbar>
       );
     } else if (tab0 === "editor") {
-      return <EditorContainer questsToLoad={toJS(store.index.quests)} />;
+      return (
+        <EditorContainer
+          questsToLoad={toJS(store.index.quests)}
+          onExit={() => {
+            location.href = `#/`;
+          }}
+        />
+      );
     } else if (tab0 === "quests") {
       if (!tab1) {
         return <QuestList store={store} />;

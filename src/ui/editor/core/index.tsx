@@ -53,7 +53,7 @@ type EditorOverlay =
       kind: "load";
     };
 
-export function EditorCore({ questsToLoad }: { questsToLoad: Game[] }) {
+export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onExit: () => void }) {
   const { quest, setQuest: onChange, undo, redo } = useIdb();
 
   const [mouseMode, setMouseMode] = React.useState<EditorMouseMode>("select");
@@ -423,7 +423,7 @@ export function EditorCore({ questsToLoad }: { questsToLoad: Game[] }) {
         flexDirection: "column",
       }}
     >
-      <div>
+      <div className="d-flex">
         <button
           className={classNames("mr-1", "btn", "btn-light")}
           onClick={() => {
@@ -431,7 +431,7 @@ export function EditorCore({ questsToLoad }: { questsToLoad: Game[] }) {
             onChange(emptyQuest);
           }}
         >
-          <i className="fa fa-file-o" title="Новый" />
+          <i className="fa fa-file-o fa-fw" title="Новый" />
         </button>
         <button
           className={classNames("mr-1", "btn", "btn-light")}
@@ -439,7 +439,7 @@ export function EditorCore({ questsToLoad }: { questsToLoad: Game[] }) {
             setOverlayMode({ kind: "load" });
           }}
         >
-          <i className="fa fa-folder-open-o" title="Открыть" />
+          <i className="fa fa-folder-open-o fa-fw" title="Открыть" />
         </button>
 
         <button
@@ -461,7 +461,7 @@ export function EditorCore({ questsToLoad }: { questsToLoad: Game[] }) {
             //setOverlayMode({ kind: "load" });
           }}
         >
-          <i className="fa fa-download" title="Скачать" />
+          <i className="fa fa-download fa-fw" title="Скачать" />
         </button>
 
         {EDITOR_MOUSE_MODES.map((candidateMode) => (
@@ -471,15 +471,15 @@ export function EditorCore({ questsToLoad }: { questsToLoad: Game[] }) {
             onClick={() => setMouseMode(candidateMode)}
           >
             {candidateMode === "move" ? (
-              <i className="fa fa-arrows" title="Двигать (2)" />
+              <i className="fa fa-arrows fa-fw" title="Двигать (2)" />
             ) : candidateMode === "select" ? (
-              <i className="fa fa-mouse-pointer" title="Выделять (1)" />
+              <i className="fa fa-mouse-pointer fa-fw" title="Выделять (1)" />
             ) : candidateMode === "newJump" ? (
-              <i className="fa fa-arrows-h" title="Новый переход (4)" />
+              <i className="fa fa-arrows-h fa-fw" title="Новый переход (4)" />
             ) : candidateMode === "newLocation" ? (
-              <i className="fa fa-circle" title="Новая локация (3)" />
+              <i className="fa fa-circle fa-fw" title="Новая локация (3)" />
             ) : candidateMode === "remove" ? (
-              <i className="fa fa-remove" title="Удалить (5)" />
+              <i className="fa fa-remove fa-fw" title="Удалить (5)" />
             ) : (
               assertNever(candidateMode)
             )}
@@ -492,7 +492,7 @@ export function EditorCore({ questsToLoad }: { questsToLoad: Game[] }) {
             setOverlayMode({ kind: "questsettings" });
           }}
         >
-          <i className="fa fa-wrench" title="Редактировать общую информацию по квесту" />
+          <i className="fa fa-wrench fa-fw" title="Редактировать общую информацию по квесту" />
         </button>
 
         <button
@@ -500,14 +500,14 @@ export function EditorCore({ questsToLoad }: { questsToLoad: Game[] }) {
           onClick={undo || undefined}
           disabled={!undo}
         >
-          <i className="fa fa-undo" title="Отменить" />
+          <i className="fa fa-undo fa-fw" title="Отменить" />
         </button>
         <button
           className={classNames("btn", "btn-light")}
           onClick={redo || undefined}
           disabled={!redo}
         >
-          <i className="fa fa-repeat" title="Повторить" />
+          <i className="fa fa-repeat fa-fw" title="Повторить" />
         </button>
 
         <button
@@ -520,7 +520,11 @@ export function EditorCore({ questsToLoad }: { questsToLoad: Game[] }) {
             }
           }}
         >
-          <i className="fa fa-play-circle" title="Играть" />
+          <i className="fa fa-play-circle fa-fw" title="Играть" />
+        </button>
+
+        <button className={classNames("ml-auto", "btn", "btn-light")} onClick={onExit}>
+          <i className="fa fa-external-link fa-fw" title="Выход" />
         </button>
 
         <span className="mx-2" />
