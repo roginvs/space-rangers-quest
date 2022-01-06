@@ -144,6 +144,20 @@ export function drawHovers(
       }
       context.setLineDash([]);
 
+      context.lineWidth = 4;
+      context.strokeStyle = colorToString(endColor);
+      if (LUT.length > 0) {
+        // This might happen if distance between locations is too short
+        drawArrowEnding(
+          context,
+          LUT[LUT.length - 1].x,
+          LUT[LUT.length - 1].y,
+          jumpHover[2].endLoc.locX,
+          jumpHover[2].endLoc.locY,
+          JUMP_ARROW_LENGTH * 3,
+        );
+      }
+
       if (isDragging) {
         context.strokeStyle = "black";
         context.lineWidth = 1;
