@@ -15,7 +15,10 @@ export class Reader {
     this.i += 4;
     return result;
   }
-  readString() {
+
+  readString(): string;
+  readString(canBeUndefined: true): string | undefined;
+  readString(canBeUndefined: boolean = false) {
     const ifString = this.int32();
     if (ifString) {
       const strLen = this.int32();
@@ -23,7 +26,7 @@ export class Reader {
       this.i += strLen * 2;
       return str;
     } else {
-      return "";
+      return canBeUndefined ? undefined : "";
     }
   }
   byte() {
@@ -132,7 +135,7 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
   if (header === HEADER_QMM_6 || header === HEADER_QMM_7) {
     const majorVersion = header === HEADER_QMM_7 ? r.int32() : undefined;
     const minorVersion = header === HEADER_QMM_7 ? r.int32() : undefined;
-    const changeLogString = header === HEADER_QMM_7 ? r.readString() : undefined;
+    const changeLogString = header === HEADER_QMM_7 ? r.readString(true) : undefined;
 
     const givingRace = r.byte();
     const whenDone = r.byte();
@@ -361,9 +364,9 @@ function parseParamQmm(r: Reader): QMParam {
     });
   }
   param.critValueString = r.readString();
-  param.img = r.readString();
-  param.sound = r.readString();
-  param.track = r.readString();
+  param.img = r.readString(true);
+  param.sound = r.readString(true);
+  param.track = r.readString(true);
   param.starting = r.readString();
   return param;
 }
@@ -399,8 +402,8 @@ export interface QM extends QMBase, QMBase2, QMBase3 {
 function parseBase2(r: Reader, isQmm: boolean): QMBase2 {
   const ToStar = r.readString();
 
-  const Parsec = isQmm ? undefined : r.readString();
-  const Artefact = isQmm ? undefined : r.readString();
+  const Parsec = isQmm ? undefined : r.readString(true);
+  const Artefact = isQmm ? undefined : r.readString(true);
 
   const ToPlanet = r.readString();
   const Date = r.readString();
@@ -620,9 +623,9 @@ function parseLocationQmm(r: Reader, paramsCount: number): Location {
     const isChangeFormula = changeType === ParameterChangeType.Formula;
     const changingFormula = r.readString();
     const critText = r.readString();
-    const img = r.readString();
-    const sound = r.readString();
-    const track = r.readString();
+    const img = r.readString(true);
+    const sound = r.readString(true);
+    const track = r.readString(true);
     paramsChanges[paramN - 1] = {
       change,
       showingType,
@@ -642,9 +645,9 @@ function parseLocationQmm(r: Reader, paramsCount: number): Location {
   for (let i = 0; i < locationTexts; i++) {
     const text = r.readString();
     texts.push(text);
-    const img = r.readString();
-    const sound = r.readString();
-    const track = r.readString();
+    const img = r.readString(true);
+    const sound = r.readString(true);
+    const track = r.readString(true);
     media.push({ img, track, sound });
   }
 
@@ -858,9 +861,9 @@ function parseJumpQmm(r: Reader, paramsCount: number, questParams: QMParam[]): J
 
     const critText = r.readString();
 
-    const img = r.readString();
-    const sound = r.readString();
-    const track = r.readString();
+    const img = r.readString(true);
+    const sound = r.readString(true);
+    const track = r.readString(true);
 
     // console.info(`Param ${i} crit text =${critText}`)
     paramsChanges[paramId - 1] = {
@@ -882,9 +885,9 @@ function parseJumpQmm(r: Reader, paramsCount: number, questParams: QMParam[]): J
   const text = r.readString();
 
   const description = r.readString();
-  const img = r.readString();
-  const sound = r.readString();
-  const track = r.readString();
+  const img = r.readString(true);
+  const sound = r.readString(true);
+  const track = r.readString(true);
 
   return {
     priority,

@@ -62,32 +62,47 @@ describe("Writer class", () => {
   }
 });
 
-describe("All files here", () => {
-  for (const f of fs.readdirSync(__dirname)) {
-    if (!f.endsWith(".qm") && !f.endsWith(".qmm")) {
-      continue;
-    }
-    if (f !== "qmreader-1.qmm") {
-      continue;
-    }
+function checkFile(fName: string) {
+  const fileRaw = fs.readFileSync(fName);
 
-    const fileRaw = fs.readFileSync(`${__dirname}/${f}`);
-    /*
-    if (fileRaw.readInt32LE(0) === HEADER_QMM_7) {
-      it(`${f} equals`, () => {
-        const qm = parse(fileRaw);
-        const buf = writeQmm(qm);
-        //assert.deepStrictEqual(fileRaw, buf);
-        assert.deepStrictEqual(fileRaw.slice(0, buf.length), buf);
-      });
-    }
-    */
-
-    it(`${f}`, () => {
+  if (fileRaw.readInt32LE(0) === HEADER_QMM_7) {
+    it(`${fName} equal after deserialize`, () => {
       const quest = parse(fileRaw);
       const packed = writeQmm(quest);
       const unpacked = parse(packed);
       assert.deepStrictEqual(unpacked, quest);
     });
+
+    // This is skipped due to some strings issues
+    it.skip(`${fName} equals`, () => {
+      const qm = parse(fileRaw);
+      const buf = writeQmm(qm);
+      //assert.deepStrictEqual(fileRaw, buf);
+      assert.deepStrictEqual(fileRaw.slice(0, buf.length), buf);
+    });
+  }
+}
+
+describe("All files here", () => {
+  for (const f of fs.readdirSync(__dirname)) {
+    if (!f.endsWith(".qm") && !f.endsWith(".qmm")) {
+      continue;
+    }
+    //   if (f !== "qmreader-1.qm") {
+    // continue;
+    //    }
+
+    checkFile(`${__dirname}/${f}`);
+  }
+});
+
+describe(`All borrowed`, function () {
+  const srcDir = __dirname + `/../../borrowed/qm/`;
+  this.timeout(60 * 1000);
+  for (const origin of fs.readdirSync(srcDir)) {
+    for (const f of fs.readdirSync(srcDir + origin)) {
+      const fullname = srcDir + origin + "/" + f;
+      checkFile(fullname);
+    }
   }
 });
