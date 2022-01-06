@@ -117,7 +117,7 @@ const RUS = {
   pwaInstallOk: "Установка приложения началась!",
   pwaInstallNotOk: "Не получилось установить",
 
-  editor: "Редактор квестов",
+  editor: "Редактор (бета)",
 };
 
 export type LangTexts = typeof RUS;
@@ -237,7 +237,7 @@ const ENG: LangTexts = {
   pwaInstallOk: "Application installation started!",
   pwaInstallNotOk: "Failed to install application",
 
-  editor: "Quest editor",
+  editor: "Editor (beta)",
 };
 
 export function getLang(lang: Lang) {
