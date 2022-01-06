@@ -209,19 +209,21 @@ export function LocationOverlay({
             </select>
           </div>
           <div className="col-6">
-            <ParamChangeTypeEdit
-              change={location.paramsChanges[paramId]}
-              param={quest.params[paramId]}
-              onChange={(newChange) => {
-                setLocation({
-                  ...location,
-                  paramsChanges: location.paramsChanges.map((change, i) =>
-                    i === paramId ? newChange : change,
-                  ),
-                });
-              }}
-              paramsActive={quest.params}
-            />
+            {quest.params[paramId] && location.paramsChanges[paramId] && (
+              <ParamChangeTypeEdit
+                change={location.paramsChanges[paramId]}
+                param={quest.params[paramId]}
+                onChange={(newChange) => {
+                  setLocation({
+                    ...location,
+                    paramsChanges: location.paramsChanges.map((change, i) =>
+                      i === paramId ? newChange : change,
+                    ),
+                  });
+                }}
+                paramsActive={quest.params}
+              />
+            )}
           </div>
         </div>
 

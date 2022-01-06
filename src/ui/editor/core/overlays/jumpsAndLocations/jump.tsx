@@ -311,31 +311,35 @@ export function JumpOverlay({
           </div>
 
           <div className="col-6">
-            <ParamCondition
-              param={quest.params[paramId]}
-              condition={jump.paramsConditions[paramId]}
-              onChange={(newValue) => {
-                setJump({
-                  ...jump,
-                  paramsConditions: jump.paramsConditions.map((change, i) =>
-                    i === paramId ? newValue : change,
-                  ),
-                });
-              }}
-            />
-            <ParamChangeTypeEdit
-              change={jump.paramsChanges[paramId]}
-              param={quest.params[paramId]}
-              onChange={(newChange) => {
-                setJump({
-                  ...jump,
-                  paramsChanges: jump.paramsChanges.map((change, i) =>
-                    i === paramId ? newChange : change,
-                  ),
-                });
-              }}
-              paramsActive={quest.params}
-            />
+            {quest.params[paramId] && jump.paramsConditions[paramId] && (
+              <ParamCondition
+                param={quest.params[paramId]}
+                condition={jump.paramsConditions[paramId]}
+                onChange={(newValue) => {
+                  setJump({
+                    ...jump,
+                    paramsConditions: jump.paramsConditions.map((change, i) =>
+                      i === paramId ? newValue : change,
+                    ),
+                  });
+                }}
+              />
+            )}
+            {quest.params[paramId] && jump.paramsChanges[paramId] && (
+              <ParamChangeTypeEdit
+                change={jump.paramsChanges[paramId]}
+                param={quest.params[paramId]}
+                onChange={(newChange) => {
+                  setJump({
+                    ...jump,
+                    paramsChanges: jump.paramsChanges.map((change, i) =>
+                      i === paramId ? newChange : change,
+                    ),
+                  });
+                }}
+                paramsActive={quest.params}
+              />
+            )}
           </div>
         </div>
 
