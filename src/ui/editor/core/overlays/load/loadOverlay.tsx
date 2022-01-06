@@ -74,14 +74,17 @@ export function LoadOverlay({
                 return;
               }
 
-              file.arrayBuffer().then((questArrayBuffer) => {
-                const unzipped = file.name.endsWith(".gz")
-                  ? Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))
-                  : Buffer.from(questArrayBuffer);
+              file
+                .arrayBuffer()
+                .then((questArrayBuffer) => {
+                  const unzipped = file.name.endsWith(".gz")
+                    ? Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))
+                    : Buffer.from(questArrayBuffer);
 
-                const quest = parse(unzipped);
-                onClose(quest);
-              });
+                  const quest = parse(unzipped);
+                  onClose(quest);
+                })
+                .catch((e) => toast(e.message));
             }}
           />
         </div>

@@ -194,7 +194,7 @@ export function useIdb() {
             oldState
               ? {
                   ...oldState,
-                  undoQuest: undoQuest,
+                  undoQuest,
                 }
               : null,
           );
@@ -203,6 +203,7 @@ export function useIdb() {
     };
   }, [db, state]);
 
+  // Quite a copy-paste from undo
   const redo = React.useMemo(() => {
     if (!db || !state || !state.redoQuest) {
       return null;
@@ -223,7 +224,7 @@ export function useIdb() {
             oldState
               ? {
                   ...oldState,
-                  redoQuest: redoQuest,
+                  redoQuest,
                 }
               : null,
           );
