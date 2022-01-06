@@ -1,8 +1,8 @@
 import * as fs from "fs";
 import * as assert from "assert";
 import "mocha";
-import { Writer } from "../lib/qmwriter";
-import { Reader } from "../lib/qmreader";
+import { writeQmm, Writer } from "../lib/qmwriter";
+import { HEADER_QMM_7, parse, Reader } from "../lib/qmreader";
 
 describe("Writer class", () => {
   for (const chunkSize of [1, 3, 100]) {
@@ -58,6 +58,33 @@ describe("Writer class", () => {
         const r = new Reader(buf);
         assert.strictEqual(r.readString(), "Лол куку"); // ReadString returns "" if string is empty
       });
+    });
+  }
+});
+
+describe("All files here", () => {
+  for (const f of fs.readdirSync(__dirname)) {
+    if (!f.endsWith(".qm") && !f.endsWith(".qmm")) {
+      continue;
+    }
+
+    const fileRaw = fs.readFileSync(`${__dirname}/${f}`);
+    /*
+    if (fileRaw.readInt32LE(0) === HEADER_QMM_7) {
+      it(`${f} equals`, () => {
+        const qm = parse(fileRaw);
+        const buf = writeQmm(qm);
+        //assert.deepStrictEqual(fileRaw, buf);
+        assert.deepStrictEqual(fileRaw.slice(0, buf.length), buf);
+      });
+    }
+    */
+
+    it(`${f}`, () => {
+      const quest = parse(fileRaw);
+      const packed = writeQmm(quest);
+      const unpacked = parse(packed);
+      assert.deepStrictEqual(unpacked, quest);
     });
   }
 });
