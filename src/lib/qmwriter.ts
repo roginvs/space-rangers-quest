@@ -40,17 +40,15 @@ export class Writer {
       stringBuffer.copy(this.buf, this.pos);
       this.pos += stringBuffer.length;
     }
-    /*
-      const ifString = this.int32();
-      if (ifString) {
-        const strLen = this.int32();
-        const str = this.data.slice(this.i, this.i + strLen * 2).toString("utf16le");
-        this.i += strLen * 2;
-        return str;
-      } else {
-        return "";
-      }
-    }
-    */
+  }
+  byte(b: number) {
+    this.ensure(1);
+    this.buf[this.pos] = b;
+    this.pos += 1;
+  }
+  float64(val: number) {
+    this.ensure(8);
+    this.buf.writeDoubleLE(val, this.pos);
+    this.pos += 8;
   }
 }

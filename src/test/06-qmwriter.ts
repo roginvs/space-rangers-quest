@@ -20,6 +20,25 @@ describe("Writer class", () => {
         const r = new Reader(buf);
         assert.strictEqual(r.int32(), 83758303);
       });
+      it(`byte`, () => {
+        const w = new Writer();
+        w.byte(243);
+        const buf = w.export();
+        assert.strictEqual(w.export().length, 1);
+
+        const r = new Reader(buf);
+        assert.strictEqual(r.byte(), 243);
+      });
+      it(`float64`, () => {
+        const w = new Writer();
+        const value = 0.123456789;
+        w.float64(value);
+        const buf = w.export();
+        assert.strictEqual(w.export().length, 8);
+
+        const r = new Reader(buf);
+        assert.strictEqual(r.float64(), value);
+      });
       it(`Empty string`, () => {
         const w = new Writer();
         w.writeString(null);
