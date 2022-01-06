@@ -160,6 +160,29 @@ function QuestParamShowingRangeSettings({
             </>
           );
         })}
+
+        <div className="d-flex mt-4">
+          <button
+            className="ml-auto btn btn-light"
+            disabled={param.max - param.min < param.showingInfo.length}
+            onClick={() => {
+              // TODO: maybe more intelligent way to add new range
+              setParam({
+                ...param,
+                showingInfo: [
+                  ...param.showingInfo,
+                  {
+                    from: param.max,
+                    to: param.max,
+                    str: `<>`,
+                  },
+                ],
+              });
+            }}
+          >
+            + добавить диапазон
+          </button>
+        </div>
       </div>
     </>
   );
