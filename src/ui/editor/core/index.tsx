@@ -47,9 +47,9 @@ type EditorOverlay =
     };
 
 export function EditorCore() {
-  const { quest, setQuest: onChange } = useIdb();
+  const { quest, setQuest: onChange, undo, redo } = useIdb();
 
-  const [mouseMode, setMouseMode] = React.useState<EditorMouseMode>("newJump");
+  const [mouseMode, setMouseMode] = React.useState<EditorMouseMode>("select");
 
   const [overlayMode, setOverlayMode] = React.useState<EditorOverlay | undefined>(undefined);
 
@@ -446,6 +446,21 @@ export function EditorCore() {
           }}
         >
           <i className="fa fa-wrench" title="Редактировать общую информацию по квесту" />
+        </button>
+
+        <button
+          className={classNames("ml-3", "btn", "btn-light")}
+          onClick={undo || undefined}
+          disabled={!undo}
+        >
+          <i className="fa fa-undo" title="Отменить" />
+        </button>
+        <button
+          className={classNames("btn", "btn-light")}
+          onClick={redo || undefined}
+          disabled={!redo}
+        >
+          <i className="fa fa-undo fa-flip-horizontal" title="Повторить" />
         </button>
 
         <button

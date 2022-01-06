@@ -39,6 +39,8 @@ async function writeQuest(db: IDBDatabase, quest: Quest, index: number) {
     keysToRemove.push(...oldKeys);
   }
 
+  console.info(keysToRemove, index);
+
   for (const key of [keysToRemove]) {
     const removeRequest = objectStore.delete(key);
     await new Promise<void>((resolve, reject) => {
