@@ -575,7 +575,7 @@ function performJumpInternal(
   const jumpForImg = quest.jumps.find((x) => x.id === state.lastJumpId);
   const image =
     jumpForImg && jumpForImg.img
-      ? jumpForImg.img.toLowerCase() + ".jpg"
+      ? transformImageName(jumpForImg.img)
       : images
           .filter((x) => !!x.jumpIds && x.jumpIds.indexOf(jumpId) > -1)
           .map((x) => x.filename)
@@ -656,7 +656,7 @@ function performJumpInternal(
           (state.critParamId !== null && jump.paramsChanges[state.critParamId].img) ||
           quest.params[critParamId].img;
         const image = qmmImage
-          ? qmmImage.toLowerCase() + ".jpg"
+          ? transformImageName(qmmImage)
           : images
               .filter(
                 (x) => !!x.critParams && x.critParams.indexOf(state.critParamId as number) > -1,
@@ -708,7 +708,7 @@ function performJumpInternal(
       (state.critParamId !== null && jump && jump.paramsChanges[state.critParamId].img) ||
       (state.critParamId !== null && quest.params[state.critParamId].img);
     const image = qmmImg
-      ? qmmImg.toLowerCase() + ".jpg"
+      ? transformImageName(qmmImg)
       : images
           .filter(
             (x) =>
@@ -772,7 +772,7 @@ function calculateLocation(
     (x) => !!x.locationIds && x.locationIds.indexOf(state.locationId) > -1,
   );
   const image = imageFromQmm
-    ? imageFromQmm.toLowerCase() + ".jpg"
+    ? transformImageName(imageFromQmm)
     : imageFromPQI && imageFromPQI.filename;
   if (image) {
     state = {
@@ -1009,7 +1009,7 @@ function calculateLocation(
 
       const qmmImg = location.paramsChanges[critParam].img || quest.params[critParam].img;
       const image = qmmImg
-        ? qmmImg.toLowerCase() + ".jpg"
+        ? transformImageName(qmmImg)
         : images
             .filter((x) => !!x.critParams && x.critParams.indexOf(critParam) > -1)
             .map((x) => x.filename)
@@ -1075,9 +1075,20 @@ function calculateLocation(
   return state;
 }
 
+function transformImageName(imageName: string): string {
+  const filename = imageName.toLowerCase();
+  if (filename.startsWith("http://") || filename.startsWith("https://")) {
+    // No transformation to absole url
+    return imageName;
+  }
+  return filename.endsWith(".jpg") ? filename : filename + ".jpg";
+}
+
 export function getAllImagesToPreload(quest: Quest, images: PQImages) {
   const imagesPQI = images.map((x) => x.filename);
-  const imagesQmm = getImagesListFromQmm(quest as QM).map((x) => x.toLowerCase() + ".jpg");
+  const imagesQmm = getImagesListFromQmm(quest as QM).map((fileName) =>
+    transformImageName(fileName),
+  );
   const uniq: { [name: string]: boolean } = {};
   for (const img of [...imagesPQI, ...imagesQmm]) {
     uniq[img] = true;

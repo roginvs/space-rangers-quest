@@ -54,6 +54,14 @@ function removeSerialEmptyStrings(input: string[]) {
 
 const MOBILE_THRESHOLD = 576; // 576px 768px
 
+function getImageUrl(name: string) {
+  if (name.startsWith("http://") || name.startsWith("https://")) {
+    return name;
+  }
+
+  return DATA_DIR + "img/" + name;
+}
+
 export function QuestPlay({
   quest,
   gameState,
@@ -103,10 +111,10 @@ export function QuestPlay({
 
   const uistate = getUIState(quest, gameState, player);
 
-  const imageUrl = uistate.imageFileName ? DATA_DIR + "img/" + uistate.imageFileName : null;
+  const imageUrl = uistate.imageFileName ? getImageUrl(uistate.imageFileName) : null;
 
   const imagesPreloaded = getAllImagesToPreload(quest, pqiImages).map((x) => {
-    return <img key={x} src={DATA_DIR + "img/" + x} style={{ display: "none" }} />;
+    return <img key={x} src={getImageUrl(x)} style={{ display: "none" }} />;
   });
 
   const isMusic = !!musicList;
