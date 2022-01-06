@@ -2,7 +2,7 @@ import * as fs from "fs";
 import * as assert from "assert";
 import "mocha";
 import { writeQmm, Writer } from "../lib/qmwriter";
-import { HEADER_QMM_7, parse, Reader } from "../lib/qmreader";
+import { HEADER_QMM_6, HEADER_QMM_7, parse, Reader } from "../lib/qmreader";
 
 describe("Writer class", () => {
   for (const chunkSize of [1, 3, 100]) {
@@ -63,13 +63,24 @@ describe("Writer class", () => {
 });
 
 function checkFile(fName: string) {
+  if (!fName.endsWith("Amnesia.qmm")) {
+    //return;
+  }
+
   const fileRaw = fs.readFileSync(fName);
 
-  if (fileRaw.readInt32LE(0) === HEADER_QMM_7) {
+  if (fileRaw.readInt32LE(0) === HEADER_QMM_7 || fileRaw.readInt32LE(0) === HEADER_QMM_6) {
     it(`${fName} equal after deserialize`, () => {
       const quest = parse(fileRaw);
       const packed = writeQmm(quest);
       const unpacked = parse(packed);
+
+      // small hack to force them to be equal
+      if (quest.header === HEADER_QMM_6) {
+        quest.header = HEADER_QMM_7;
+        quest.majorVersion = 1;
+        quest.minorVersion = 0;
+      }
       assert.deepStrictEqual(unpacked, quest);
     });
 
@@ -88,9 +99,6 @@ describe("All files here", () => {
     if (!f.endsWith(".qm") && !f.endsWith(".qmm")) {
       continue;
     }
-    //   if (f !== "qmreader-1.qm") {
-    // continue;
-    //    }
 
     checkFile(`${__dirname}/${f}`);
   }
