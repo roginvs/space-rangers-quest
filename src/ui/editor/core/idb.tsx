@@ -14,11 +14,12 @@ async function writeQuest(db: IDBDatabase, quest: Quest, index: number) {
   const transaction = db.transaction([INDEXEDDB_EDITOR_AUTOSAVE_STORE], "readwrite");
   const objectStore = transaction.objectStore(INDEXEDDB_EDITOR_AUTOSAVE_STORE);
 
-  // Find what is higher our threshold
-  const higherKeysRequest = objectStore.getAllKeys(IDBKeyRange.lowerBound(index, true));
-  const keysToRemove = await new Promise<IDBValidKey[]>((resolve, reject) => {
-    higherKeysRequest.onsuccess = () => resolve(higherKeysRequest.result);
-    higherKeysRequest.onerror = () => reject(new Error(higherKeysRequest.error?.message));
+  // Find and remove what is higher or equal to our index
+  const higherKeysRemoveRequest = objectStore.delete(IDBKeyRange.lowerBound(index));
+  await new Promise<void>((resolve, reject) => {
+    higherKeysRemoveRequest.onsuccess = () => resolve();
+    higherKeysRemoveRequest.onerror = () =>
+      reject(new Error(higherKeysRemoveRequest.error?.message));
   });
 
   // Then save what do we have
@@ -28,24 +29,14 @@ async function writeQuest(db: IDBDatabase, quest: Quest, index: number) {
     saveRequest.onerror = () => reject(new Error(saveRequest.error?.message));
   });
 
-  // Next, find everything lower threshold
+  // Next, find and remove everything lower threshold
   const removingThreshold = index - AUTOSAVE_SIZE;
   if (removingThreshold > 0) {
-    const olderKeysRequest = objectStore.getAllKeys(IDBKeyRange.upperBound(removingThreshold));
-    const oldKeys = await new Promise<IDBValidKey[]>((resolve, reject) => {
-      olderKeysRequest.onsuccess = () => resolve(olderKeysRequest.result);
-      olderKeysRequest.onerror = () => reject(new Error(olderKeysRequest.error?.message));
-    });
-    keysToRemove.push(...oldKeys);
-  }
-
-  console.info(keysToRemove, index);
-
-  for (const key of [keysToRemove]) {
-    const removeRequest = objectStore.delete(key);
+    const olderKeysRemoveRequest = objectStore.delete(IDBKeyRange.upperBound(removingThreshold));
     await new Promise<void>((resolve, reject) => {
-      removeRequest.onsuccess = () => resolve();
-      removeRequest.onerror = () => reject(new Error(removeRequest.error?.message));
+      olderKeysRemoveRequest.onsuccess = () => resolve();
+      olderKeysRemoveRequest.onerror = () =>
+        reject(new Error(olderKeysRemoveRequest.error?.message));
     });
   }
 
