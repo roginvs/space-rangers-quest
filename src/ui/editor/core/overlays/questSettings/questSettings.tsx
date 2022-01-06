@@ -4,8 +4,10 @@ import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { Quest } from "../../../../../lib/qmplayer/funcs";
 import { WhenDone } from "../../../../../lib/qmreader";
 import { Overlay } from "../../overlay";
+import { QuestGridSettings } from "./gridSettings";
 import { QuestMainSettings } from "./mainSettings";
 import { QuestParamsSettings } from "./paramsSettings";
+import { QuestStringsSettings } from "./stringsSettings";
 
 // tslint:disable-next-line:no-useless-cast
 const TABS = ["main", "params", "strings", "grid", "jumps", "version"] as const;
@@ -50,7 +52,7 @@ export function QuestSettings({
   const [activeTab, setActiveTab] = React.useState<typeof TABS[number]>("main");
 
   // developing
-  React.useEffect(() => setActiveTab("params"), []);
+  // React.useEffect(() => setActiveTab("params"), []);
 
   const tabLabels: Record<typeof TABS[number], string> = {
     main: "Основные",
@@ -89,6 +91,12 @@ export function QuestSettings({
             </TabPane>
             <TabPane tabId="params">
               <QuestParamsSettings quest={quest} setQuest={setQuest} />
+            </TabPane>
+            <TabPane tabId="strings">
+              <QuestStringsSettings quest={quest} setQuest={setQuest} />
+            </TabPane>
+            <TabPane tabId="grid">
+              <QuestGridSettings quest={quest} setQuest={setQuest} />
             </TabPane>
           </TabContent>
         </div>
