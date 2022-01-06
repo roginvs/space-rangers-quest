@@ -189,11 +189,13 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
     r.dwordFlag();
     const playerRace = r.byte();
     const reputationChange = r.int32();
+
+    const screenSizeX = r.int32();
+    const screenSizeY = r.int32();
+    const widthSize = r.int32();
+    const heightSize = r.int32();
     r.dwordFlag();
-    r.dwordFlag();
-    r.dwordFlag();
-    r.dwordFlag();
-    r.dwordFlag();
+
     const defaultJumpCountLimit = r.int32();
     const hardness = r.int32();
     return {
@@ -209,10 +211,11 @@ function parseBase(r: Reader, header: HeaderMagic): QMBase {
       reputationChange,
 
       // TODO
-      screenSizeX: 200,
-      screenSizeY: 200,
-      heightSize: 100,
-      widthSize: 100,
+      screenSizeX,
+      screenSizeY,
+
+      widthSize,
+      heightSize,
     };
   }
 }
