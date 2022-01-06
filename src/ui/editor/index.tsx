@@ -93,5 +93,5 @@ export function EditorContainer() {
     return <div>Loading</div>;
   }
 
-  return <EditorCore quest={quest} onChange={setQuest} />;
+  return <EditorCore />;
 }

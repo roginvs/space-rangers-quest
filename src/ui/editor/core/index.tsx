@@ -27,12 +27,7 @@ import { useOnDocumentKeyUp } from "./keypress";
 import { QuestSettings } from "./overlays/questSettings/questSettings";
 import { initRandomGame, QuestPlay } from "../../questPlay";
 import { getLang } from "../../lang";
-
-export interface EditorCoreProps {
-  quest: Quest;
-  onChange: (newQuest: Quest) => void;
-  //onExit: () => void,
-}
+import { useIdb } from "./idb";
 
 // tslint:disable-next-line:no-useless-cast
 export const EDITOR_MOUSE_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
@@ -51,7 +46,9 @@ type EditorOverlay =
       kind: "questsettings";
     };
 
-export function EditorCore({ quest, onChange }: EditorCoreProps) {
+export function EditorCore() {
+  const { quest, setQuest: onChange } = useIdb();
+
   const [mouseMode, setMouseMode] = React.useState<EditorMouseMode>("newJump");
 
   const [overlayMode, setOverlayMode] = React.useState<EditorOverlay | undefined>(undefined);
@@ -80,7 +77,10 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const interactiveCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const interactiveContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
 
-  const canvasSize = React.useMemo(() => getCanvasSize(quest), [quest]);
+  const canvasSize = React.useMemo(
+    () => (quest ? getCanvasSize(quest) : { canvasHeight: 0, canvasWidth: 0 }),
+    [quest],
+  );
   const [hoverZones, setHoverZones] = React.useState<HoverZones>([]);
   const [hoverZone, setHoverZone] = React.useState<
     | {
@@ -101,6 +101,9 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       return;
     }
     if (isPlaying) {
+      return;
+    }
+    if (!quest) {
       return;
     }
     const hoverZones = updateMainCanvas(
@@ -132,6 +135,9 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     if (isPlaying) {
       return;
     }
+    if (!quest) {
+      return;
+    }
 
     // TODO: This do not work well when scrolling
     const onMove = (e: MouseEvent) => {
@@ -159,7 +165,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     return () => {
       document.removeEventListener("mousemove", onMove);
     };
-  }, [hoverZones, isDragging, overlayMode, isPlaying]);
+  }, [hoverZones, isDragging, overlayMode, isPlaying, quest]);
 
   React.useEffect(() => {
     if (overlayMode) {
@@ -170,6 +176,9 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     }
     const interactiveCanvas = interactiveCanvasRef.current;
     if (!interactiveCanvas) {
+      return;
+    }
+    if (!quest) {
       return;
     }
     const onMouseDown = (e: MouseEvent) => {
@@ -377,6 +386,10 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   useOnDocumentKeyUp(onDocumentKeyUp);
 
   // console.info(`Editor re-render`);
+
+  if (!quest) {
+    return <div>Loading latest save...</div>;
+  }
 
   if (isPlaying) {
     return (
