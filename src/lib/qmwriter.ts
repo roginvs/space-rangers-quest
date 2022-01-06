@@ -18,7 +18,7 @@ export class Writer {
     }
   }
 
-  constructor(private chunkSize = 1024 * 1024) {
+  constructor(private readonly chunkSize = 1024 * 1024) {
     // nothing here
   }
 
