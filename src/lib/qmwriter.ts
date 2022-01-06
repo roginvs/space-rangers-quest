@@ -1,9 +1,11 @@
 import { DeepImmutable } from "./qmplayer/deepImmutable";
 import {
   HEADER_QMM_7,
+  JumpParameterCondition,
   LocationType,
   ParameterChange,
   ParameterChangeType,
+  ParameterShowingType,
   QM,
   QMParam,
 } from "./qmreader";
@@ -83,6 +85,35 @@ function writeParamChange(w: Writer, param: DeepImmutable<ParameterChange>, para
   w.writeString(param.img);
   w.writeString(param.sound);
   w.writeString(param.track);
+}
+
+function isParameterChangeChanged(param: DeepImmutable<ParameterChange>): boolean {
+  return (
+    param.change !== 0 ||
+    param.showingType !== ParameterShowingType.НеТрогать ||
+    param.isChangeFormula ||
+    param.isChangeValue ||
+    param.isChangePercentage ||
+    !!param.changingFormula ||
+    !!param.critText ||
+    !!param.img ||
+    !!param.sound ||
+    !!param.track
+  );
+}
+
+function isJumpParameterConditionChanged(
+  condition: DeepImmutable<JumpParameterCondition>,
+  param: { min: number; max: number },
+): boolean {
+  return (
+    condition.mustFrom !== param.min ||
+    condition.mustTo !== param.max ||
+    condition.mustEqualValues.length > 0 ||
+    condition.mustEqualValuesEqual ||
+    condition.mustModValues.length > 0 ||
+    condition.mustModValuesMod
+  );
 }
 
 export function writeQmm(quest: DeepImmutable<QM>) {
@@ -170,8 +201,13 @@ export function writeQmm(quest: DeepImmutable<QM>) {
       : LocationType.Ordinary;
     w.byte(type);
 
-    // TODO: Filter
-    const affectedParamsChange = loc.paramsChanges.map((param, idx) => ({ param, idx }));
+    const affectedParamsChange = loc.paramsChanges
+      .map((param, idx) => ({
+        param,
+        idx,
+        keep: isParameterChangeChanged(param),
+      }))
+      .filter((x) => x.keep);
 
     w.int32(affectedParamsChange.length);
     for (const { param, idx } of affectedParamsChange) {
@@ -201,8 +237,13 @@ export function writeQmm(quest: DeepImmutable<QM>) {
     w.int32(jump.jumpingCountLimit);
     w.int32(jump.showingOrder);
 
-    // TODO: Filter
-    const affectedJumpConditionParams = jump.paramsConditions.map((cond, idx) => ({ cond, idx }));
+    const affectedJumpConditionParams = jump.paramsConditions
+      .map((cond, idx) => ({
+        cond,
+        idx,
+        keep: isJumpParameterConditionChanged(cond, quest.params[idx]),
+      }))
+      .filter((x) => x.keep);
     w.int32(affectedJumpConditionParams.length);
     for (const { cond, idx } of affectedJumpConditionParams) {
       w.int32(idx + 1);
@@ -222,8 +263,9 @@ export function writeQmm(quest: DeepImmutable<QM>) {
       }
     }
 
-    // TODO: Filter
-    const affectedParamsChange = jump.paramsChanges.map((param, idx) => ({ param, idx }));
+    const affectedParamsChange = jump.paramsChanges
+      .map((param, idx) => ({ param, idx, keep: isParameterChangeChanged(param) }))
+      .filter((x) => x.keep);
     w.int32(affectedParamsChange.length);
     for (const { param, idx } of affectedParamsChange) {
       writeParamChange(w, param, idx);
