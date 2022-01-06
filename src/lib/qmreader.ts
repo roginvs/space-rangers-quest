@@ -1,6 +1,7 @@
 export const LOCATION_TEXTS = 10;
 
-class Reader {
+/** Exported only for tests */
+export class Reader {
   private i = 0;
   constructor(private readonly data: Buffer) {}
   int32() {
