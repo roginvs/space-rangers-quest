@@ -4,6 +4,7 @@ import { QM, parse, JumpId } from "../../lib/qmreader";
 import pako from "pako";
 import { DATA_DIR } from "../consts";
 import { EditorCore } from "./core";
+import { emptyQmm } from "./core/emptyQmm";
 
 function addSampleJumpsToQuest(quest: QM) {
   // Add some extra data
@@ -72,13 +73,19 @@ export function EditorContainer() {
       .then((questArrayBuffer) => {
         const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer))));
 
-        addSampleJumpsToQuest(quest);
+        // addSampleJumpsToQuest(quest);
 
-        setQuest(quest);
+        //setQuest(quest);
       })
       .catch((e) => {
         console.error("Lol");
       });
+  }, []);
+
+  React.useEffect(() => {
+    const quest = parse(emptyQmm);
+    console.info(quest);
+    setQuest(quest);
   }, []);
 
   if (!quest) {

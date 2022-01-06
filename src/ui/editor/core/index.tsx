@@ -54,7 +54,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const [overlayMode, setOverlayMode] = React.useState<EditorOverlay | undefined>(undefined);
 
   // DEBUGGING
-  ////*
+  /*
   React.useEffect(() => {
     setOverlayMode({
       kind: "location",
@@ -67,7 +67,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     });
     setOverlayMode({ kind: "questsettings" });
   }, []);
-  //*/
+  // */
 
   const mainCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const mainContextRef = React.useRef<CanvasRenderingContext2D | null>(null);

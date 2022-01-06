@@ -11,8 +11,10 @@ interface CanvasSize {
   canvasHeight: number;
 }
 export function getCanvasSize(quest: Quest): CanvasSize {
-  const canvasWidth = Math.max(...quest.locations.map((l) => l.locX)) + CANVAS_PADDING;
-  const canvasHeight = Math.max(...quest.locations.map((l) => l.locY)) + CANVAS_PADDING;
+  const canvasWidth =
+    Math.max(quest.screenSizeX, ...quest.locations.map((l) => l.locX)) + CANVAS_PADDING;
+  const canvasHeight =
+    Math.max(quest.screenSizeY, ...quest.locations.map((l) => l.locY)) + CANVAS_PADDING;
   return { canvasWidth, canvasHeight };
 }
 export function updateMainCanvas(
