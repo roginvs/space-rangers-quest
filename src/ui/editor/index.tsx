@@ -74,7 +74,7 @@ export function EditorContainer() {
         const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer))));
 
         // addSampleJumpsToQuest(quest);
-        if (1 + 1 === 3) {
+        if (1 + 1 === 2) {
           setQuest(quest);
         }
       })

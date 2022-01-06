@@ -12,6 +12,7 @@ import "./questPlay.css";
 import { Music } from "./questPlay.music";
 import { LangTexts } from "./lang";
 import { QuestPlayImage } from "./questPlay.image";
+import { DeepImmutable } from "../lib/qmplayer/deepImmutable";
 
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
@@ -21,11 +22,13 @@ export function initRandomGame(quest: Quest) {
   return gameState;
 }
 export function initRandomGameAndDoFirstStep(quest: Quest, images: PQImages) {
-  let gameState = initGame(
+  const gameState = performJump(
+    JUMP_I_AGREE,
     quest,
-    Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2),
+    initRandomGame(quest),
+    images,
+    new Date().getTime(),
   );
-  gameState = performJump(JUMP_I_AGREE, quest, gameState, images, new Date().getTime());
   return gameState;
 }
 
@@ -71,7 +74,7 @@ export function QuestPlay({
 
   gameState: GameState;
 
-  player: Player;
+  player: DeepImmutable<Player>;
 
   setGameState: (newGameState: GameState) => void;
 
@@ -83,7 +86,7 @@ export function QuestPlay({
   l: LangTexts;
 
   onExit: () => void;
-  busySaving: boolean;
+  busySaving?: boolean;
 }) {
   const [width, setWidth] = React.useState(window.innerWidth);
   React.useEffect(() => {

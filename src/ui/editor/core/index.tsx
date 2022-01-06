@@ -3,6 +3,7 @@ import * as React from "react";
 import { assertNever } from "../../../assertNever";
 import { DeepImmutable } from "../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../lib/qmplayer/funcs";
+import { GameState } from "../../../lib/qmplayer";
 import { LOCATION_DROP_RADIUS, LOCATION_RADIUS } from "../consts";
 import { createJump, createLocation, updateJump, updateLocation } from "./actions";
 import { colorToString, interpolateColor } from "./color";
@@ -24,6 +25,8 @@ import { JumpHover } from "./hovers/jump";
 import { JumpOverlay } from "./overlays/jumpsAndLocations/jump";
 import { useOnDocumentKeyUp } from "./keypress";
 import { QuestSettings } from "./overlays/questSettings/questSettings";
+import { initRandomGame, QuestPlay } from "../../questPlay";
+import { getLang } from "../../lang";
 
 export interface EditorCoreProps {
   quest: Quest;
@@ -52,6 +55,8 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
   const [mouseMode, setMouseMode] = React.useState<EditorMouseMode>("newJump");
 
   const [overlayMode, setOverlayMode] = React.useState<EditorOverlay | undefined>(undefined);
+
+  const [isPlaying, setIsPlaying] = React.useState<GameState | null>(null);
 
   // DEBUGGING
   /*
@@ -95,6 +100,9 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     if (!ctx) {
       return;
     }
+    if (isPlaying) {
+      return;
+    }
     const hoverZones = updateMainCanvas(
       ctx,
       canvasSize.canvasWidth,
@@ -103,7 +111,7 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     );
     setHoverZones(hoverZones);
     console.info(`Main canvas re-render`);
-  }, [quest, canvasSize]);
+  }, [quest, canvasSize, isPlaying]);
 
   const getMouseCoordsInCanvas = React.useCallback((e: MouseEvent) => {
     const canvas = interactiveCanvasRef.current;
@@ -119,6 +127,9 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
   React.useEffect(() => {
     if (overlayMode) {
+      return;
+    }
+    if (isPlaying) {
       return;
     }
 
@@ -148,10 +159,13 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     return () => {
       document.removeEventListener("mousemove", onMove);
     };
-  }, [hoverZones, isDragging, overlayMode]);
+  }, [hoverZones, isDragging, overlayMode, isPlaying]);
 
   React.useEffect(() => {
     if (overlayMode) {
+      return;
+    }
+    if (isPlaying) {
       return;
     }
     const interactiveCanvas = interactiveCanvasRef.current;
@@ -325,19 +339,25 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
       interactiveCanvas.removeEventListener("mouseup", onMouseUp);
       interactiveCanvas.removeEventListener("mousedown", onMouseDown);
     };
-  }, [mouseMode, hoverZone, overlayMode, getMouseCoordsInCanvas]);
+  }, [mouseMode, hoverZone, overlayMode, getMouseCoordsInCanvas, isPlaying]);
 
   React.useEffect(() => {
     const context = interactiveContextRef.current;
     if (!context) {
       return;
     }
+    if (isPlaying) {
+      return;
+    }
     drawHovers(context, canvasSize, hoverZone, isDragging);
-  }, [hoverZone, canvasSize, isDragging]);
+  }, [hoverZone, canvasSize, isDragging, isPlaying]);
 
   const onDocumentKeyUp = React.useCallback(
     (e: KeyboardEvent) => {
       if (overlayMode) {
+        return;
+      }
+      if (isPlaying) {
         return;
       }
       if (e.key === "1") {
@@ -352,11 +372,27 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         setMouseMode("remove");
       }
     },
-    [overlayMode],
+    [overlayMode, isPlaying],
   );
   useOnDocumentKeyUp(onDocumentKeyUp);
 
   // console.info(`Editor re-render`);
+
+  if (isPlaying) {
+    return (
+      <QuestPlay
+        quest={quest}
+        gameState={isPlaying}
+        player={{ ...quest.strings, lang: "rus", Player: quest.strings.Ranger }}
+        setGameState={(newState) => setIsPlaying(newState)}
+        pqiImages={[]}
+        musicList={undefined}
+        setIsMusic={() => {}}
+        l={getLang("rus")}
+        onExit={() => setIsPlaying(null)}
+      />
+    );
+  }
 
   return (
     <div
@@ -398,6 +434,20 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         >
           <i className="fa fa-wrench" title="Редактировать общую информацию по квесту" />
         </button>
+
+        <button
+          className={classNames("ml-3", "btn", "btn-light")}
+          onClick={() => {
+            if (quest.locations.find((loc) => loc.isStarting)) {
+              setIsPlaying(initRandomGame(quest));
+            } else {
+              toast("Нет начальной локации!");
+            }
+          }}
+        >
+          <i className="fa fa-play-circle" title="Играть" />
+        </button>
+
         <span className="mx-2" />
         {/*
     <button className="btn btn-light" disabled={!store.canUndo} onClick={() => store.undo()}>
