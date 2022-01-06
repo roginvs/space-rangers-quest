@@ -96,6 +96,8 @@ describe("All files here", () => {
   }
 });
 
+// tslint:disable:no-invalid-this
+
 describe(`All borrowed`, function () {
   const srcDir = __dirname + `/../../borrowed/qm/`;
   this.timeout(60 * 1000);

@@ -44,25 +44,24 @@ import { writeQmm } from "../../../lib/qmwriter";
 export const EDITOR_MOUSE_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
 export type EditorMouseMode = typeof EDITOR_MOUSE_MODES[number];
 
-type EditorOverlay = DeepImmutable<
+type EditorOverlay =
   | {
-      kind: "location";
-      location: DeepImmutable<Location>;
-      enableSaveOnNoChanges: boolean;
+      readonly kind: "location";
+      readonly location: DeepImmutable<Location>;
+      readonly enableSaveOnNoChanges: boolean;
     }
   | {
-      kind: "jump";
-      jump: DeepImmutable<Jump>;
-      enableSaveOnNoChanges: boolean;
+      readonly kind: "jump";
+      readonly jump: DeepImmutable<Jump>;
+      readonly enableSaveOnNoChanges: boolean;
     }
   | {
-      kind: "questsettings";
-      enableSaveOnNoChanges: boolean;
+      readonly kind: "questsettings";
+      readonly enableSaveOnNoChanges: boolean;
     }
   | {
-      kind: "load";
-    }
->;
+      readonly kind: "load";
+    };
 
 export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onExit: () => void }) {
   const { quest, setQuest: onChange, undo, redo } = useIdb();
