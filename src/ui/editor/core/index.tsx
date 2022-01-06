@@ -154,6 +154,10 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
     if (overlayMode) {
       return;
     }
+    const interactiveCanvas = interactiveCanvasRef.current;
+    if (!interactiveCanvas) {
+      return;
+    }
     const onMouseDown = (e: MouseEvent) => {
       if (e.button === 0) {
         const mouseCoords = getMouseCoordsInCanvas(e);
@@ -197,10 +201,9 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
         }
       }
     };
-    document.addEventListener("mousedown", onMouseDown);
+    interactiveCanvas.addEventListener("mousedown", onMouseDown);
 
     const onMouseUp = (e: MouseEvent) => {
-      // TODO: This also triggers when clicking on main menu
       const mouseInCanvas = getMouseCoordsInCanvas(e);
 
       if (e.button === 2 /* Right click*/ || mouseMode === "select") {
@@ -317,10 +320,10 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
 
       setIsDragging(undefined);
     };
-    document.addEventListener("mouseup", onMouseUp);
+    interactiveCanvas.addEventListener("mouseup", onMouseUp);
     return () => {
-      document.removeEventListener("mouseup", onMouseUp);
-      document.removeEventListener("mousedown", onMouseDown);
+      interactiveCanvas.removeEventListener("mouseup", onMouseUp);
+      interactiveCanvas.removeEventListener("mousedown", onMouseDown);
     };
   }, [mouseMode, hoverZone, overlayMode, getMouseCoordsInCanvas]);
 
