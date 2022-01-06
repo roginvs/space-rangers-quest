@@ -210,8 +210,8 @@ export function QuestSettings({
                   </div>
                 </div>
 
-                <div className="col-4">
-                  <div className="mr-2">
+                <div className="col-4 d-flex align-items-center">
+                  <div className="">
                     <div className="ml-3 form-check form-check-inline">
                       <label className="form-check-label">
                         <input
@@ -232,6 +232,43 @@ export function QuestSettings({
                       </label>
                     </div>
                   </div>
+                </div>
+              </div>
+              <div className="text-center">
+                <label className="mr-3">
+                  Обязательные: {"<ToPlanet> <ToStar> (<Date> или <Day>)"}
+                </label>
+                <label>Необязательные: {"<Ranger> <Money> <FromPlanet> <FromStar>"}</label>
+              </div>
+              <div className="row mb-3">
+                <div className="col-6">
+                  <textarea
+                    style={{
+                      resize: "none",
+                    }}
+                    className={classNames("form-control h-100")}
+                    rows={12}
+                    value={quest.taskText}
+                    onChange={(e) => {
+                      setQuest({ ...quest, taskText: e.target.value });
+                    }}
+                    placeholder="Текст задания"
+                  />
+                </div>
+
+                <div className="col-6">
+                  <textarea
+                    style={{
+                      resize: "none",
+                    }}
+                    className={classNames("form-control h-100")}
+                    rows={12}
+                    value={quest.successText}
+                    onChange={(e) => {
+                      setQuest({ ...quest, successText: e.target.value });
+                    }}
+                    placeholder="Текст поздравления"
+                  />
                 </div>
               </div>
             </TabPane>
