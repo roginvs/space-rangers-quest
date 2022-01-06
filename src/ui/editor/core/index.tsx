@@ -521,8 +521,8 @@ export function EditorCore({ quest, onChange }: EditorCoreProps) {
                   const context = element.getContext("2d", { alpha: true });
                   interactiveContextRef.current = context;
                 }
-                if (!element && interactiveCanvasRef.current) {
-                  interactiveCanvasRef.current = null;
+                if (!element && interactiveContextRef.current) {
+                  interactiveContextRef.current = null;
                 }
               }}
               onContextMenu={(e) => e.preventDefault()}
