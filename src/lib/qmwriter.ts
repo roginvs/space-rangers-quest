@@ -1,5 +1,5 @@
 import { DeepImmutable } from "./qmplayer/deepImmutable";
-import { HEADER_QMM_7, LocationType, QM } from "./qmreader";
+import { HEADER_QMM_7, LocationType, ParameterChangeType, QM } from "./qmreader";
 
 export class Writer {
   private buf = Buffer.alloc(this.chunkSize);
@@ -140,7 +140,75 @@ export function writeQmm(quest: DeepImmutable<QM>) {
       ? LocationType.Faily
       : LocationType.Ordinary;
     w.byte(type);
-    // todo
+
+    // TODO: Filter
+    const affectedParams = loc.paramsChanges.map((param, idx) => ({ param, idx }));
+
+    w.int32(affectedParams.length);
+    for (const { param, idx } of affectedParams) {
+      w.int32(idx + 1);
+      w.int32(param.change);
+      w.byte(param.showingType);
+
+      const changeType = param.isChangeFormula
+        ? ParameterChangeType.Formula
+        : param.isChangeValue
+        ? ParameterChangeType.Value
+        : param.isChangePercentage
+        ? ParameterChangeType.Percentage
+        : ParameterChangeType.Summ;
+      w.byte(changeType);
+
+      w.writeString(param.changingFormula);
+
+      w.writeString(param.critText);
+      w.writeString(param.img);
+      w.writeString(param.sound);
+      w.writeString(param.track);
+    }
+    w.int32(loc.texts.length);
+    for (let i = 0; i < loc.texts.length; i++) {
+      w.writeString(loc.texts[i]);
+      const media = loc.media[i];
+      w.writeString(media?.img);
+      w.writeString(media?.sound);
+      w.writeString(media?.track);
+    }
+
+    w.byte(loc.isTextByFormula ? 1 : 0);
+    w.writeString(loc.textSelectFormula);
+  }
+
+  for (const jump of quest.jumps) {
+    w.float64(jump.priority);
+    w.int32(jump.dayPassed ? 1 : 0);
+    w.int32(jump.id);
+    w.int32(jump.fromLocationId);
+    w.int32(jump.toLocationId);
+    w.byte(jump.alwaysShow ? 1 : 0);
+    w.int32(jump.jumpingCountLimit);
+    w.int32(jump.showingOrder);
+
+    // TODO: Filter
+    const affectedJumpCondition = jump.paramsConditions.map((cond, idx) => ({ cond, idx }));
+    w.int32(affectedJumpCondition.length);
+    for (const { cond, idx } of affectedJumpCondition) {
+      w.int32(idx + 1);
+      w.int32(cond.mustFrom);
+      w.int32(cond.mustTo);
+
+      w.int32(cond.mustEqualValues.length);
+      w.byte(cond.mustEqualValuesEqual ? 1 : 0);
+      for (const val of cond.mustEqualValues) {
+        w.int32(val);
+      }
+
+      w.int32(cond.mustModValues.length);
+      w.byte(cond.mustModValuesMod ? 1 : 0);
+      for (const val of cond.mustModValues) {
+        w.int32(val);
+      }
+    }
   }
 
   return w.export();
