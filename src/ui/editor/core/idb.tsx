@@ -7,29 +7,45 @@ import { emptyQmm } from "./emptyQmm";
 const EDITOR_INDEXEDDB_NAME = "space-rangers-editor";
 const INDEXEDDB_EDITOR_AUTOSAVE_STORE = "autosave";
 
-const getAllKeys = (store: IDBObjectStore) => {
-  return new Promise<number[]>((resolve, reject) => {
-    const getAllKeysRequest = store.getAllKeys();
-    getAllKeysRequest.onsuccess = () => {
-      resolve(
-        getAllKeysRequest.result.map((x) => (typeof x === "number" ? x : 0)).sort((a, b) => a - b),
-      );
-    };
-    getAllKeysRequest.onerror = (e) => reject(new Error(getAllKeysRequest.error?.message));
-  });
-};
+// TODO: Make it much bigger!
+const AUTOSAVE_SIZE = 4;
 
 async function writeQuest(db: IDBDatabase, quest: Quest, index: number) {
-  // todo:
-  //  - write to specific index
   const transaction = db.transaction([INDEXEDDB_EDITOR_AUTOSAVE_STORE], "readwrite");
   const objectStore = transaction.objectStore(INDEXEDDB_EDITOR_AUTOSAVE_STORE);
 
-  const request = objectStore.put(quest, index);
-  await new Promise<void>((resolve, reject) => {
-    request.onsuccess = () => resolve();
-    request.onerror = (e) => reject(e);
+  // Find what is higher our threshold
+  const higherKeysRequest = objectStore.getAllKeys(IDBKeyRange.lowerBound(index, true));
+  const keysToRemove = await new Promise<IDBValidKey[]>((resolve, reject) => {
+    higherKeysRequest.onsuccess = () => resolve(higherKeysRequest.result);
+    higherKeysRequest.onerror = () => reject(new Error(higherKeysRequest.error?.message));
   });
+
+  // Then save what do we have
+  const saveRequest = objectStore.put(quest, index);
+  await new Promise<void>((resolve, reject) => {
+    saveRequest.onsuccess = () => resolve();
+    saveRequest.onerror = () => reject(new Error(saveRequest.error?.message));
+  });
+
+  // Next, find everything lower threshold
+  const removingThreshold = index - AUTOSAVE_SIZE;
+  if (removingThreshold > 0) {
+    const olderKeysRequest = objectStore.getAllKeys(IDBKeyRange.upperBound(removingThreshold));
+    const oldKeys = await new Promise<IDBValidKey[]>((resolve, reject) => {
+      olderKeysRequest.onsuccess = () => resolve(olderKeysRequest.result);
+      olderKeysRequest.onerror = () => reject(new Error(olderKeysRequest.error?.message));
+    });
+    keysToRemove.push(...oldKeys);
+  }
+
+  for (const key of [keysToRemove]) {
+    const removeRequest = objectStore.delete(key);
+    await new Promise<void>((resolve, reject) => {
+      removeRequest.onsuccess = () => resolve();
+      removeRequest.onerror = () => reject(new Error(removeRequest.error?.message));
+    });
+  }
 
   //  - remove everything lower than index minus MAX_SAVE
   //  - remove everything higher than index
@@ -38,19 +54,16 @@ async function readLatestIndex(db: IDBDatabase) {
   return new Promise<number>((resolve, reject) => {
     const transaction = db.transaction([INDEXEDDB_EDITOR_AUTOSAVE_STORE], "readonly");
     const objectStore = transaction.objectStore(INDEXEDDB_EDITOR_AUTOSAVE_STORE);
-    // TODO: Use cursor
-    getAllKeys(objectStore)
-      .then((allKeys) => {
-        if (allKeys.length === 0) {
-          resolve(1);
-        } else {
-          resolve(allKeys[allKeys.length - 1]);
-        }
-      })
-      .catch((e) => {
-        console.error(e);
+
+    const openCursorRequest = objectStore.openKeyCursor(null, "prev");
+    openCursorRequest.onsuccess = (event) => {
+      if (openCursorRequest.result && typeof openCursorRequest.result.key === "number") {
+        resolve(openCursorRequest.result.key);
+      } else {
         resolve(1);
-      });
+      }
+    };
+    openCursorRequest.onerror = (e) => reject(new Error(openCursorRequest.error?.message));
   });
 }
 async function readQuest(db: IDBDatabase, index: number): Promise<Quest | null> {
