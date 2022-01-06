@@ -119,7 +119,7 @@ export function addParameter(quest: Quest): Quest {
     critType: ParamCritType.Минимум,
     isMoney: false,
     name: `Параметр ${quest.paramsCount + 1}`,
-    starting: "0",
+    starting: "[0]",
     critValueString: `Сообщение достижения критического значения параметром ${
       quest.paramsCount + 1
     }`,
