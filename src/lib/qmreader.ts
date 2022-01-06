@@ -506,7 +506,8 @@ export interface Location extends ParamsChanger {
 }
 function parseLocation(r: Reader, paramsCount: number): Location {
   const dayPassed = !!r.int32();
-  r.seek(8);
+  const locX = r.int32();
+  const locY = r.int32();
   const id = r.int32() as LocationId;
   const isStarting = !!r.byte();
   const isSuccess = !!r.byte();
@@ -566,9 +567,8 @@ function parseLocation(r: Reader, paramsCount: number): Location {
     textSelectFormula: textSelectFurmula,
     maxVisits: 0,
 
-    // TODO
-    locX: 50,
-    locY: 50,
+    locX,
+    locY,
   };
 }
 function parseLocationQmm(r: Reader, paramsCount: number): Location {
