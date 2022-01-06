@@ -7,8 +7,7 @@ import { emptyQmm } from "./emptyQmm";
 const EDITOR_INDEXEDDB_NAME = "space-rangers-editor";
 const INDEXEDDB_EDITOR_AUTOSAVE_STORE = "autosave";
 
-// TODO: Make it much bigger!
-const AUTOSAVE_SIZE = 4;
+const AUTOSAVE_SIZE = 500;
 
 async function writeQuest(db: IDBDatabase, quest: Quest, index: number) {
   const transaction = db.transaction([INDEXEDDB_EDITOR_AUTOSAVE_STORE], "readwrite");
