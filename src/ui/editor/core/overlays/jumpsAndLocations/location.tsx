@@ -59,7 +59,6 @@ export function LocationOverlay({
   }, [isChanged, isPrompting]);
 
   useOnDocumentKeyUp((e) => {
-    console.info(e.key);
     if (e.key === "Escape") {
       onCloseWithPrompt();
     }
