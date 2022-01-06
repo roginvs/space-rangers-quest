@@ -26,8 +26,7 @@ describe("Checking substitute", function () {
     ["Boo {2+3}", "Boo <clr>5<clrEnd>"],
     ["Boo {2+[10..20]}", "Boo <clr>17<clrEnd>"],
     ["Lol <Ranger><Ranger>", "Lol <clr>MyName<clrEnd><clr>MyName<clrEnd>"],
-    // TODO This is commented because current implementation causes infinite loop.
-    // ["Special char <ToStar>", "Special char <clr><ToStar><clrEnd>"],
+    ["Special char <ToStar>", "Special char <clr><ToStar><clrEnd>"],
     ["Diamond <>", "Diamond <clr>20<clrEnd>"],
     ["Один [d2]", "Один <clr>Фиал<clrEnd>"],
     ["Один [d2:25]", "Один <clr>Bottle<clrEnd>"],

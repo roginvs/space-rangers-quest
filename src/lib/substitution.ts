@@ -165,9 +165,7 @@ export function substitute(
     str = str.replace(formulaWithBrackets, `${clr}${result}${clrEnd}`);
   }
   for (const k of PLAYER_KEYS_TO_REPLACE) {
-    while (str.indexOf(`<${k}>`) > -1) {
-      str = str.replace(`<${k}>`, `${clr}${player[k]}${clrEnd}`);
-    }
+    str = str.split(`<${k}>`).join(`${clr}${player[k]}${clrEnd}`);
   }
   for (let ii = 0; ii < paramValues.length; ii++) {
     while (str.indexOf(`[p${ii + 1}]`) > -1) {
