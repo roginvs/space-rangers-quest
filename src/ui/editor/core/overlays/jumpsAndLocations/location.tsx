@@ -127,6 +127,9 @@ export function LocationOverlay({
                 onChange={(e) =>
                   setLocation({ ...location, isTextByFormula: e.target.value === "formula" })
                 }
+                title={
+                  location.isTextByFormula ? "Пустая формула означает выбирать случайно" : undefined
+                }
               >
                 <option value={"serial"}>Выбирать по порядку</option>
                 <option value={"formula"}>Выбирать по формуле</option>
@@ -137,6 +140,7 @@ export function LocationOverlay({
                   value={location.textSelectFormula}
                   onChange={(newValue) => setLocation({ ...location, textSelectFormula: newValue })}
                   paramsActive={quest.params}
+                  allowEmpty
                 />
               )}
             </form>
