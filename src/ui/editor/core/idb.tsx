@@ -131,7 +131,7 @@ export function useIdb() {
       .then((freshDb) => setDb(freshDb))
       .catch((e) => {
         setFallbackEmptyState();
-        toast(e.message);
+        toast(`Failed to init database: ${e.message}`);
       });
   }, [setFallbackEmptyState]);
 
@@ -145,7 +145,9 @@ export function useIdb() {
       });
 
       if (db && state) {
-        writeQuest(db, newQuest, state.currentIndex + 1).catch((e) => toast(e.message));
+        writeQuest(db, newQuest, state.currentIndex + 1).catch((e) =>
+          toast(`Failed to save quest: ${e.message}!`),
+        );
       }
     },
     [db, state],
@@ -182,7 +184,7 @@ export function useIdb() {
       });
     })().catch((e) => {
       setFallbackEmptyState();
-      toast(e.message);
+      toast(`Failed to read from database: ${e.message}`);
     });
   }, [db, setFallbackEmptyState]);
 
@@ -211,7 +213,7 @@ export function useIdb() {
               : null,
           );
         })
-        .catch((e) => toast(e.message));
+        .catch((e) => toast(`Failed to read previous quest: ${e.message}`));
     };
   }, [db, state]);
 
@@ -241,7 +243,7 @@ export function useIdb() {
               : null,
           );
         })
-        .catch((e) => toast(e.message));
+        .catch((e) => toast(`Failed to read quest to next redo: ${e.message}`));
     };
   }, [db, state]);
 
