@@ -3,6 +3,7 @@ import { toast } from "react-toastify";
 import { Quest } from "../../../lib/qmplayer/funcs";
 import { parse } from "../../../lib/qmreader";
 import { emptyQmm } from "./emptyQmm";
+import { greetingsQmm } from "./greetingsQmm";
 
 const EDITOR_INDEXEDDB_NAME = "space-rangers-editor";
 const INDEXEDDB_EDITOR_AUTOSAVE_STORE = "autosave";
@@ -43,7 +44,7 @@ async function writeQuest(db: IDBDatabase, quest: Quest, index: number) {
   //  - remove everything higher than index
 }
 async function readLatestIndex(db: IDBDatabase) {
-  return new Promise<number>((resolve, reject) => {
+  return new Promise<number | null>((resolve, reject) => {
     const transaction = db.transaction([INDEXEDDB_EDITOR_AUTOSAVE_STORE], "readonly");
     const objectStore = transaction.objectStore(INDEXEDDB_EDITOR_AUTOSAVE_STORE);
 
@@ -52,7 +53,7 @@ async function readLatestIndex(db: IDBDatabase) {
       if (openCursorRequest.result && typeof openCursorRequest.result.key === "number") {
         resolve(openCursorRequest.result.key);
       } else {
-        resolve(1);
+        resolve(null);
       }
     };
     openCursorRequest.onerror = (e) => reject(new Error(openCursorRequest.error?.message));
@@ -115,7 +116,7 @@ export function useIdb() {
 
   const [state, setState] = React.useState<IDBStoreState | null>(null);
 
-  const setInitialDefaultState = React.useCallback(() => {
+  const setFallbackEmptyState = React.useCallback(() => {
     const emptyQuest = parse(emptyQmm);
     setState({
       quest: emptyQuest,
@@ -129,10 +130,10 @@ export function useIdb() {
     initDatabase()
       .then((freshDb) => setDb(freshDb))
       .catch((e) => {
-        setInitialDefaultState();
+        setFallbackEmptyState();
         toast(e.message);
       });
-  }, [setInitialDefaultState]);
+  }, [setFallbackEmptyState]);
 
   const saveQuest = React.useCallback(
     (newQuest: Quest) => {
@@ -156,10 +157,21 @@ export function useIdb() {
     }
     (async () => {
       const latestIndex = await readLatestIndex(db);
+      if (!latestIndex) {
+        const greetingsQuest = parse(greetingsQmm);
+        setState({
+          quest: greetingsQuest,
+          undoQuest: null,
+          redoQuest: null,
+          currentIndex: 1,
+        });
+        return;
+      }
       const quest = await readQuest(db, latestIndex);
       const prevQuest = await readQuest(db, latestIndex - 1);
       if (!quest) {
-        setInitialDefaultState();
+        setFallbackEmptyState();
+        toast(`Could not read saved quest at index ${latestIndex}`);
         return;
       }
       setState({
@@ -169,10 +181,10 @@ export function useIdb() {
         currentIndex: latestIndex,
       });
     })().catch((e) => {
-      setInitialDefaultState();
+      setFallbackEmptyState();
       toast(e.message);
     });
-  }, [db, setInitialDefaultState]);
+  }, [db, setFallbackEmptyState]);
 
   const undo = React.useMemo(() => {
     if (!db || !state || !state.undoQuest) {
