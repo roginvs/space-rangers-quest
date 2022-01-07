@@ -102,7 +102,15 @@ export function QuestMainSettings({ quest, setQuest }: QuestSettingsTabProps) {
           <div className="mr-2">
             <label className="mb-0">
               <span>Отношение после выполнения: </span>
-              <span className={quest.reputationChange > 0 ? "text-success" : "text-danger"}>
+              <span
+                className={
+                  quest.reputationChange > 0
+                    ? "text-success"
+                    : quest.reputationChange < 0
+                    ? "text-danger"
+                    : ""
+                }
+              >
                 {quest.reputationChange > 0 ? "+" : ""}
                 {quest.reputationChange}%
               </span>
@@ -138,7 +146,7 @@ export function QuestMainSettings({ quest, setQuest }: QuestSettingsTabProps) {
         <div className="col-4 d-flex align-items-center">
           <div className="">
             <div className="ml-3 form-check form-check-inline">
-              <label className="form-check-label">
+              <label className="form-check-label" title="Не нужно лететь обратно на планету">
                 <input
                   className="form-check-input"
                   type="checkbox"
