@@ -34,7 +34,6 @@ export class Writer {
     this.pos += 4;
   }
   writeString(str: string | null | undefined) {
-    this.ensure(4);
     if (str === null || str === undefined) {
       this.int32(0);
     } else {
@@ -45,7 +44,6 @@ export class Writer {
       }
       const length = stringBuffer.length / 2;
 
-      this.ensure(4);
       this.int32(length);
 
       this.ensure(stringBuffer.length);
