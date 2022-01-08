@@ -40,6 +40,7 @@ import { emptyQmm } from "./emptyQmm";
 import { Game } from "../../../packGameData";
 import { LoadOverlay } from "./overlays/load/loadOverlay";
 import { writeQmm } from "../../../lib/qmwriter";
+import { HelpOverlay } from "./overlays/helpOverlay";
 
 // tslint:disable-next-line:no-useless-cast
 export const EDITOR_MOUSE_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
@@ -62,6 +63,9 @@ type EditorOverlay =
     }
   | {
       readonly kind: "load";
+    }
+  | {
+      readonly kind: "help";
     };
 
 export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onExit: () => void }) {
@@ -303,7 +307,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
                 ),
               );
               if (!newLocation) {
-                toast("No location here");
+                toast("Тут нет локации!");
               } else {
                 onChange(
                   updateJump(quest, {
@@ -339,7 +343,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
                 enableSaveOnNoChanges: true,
               });
             } else {
-              toast("No location here");
+              toast("Тут нет локации!");
             }
           }
           setHoverZone(undefined);
@@ -547,6 +551,15 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
         <button
           className={classNames("ml-3", "btn", "btn-light")}
           onClick={() => {
+            setOverlayMode({ kind: "help" });
+          }}
+        >
+          <i className="fa fa-question-circle-o fa-fw" title="Справка" />
+        </button>
+
+        <button
+          className={classNames("ml-3", "btn", "btn-light")}
+          onClick={() => {
             if (quest.locations.find((loc) => loc.isStarting)) {
               setIsPlaying(initRandomGame(quest));
             } else {
@@ -701,6 +714,8 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
               }}
               questsToLoad={questsToLoad}
             />
+          ) : overlayMode.kind === "help" ? (
+            <HelpOverlay onClose={() => setOverlayMode(undefined)} />
           ) : (
             assertNever(overlayMode)
           )
