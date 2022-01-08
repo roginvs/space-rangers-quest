@@ -35,6 +35,20 @@ export function LoadOverlay({
   });
 
   const [existingId, setExistingId] = React.useState(0);
+
+  const loadExisting = React.useCallback(() => {
+    fetch(DATA_DIR + questsToLoad[existingId].filename)
+      .then((res) => res.arrayBuffer())
+      .then((questArrayBuffer) => {
+        const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer))));
+        onClose({
+          ...quest,
+          filename: getBasenameWithoutExtension(questsToLoad[existingId].filename),
+        });
+      })
+      .catch((e) => toast(e.message));
+  }, [existingId, questsToLoad, onClose]);
+
   return (
     <Overlay
       wide
@@ -50,6 +64,7 @@ export function LoadOverlay({
             value={existingId}
             size={20}
             onChange={(e) => setExistingId(parseInt(e.target.value))}
+            onDoubleClick={loadExisting}
           >
             {questsToLoad.map((game, idx) => {
               return (
@@ -62,18 +77,7 @@ export function LoadOverlay({
           <button
             className="btn btn-primary w-100"
             disabled={!questsToLoad[existingId]}
-            onClick={() => {
-              fetch(DATA_DIR + questsToLoad[existingId].filename)
-                .then((res) => res.arrayBuffer())
-                .then((questArrayBuffer) => {
-                  const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer))));
-                  onClose({
-                    ...quest,
-                    filename: getBasenameWithoutExtension(questsToLoad[existingId].filename),
-                  });
-                })
-                .catch((e) => toast(e.message));
-            }}
+            onClick={loadExisting}
           >
             Загрузить {questsToLoad[existingId]?.gameName || ""}
           </button>
