@@ -575,14 +575,6 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
         </button>
 
         <span className="mx-2" />
-        {/*
-    <button className="btn btn-light" disabled={!store.canUndo} onClick={() => store.undo()}>
-      <i className="fa fa-undo" />
-    </button>
-    <button className="btn btn-light" disabled={!store.canRedo} onClick={() => store.redo()}>
-      <i className="fa fa-undo fa-flip-horizontal" />
-    </button>
-    */}
       </div>
       <div
         style={{

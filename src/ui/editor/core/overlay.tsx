@@ -20,7 +20,7 @@ export const Overlay: React.FC<{
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        zIndex: 10000,
+        zIndex: 100,
       }}
       onClick={(e) => {
         e.stopPropagation();
