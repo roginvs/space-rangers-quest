@@ -10,8 +10,13 @@ export function JumpHover({ quest, jump }: { quest: Quest; jump: DeepImmutable<J
     (x) => x.fromLocationId === jump.fromLocationId && x.text === jump.text && x.id !== jump.id,
   );
 
-  const conflictoryString =
-    conflictingJumps.length > 0 ? `Спорный с приоритетом ${jump.priority}` : "";
+  const priorityString =
+    conflictingJumps.length > 0
+      ? `Спорный с приоритетом ${jump.priority}`
+      : jump.priority !== 1
+      ? `Вероятность ${jump.priority}`
+      : "";
+
   const shortInfo = jump.text
     ? jump.description
       ? "Переход с описанием"
@@ -34,7 +39,7 @@ export function JumpHover({ quest, jump }: { quest: Quest; jump: DeepImmutable<J
         <span>P {jump.id}</span>
       </div>
       <div>- {shortInfo} -</div>
-      <div>{conflictoryString}</div>
+      <div>{priorityString}</div>
       <Divider />
       {jump.text || jump.description ? (
         <>
