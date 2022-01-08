@@ -96,7 +96,10 @@ export function LocationOverlay({
                   setLocation({
                     ...location,
                     texts: [...location.texts, ""],
-                    media: [...location.media, { img: "", track: "", sound: "" }],
+                    media: [
+                      ...location.media,
+                      { img: undefined, track: undefined, sound: undefined },
+                    ],
                   });
                   setTextIndex(location.texts.length);
                 }}
@@ -166,14 +169,16 @@ export function LocationOverlay({
         />
 
         <MediaEdit
-          media={location.media[textIndex] || { img: "", track: "", sound: "" }}
+          media={
+            location.media[textIndex] || { img: undefined, track: undefined, sound: undefined }
+          }
           setMedia={(newMedia) => {
             // Doing this way to create missing media (if any)
             const medias = [...location.media];
             medias[textIndex] = newMedia;
             range(textIndex).forEach((i) => {
               if (!medias[i]) {
-                medias[i] = { img: "", track: "", sound: "" };
+                medias[i] = { img: undefined, track: undefined, sound: undefined };
               }
             });
             setLocation({

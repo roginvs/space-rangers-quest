@@ -21,20 +21,20 @@ export function MediaEdit({
       <input
         className="form-control"
         placeholder="Иллюстрация"
-        value={media.img}
+        value={media.img || ""}
         onChange={(e) => setMedia({ ...media, img: e.target.value })}
         title="Также поддерживаются абсолютные пути к изображениям"
       />
       <input
         className={classNames("form-control", vertical ? "" : "mx-2")}
         placeholder="Фоновый трек"
-        value={media.track}
+        value={media.track || ""}
         onChange={(e) => setMedia({ ...media, track: e.target.value })}
       />
       <input
         className="form-control"
         placeholder="Звуковой эффект"
-        value={media.sound}
+        value={media.sound || ""}
         onChange={(e) => setMedia({ ...media, sound: e.target.value })}
       />
     </div>
