@@ -67,6 +67,18 @@ function QuestParamShowingRangeSettings({
           height: 400,
         }}
       >
+        <div className="d-flex align-items-center mb-2">
+          <div className="text-center mr-3" style={{ width: "15%" }}>
+            От
+          </div>
+          <div className="text-center mr-3" style={{ width: "15%" }}>
+            До
+          </div>
+          <div className="text-center mr-2 ml-auto" style={{ width: "100%" }}>
+            Текст
+          </div>
+          <div style={{ width: 16 }}></div>
+        </div>
         {param.showingInfo.map((showingInfo, index) => {
           const fromDisabled = index === 0;
           const toDisabled = index === param.showingInfo.length - 1;
@@ -82,85 +94,89 @@ function QuestParamShowingRangeSettings({
             });
           };
           return (
-            <div key={index}>
-              <div className="d-flex align-items-center">
-                <div className="mr-1">От</div>
-                <input
-                  disabled={!param.active || fromDisabled}
-                  className="form-control w-100 mr-3"
-                  type="number"
-                  value={showingInfo.from}
-                  min={prevRange ? prevRange.to + 1 : param.min}
-                  max={showingInfo.to}
-                  onChange={(e) =>
-                    setShowingInfo({ ...showingInfo, from: parseInt(e.target.value) })
+            <div key={index} className="d-flex align-items-center mb-2">
+              <input
+                disabled={!param.active || fromDisabled}
+                className="form-control mr-3"
+                style={{ width: "15%" }}
+                type="number"
+                value={showingInfo.from}
+                min={prevRange ? prevRange.to + 1 : param.min}
+                max={showingInfo.to}
+                onChange={(e) => setShowingInfo({ ...showingInfo, from: parseInt(e.target.value) })}
+              />
+
+              <input
+                disabled={!param.active || toDisabled}
+                className="form-control mr-3"
+                style={{ width: "15%" }}
+                type="number"
+                min={showingInfo.from}
+                max={nextRange ? nextRange.from - 1 : param.max}
+                value={showingInfo.to}
+                onChange={(e) => setShowingInfo({ ...showingInfo, to: parseInt(e.target.value) })}
+              />
+
+              <input
+                disabled={!param.active}
+                className="form-control w-100 mr-2"
+                value={showingInfo.str}
+                onChange={(e) => setShowingInfo({ ...showingInfo, str: e.target.value })}
+              />
+
+              <i
+                className={classNames(
+                  "fa fa-times ml-auto mr-2",
+                  param.showingInfo.length > 1 ? "" : "text-muted",
+                )}
+                style={{
+                  cursor: !param.active
+                    ? ""
+                    : param.showingInfo.length > 1
+                    ? "pointer"
+                    : "not-allowed",
+                }}
+                onClick={() => {
+                  if (!param.active) {
+                    return;
                   }
-                />
-                <div className="mr-1">До</div>
-                <input
-                  disabled={!param.active || toDisabled}
-                  className="form-control w-100 mr-3"
-                  type="number"
-                  min={showingInfo.from}
-                  max={nextRange ? nextRange.from - 1 : param.max}
-                  value={showingInfo.to}
-                  onChange={(e) => setShowingInfo({ ...showingInfo, to: parseInt(e.target.value) })}
-                />
-                <i
-                  className={classNames(
-                    "fa fa-times ml-auto mr-2",
-                    param.showingInfo.length > 1 ? "" : "text-muted",
-                  )}
-                  style={{ cursor: param.showingInfo.length > 1 ? "pointer" : "not-allowed" }}
-                  onClick={() => {
-                    const newShowingInfos = param.showingInfo.filter((_, i) => i !== index);
-                    const fixedRanges = newShowingInfos
-                      .map((curr, idx) => {
-                        const next =
-                          idx < newShowingInfos.length - 1 ? newShowingInfos[idx + 1] : null;
-                        if (next) {
-                          if (curr.to + 1 < next.from) {
-                            return {
-                              from: curr.from,
-                              to: next.from - 1,
-                              str: curr.str,
-                            };
-                          }
+                  const newShowingInfos = param.showingInfo.filter((_, i) => i !== index);
+                  const fixedRanges = newShowingInfos
+                    .map((curr, idx) => {
+                      const next =
+                        idx < newShowingInfos.length - 1 ? newShowingInfos[idx + 1] : null;
+                      if (next) {
+                        if (curr.to + 1 < next.from) {
+                          return {
+                            from: curr.from,
+                            to: next.from - 1,
+                            str: curr.str,
+                          };
                         }
-                        return curr;
-                      })
-                      .map((curr, idx) => {
-                        return {
-                          from: idx === 0 ? param.min : curr.from,
-                          to: idx === newShowingInfos.length - 1 ? param.max : curr.to,
-                          str: curr.str,
-                        };
-                      });
-                    setParam({
-                      ...param,
-                      showingInfo: fixedRanges,
+                      }
+                      return curr;
+                    })
+                    .map((curr, idx) => {
+                      return {
+                        from: idx === 0 ? param.min : curr.from,
+                        to: idx === newShowingInfos.length - 1 ? param.max : curr.to,
+                        str: curr.str,
+                      };
                     });
-                  }}
-                />
-              </div>
-              <div className="d-flex mb-3">
-                <div className="w-100">
-                  <input
-                    disabled={!param.active}
-                    className="form-control w-100"
-                    value={showingInfo.str}
-                    onChange={(e) => setShowingInfo({ ...showingInfo, str: e.target.value })}
-                  />
-                </div>
-              </div>
+                  setParam({
+                    ...param,
+                    showingInfo: fixedRanges,
+                  });
+                }}
+              />
             </div>
           );
         })}
 
-        <div className="d-flex mt-4">
+        <div className="d-flex mt-4 pb-3">
           <button
             className="ml-auto btn btn-light"
-            disabled={param.max - param.min < param.showingInfo.length}
+            disabled={param.max - param.min < param.showingInfo.length || !param.active}
             onClick={() => {
               // TODO: maybe more intelligent way to add new range
               setParam({
@@ -362,12 +378,14 @@ function QuestParamSettings({
             }}
             className={classNames("form-control h-100")}
             rows={4}
+            disabled={!param.active}
             value={param.critValueString}
             onChange={(e) => {
               setParam({ ...param, critValueString: e.target.value });
             }}
           />
           <MediaEdit
+            disabled={!param.active}
             media={param}
             setMedia={(media) =>
               setParam({ ...param, img: media.img, track: media.track, sound: media.sound })
@@ -391,7 +409,7 @@ export function QuestParamsSettings({ quest, setQuest }: QuestSettingsTabProps) 
           <select
             className="form-control"
             value={paramId}
-            size={20}
+            size={22}
             onChange={(e) => setParamId(parseInt(e.target.value))}
           >
             {quest.params.map((param, idx) => {

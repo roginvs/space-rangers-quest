@@ -7,10 +7,12 @@ export function MediaEdit({
   media,
   setMedia,
   vertical,
+  disabled,
 }: {
   media: DeepImmutable<Media>;
   setMedia: (media: DeepImmutable<Media>) => void;
   vertical?: boolean;
+  disabled?: boolean;
 }) {
   return (
     <div
@@ -24,18 +26,21 @@ export function MediaEdit({
         value={media.img || ""}
         onChange={(e) => setMedia({ ...media, img: e.target.value })}
         title="Также поддерживаются абсолютные пути к изображениям"
+        disabled={disabled}
       />
       <input
         className={classNames("form-control", vertical ? "" : "mx-2")}
         placeholder="Фоновый трек"
         value={media.track || ""}
         onChange={(e) => setMedia({ ...media, track: e.target.value })}
+        disabled={disabled}
       />
       <input
         className="form-control"
         placeholder="Звуковой эффект"
         value={media.sound || ""}
         onChange={(e) => setMedia({ ...media, sound: e.target.value })}
+        disabled={disabled}
       />
     </div>
   );
