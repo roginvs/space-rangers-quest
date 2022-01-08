@@ -8,6 +8,7 @@ export function downloadQuest(quest: QuestWithName) {
   const link = document.createElement("a");
   link.href = url;
   // TODO: Maybe add minor and major versions?
+  // Maybe add current date string?
   link.download = quest.filename ? quest.filename + ".qmm" : "quest.qmm";
   document.body.appendChild(link);
   link.click();
