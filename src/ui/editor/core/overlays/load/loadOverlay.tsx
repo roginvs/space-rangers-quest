@@ -8,6 +8,7 @@ import { parse } from "../../../../../lib/qmreader";
 import { Game } from "../../../../../packGameData";
 import { DATA_DIR } from "../../../../consts";
 import { QuestWithName } from "../../idb";
+import { useOnDocumentKeyUp } from "../../keypress";
 import { Overlay } from "../../overlay";
 
 function getBasenameWithoutExtension(filename: string) {
@@ -27,6 +28,12 @@ export function LoadOverlay({
   onClose: (newQuest: QuestWithName | undefined) => void;
   questsToLoad: Game[];
 }) {
+  useOnDocumentKeyUp((e) => {
+    if (e.key === "Escape") {
+      onClose(undefined);
+    }
+  });
+
   const [existingId, setExistingId] = React.useState(0);
   return (
     <Overlay

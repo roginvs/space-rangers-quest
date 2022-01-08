@@ -3,6 +3,7 @@ import * as React from "react";
 import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { Quest } from "../../../../../lib/qmplayer/funcs";
 import { WhenDone } from "../../../../../lib/qmreader";
+import { useOnDocumentKeyUp } from "../../keypress";
 import { Overlay } from "../../overlay";
 import { QuestGridSettings } from "./gridSettings";
 import { QuestJumpSettings } from "./jumpsSettings";
@@ -52,6 +53,12 @@ export function QuestSettings({
       setIsPrompting(true);
     }
   }, [isChanged, isPrompting]);
+
+  useOnDocumentKeyUp((e) => {
+    if (e.key === "Escape") {
+      onCloseWithPrompt();
+    }
+  });
 
   const [activeTab, setActiveTab] = React.useState<typeof TABS[number]>("main");
 

@@ -1,8 +1,15 @@
 import classNames from "classnames";
 import * as React from "react";
+import { useOnDocumentKeyUp } from "../keypress";
 import { Overlay } from "../overlay";
 
 export function HelpOverlay({ onClose }: { onClose: () => void }) {
+  useOnDocumentKeyUp((e) => {
+    if (e.key === "Escape") {
+      onClose();
+    }
+  });
+
   return (
     <Overlay wide={false} position="absolute" headerText={`Справка`} onClose={() => onClose()}>
       <div className="text-center p-4">
