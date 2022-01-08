@@ -7,6 +7,7 @@ export function HelpOverlay({ onClose }: { onClose: () => void }) {
     <Overlay wide={false} position="absolute" headerText={`Справка`} onClose={() => onClose()}>
       <div className="text-center p-4">
         <div className="mb-2">Этот редактор является веб-версией редактора TGE</div>
+        <div className="mb-2">Как и плеер работает без интернета</div>
         <div className="mb-2">
           Руководство по TGE можно поискать{" "}
           <a
