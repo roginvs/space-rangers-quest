@@ -222,6 +222,7 @@ export function JumpOverlay({
               placeholder="Иллюстрация"
               value={jump.img}
               onChange={(e) => setJump({ ...jump, img: e.target.value })}
+              title="Также поддерживаются абсолютные пути к изображениям"
             />
             <input
               className="form-control"

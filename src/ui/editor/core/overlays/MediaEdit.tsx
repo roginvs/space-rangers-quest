@@ -18,6 +18,7 @@ export function MediaEdit({
             placeholder="Иллюстрация"
             value={media.img}
             onChange={(e) => setMedia({ ...media, img: e.target.value })}
+            title="Также поддерживаются абсолютные пути к изображениям"
           />
         </div>
       </div>
