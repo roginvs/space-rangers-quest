@@ -1,6 +1,7 @@
 import classNames from "classnames";
 import * as React from "react";
 import { toast } from "react-toastify";
+import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { DeepImmutable } from "../../../../../lib/qmplayer/deepImmutable";
 import { Quest } from "../../../../../lib/qmplayer/funcs";
 import {
@@ -58,7 +59,6 @@ function QuestParamShowingRangeSettings({
   setParam: (newParam: DeepImmutable<QMParam>) => void;
   // quest: Quest;
 }) {
-  // TODO: This visually do not look very good
   return (
     <>
       <div
@@ -382,10 +382,12 @@ function QuestParamSettings({
 export function QuestParamsSettings({ quest, setQuest }: QuestSettingsTabProps) {
   const [paramId, setParamId] = React.useState(0);
 
+  const [activeTab, setActiveTab] = React.useState<"basic" | "strings">("basic");
+
   return (
     <>
       <div className="row mt-3">
-        <div className="col-4">
+        <div className="col-6">
           <select
             className="form-control"
             value={paramId}
@@ -433,31 +435,59 @@ export function QuestParamsSettings({ quest, setQuest }: QuestSettingsTabProps) 
           </div>
         </div>
 
-        <div className="col-4">
+        <div className="col-6">
           {quest.params[paramId] && (
-            <QuestParamSettings
-              param={quest.params[paramId]}
-              setParam={(newParam) => {
-                setQuest({
-                  ...quest,
-                  params: quest.params.map((param, idx) => (idx === paramId ? newParam : param)),
-                });
-              }}
-              quest={quest}
-            />
-          )}
-        </div>
-        <div className="col-4">
-          {quest.params[paramId] && (
-            <QuestParamShowingRangeSettings
-              param={quest.params[paramId]}
-              setParam={(newParam) => {
-                setQuest({
-                  ...quest,
-                  params: quest.params.map((param, idx) => (idx === paramId ? newParam : param)),
-                });
-              }}
-            />
+            <>
+              <Nav tabs>
+                <NavItem>
+                  <NavLink
+                    className={classNames({ active: activeTab === "basic" })}
+                    onClick={() => setActiveTab("basic")}
+                  >
+                    Основные характеристики
+                  </NavLink>
+                </NavItem>
+
+                <NavItem>
+                  <NavLink
+                    className={classNames({ active: activeTab === "strings" })}
+                    onClick={() => setActiveTab("strings")}
+                  >
+                    Формат вывода при игре (по диапазонам)
+                  </NavLink>
+                </NavItem>
+              </Nav>
+              <TabContent activeTab={activeTab}>
+                <TabPane tabId="basic" className="pt-2">
+                  <QuestParamSettings
+                    param={quest.params[paramId]}
+                    setParam={(newParam) => {
+                      setQuest({
+                        ...quest,
+                        params: quest.params.map((param, idx) =>
+                          idx === paramId ? newParam : param,
+                        ),
+                      });
+                    }}
+                    quest={quest}
+                  />
+                </TabPane>
+
+                <TabPane tabId="strings" className="pt-2">
+                  <QuestParamShowingRangeSettings
+                    param={quest.params[paramId]}
+                    setParam={(newParam) => {
+                      setQuest({
+                        ...quest,
+                        params: quest.params.map((param, idx) =>
+                          idx === paramId ? newParam : param,
+                        ),
+                      });
+                    }}
+                  />
+                </TabPane>
+              </TabContent>
+            </>
           )}
         </div>
       </div>
