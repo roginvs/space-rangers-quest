@@ -217,24 +217,17 @@ export function JumpOverlay({
             />
           </div>
           <div className="col-3 pt-4">
-            <input
-              className="form-control"
-              placeholder="Иллюстрация"
-              value={jump.img}
-              onChange={(e) => setJump({ ...jump, img: e.target.value })}
-              title="Также поддерживаются абсолютные пути к изображениям"
-            />
-            <input
-              className="form-control"
-              placeholder="Фоновый трек"
-              value={jump.track}
-              onChange={(e) => setJump({ ...jump, track: e.target.value })}
-            />
-            <input
-              className="form-control"
-              placeholder="Звуковой эффект"
-              value={jump.sound}
-              onChange={(e) => setJump({ ...jump, track: e.target.value })}
+            <MediaEdit
+              media={jump}
+              setMedia={(newMedia) =>
+                setJump({
+                  ...jump,
+                  img: newMedia.img,
+                  track: newMedia.track,
+                  sound: newMedia.sound,
+                })
+              }
+              vertical
             />
           </div>
         </div>
