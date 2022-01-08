@@ -25,7 +25,7 @@ npm install
 npm run lint
 npm run test
 mkdir built-web
-./node_modules/.bin/ts-node src/packGameData.ts
+npm run pack-game-data
 npm run build
 ```
 
