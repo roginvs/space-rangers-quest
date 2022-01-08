@@ -41,6 +41,7 @@ import { Game } from "../../../packGameData";
 import { LoadOverlay } from "./overlays/load/loadOverlay";
 import { writeQmm } from "../../../lib/qmwriter";
 import { HelpOverlay } from "./overlays/helpOverlay";
+import { downloadQuest } from "./download";
 
 // tslint:disable-next-line:no-useless-cast
 export const EDITOR_MOUSE_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
@@ -485,18 +486,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
         <button
           className={classNames("mr-3", "btn", "btn-light")}
           onClick={() => {
-            const arrayBuffer = writeQmm(quest);
-            const blob = new Blob([arrayBuffer], { type: "application/octet-stream" });
-            const url = URL.createObjectURL(blob);
-            const link = document.createElement("a");
-            link.href = url;
-            link.download = "quest.qmm";
-            document.body.appendChild(link);
-            link.click();
-            setTimeout(() => {
-              document.body.removeChild(link);
-              URL.revokeObjectURL(url);
-            }, 1000);
+            downloadQuest(quest);
           }}
         >
           <i className="fa fa-download fa-fw" title="Скачать" />

@@ -10,7 +10,11 @@ const INDEXEDDB_EDITOR_AUTOSAVE_STORE = "autosave";
 
 const AUTOSAVE_SIZE = 500;
 
-async function writeQuest(db: IDBDatabase, quest: Quest, index: number) {
+export interface QuestWithName extends Quest {
+  readonly filename?: string;
+}
+
+async function writeQuest(db: IDBDatabase, quest: QuestWithName, index: number) {
   const transaction = db.transaction([INDEXEDDB_EDITOR_AUTOSAVE_STORE], "readwrite");
   const objectStore = transaction.objectStore(INDEXEDDB_EDITOR_AUTOSAVE_STORE);
 
@@ -59,7 +63,7 @@ async function readLatestIndex(db: IDBDatabase) {
     openCursorRequest.onerror = (e) => reject(new Error(openCursorRequest.error?.message));
   });
 }
-async function readQuest(db: IDBDatabase, index: number): Promise<Quest | null> {
+async function readQuest(db: IDBDatabase, index: number): Promise<QuestWithName | null> {
   return new Promise<Quest | null>((resolve, reject) => {
     const transaction = db.transaction([INDEXEDDB_EDITOR_AUTOSAVE_STORE], "readonly");
     const objectStore = transaction.objectStore(INDEXEDDB_EDITOR_AUTOSAVE_STORE);
@@ -105,9 +109,9 @@ async function initDatabase() {
 }
 
 interface IDBStoreState {
-  readonly quest: Quest;
-  readonly undoQuest: Quest | null;
-  readonly redoQuest: Quest | null;
+  readonly quest: QuestWithName;
+  readonly undoQuest: QuestWithName | null;
+  readonly redoQuest: QuestWithName | null;
   readonly currentIndex: number;
 }
 
@@ -136,7 +140,7 @@ export function useIdb() {
   }, [setFallbackEmptyState]);
 
   const saveQuest = React.useCallback(
-    (newQuest: Quest) => {
+    (newQuest: QuestWithName) => {
       setState({
         currentIndex: state ? state.currentIndex + 1 : 1,
         undoQuest: state ? state.quest : null,

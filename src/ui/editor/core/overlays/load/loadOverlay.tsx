@@ -7,13 +7,24 @@ import { Quest } from "../../../../../lib/qmplayer/funcs";
 import { parse } from "../../../../../lib/qmreader";
 import { Game } from "../../../../../packGameData";
 import { DATA_DIR } from "../../../../consts";
+import { QuestWithName } from "../../idb";
 import { Overlay } from "../../overlay";
+
+function getBasenameWithoutExtension(filename: string) {
+  return filename
+    .split("/")
+    .pop()!
+    .replace(/\.qmm$/, "")
+    .replace(/\.qm$/, "")
+    .replace(/\.qmm.gz$/, "")
+    .replace(/\.qm.gz$/, "");
+}
 
 export function LoadOverlay({
   onClose,
   questsToLoad,
 }: {
-  onClose: (newQuest: Quest | undefined) => void;
+  onClose: (newQuest: QuestWithName | undefined) => void;
   questsToLoad: Game[];
 }) {
   const [existingId, setExistingId] = React.useState(0);
@@ -49,7 +60,10 @@ export function LoadOverlay({
                 .then((res) => res.arrayBuffer())
                 .then((questArrayBuffer) => {
                   const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer))));
-                  onClose(quest);
+                  onClose({
+                    ...quest,
+                    filename: getBasenameWithoutExtension(questsToLoad[existingId].filename),
+                  });
                 })
                 .catch((e) => toast(e.message));
             }}
@@ -82,7 +96,10 @@ export function LoadOverlay({
                     : Buffer.from(questArrayBuffer);
 
                   const quest = parse(unzipped);
-                  onClose(quest);
+                  onClose({
+                    ...quest,
+                    filename: getBasenameWithoutExtension(file.name),
+                  });
                 })
                 .catch((e) => toast(e.message));
             }}

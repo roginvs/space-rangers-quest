@@ -1,6 +1,7 @@
 import { Quest } from "../../../../../lib/qmplayer/funcs";
+import { QuestWithName } from "../../idb";
 
 export interface QuestSettingsTabProps {
-  quest: Quest;
-  setQuest: (newQuest: Quest) => void;
+  quest: QuestWithName;
+  setQuest: (newQuest: QuestWithName) => void;
 }
