@@ -10,8 +10,12 @@ const INDEXEDDB_EDITOR_AUTOSAVE_STORE = "autosave";
 
 const AUTOSAVE_SIZE = 500;
 
-export interface QuestWithName extends Quest {
+export interface QuestName {
   readonly filename?: string;
+}
+
+export interface QuestWithName extends Quest, QuestName {
+  // nothing here
 }
 
 async function writeQuest(db: IDBDatabase, quest: QuestWithName, index: number) {

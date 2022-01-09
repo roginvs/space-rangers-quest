@@ -44,6 +44,7 @@ import { LoadOverlay } from "./overlays/load/loadOverlay";
 import { writeQmm } from "../../../lib/qmwriter";
 import { HelpOverlay } from "./overlays/helpOverlay";
 import { downloadQuest } from "./download";
+import { QuestName } from "./namechange";
 
 // tslint:disable-next-line:no-useless-cast
 export const EDITOR_MOUSE_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
@@ -469,7 +470,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
         flexDirection: "column",
       }}
     >
-      <div className="d-flex">
+      <div className="d-flex align-items-center">
         <button
           className={classNames("mr-1", "btn", "btn-light")}
           onClick={() => {
@@ -568,6 +569,11 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
         >
           <i className="fa fa-play-circle fa-fw" title="Играть" />
         </button>
+
+        <QuestName
+          quest={quest}
+          setQuest={(newQuest) => onChange({ ...quest, filename: newQuest.filename })}
+        />
 
         <button className={classNames("ml-auto", "btn", "btn-light")} onClick={onExit}>
           <i className="fa fa-external-link fa-fw" title="Выход" />
