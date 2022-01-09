@@ -1,3 +1,4 @@
+import classNames from "classnames";
 import * as React from "react";
 import { QuestName } from "./idb";
 import { useOnDocumentKeyUp } from "./keypress";
@@ -29,13 +30,14 @@ export function QuestName({
 
   return !isEditing ? (
     <label
-      className="mb-0 ml-2 mr-2"
+      className={classNames("mb-0 ml-2 mr-2", !quest.filename ? "text-muted" : "")}
       onClick={() => {
         setIsEditing(true);
         setName(quest.filename);
       }}
+      title="Имя файла квеста (клик чтобы изменить)"
     >
-      {quest.filename}
+      {quest.filename || "noname"}
     </label>
   ) : (
     <input

@@ -475,7 +475,10 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
           className={classNames("mr-1", "btn", "btn-light")}
           onClick={() => {
             const emptyQuest = parse(emptyQmm);
-            onChange(emptyQuest);
+            onChange({
+              ...emptyQuest,
+              filename: "newquest",
+            });
             setOverlayMode({
               kind: "questsettings",
               enableSaveOnNoChanges: true,
