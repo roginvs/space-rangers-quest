@@ -46,7 +46,7 @@ export function LocationHover({
   return (
     <div className="d-flex flex-column align-items-center">
       <div className="w-100 d-flex flex-row justify-content-between">
-        <span>{location.texts.length > 1 ? "M" : ""}</span>
+        <span>{location.texts.filter((text) => text).length > 1 ? "M" : ""}</span>
         <span>L {location.id}</span>
       </div>
       <Divider />
