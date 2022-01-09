@@ -129,15 +129,10 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
     if (!quest) {
       return;
     }
-    const hoverZones = updateMainCanvas(
-      ctx,
-      canvasSize.canvasWidth,
-      canvasSize.canvasHeight,
-      quest,
-    );
+    const hoverZones = updateMainCanvas(ctx, quest);
     setHoverZones(hoverZones);
     console.info(`Main canvas re-render`);
-  }, [quest, canvasSize, isPlaying]);
+  }, [quest, isPlaying]);
 
   const getMouseCoordsInCanvas = React.useCallback((e: MouseEvent) => {
     const canvas = interactiveCanvasRef.current;
@@ -394,8 +389,8 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
     if (isPlaying) {
       return;
     }
-    drawHovers(context, canvasSize, hoverZone, isDragging);
-  }, [hoverZone, canvasSize, isDragging, isPlaying]);
+    drawHovers(context, hoverZone, isDragging);
+  }, [hoverZone, isDragging, isPlaying]);
 
   const onDocumentKeyUp = React.useCallback(
     (e: KeyboardEvent) => {

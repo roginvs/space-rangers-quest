@@ -17,16 +17,11 @@ export function getCanvasSize(quest: Quest): CanvasSize {
     Math.max(quest.screenSizeY, ...quest.locations.map((l) => l.locY)) + CANVAS_PADDING;
   return { canvasWidth, canvasHeight };
 }
-export function updateMainCanvas(
-  ctx: CanvasRenderingContext2D,
-  canvasWidth: number,
-  canvasHeight: number,
-  quest: Quest,
-) {
+export function updateMainCanvas(ctx: CanvasRenderingContext2D, quest: Quest) {
   const hoverZones: HoverZones = [];
 
   ctx.fillStyle = colors.background;
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height);
 
   // Locations
   quest.locations.forEach((location) => {
@@ -92,7 +87,6 @@ export function updateMainCanvas(
 
 export function drawHovers(
   context: CanvasRenderingContext2D,
-  canvasSize: CanvasSize,
   hoverZone:
     | {
         zone: HoverZone;
@@ -102,8 +96,7 @@ export function drawHovers(
     | undefined,
   isDragging: { x: number; y: number } | undefined,
 ) {
-  // TODO: This is part of Drawings.tsx
-  context.clearRect(0, 0, canvasSize.canvasWidth, canvasSize.canvasHeight);
+  context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
   if (hoverZone) {
     const location = hoverZone.zone[3];
