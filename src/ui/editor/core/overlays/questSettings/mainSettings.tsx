@@ -98,7 +98,7 @@ export function QuestMainSettings({ quest, setQuest }: QuestSettingsTabProps) {
         </div>
       </div>
       <div className="row mb-3">
-        <div className="col-3">
+        <div className="col-4">
           <div className="mr-2">
             <label className="mb-0">
               <span>Отношение после выполнения: </span>
@@ -126,7 +126,7 @@ export function QuestMainSettings({ quest, setQuest }: QuestSettingsTabProps) {
           </div>
         </div>
 
-        <div className="col-3">
+        <div className="col-4">
           <div className="mr-2">
             <label className="mb-0">
               <span>Сложность квеста: </span>
@@ -143,7 +143,7 @@ export function QuestMainSettings({ quest, setQuest }: QuestSettingsTabProps) {
           </div>
         </div>
 
-        <div className="col-3 d-flex align-items-center">
+        <div className="col-4 d-flex align-items-center">
           <div className="ml-3 form-check form-check-inline">
             <label className="form-check-label" title="Не нужно лететь обратно на планету">
               <input
@@ -161,14 +161,6 @@ export function QuestMainSettings({ quest, setQuest }: QuestSettingsTabProps) {
               Завершение сразу после выполнения
             </label>
           </div>
-        </div>
-        <div className="col-3 d-flex flex-column">
-          <label className="form-check-label mb-0">Имя файла</label>
-          <input
-            className="form-control w-100"
-            value={quest.filename}
-            onChange={(e) => setQuest({ ...quest, filename: e.target.value })}
-          />
         </div>
       </div>
       <div className="text-center">
