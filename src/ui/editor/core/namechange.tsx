@@ -35,7 +35,8 @@ export function QuestName({
         setIsEditing(true);
         setName(quest.filename);
       }}
-      title="Имя файла квеста (клик чтобы изменить)"
+      title="Имя файла квеста"
+      style={{ cursor: "pointer" }}
     >
       {quest.filename || "noname"}
     </label>
