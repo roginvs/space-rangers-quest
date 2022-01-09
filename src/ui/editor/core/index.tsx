@@ -8,6 +8,8 @@ import { LOCATION_DROP_RADIUS, LOCATION_RADIUS } from "../consts";
 import {
   createJump,
   createLocation,
+  duplicateLocation,
+  duplicateJump,
   fixJumpParamMinMax,
   removeJump,
   removeLocation,
@@ -280,13 +282,19 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
                   toast("This position is busy");
                 }
               } else {
-                onChange(
-                  updateLocation(quest, {
-                    ...location,
-                    locX: griddedLocation.x,
-                    locY: griddedLocation.y,
-                  }),
-                );
+                if (e.ctrlKey) {
+                  onChange(
+                    duplicateLocation(quest, location, griddedLocation.x, griddedLocation.y),
+                  );
+                } else {
+                  onChange(
+                    updateLocation(quest, {
+                      ...location,
+                      locX: griddedLocation.x,
+                      locY: griddedLocation.y,
+                    }),
+                  );
+                }
               }
             }
 
@@ -305,13 +313,19 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
               if (!newLocation) {
                 toast("Тут нет локации!");
               } else {
-                onChange(
-                  updateJump(quest, {
-                    ...jump,
-                    fromLocationId: isBeginning ? newLocation.id : jump.fromLocationId,
-                    toLocationId: isBeginning ? jump.toLocationId : newLocation.id,
-                  }),
-                );
+                const newFromLocationId = isBeginning ? newLocation.id : jump.fromLocationId;
+                const newToLocationId = isBeginning ? jump.toLocationId : newLocation.id;
+                if (e.ctrlKey) {
+                  onChange(duplicateJump(quest, jump, newFromLocationId, newToLocationId));
+                } else {
+                  onChange(
+                    updateJump(quest, {
+                      ...jump,
+                      fromLocationId: newFromLocationId,
+                      toLocationId: newToLocationId,
+                    }),
+                  );
+                }
               }
             }
           }
@@ -494,7 +508,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
             onClick={() => setMouseMode(candidateMode)}
           >
             {candidateMode === "move" ? (
-              <i className="fa fa-arrows fa-fw" title="Двигать (2)" />
+              <i className="fa fa-arrows fa-fw" title="Двигать (2) [Вместе с Ctrl - копировать]" />
             ) : candidateMode === "select" ? (
               <i className="fa fa-mouse-pointer fa-fw" title="Выделять (1)" />
             ) : candidateMode === "newJump" ? (

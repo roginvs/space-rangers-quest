@@ -41,13 +41,18 @@ function createDefaultParamChange(): ParameterChange {
     img: undefined,
   };
 }
-export function createLocation(quest: Quest, locX: number, locY: number) {
+
+function createLocationId(quest: Quest) {
   let newLocationId = 1;
   while (quest.locations.find((l) => l.id === newLocationId)) {
     newLocationId++;
   }
+  return newLocationId as LocationId;
+}
+
+export function createLocation(quest: Quest, locX: number, locY: number) {
   const newLocation: DeepImmutable<Location> = {
-    id: newLocationId as LocationId,
+    id: createLocationId(quest),
     dayPassed: false,
     isStarting: false,
     isSuccess: false,
@@ -71,14 +76,35 @@ export function createLocation(quest: Quest, locX: number, locY: number) {
   };
   return newLocation;
 }
+export function duplicateLocation(
+  quest: Quest,
+  location: DeepImmutable<Location>,
+  newlocX: number,
+  newlocY: number,
+) {
+  const newLocation: DeepImmutable<Location> = {
+    ...location,
+    id: createLocationId(quest),
+    locX: newlocX,
+    locY: newlocY,
+  };
+  return {
+    ...quest,
+    locations: [...quest.locations, newLocation],
+  };
+}
 
-export function createJump(quest: Quest, fromLocationId: LocationId, toLocationId: LocationId) {
+function createJumpId(quest: Quest) {
   let newJumpId = 1;
   while (quest.jumps.find((j) => j.id === newJumpId)) {
     newJumpId++;
   }
+  return newJumpId as JumpId;
+}
+
+export function createJump(quest: Quest, fromLocationId: LocationId, toLocationId: LocationId) {
   const newJump: DeepImmutable<Jump> = {
-    id: newJumpId as JumpId,
+    id: createJumpId(quest),
     alwaysShow: false,
     dayPassed: false,
     description: "",
@@ -103,6 +129,24 @@ export function createJump(quest: Quest, fromLocationId: LocationId, toLocationI
     paramsChanges: quest.params.map(() => createDefaultParamChange()),
   };
   return newJump;
+}
+
+export function duplicateJump(
+  quest: Quest,
+  jump: DeepImmutable<Jump>,
+  fromLocationId: LocationId,
+  toLocationId: LocationId,
+) {
+  const newJump: DeepImmutable<Jump> = {
+    ...jump,
+    id: createJumpId(quest),
+    fromLocationId,
+    toLocationId,
+  };
+  return {
+    ...quest,
+    jumps: [...quest.jumps, newJump],
+  };
 }
 
 export function addParameter(quest: Quest): Quest {
