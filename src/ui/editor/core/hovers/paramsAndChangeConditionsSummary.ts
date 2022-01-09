@@ -32,7 +32,7 @@ export function getParamStringInfo(
       ? " (скрыть)"
       : assertNever(paramChange.showingType);
   const changeString = paramChange.isChangeValue
-    ? `:= ${paramChange.change}`
+    ? `:=${paramChange.change}`
     : paramChange.isChangePercentage
     ? paramChange.change > 0
       ? `+${paramChange.change}%`
@@ -40,7 +40,7 @@ export function getParamStringInfo(
       ? `${paramChange.change}%`
       : ""
     : paramChange.isChangeFormula
-    ? `:= ${paramChange.changingFormula}`
+    ? `:=${paramChange.changingFormula} (формула)`
     : paramChange.change > 0
     ? `+${paramChange.change}`
     : paramChange.change < 0
@@ -58,14 +58,12 @@ export function getParamStringInfo(
     }
     // TODO: Make it slightly prettier
     if (conditions.mustEqualValues.length > 0) {
-      conditionString += conditions.mustEqualValuesEqual ? "==" : "!==";
-      conditions.mustEqualValues.forEach((v) => (conditionString += `${v}`));
-      conditionString += " ";
+      conditionString += conditions.mustEqualValuesEqual ? "==" : "!=";
+      conditionString += conditions.mustEqualValues.map((v) => v.toString()).join(";") + " ";
     }
     if (conditions.mustModValues.length > 0) {
       conditionString += conditions.mustModValuesMod ? "%" : "!%";
-      conditions.mustModValues.forEach((v) => (conditionString += `${v}`));
-      conditionString += " ";
+      conditionString += conditions.mustModValues.map((v) => v.toString()).join(";") + " ";
     }
   }
 
