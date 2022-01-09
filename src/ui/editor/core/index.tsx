@@ -632,11 +632,11 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
                     : mouseMode === "select"
                     ? "default"
                     : mouseMode === "newLocation"
-                    ? "url('/fontawesome_cursors/circle.svg') 10 10, crosshair"
+                    ? "url('/fontawesome_cursors/circle.svg') 12 12, crosshair"
                     : mouseMode === "newJump"
-                    ? "url('/fontawesome_cursors/arrow-right.svg') 10 10, e-resize"
+                    ? "url('/fontawesome_cursors/arrow-right.svg') 12 12, e-resize"
                     : mouseMode === "remove"
-                    ? "url('/fontawesome_cursors/remove.svg') 10 10, not-allowed"
+                    ? "url('/fontawesome_cursors/remove.svg') 12 12, not-allowed"
                     : assertNever(mouseMode),
               }}
               width={canvasSize.canvasWidth}
