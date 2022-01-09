@@ -498,7 +498,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
             ) : candidateMode === "select" ? (
               <i className="fa fa-mouse-pointer fa-fw" title="Выделять (1)" />
             ) : candidateMode === "newJump" ? (
-              <i className="fa fa-arrows-h fa-fw" title="Новый переход (4)" />
+              <i className="fa fa-arrow-right fa-fw" title="Новый переход (4)" />
             ) : candidateMode === "newLocation" ? (
               <i className="fa fa-circle fa-fw" title="Новая локация (3)" />
             ) : candidateMode === "remove" ? (
@@ -609,11 +609,11 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
                     : mouseMode === "select"
                     ? "default"
                     : mouseMode === "newLocation"
-                    ? "crosshair"
+                    ? "url('/fontawesome_cursors/circle.svg') 10 10, crosshair"
                     : mouseMode === "newJump"
-                    ? "e-resize"
+                    ? "url('/fontawesome_cursors/arrow-right.svg') 10 10, e-resize"
                     : mouseMode === "remove"
-                    ? "url('/fa/remove.svg') 12 12, pointer"
+                    ? "url('/fontawesome_cursors/remove.svg') 10 10, not-allowed"
                     : assertNever(mouseMode),
               }}
               width={canvasSize.canvasWidth}
