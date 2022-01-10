@@ -36,13 +36,7 @@ export function LocationHover({
     location.paramsChanges,
     null,
   );
-  /*
-  paramsSummary.unshift({
-    key: "lol",
-    leftText: "blablafasd  asd 3 asd asd asd aqweadszxcxvv",
-    rightText: "AAAA",
-  });
-  */
+
   return (
     <div className="d-flex flex-column align-items-center">
       <div className="w-100 d-flex flex-row justify-content-between">
