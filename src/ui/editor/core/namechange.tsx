@@ -36,7 +36,7 @@ export function QuestName({
         setName(quest.filename);
       }}
       title="Имя файла квеста"
-      style={{ cursor: "pointer" }}
+      style={{ cursor: "pointer", paddingRight: 10, whiteSpace: "pre" }}
     >
       {quest.filename || "noname"}
     </label>
