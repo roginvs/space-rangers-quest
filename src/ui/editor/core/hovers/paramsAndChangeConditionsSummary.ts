@@ -40,7 +40,7 @@ export function getParamStringInfo(
       ? `${paramChange.change}%`
       : ""
     : paramChange.isChangeFormula
-    ? `:=${paramChange.changingFormula} (формула)`
+    ? `:=${paramChange.changingFormula}`
     : paramChange.change > 0
     ? `+${paramChange.change}`
     : paramChange.change < 0
