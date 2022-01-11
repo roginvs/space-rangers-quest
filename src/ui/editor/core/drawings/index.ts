@@ -16,7 +16,7 @@ export function getCanvasSize(quest: Quest): CanvasSize {
     Math.max(quest.screenSizeY, ...quest.locations.map((l) => l.locY)) + CANVAS_PADDING;
   return { width, height };
 }
-export function updateMainCanvas(ctx: CanvasRenderingContext2D, quest: Quest) {
+export function updateMainCanvas(ctx: CanvasRenderingContext2D, quest: Quest, zoom: number) {
   const hoverZones: HoverZones = [];
 
   ctx.fillStyle = colors.background;
@@ -24,7 +24,7 @@ export function updateMainCanvas(ctx: CanvasRenderingContext2D, quest: Quest) {
 
   // Locations
   quest.locations.forEach((location) => {
-    drawLocation(ctx, hoverZones, location);
+    drawLocation(ctx, hoverZones, location, zoom);
   });
 
   // Jumps
@@ -65,6 +65,7 @@ export function updateMainCanvas(ctx: CanvasRenderingContext2D, quest: Quest) {
       myIndex,
       allJumpsCount,
       haveOtherJumpsWithSameText,
+      zoom,
     );
   });
 
@@ -94,6 +95,7 @@ export function drawHovers(
       }
     | undefined,
   isDragging: { x: number; y: number } | undefined,
+  zoom: number,
 ) {
   context.clearRect(0, 0, context.canvas.width, context.canvas.height);
 
@@ -106,7 +108,7 @@ export function drawHovers(
       context.lineWidth = 2;
       context.fillStyle = "none";
       context.beginPath();
-      context.arc(location.locX, location.locY, LOCATION_RADIUS, 0, 2 * Math.PI);
+      context.arc(location.locX * zoom, location.locY * zoom, LOCATION_RADIUS, 0, 2 * Math.PI);
       context.stroke();
       context.setLineDash([]);
 

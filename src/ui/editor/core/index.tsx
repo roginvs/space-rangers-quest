@@ -105,6 +105,8 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
 
   const windowInnerSize = useWindowInnerSize();
 
+  const zoom = 1;
+
   const canvasSize = React.useMemo(() => {
     if (!quest) {
       return {
@@ -114,8 +116,8 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
     }
     const questCanvasSize = getCanvasSize(quest);
     return {
-      width: Math.max(questCanvasSize.width, windowInnerSize.width),
-      height: Math.max(questCanvasSize.height, windowInnerSize.height),
+      width: Math.max(questCanvasSize.width * zoom, windowInnerSize.width),
+      height: Math.max(questCanvasSize.height * zoom, windowInnerSize.height),
     };
   }, [quest, windowInnerSize]);
 
@@ -144,10 +146,10 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
     if (!quest) {
       return;
     }
-    const hoverZones = updateMainCanvas(ctx, quest);
+    const hoverZones = updateMainCanvas(ctx, quest, zoom);
     setHoverZones(hoverZones);
     console.info(`Main canvas re-render`);
-  }, [quest, isPlaying]);
+  }, [quest, isPlaying, zoom]);
 
   const getMouseCoordsInCanvas = React.useCallback((e: MouseEvent) => {
     const canvas = interactiveCanvasRef.current;
@@ -236,12 +238,12 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
                     {
                       LUT: [],
                       startLoc: {
-                        locX: location.locX,
-                        locY: location.locY,
+                        locX: location.locX * zoom,
+                        locY: location.locY * zoom,
                       },
                       endLoc: {
-                        locX: location.locX,
-                        locY: location.locY,
+                        locX: location.locX * zoom,
+                        locY: location.locY * zoom,
                       },
                       startColor: [255, 255, 255],
                       endColor: [0, 0, 255],
@@ -284,7 +286,11 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
           if (hoverZone) {
             const location = hoverZone.zone[3];
             if (location) {
-              const griddedLocation = snapToGrid(quest, mouseInCanvas.x, mouseInCanvas.y);
+              const griddedLocation = snapToGrid(
+                quest,
+                mouseInCanvas.x / zoom,
+                mouseInCanvas.y / zoom,
+              );
               const locationAtThisPosition = whatLocationIsAlreadyAtThisPosition(
                 quest,
                 griddedLocation.x,
@@ -316,8 +322,8 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
               const [jump, isBeginning] = jumpMoving;
               const newLocation = quest.locations.find((loc) =>
                 isDistanceLower(
-                  mouseInCanvas.x,
-                  mouseInCanvas.y,
+                  mouseInCanvas.x / zoom,
+                  mouseInCanvas.y / zoom,
                   loc.locX,
                   loc.locY,
                   LOCATION_DROP_RADIUS,
@@ -347,8 +353,8 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
           if (hoverZone && hoverZone.zone[4]) {
             const toLocation = quest.locations.find((loc) =>
               isDistanceLower(
-                mouseInCanvas.x,
-                mouseInCanvas.y,
+                mouseInCanvas.x / zoom,
+                mouseInCanvas.y / zoom,
                 loc.locX,
                 loc.locY,
                 LOCATION_DROP_RADIUS,
@@ -371,7 +377,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
           }
           setHoverZone(undefined);
         } else if (mouseMode === "newLocation") {
-          const griddedLocation = snapToGrid(quest, mouseInCanvas.x, mouseInCanvas.y);
+          const griddedLocation = snapToGrid(quest, mouseInCanvas.x / zoom, mouseInCanvas.y / zoom);
           const locationAtThisPosition = whatLocationIsAlreadyAtThisPosition(
             quest,
             griddedLocation.x,
@@ -406,7 +412,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
       interactiveCanvas.removeEventListener("mouseup", onMouseUp);
       interactiveCanvas.removeEventListener("mousedown", onMouseDown);
     };
-  }, [mouseMode, hoverZone, overlayMode, getMouseCoordsInCanvas, isPlaying]);
+  }, [mouseMode, hoverZone, overlayMode, getMouseCoordsInCanvas, isPlaying, zoom]);
 
   React.useEffect(() => {
     const context = interactiveContextRef.current;
@@ -416,8 +422,8 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
     if (isPlaying) {
       return;
     }
-    drawHovers(context, hoverZone, isDragging);
-  }, [hoverZone, isDragging, isPlaying]);
+    drawHovers(context, hoverZone, isDragging, zoom);
+  }, [hoverZone, isDragging, isPlaying, zoom]);
 
   const onDocumentKeyUp = React.useCallback(
     (e: KeyboardEvent) => {
@@ -615,14 +621,14 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
           <div
             style={{
               position: "relative",
-              width: canvasSize.width,
-              height: canvasSize.height,
+              width: canvasSize.width * zoom,
+              height: canvasSize.height * zoom,
             }}
           >
             <canvas
               style={{ position: "absolute" }}
-              width={canvasSize.width}
-              height={canvasSize.height}
+              width={canvasSize.width * zoom}
+              height={canvasSize.height * zoom}
               ref={(element) => {
                 mainCanvasRef.current = element;
                 if (element && !mainContextRef.current) {
@@ -651,8 +657,8 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
                     ? "url('/fontawesome_cursors/remove.svg') 12 12, not-allowed"
                     : assertNever(mouseMode),
               }}
-              width={canvasSize.width}
-              height={canvasSize.height}
+              width={canvasSize.width * zoom}
+              height={canvasSize.height * zoom}
               ref={(element) => {
                 interactiveCanvasRef.current = element;
                 if (element && !interactiveContextRef.current) {

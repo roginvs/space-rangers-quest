@@ -8,6 +8,7 @@ export function drawLocation(
   ctx: CanvasRenderingContext2D,
   hoverZones: HoverZones,
   location: DeepImmutable<Location>,
+  zoom: number,
 ) {
   ctx.strokeStyle = "black";
   ctx.lineWidth = 2;
@@ -22,13 +23,13 @@ export function drawLocation(
     : colors.location.intermediate;
   ctx.fillStyle = color;
   ctx.beginPath();
-  ctx.arc(location.locX, location.locY, LOCATION_RADIUS, 0, 2 * Math.PI);
+  ctx.arc(location.locX * zoom, location.locY * zoom, LOCATION_RADIUS, 0, 2 * Math.PI);
 
   ctx.fill();
 
   hoverZones.push([
-    location.locX,
-    location.locY,
+    location.locX * zoom,
+    location.locY * zoom,
     Math.max(LOCATION_RADIUS, JUMP_END_LOCATION_RADIUS),
     location,
     null,

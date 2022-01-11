@@ -156,8 +156,6 @@ function getJumpLookupTable(
 
 function getJumpArrowColors(
   jump: DeepImmutable<Jump>,
-  startLoc: LocationLocationOnly,
-  endLoc: LocationLocationOnly,
   myIndex: number,
   allJumpsCount: number,
   haveOtherJumpsWithSameText: boolean,
@@ -184,17 +182,27 @@ export function drawJumpArrow(
   myIndex: number,
   allJumpsCount: number,
   haveOtherJumpsWithSameText: boolean,
+  zoom: number,
 ) {
   const [startColor, endColor] = getJumpArrowColors(
     jump,
-    startLoc,
-    endLoc,
     myIndex,
     allJumpsCount,
     haveOtherJumpsWithSameText,
   );
 
-  const LUT = getJumpLookupTable(startLoc, endLoc, myIndex, allJumpsCount);
+  const LUT = getJumpLookupTable(
+    {
+      locX: startLoc.locX * zoom,
+      locY: startLoc.locY * zoom,
+    },
+    {
+      locX: endLoc.locX * zoom,
+      locY: endLoc.locY * zoom,
+    },
+    myIndex,
+    allJumpsCount,
+  );
   ctx.lineWidth = 1;
 
   const hoverDraw: HoverDrawJump = {
@@ -202,12 +210,12 @@ export function drawJumpArrow(
     startColor,
     endColor,
     startLoc: {
-      locX: startLoc.locX,
-      locY: startLoc.locY,
+      locX: startLoc.locX * zoom,
+      locY: startLoc.locY * zoom,
     },
     endLoc: {
-      locX: endLoc.locX,
-      locY: endLoc.locY,
+      locX: endLoc.locX * zoom,
+      locY: endLoc.locY * zoom,
     },
   };
 
@@ -236,8 +244,8 @@ export function drawJumpArrow(
       ctx,
       LUT[LUT.length - 1].x,
       LUT[LUT.length - 1].y,
-      endLoc.locX,
-      endLoc.locY,
+      endLoc.locX * zoom,
+      endLoc.locY * zoom,
       JUMP_ARROW_LENGTH,
     );
   }
