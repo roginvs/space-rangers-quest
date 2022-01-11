@@ -105,7 +105,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
 
   const windowInnerSize = useWindowInnerSize();
 
-  const zoom = 1;
+  const [zoom, setZoom] = React.useState(1);
 
   const canvasSize = React.useMemo(() => {
     if (!quest) {
@@ -119,7 +119,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
       width: Math.max(questCanvasSize.width * zoom, windowInnerSize.width),
       height: Math.max(questCanvasSize.height * zoom, windowInnerSize.height),
     };
-  }, [quest, windowInnerSize]);
+  }, [quest, windowInnerSize, zoom]);
 
   const [hoverZones, setHoverZones] = React.useState<HoverZones>([]);
   const [hoverZone, setHoverZone] = React.useState<
@@ -556,6 +556,23 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
 
         <button
           className={classNames("ml-3", "btn", "btn-light")}
+          onClick={() => {
+            setZoom(zoom / 1.2);
+          }}
+        >
+          <i className="fa fa-search-minus fa-fw" title="Zoom" />
+        </button>
+        <button
+          className={classNames("btn", "btn-light")}
+          onClick={() => {
+            setZoom(zoom * 1.2);
+          }}
+        >
+          <i className="fa fa-search-plus fa-fw" title="Zoom" />
+        </button>
+
+        <button
+          className={classNames("ml-3", "btn", "btn-light")}
           onClick={undo || undefined}
           disabled={!undo}
         >
@@ -621,14 +638,14 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
           <div
             style={{
               position: "relative",
-              width: canvasSize.width * zoom,
-              height: canvasSize.height * zoom,
+              width: canvasSize.width,
+              height: canvasSize.height,
             }}
           >
             <canvas
               style={{ position: "absolute" }}
-              width={canvasSize.width * zoom}
-              height={canvasSize.height * zoom}
+              width={canvasSize.width}
+              height={canvasSize.height}
               ref={(element) => {
                 mainCanvasRef.current = element;
                 if (element && !mainContextRef.current) {
@@ -657,8 +674,8 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
                     ? "url('/fontawesome_cursors/remove.svg') 12 12, not-allowed"
                     : assertNever(mouseMode),
               }}
-              width={canvasSize.width * zoom}
-              height={canvasSize.height * zoom}
+              width={canvasSize.width}
+              height={canvasSize.height}
               ref={(element) => {
                 interactiveCanvasRef.current = element;
                 if (element && !interactiveContextRef.current) {
