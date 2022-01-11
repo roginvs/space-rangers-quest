@@ -33,7 +33,7 @@ import { Overlay } from "./overlay";
 import { LocationOverlay } from "./overlays/jumpsAndLocations/location";
 import { JumpHover } from "./hovers/jump";
 import { JumpOverlay } from "./overlays/jumpsAndLocations/jump";
-import { useOnDocumentKeyUp } from "./hooks";
+import { useOnDocumentKeyUp, useWindowInnerSize } from "./hooks";
 import { QuestSettings } from "./overlays/questSettings/questSettings";
 import { initRandomGame, QuestPlay } from "../../questPlay";
 import { getLang } from "../../lang";
@@ -103,10 +103,22 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
   const interactiveCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const interactiveContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
 
-  const canvasSize = React.useMemo(
-    () => (quest ? getCanvasSize(quest) : { canvasHeight: 0, canvasWidth: 0 }),
-    [quest],
-  );
+  const windowInnerSize = useWindowInnerSize();
+
+  const canvasSize = React.useMemo(() => {
+    if (!quest) {
+      return {
+        width: windowInnerSize.width,
+        height: windowInnerSize.height,
+      };
+    }
+    const questCanvasSize = getCanvasSize(quest);
+    return {
+      width: Math.max(questCanvasSize.width, windowInnerSize.width),
+      height: Math.max(questCanvasSize.height, windowInnerSize.height),
+    };
+  }, [quest, windowInnerSize]);
+
   const [hoverZones, setHoverZones] = React.useState<HoverZones>([]);
   const [hoverZone, setHoverZone] = React.useState<
     | {
@@ -603,14 +615,14 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
           <div
             style={{
               position: "relative",
-              width: canvasSize.canvasWidth,
-              height: canvasSize.canvasHeight,
+              width: canvasSize.width,
+              height: canvasSize.height,
             }}
           >
             <canvas
               style={{ position: "absolute" }}
-              width={canvasSize.canvasWidth}
-              height={canvasSize.canvasHeight}
+              width={canvasSize.width}
+              height={canvasSize.height}
               ref={(element) => {
                 mainCanvasRef.current = element;
                 if (element && !mainContextRef.current) {
@@ -639,8 +651,8 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
                     ? "url('/fontawesome_cursors/remove.svg') 12 12, not-allowed"
                     : assertNever(mouseMode),
               }}
-              width={canvasSize.canvasWidth}
-              height={canvasSize.canvasHeight}
+              width={canvasSize.width}
+              height={canvasSize.height}
               ref={(element) => {
                 interactiveCanvasRef.current = element;
                 if (element && !interactiveContextRef.current) {

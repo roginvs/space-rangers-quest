@@ -7,15 +7,14 @@ import { drawArrowEnding, drawJumpArrow } from "./jumps";
 import { drawLocation } from "./locations";
 
 interface CanvasSize {
-  canvasWidth: number;
-  canvasHeight: number;
+  width: number;
+  height: number;
 }
 export function getCanvasSize(quest: Quest): CanvasSize {
-  const canvasWidth =
-    Math.max(quest.screenSizeX, ...quest.locations.map((l) => l.locX)) + CANVAS_PADDING;
-  const canvasHeight =
+  const width = Math.max(quest.screenSizeX, ...quest.locations.map((l) => l.locX)) + CANVAS_PADDING;
+  const height =
     Math.max(quest.screenSizeY, ...quest.locations.map((l) => l.locY)) + CANVAS_PADDING;
-  return { canvasWidth, canvasHeight };
+  return { width, height };
 }
 export function updateMainCanvas(ctx: CanvasRenderingContext2D, quest: Quest) {
   const hoverZones: HoverZones = [];
