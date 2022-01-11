@@ -33,7 +33,7 @@ import { Overlay } from "./overlay";
 import { LocationOverlay } from "./overlays/jumpsAndLocations/location";
 import { JumpHover } from "./hovers/jump";
 import { JumpOverlay } from "./overlays/jumpsAndLocations/jump";
-import { useOnDocumentKeyUp } from "./keypress";
+import { useOnDocumentKeyUp } from "./hooks";
 import { QuestSettings } from "./overlays/questSettings/questSettings";
 import { initRandomGame, QuestPlay } from "../../questPlay";
 import { getLang } from "../../lang";

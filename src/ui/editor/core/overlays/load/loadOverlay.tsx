@@ -8,7 +8,7 @@ import { parse } from "../../../../../lib/qmreader";
 import { Game } from "../../../../../packGameData";
 import { DATA_DIR } from "../../../../consts";
 import { QuestWithName } from "../../idb";
-import { useOnDocumentKeyUp } from "../../keypress";
+import { useOnDocumentKeyUp } from "../../hooks";
 import { Overlay } from "../../overlay";
 
 function getBasenameWithoutExtension(filename: string) {

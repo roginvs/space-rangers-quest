@@ -10,7 +10,7 @@ import { range } from "../../utils";
 import { ParamChangeTypeEdit } from "./common";
 import { MediaEdit } from "../MediaEdit";
 import { toast } from "react-toastify";
-import { useOnDocumentKeyUp } from "../../keypress";
+import { useOnDocumentKeyUp } from "../../hooks";
 import { FormulaInput } from "../../common/formulaInput";
 
 function ParamCondition({

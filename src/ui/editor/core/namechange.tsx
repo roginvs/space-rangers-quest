@@ -1,7 +1,7 @@
 import classNames from "classnames";
 import * as React from "react";
 import { QuestName } from "./idb";
-import { useOnDocumentKeyUp } from "./keypress";
+import { useOnDocumentKeyUp } from "./hooks";
 
 export function QuestName({
   quest,

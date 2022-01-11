@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import * as React from "react";
-import { useOnDocumentKeyUp } from "../keypress";
+import { useOnDocumentKeyUp } from "../hooks";
 import { Overlay } from "../overlay";
 
 export function HelpOverlay({ onClose }: { onClose: () => void }) {
