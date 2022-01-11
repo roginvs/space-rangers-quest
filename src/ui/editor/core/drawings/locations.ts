@@ -1,7 +1,7 @@
 import { DeepImmutable } from "../../../../lib/qmplayer/deepImmutable";
 import { Location } from "../../../../lib/qmreader";
 import { colors } from "../../colors";
-import { LOCATION_RADIUS } from "../../consts";
+import { JUMP_END_LOCATION_RADIUS, LOCATION_RADIUS } from "../../consts";
 import { HoverZones } from "../hover";
 
 export function drawLocation(
@@ -26,5 +26,11 @@ export function drawLocation(
 
   ctx.fill();
 
-  hoverZones.push([location.locX, location.locY, LOCATION_RADIUS * 2, location, null]);
+  hoverZones.push([
+    location.locX,
+    location.locY,
+    Math.max(LOCATION_RADIUS, JUMP_END_LOCATION_RADIUS),
+    location,
+    null,
+  ]);
 }
