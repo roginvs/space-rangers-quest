@@ -38,15 +38,15 @@
             // This handler will show errors until main React component is mounted
             var msg = 'Error: ' + message + ' at ' + source + ':' + lineno + ':' + colno + ' ' + (
                 error ? error.name + ' ' + error.message + ' ' + error.stack : '');
-            console.info('Got window onerror: ' + msg);
+            console.info((logErrorDiv? 'Got window onerror: ' : 'Got window onerror (no logErrorDiv):') + msg);
             if (logErrorDiv) {
                 var lineDiv = document.createElement('div');
                 lineDiv.innerText = msg;
                 lineDiv.className = 'text-danger';
                 logErrorDiv.appendChild(lineDiv);
             } else {
-                console.info('Div loading_errors_div is not found, this means that root React component is mounted ' +
-                    'and will handle errors');
+                //console.info('Div loading_errors_div is not found, this means that root React component is mounted ' +
+                //    'and will handle errors');
             }
 
             var loaderDiv = document.getElementById('loader_div');
