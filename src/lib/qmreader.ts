@@ -97,6 +97,12 @@ export enum PlayerCareer {
   Воин = 4,
 }
 
+// Gladiator: ......C8
+// Ivan:      ......D0
+// FullRing   ......CA
+// Jump       00000000
+//
+
 export const HEADER_QM_2 = 0x423a35d2; // 24 parameters
 export const HEADER_QM_3 = 0x423a35d3; // 48 parameters
 export const HEADER_QM_4 = 0x423a35d4; // 96 parameters
