@@ -12,14 +12,17 @@ export const HoverPopup: React.FC<{
   const isLeft = clientX < windowX / 2;
   const isTop = clientY < windowY / 2;
 
+  const isVerticalCenter = clientY > windowY * 0.25 && clientY < windowY * 0.75;
+
   return (
     <div
       style={{
         position: "fixed",
         left: isLeft ? clientX + DISTANCE : undefined,
         right: isLeft ? undefined : windowX - clientX + DISTANCE,
-        top: isTop ? clientY + DISTANCE : undefined,
-        bottom: isTop ? undefined : windowY - clientY + DISTANCE,
+        top: isVerticalCenter ? "50%" : isTop ? clientY + DISTANCE : undefined,
+        bottom: isVerticalCenter ? undefined : isTop ? undefined : windowY - clientY + DISTANCE,
+        transform: isVerticalCenter ? "translateY(-50%)" : undefined,
         backgroundColor: "#e7e298",
         borderRadius: 5,
         margin: 30,
