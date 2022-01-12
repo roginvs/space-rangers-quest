@@ -149,7 +149,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
     const hoverZones = updateMainCanvas(ctx, quest, zoom);
     setHoverZones(hoverZones);
     console.info(`Main canvas re-render`);
-  }, [quest, isPlaying, zoom]);
+  }, [quest, isPlaying, zoom, canvasSize]);
 
   const getMouseCoordsInCanvas = React.useCallback((e: MouseEvent) => {
     const canvas = interactiveCanvasRef.current;
