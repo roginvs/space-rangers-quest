@@ -662,12 +662,12 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
               style={{
                 position: "absolute",
                 cursor:
-                  mouseMode === "move"
-                    ? "move"
-                    : mouseMode === "select"
-                    ? "default"
-                    : mouseMode === "newLocation"
+                  mouseMode === "newLocation"
                     ? "url('/fontawesome_cursors/circle.svg') 12 12, crosshair"
+                    : mouseMode === "select" || !hoverZone
+                    ? "default"
+                    : mouseMode === "move"
+                    ? "move"
                     : mouseMode === "newJump"
                     ? "url('/fontawesome_cursors/arrow-right.svg') 12 12, e-resize"
                     : mouseMode === "remove"
