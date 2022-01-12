@@ -103,6 +103,8 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
   const interactiveCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const interactiveContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
 
+  const mainScrollDivRef = React.useRef<HTMLDivElement>();
+
   const windowInnerSize = useWindowInnerSize();
 
   const [zoom, setZoom] = React.useState(1);
@@ -195,6 +197,12 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
       setHoverZone(
         hoverZone ? { zone: hoverZone, clientX: e.clientX, clientY: e.clientY } : undefined,
       );
+
+      if (e.buttons === 2 || e.buttons === 1) {
+        if (mainScrollDivRef.current) {
+          mainScrollDivRef.current.scrollBy(-e.movementX, -e.movementY);
+        }
+      }
     };
     document.addEventListener("mousemove", onMove);
     return () => {
@@ -634,6 +642,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
             overflow: "scroll",
             height: "100%",
           }}
+          ref={mainScrollDivRef}
         >
           <div
             style={{
