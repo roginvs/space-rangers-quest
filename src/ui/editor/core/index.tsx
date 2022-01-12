@@ -103,7 +103,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
   const interactiveCanvasRef = React.useRef<HTMLCanvasElement | null>(null);
   const interactiveContextRef = React.useRef<CanvasRenderingContext2D | null>(null);
 
-  const mainScrollDivRef = React.useRef<HTMLDivElement>();
+  const mainScrollDivRef = React.useRef<HTMLDivElement | null>();
 
   const windowInnerSize = useWindowInnerSize();
 
@@ -645,7 +645,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
             overflow: "scroll",
             height: "100%",
           }}
-          ref={mainScrollDivRef}
+          ref={(element) => (mainScrollDivRef.current = element)}
         >
           <div
             style={{
