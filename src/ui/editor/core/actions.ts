@@ -50,11 +50,16 @@ function createLocationId(quest: Quest) {
   return newLocationId as LocationId;
 }
 
-export function createLocation(quest: Quest, locX: number, locY: number) {
+export function createLocation(
+  quest: Quest,
+  locX: number,
+  locY: number,
+  isDefaultStarting: boolean,
+) {
   const newLocation: DeepImmutable<Location> = {
     id: createLocationId(quest),
     dayPassed: false,
-    isStarting: false,
+    isStarting: isDefaultStarting || false,
     isSuccess: false,
     isEmpty: false,
     isFaily: false,

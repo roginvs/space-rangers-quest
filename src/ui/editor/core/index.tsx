@@ -415,7 +415,13 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
           if (locationAtThisPosition) {
             toast("Тут уже есть локация!");
           } else {
-            const newPossibleLocation = createLocation(quest, griddedLocation.x, griddedLocation.y);
+            const isDefaultStarting = quest.locations.length === 0;
+            const newPossibleLocation = createLocation(
+              quest,
+              griddedLocation.x,
+              griddedLocation.y,
+              isDefaultStarting,
+            );
             setOverlayMode({
               kind: "location",
               location: newPossibleLocation,
