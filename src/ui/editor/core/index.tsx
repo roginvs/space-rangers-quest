@@ -38,7 +38,7 @@ import { useOnDocumentKeyUp, useWindowInnerSize } from "./hooks";
 import { QuestSettings } from "./overlays/questSettings/questSettings";
 import { initRandomGame, QuestPlay } from "../../questPlay";
 import { getLang } from "../../lang";
-import { useIdb } from "./idb";
+import { QuestWithName, useIdb } from "./idb";
 import { emptyQmm } from "./emptyQmm";
 import { Game } from "../../../packGameData";
 import { LoadOverlay } from "./overlays/load/loadOverlay";
@@ -74,7 +74,7 @@ type EditorOverlay =
     };
 
 export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onExit: () => void }) {
-  const { quest, setQuest: onChange, undo, redo } = useIdb();
+  const { quest, setQuest: saveQuestToIdb, undo, redo } = useIdb();
 
   const [mouseMode, setMouseMode] = React.useState<EditorMouseMode>("select");
 
@@ -137,6 +137,13 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
   const [isDragging, setIsDragging] = React.useState<{ x: number; y: number } | undefined>(
     undefined,
   );
+
+  const onChange = React.useCallback((quest: QuestWithName) => {
+    setHoverZones([]);
+    setHoverZone(undefined);
+    setIsDragging(undefined);
+    saveQuestToIdb(quest);
+  }, []);
 
   React.useEffect(() => {
     const ctx = mainContextRef.current;
