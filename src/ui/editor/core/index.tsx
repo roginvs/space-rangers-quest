@@ -194,6 +194,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
           hoverCandidate[2],
         ),
       );
+
       setHoverZone(
         hoverZone ? { zone: hoverZone, clientX: e.clientX, clientY: e.clientY } : undefined,
       );
@@ -228,7 +229,9 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
       if (e.button === 0) {
         const mouseCoords = getMouseCoordsInCanvas(e);
         if (mouseMode === "move") {
-          setIsDragging(mouseCoords);
+          if (hoverZone) {
+            setIsDragging(mouseCoords);
+          }
         } else if (mouseMode === "newJump") {
           if (hoverZone) {
             const location = hoverZone.zone[3];
