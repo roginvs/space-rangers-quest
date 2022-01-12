@@ -571,7 +571,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
             setZoom(zoom / 1.2);
           }}
         >
-          <i className="fa fa-search-minus fa-fw" title="Zoom" />
+          <i className="fa fa-search-minus fa-fw" title="Zoom out" />
         </button>
         <button
           className={classNames("btn", "btn-light")}
@@ -579,7 +579,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
             setZoom(zoom * 1.2);
           }}
         >
-          <i className="fa fa-search-plus fa-fw" title="Zoom" />
+          <i className="fa fa-search-plus fa-fw" title="Zoom in" />
         </button>
 
         <button
