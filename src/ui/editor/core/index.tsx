@@ -138,12 +138,15 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
     undefined,
   );
 
-  const onChange = React.useCallback((quest: QuestWithName) => {
-    setHoverZones([]);
-    setHoverZone(undefined);
-    setIsDragging(undefined);
-    saveQuestToIdb(quest);
-  }, []);
+  const onChange = React.useCallback(
+    (newQuest: QuestWithName) => {
+      setHoverZones([]);
+      setHoverZone(undefined);
+      setIsDragging(undefined);
+      saveQuestToIdb(newQuest);
+    },
+    [saveQuestToIdb],
+  );
 
   React.useEffect(() => {
     const ctx = mainContextRef.current;
