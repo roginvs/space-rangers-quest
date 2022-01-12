@@ -25,6 +25,7 @@ import "react-toastify/dist/ReactToastify.css";
 import {
   isDistanceLower,
   isLocationAtThisPosition as whatLocationIsAlreadyAtThisPosition,
+  moveAllLocationsFromTopBottom,
   snapToGrid,
 } from "./utils";
 import { Jump, Location, parse } from "../../../lib/qmreader";
@@ -318,11 +319,13 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
                   );
                 } else {
                   onChange(
-                    updateLocation(quest, {
-                      ...location,
-                      locX: griddedLocation.x,
-                      locY: griddedLocation.y,
-                    }),
+                    moveAllLocationsFromTopBottom(
+                      updateLocation(quest, {
+                        ...location,
+                        locX: griddedLocation.x,
+                        locY: griddedLocation.y,
+                      }),
+                    ),
                   );
                 }
               }
