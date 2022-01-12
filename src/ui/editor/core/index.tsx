@@ -182,7 +182,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
       const mouseCoords = getMouseCoordsInCanvas(e);
 
       if (isDragging) {
-        if (e.buttons != 0) {
+        if (e.buttons !== 0) {
           setIsDragging(mouseCoords);
         } else {
           // This is a workaround if onMove event is triggered before we update onMove callback with new isDragging value
