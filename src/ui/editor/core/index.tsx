@@ -315,7 +315,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
               );
               if (locationAtThisPosition) {
                 if (locationAtThisPosition.id !== location.id) {
-                  toast("This position is busy");
+                  toast("Тут уже есть локация!");
                 }
               } else {
                 if (e.ctrlKey) {
@@ -403,7 +403,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
             griddedLocation.y,
           );
           if (locationAtThisPosition) {
-            toast("There is already location at this position");
+            toast("Тут уже есть локация!");
           } else {
             const newPossibleLocation = createLocation(quest, griddedLocation.x, griddedLocation.y);
             setOverlayMode({
