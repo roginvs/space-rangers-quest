@@ -1,7 +1,9 @@
+import { Tag } from "reactstrap";
 import { PlayerSubstitute } from "./qmplayer/playerSubstitute";
 
+export type PadKind = "left" | "right" | "center";
 export interface StringTokenFormat {
-  kind: "left" | "right" | "center";
+  kind: PadKind;
   numberOfSpaces: number;
 }
 export interface StringTokenColor {
@@ -23,13 +25,19 @@ export type StringTokenCalculated =
       kind: PlayerSubstitute;
     };
 
+const EASY_TAGS = ["clr", "clrEnd", "fix", "/fix", "/format", "/color", ""] as const;
+
+export type PlayerString = keyof PlayerSubstitute;
+export type TagsString = typeof EASY_TAGS[number];
+
 export type StringToken =
   | {
       type: "text";
       text: string;
     }
   | {
-      type: "clr" | "clrEnd" | "fix" | "fixEnd" | "colorEnd" | "formatEnd" | "diamond";
+      type: "tag";
+      tag: PlayerString | TagsString;
     }
   | {
       type: "format";
@@ -51,10 +59,6 @@ export type StringToken =
   | {
       type: "formula";
       formula: string;
-    }
-  | {
-      type: "ranger";
-      player: keyof PlayerSubstitute;
     };
 
 const PLAYER_KEYS_TO_REPLACE: (keyof PlayerSubstitute)[] = [
@@ -84,25 +88,38 @@ export function stringParse(str: string): StringToken[] {
   };
 
   while (pos < str.length) {
-    if (str[pos] === "<" && str[pos + 1] === ">") {
-      flushText();
-      out.push({ type: "diamond" });
-      pos += 2;
-      continue;
-    }
-
-    for (const candidate of PLAYER_KEYS_TO_REPLACE) {
+    for (const candidate of [...PLAYER_KEYS_TO_REPLACE, ...EASY_TAGS]) {
       const candidateWithBrackes = `<${candidate}>`;
       let found = false;
       if (str.slice(pos, pos + candidateWithBrackes.length) === candidateWithBrackes) {
         flushText();
-        out.push({ type: "ranger", player: candidate });
+        out.push({ type: "tag", tag: candidate });
         pos += candidateWithBrackes.length;
         found = true;
       }
       if (found) {
         continue;
       }
+    }
+
+    const formatMatch = str.slice(pos).match(/^\<format=(left|right|center),(\d+)\>/);
+    if (formatMatch) {
+      flushText();
+
+      pos += formatMatch[0].length;
+
+      const whereToPad = formatMatch[1];
+      const howManyPd = parseInt(formatMatch[2]);
+
+      out.push({
+        type: "format",
+        format: {
+          kind: whereToPad as PadKind,
+          numberOfSpaces: howManyPd,
+        },
+      });
+
+      continue;
     }
 
     // And by default feeding text

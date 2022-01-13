@@ -23,7 +23,8 @@ describe("stringParse", () => {
           text: "Text ",
         },
         {
-          type: "diamond",
+          type: "tag",
+          tag: "",
         },
         {
           type: "text",
@@ -41,20 +42,41 @@ describe("stringParse", () => {
           type: "text",
         },
         {
-          player: "Ranger",
-          type: "ranger",
+          type: "tag",
+          tag: "Ranger",
         },
         {
-          player: "Date",
-          type: "ranger",
+          type: "tag",
+          tag: "Date",
         },
         {
           text: " B ",
           type: "text",
         },
         {
-          player: "FromPlanet",
-          type: "ranger",
+          type: "tag",
+          tag: "FromPlanet",
+        },
+      ],
+    ],
+
+    [
+      "<format=right,30>BB</format>",
+      [
+        {
+          format: {
+            kind: "right",
+            numberOfSpaces: 30,
+          },
+          type: "format",
+        },
+        {
+          text: "BB",
+          type: "text",
+        },
+        {
+          tag: "/format",
+          type: "tag",
         },
       ],
     ],
