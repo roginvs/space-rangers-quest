@@ -3,6 +3,7 @@ import { parse } from "../lib/qmreader";
 import * as fs from "fs";
 import * as assert from "assert";
 import "mocha";
+import { StringTokens } from "../lib/stringCalculate";
 
 // tslint:disable:no-invalid-this
 
@@ -16,12 +17,18 @@ import {
 
 let player: QMPlayer;
 
+function tokensToStr(tokens: StringTokens) {
+  return tokens.map((token) => token.text).join("");
+}
+
 function jumpTo(text: string = "") {
   const state = player.getState();
   // const saving = player.getSaving();
   //console.info(`jumpto='${text}' state=${saving.state} locId=${saving.locationId} jumps=${saving.possibleJumps
   //    .map(j =>`id=${j.id}${j.active}`).join(', ')} locs=`,saving.locationVisitCount);
-  const jump = state.choices.filter((x) => x.text.indexOf(text) > -1 && x.active).shift();
+  const jump = state.choices
+    .filter((x) => tokensToStr(x.text).indexOf(text) > -1 && x.active)
+    .shift();
   //console.info(`jump=${jump ? jump.jumpId : "!"}`);
   if (!jump) {
     // const saving = player.getSaving();

@@ -18,7 +18,6 @@ import { Index, Game } from "../packGameData";
 import { AppNavbar } from "./appNavbar";
 import { ButtonDropdown, DropdownMenu, DropdownToggle, DropdownItem } from "reactstrap";
 import { QuestReplaceTags } from "./questReplaceTags";
-import { substitute } from "../lib/substitution";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
 import { SRDateToString } from "../lib/qmplayer/funcs";
 import classnames from "classnames";

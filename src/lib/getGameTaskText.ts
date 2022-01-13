@@ -3,10 +3,10 @@ import { DEFAULT_DAYS_TO_PASS_QUEST } from "./qmplayer/defs";
 import { SRDateToString } from "./qmplayer/funcs";
 import { Player } from "./qmplayer/player";
 import { QM } from "./qmreader";
-import { substitute } from "./substitution";
+import { stringCalculate } from "./stringCalculate";
 
 export function getGameTaskText(taskText: string, player: Player) {
-  return substitute(
+  return stringCalculate(
     taskText,
     {
       ...player,

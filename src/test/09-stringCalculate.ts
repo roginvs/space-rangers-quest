@@ -259,7 +259,7 @@ describe("Checking substitute", function () {
     //
   ] as const) {
     const random = createDetermenisticRandom([5, 6, 7]);
-    it(`Substitute '${str}'`, () => {
+    it(`stringCalculate '${str}'`, () => {
       const observed = stringCalculate(
         str,
         player,

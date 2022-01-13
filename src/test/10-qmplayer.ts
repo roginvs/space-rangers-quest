@@ -5,14 +5,20 @@ import * as assert from "assert";
 import "mocha";
 
 import { QMPlayer, GameState, JUMP_I_AGREE } from "../lib/qmplayer";
-
+import { StringTokens } from "../lib/stringCalculate";
 // tslint:disable:no-invalid-this
 
 let player: QMPlayer;
 
+function tokensToStr(tokens: StringTokens) {
+  return tokens.map((token) => token.text).join("");
+}
+
 function jumpTo(text: string = "") {
   const state = player.getState();
-  const jump = state.choices.filter((x) => x.text.indexOf(text) > -1 && x.active).shift();
+  const jump = state.choices
+    .filter((x) => tokensToStr(x.text).indexOf(text) > -1 && x.active)
+    .shift();
   if (!jump) {
     throw new Error(`OLOLO: No jump ${text} in ` + JSON.stringify(state, null, 4));
   }
@@ -36,7 +42,7 @@ describe("Player on test6-empty.qm", function () {
     });
     it(`failonloc_chain`, () => {
       jumpTo("failonloc_chain");
-      assert.strictEqual(player.getState().text, "p2_at_l11");
+      assert.strictEqual(tokensToStr(player.getState().text, "p2_at_l11");
       assert.strictEqual(player.getState().gameState, "fail");
     });
     it(`success_on_loc_jumptext`, () => {
@@ -1035,25 +1041,25 @@ describe("Player on test2.qm", function () {
       jumpTo("ending_locations");
     });
     it(`win0`, () => {
-      assert.ok(jumpTo("win0").text === "Winner");
+      assert.ok(tokensToStr(jumpTo("win0").text) === "Winner");
       const st = jumpTo("");
       assert.ok(st.gameState === "win");
     });
     it(`win1`, () => {
-      assert.ok(jumpTo("win1").text === "text");
-      assert.ok(jumpTo("").text === "Winner");
+      assert.ok(tokensToStr(jumpTo("win1").text) === "text");
+      assert.ok(tokensToStr(jumpTo("").text) === "Winner");
       const st = jumpTo("");
       assert.ok(st.gameState === "win");
     });
 
     it(`lose0`, () => {
       const st = jumpTo("lose0");
-      assert.ok(st.gameState === "fail" && st.text === "Loser");
+      assert.ok(st.gameState === "fail" && tokensToStr(st.text) === "Loser");
     });
     it(`lose1`, () => {
-      assert.ok(jumpTo("lose1").text === "text");
+      assert.ok(tokensToStr(jumpTo("lose1").text) === "text");
       const st = jumpTo("");
-      assert.ok(st.gameState === "fail" && st.text === "Loser");
+      assert.ok(st.gameState === "fail" && tokensToStr(st.text) === "Loser");
     });
 
     it(`zombie0`, () => {
@@ -1062,7 +1068,7 @@ describe("Player on test2.qm", function () {
       assert.strictEqual(st.text, "Zombie");
     });
     it(`zombie1`, () => {
-      assert.ok(jumpTo("zombie1").text === "text");
+      assert.ok(tokensToStr(jumpTo("zombie1").text) === "text");
       const st = jumpTo("");
       assert.strictEqual(st.gameState, "dead");
       assert.strictEqual(st.text, "Zombie");
@@ -1080,7 +1086,7 @@ describe("Player on test2.qm", function () {
     it(`Fail wuth zombie`, () => {
       jumpTo("failZombie");
       const st = jumpTo();
-      assert.ok(st.text === "Zombie");
+      assert.ok(tokensToStr(st.text) === "Zombie");
       assert.strictEqual(st.choices.length, 0);
     });
   });
@@ -1208,8 +1214,11 @@ describe("Player on test.qm", function () {
     assert.strictEqual(state2.choices.filter((x) => x.active).length, 2);
     assert.strictEqual(state2.choices.filter((x) => !x.active).length, 5);
 
-    assert.ok(state2.choices[0].text.indexOf("p2 / 5") > -1, `Choices have p2/5`);
-    assert.ok(state2.choices[6].text.indexOf("Видно активен по формуле") > -1, "Have formula seen");
+    assert.ok(tokensToStr(state2.choices[0].text).indexOf("p2 / 5") > -1, `Choices have p2/5`);
+    assert.ok(
+      tokensToStr(state2.choices[6].text).indexOf("Видно активен по формуле") > -1,
+      "Have formula seen",
+    );
   });
   it(`Jumps on jumpid > 2`, () => {
     const state2 = player.getState();
@@ -1223,14 +1232,14 @@ describe("Player on test.qm", function () {
   });
   it(`Next jumps, hideme param show/hide`, () => {
     const state4 = player.getState();
-    assert.ok(state4.paramsState[5].indexOf("hideme") < 0);
+    assert.ok(tokensToStr(state4.paramsState[5]).indexOf("hideme") < 0);
     //console.info(JSON.stringify(state4, null, 4));
     assert.strictEqual(state4.text, "Текст на переходе");
 
     player.performJump(state4.choices.shift()!.jumpId);
     const state5 = player.getState();
     //console.info(JSON.stringify(state5, null, 4));
-    assert.ok(state5.paramsState[5].indexOf("hideme") > -1);
+    assert.ok(tokensToStr(state5.paramsState[5]).indexOf("hideme") > -1);
   });
   it(`Пустая1`, () => assert.strictEqual(jumpTo("Пустая1").text, "Пустая1"));
 
@@ -1313,19 +1322,19 @@ describe("Player on test.qm", function () {
     let randomJumpCount = 0;
     for (let i = 0; i < 700; i++) {
       // console.info(`i=${i}, f=${((i+2) % 3) + 1} val=${parseInt(player.getState().text)}`);
-      assert.strictEqual(((i + 2) % 3) + 1, parseInt(player.getState().text), "X1"); // + JSON.stringify(player.getSaving(), null, 4));
+      assert.strictEqual(((i + 2) % 3) + 1, parseInt(tokensToStr(player.getState().text)), "X1"); // + JSON.stringify(player.getSaving(), null, 4));
       randomJumpCount += player
         .getState()
-        .choices.filter((x) => x.text.indexOf("random") > -1).length;
+        .choices.filter((x) => tokensToStr(x.text).indexOf("random") > -1).length;
       jumpTo("oooo");
       // console.info(`~~~~~~~~~~~~~~~~~~~~~~~~~~ i=${i} f=${((i) % 6) + 3} state=${parseInt(player.getState().text)}`)
-      assert.strictEqual((i % 6) + 3, parseInt(player.getState().text), "X2");
+      assert.strictEqual((i % 6) + 3, parseInt(tokensToStr(player.getState().text)), "X2");
       jumpTo("back");
     }
     const st10 = player.getState();
-    const n4 = parseInt(st10.paramsState[3].replace("<clr>", "").replace("<clrEnd>", ""));
-    const n5 = parseInt(st10.paramsState[4].replace("<clr>", "").replace("<clrEnd>", ""));
-    const n6 = parseInt(st10.paramsState[5].replace("<clr>", "").replace("<clrEnd>", ""));
+    const n4 = parseInt(tokensToStr(st10.paramsState[3]));
+    const n5 = parseInt(tokensToStr(st10.paramsState[4]));
+    const n6 = parseInt(tokensToStr(st10.paramsState[5]));
     assert.ok(n4 > 50 && n4 < 150);
     assert.ok(n5 > 350 && n5 < 450);
     assert.ok(n6 > 150 && n6 < 250);
