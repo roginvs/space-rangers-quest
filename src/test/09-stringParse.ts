@@ -31,7 +31,38 @@ describe("stringParse", () => {
         },
       ],
     ],
+
+    [
+      "A<Ranger><Date> B <FromPlanet>",
+
+      [
+        {
+          text: "A",
+          type: "text",
+        },
+        {
+          player: "Ranger",
+          type: "ranger",
+        },
+        {
+          player: "Date",
+          type: "ranger",
+        },
+        {
+          text: " B ",
+          type: "text",
+        },
+        {
+          player: "FromPlanet",
+          type: "ranger",
+        },
+      ],
+    ],
   ] as const) {
-    it(`Parsing '${str}'`, () => assert.deepEqual(stringParse(str), expected));
+    it(`Parsing '${str}'`, () => {
+      const observed = stringParse(str);
+      //console.info("\n\n", JSON.stringify(observed, null, 4), "\n\n");
+      assert.deepEqual(observed, expected);
+    });
   }
 });

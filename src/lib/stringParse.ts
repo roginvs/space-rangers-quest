@@ -54,8 +54,21 @@ export type StringToken =
     }
   | {
       type: "ranger";
-      player: PlayerSubstitute;
+      player: keyof PlayerSubstitute;
     };
+
+const PLAYER_KEYS_TO_REPLACE: (keyof PlayerSubstitute)[] = [
+  "Ranger",
+  "Player",
+  "FromPlanet",
+  "FromStar",
+  "ToPlanet",
+  "ToStar",
+  "Money",
+  "Date",
+  "Day",
+  "CurDate",
+];
 
 export function stringParse(str: string): StringToken[] {
   const out: StringToken[] = [];
@@ -78,9 +91,25 @@ export function stringParse(str: string): StringToken[] {
       continue;
     }
 
+    for (const candidate of PLAYER_KEYS_TO_REPLACE) {
+      const candidateWithBrackes = `<${candidate}>`;
+      let found = false;
+      if (str.slice(pos, pos + candidateWithBrackes.length) === candidateWithBrackes) {
+        flushText();
+        out.push({ type: "ranger", player: candidate });
+        pos += candidateWithBrackes.length;
+        found = true;
+      }
+      if (found) {
+        continue;
+      }
+    }
+
     // And by default feeding text
-    text = text + str[pos];
-    pos++;
+    if (pos < str.length) {
+      text = text + str[pos];
+      pos++;
+    }
   }
   flushText();
 
