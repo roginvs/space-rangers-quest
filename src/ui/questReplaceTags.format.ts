@@ -31,7 +31,7 @@ export function formatTokens(parsed: StringTokenTags[]): StringTokens {
   for (const token of parsed) {
     if (token.type === "text") {
       token.text.split(/\r\n|\n/).forEach((line, index, arr) => {
-        const haveNext = index != arr.length - 1;
+        const haveNext = index !== arr.length - 1;
 
         out.push({
           type: "text",
