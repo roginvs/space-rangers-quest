@@ -14,9 +14,14 @@ function parse(str: string) {
   // console.info(JSON.stringify(ast, null, 4));
   return ast;
 }
-export function calculate(str: string, params: ParamValues = [], random: RandomFunc) {
+export function calculate(
+  str: string,
+  params: ParamValues = [],
+  random: RandomFunc,
+  diamondIndex?: number,
+) {
   const ast = parse(str);
-  const value = calculateAst(ast, params, random);
+  const value = calculateAst(ast, params, random, diamondIndex);
   return Math.round(value);
 }
 

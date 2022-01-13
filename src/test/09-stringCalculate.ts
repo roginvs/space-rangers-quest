@@ -240,6 +240,18 @@ describe("Checking substitute", function () {
       ],
     ],
 
+    [
+      "You have {<>+2}",
+      [
+        { type: "text", text: "You have " },
+        {
+          isClr: true,
+          text: "22",
+          type: "text",
+        },
+      ],
+    ],
+
     //
     //
     // TODO: What if [d1] refers [d2] which refers [d1]? TGE crashes with stack overflow
@@ -247,7 +259,7 @@ describe("Checking substitute", function () {
     //
   ] as const) {
     const random = createDetermenisticRandom([5, 6, 7]);
-    it(`Substitute '${str}' into '${expected}'`, () => {
+    it(`Substitute '${str}'`, () => {
       const observed = stringCalculate(
         str,
         player,

@@ -213,6 +213,12 @@ export function parseExpression(readerFunc: () => Token) {
         operator: "minus token",
       };
       return expr;
+    } else if (primStartToken.kind === "not equals token") {
+      reader.readNext();
+      const expr: Expression = {
+        type: "diamond",
+      };
+      return expr;
     } else {
       if (reader.current().kind === "end token") {
         throw new Error(`Expected value at ${reader.current().start}`);

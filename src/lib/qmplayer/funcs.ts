@@ -16,11 +16,10 @@ import { AleaState, Alea } from "../alea";
 import { calculate } from "../formula";
 import { DeepImmutable } from "./deepImmutable";
 import { RandomFunc } from "../randomFunc";
-import { substitute } from "../substitution";
 import { JUMP_I_AGREE, JUMP_NEXT, JUMP_GO_BACK_TO_SHIP, DEFAULT_DAYS_TO_PASS_QUEST } from "./defs";
 import { assertNever } from "../../assertNever";
-import * as assert from "assert";
 import { Player, Lang, DEFAULT_RUS_PLAYER } from "./player";
+import { stringCalculate, StringTokens } from "../stringCalculate";
 
 export type Quest = DeepImmutable<QM>;
 
@@ -65,15 +64,15 @@ export type GameState = DeepImmutable<{
   GameLog;
 
 interface PlayerChoice {
-  text: string;
+  text: StringTokens;
   jumpId: number;
   active: boolean;
 }
 
 export interface PlayerState {
-  text: string;
+  text: StringTokens;
   imageFileName: string | null;
-  paramsState: string[];
+  paramsState: StringTokens[];
   choices: PlayerChoice[];
   gameState: "running" | "fail" | "win" | "dead";
 }
@@ -171,7 +170,7 @@ function replace(
    */
   random: RandomFunc,
 ) {
-  return substitute(
+  return stringCalculate(
     str,
     {
       Day: `${DEFAULT_DAYS_TO_PASS_QUEST - state.daysPassed}`,
@@ -187,7 +186,7 @@ function replace(
 }
 
 function getParamsState(quest: Quest, state: GameState, player: Player, random: RandomFunc) {
-  const paramsState: string[] = [];
+  const paramsState: StringTokens[] = [];
   for (let i = 0; i < quest.paramsCount; i++) {
     if (state.paramShow[i] && quest.params[i].active) {
       const val = state.paramValues[i];
@@ -275,7 +274,7 @@ export function getUIState(
       choices: [
         {
           jumpId: JUMP_I_AGREE,
-          text: texts.iAgree,
+          text: [{ type: "text", text: texts.iAgree }],
           active: true,
         },
       ],
@@ -293,7 +292,7 @@ export function getUIState(
       choices: [
         {
           jumpId: JUMP_NEXT,
-          text: texts.next,
+          text: [{ type: "text", text: texts.next }],
           active: true,
         },
       ],
@@ -325,7 +324,7 @@ export function getUIState(
             ? [
                 {
                   jumpId: JUMP_GO_BACK_TO_SHIP,
-                  text: texts.goBackToShip,
+                  text: [{ type: "text", text: texts.goBackToShip }],
                   active: true,
                 },
               ]
@@ -345,7 +344,7 @@ export function getUIState(
               {
                 // critonlocation
                 jumpId: JUMP_NEXT,
-                text: texts.next,
+                text: [{ type: "text", text: texts.next }],
                 active: true,
               },
             ],
@@ -376,7 +375,7 @@ export function getUIState(
           ? [
               {
                 jumpId: JUMP_GO_BACK_TO_SHIP,
-                text: texts.goBackToShip,
+                text: [{ type: "text", text: texts.goBackToShip }],
                 active: true,
               },
             ]
@@ -403,7 +402,7 @@ export function getUIState(
       choices: [
         {
           jumpId: JUMP_NEXT,
-          text: texts.next,
+          text: [{ type: "text", text: texts.next }],
           active: true,
         },
       ],
@@ -437,7 +436,12 @@ export function getUIState(
           ? [
               {
                 jumpId: JUMP_GO_BACK_TO_SHIP,
-                text: texts.goBackToShip,
+                text: [
+                  {
+                    type: "text",
+                    text: texts.goBackToShip,
+                  },
+                ],
                 active: true,
               },
             ]

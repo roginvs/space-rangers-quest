@@ -15,6 +15,8 @@ export type StringTokenCalculated = {
   color?: StringTokenColor;
 };
 
+export type StringTokens = StringTokenCalculated[];
+
 export function stringCalculate(
   str: string,
   player: PlayerSubstitute,
@@ -22,8 +24,8 @@ export function stringCalculate(
   paramShowInfos: DeepImmutable<QMParamShowInfo[]>,
   random: RandomFunc,
   diamondIndex?: number,
-): StringTokenCalculated[] {
-  const out: StringTokenCalculated[] = [];
+): StringTokens {
+  const out: StringTokens = [];
 
   const parsed = stringParse(str);
   let clrCount = 0;
@@ -149,7 +151,7 @@ export function stringCalculate(
         assertNever(tag);
       }
     } else if (token.type === "formula") {
-      const value = calculate(token.formula, paramValues, random);
+      const value = calculate(token.formula, paramValues, random, diamondIndex);
       out.push({
         type: "text",
         text: `${value}`,
@@ -166,7 +168,7 @@ export function stringCalculate(
       const paramIndex = token.paramNumber - 1;
       const paramValue =
         token.paramValueExpression !== undefined
-          ? calculate(token.paramValueExpression, paramValues, random)
+          ? calculate(token.paramValueExpression, paramValues, random, diamondIndex)
           : paramValues[paramIndex];
       if (paramValue === undefined) {
         out.push({

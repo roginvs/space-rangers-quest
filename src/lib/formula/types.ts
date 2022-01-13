@@ -45,14 +45,15 @@ export interface Token {
   text: string;
 }
 
-export type ExpressionType = "number" | "range" | "parameter" | "binary" | "unary";
+export type ExpressionType = "number" | "range" | "parameter" | "binary" | "unary" | "diamond";
 
 export type Expression =
   | NumberExpression
   | RangeExpression
   | ParameterExpression
   | BinaryExpression
-  | UnaryExpression;
+  | UnaryExpression
+  | DiamondExpression;
 interface ExpressionCommon {
   type: ExpressionType;
 }
@@ -71,6 +72,10 @@ export interface RangeExpression extends ExpressionCommon {
 export interface ParameterExpression extends ExpressionCommon {
   type: "parameter";
   parameterId: number;
+}
+
+export interface DiamondExpression extends ExpressionCommon {
+  type: "diamond";
 }
 export interface BinaryExpression extends ExpressionCommon {
   type: "binary";

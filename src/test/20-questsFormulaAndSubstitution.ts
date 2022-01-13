@@ -4,12 +4,12 @@ import "mocha";
 
 import { QMPlayer, GameState } from "../lib/qmplayer";
 import { parse, QM } from "../lib/qmreader";
-import { substitute } from "../lib/substitution";
 import * as formula from "../lib/formula";
 import { PlayerSubstitute } from "../lib/qmplayer/playerSubstitute";
 import { createDetermenisticRandom, randomFromMathRandom } from "../lib/randomFunc";
 import { getGameTaskText } from "../lib/getGameTaskText";
 import { ParamValues } from "../lib/formula/types";
+import { stringCalculate } from "../lib/stringCalculate";
 
 // tslint:disable:no-invalid-this
 
@@ -37,7 +37,7 @@ describe(`Checking all quests for formulas and params substitution`, function ()
         };
         function check(str: string, place = "", isDiamond = false) {
           try {
-            substitute(
+            stringCalculate(
               str,
               player,
               paramValues,

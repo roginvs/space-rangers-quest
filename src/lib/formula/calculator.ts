@@ -55,6 +55,7 @@ export function calculateAst(
   ast: Expression,
   params: ParamValues = [],
   random: RandomFunc,
+  diamondIndex: number | undefined,
 ): number {
   function transformToIntoRanges(node: Expression): RangeCalculated[] {
     if (node.type !== "binary" || node.operator !== "to keyword") {
@@ -72,12 +73,12 @@ export function calculateAst(
     const leftRanges =
       left.type === "range"
         ? calculateRange(left)
-        : valToRanges(floorCeil(calculateAst(left, params, random)));
+        : valToRanges(floorCeil(calculateAst(left, params, random, diamondIndex)));
 
     const rightRanges =
       right.type === "range"
         ? calculateRange(right)
-        : valToRanges(floorCeil(calculateAst(right, params, random)));
+        : valToRanges(floorCeil(calculateAst(right, params, random, diamondIndex)));
 
     const leftRangeMax = Math.max(...leftRanges.map((x) => x.to), 0);
     const rightRangeMax = Math.max(...rightRanges.map((x) => x.to), 0);
@@ -99,8 +100,8 @@ export function calculateAst(
       throw new Error("Wrong usage");
     }
     return node.ranges.map((range) => {
-      const from = floorCeil(calculateAst(range.from, params, random));
-      const to = range.to ? floorCeil(calculateAst(range.to, params, random)) : from;
+      const from = floorCeil(calculateAst(range.from, params, random, diamondIndex));
+      const to = range.to ? floorCeil(calculateAst(range.to, params, random, diamondIndex)) : from;
       const reversed = from > to;
       return {
         from: reversed ? to : from,
@@ -119,20 +120,20 @@ export function calculateAst(
     return paramValue;
   } else if (ast.type === "binary") {
     if (ast.operator === "plus token") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       return numberMinMax(a + b);
     } else if (ast.operator === "minus token") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       return numberMinMax(a - b);
     } else if (ast.operator === "slash token") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       return numberMinMax(b !== 0 ? a / b : a > 0 ? MAX_NUMBER : -MAX_NUMBER);
     } else if (ast.operator === "div keyword") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       if (b !== 0) {
         const val = a / b;
         return numberMinMax(floorCeil(val));
@@ -140,12 +141,12 @@ export function calculateAst(
         return a > 0 ? MAX_NUMBER : -MAX_NUMBER;
       }
     } else if (ast.operator === "mod keyword") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       return numberMinMax(b !== 0 ? a % b : a > 0 ? MAX_NUMBER : -MAX_NUMBER);
     } else if (ast.operator === "asterisk token") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       return numberMinMax(a * b);
     } else if (ast.operator === "to keyword") {
       const newRanges = transformToIntoRanges(ast);
@@ -155,7 +156,7 @@ export function calculateAst(
       const left = reversed ? ast.right : ast.left;
       const right = reversed ? ast.left : ast.right;
 
-      const leftVal = numberMinMax(calculateAst(left, params, random));
+      const leftVal = numberMinMax(calculateAst(left, params, random, diamondIndex));
       const ranges =
         right.type === "range"
           ? calculateRange(right)
@@ -170,52 +171,61 @@ export function calculateAst(
         }
         return 0;
       } else {
-        const rightVal = numberMinMax(calculateAst(ast.right, params, random));
+        const rightVal = numberMinMax(calculateAst(ast.right, params, random, diamondIndex));
         return leftVal === rightVal ? 1 : 0;
       }
     } else if (ast.operator === "greater than eq token") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       return a >= b ? 1 : 0;
     } else if (ast.operator === "greater than token") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       return a > b ? 1 : 0;
     } else if (ast.operator === "less than eq token") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       return a <= b ? 1 : 0;
     } else if (ast.operator === "less than token") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       return a < b ? 1 : 0;
     } else if (ast.operator === "equals token") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       return a === b ? 1 : 0;
     } else if (ast.operator === "not equals token") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       return a !== b ? 1 : 0;
     } else if (ast.operator === "and keyword") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       return a && b ? 1 : 0;
     } else if (ast.operator === "or keyword") {
-      const a = calculateAst(ast.left, params, random);
-      const b = calculateAst(ast.right, params, random);
+      const a = calculateAst(ast.left, params, random, diamondIndex);
+      const b = calculateAst(ast.right, params, random, diamondIndex);
       return a || b ? 1 : 0;
     } else {
       return assertNever(ast.operator);
     }
   } else if (ast.type === "unary") {
     if (ast.operator === "minus token") {
-      return -calculateAst(ast.expression, params, random);
+      return -calculateAst(ast.expression, params, random, diamondIndex);
     } else {
       return assertNever(ast);
     }
   } else if (ast.type === "range") {
     return pickRandomForRanges(calculateRange(ast), random);
+  } else if (ast.type === "diamond") {
+    if (diamondIndex === undefined) {
+      throw new Error(`<> operator is requested but was not provided`);
+    }
+    const paramValue = params[diamondIndex];
+    if (paramValue === undefined) {
+      throw new Error(`Parameter <> is p${diamondIndex} which is not defined`);
+    }
+    return paramValue;
   } else {
     return assertNever(ast);
   }
