@@ -12,6 +12,7 @@ export type StringTokenCalculated = {
   color?: StringTokenColor;
 };
 
+// tslint:disable-next-line:no-useless-cast
 const TAGS = ["clr", "clrEnd", "fix", "/fix", "/format", "/color"] as const;
 
 export type PadKind = "left" | "right" | "center";
