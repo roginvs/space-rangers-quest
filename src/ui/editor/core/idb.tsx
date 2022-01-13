@@ -122,6 +122,18 @@ interface IDBStoreState {
 export function useIdb() {
   const [db, setDb] = React.useState<IDBDatabase | undefined>(undefined);
 
+  const [broadcastChannel, setBroadcastChannel] = React.useState<BroadcastChannel | undefined>();
+  React.useEffect(() => {
+    if (typeof BroadcastChannel === "undefined") {
+      return;
+    }
+    const bc = new BroadcastChannel("space-ranger-editor-questupdated");
+    setBroadcastChannel(bc);
+    return () => {
+      bc.close();
+    };
+  }, []);
+
   const [state, setState] = React.useState<IDBStoreState | null>(null);
 
   const setFallbackEmptyState = React.useCallback(() => {
@@ -152,16 +164,31 @@ export function useIdb() {
         quest: newQuest,
       });
 
-      if (db && state) {
-        writeQuest(db, newQuest, state.currentIndex + 1).catch((e) =>
-          toast(`Failed to save quest: ${e.message}!`),
-        );
+      if (!db) {
+        toast("No database to save quest");
+        return;
       }
+
+      if (!state) {
+        toast("No previous state to save quest");
+        return;
+      }
+
+      writeQuest(db, newQuest, state.currentIndex + 1)
+        .then(() => {
+          if (broadcastChannel) {
+            broadcastChannel.postMessage("");
+          } else {
+            toast("No broadcast channel to send message");
+          }
+        })
+        .catch((e) => toast(`Failed to save quest: ${e.message}!`));
     },
-    [db, state],
+    [db, state, broadcastChannel],
   );
 
   const startupLoad = React.useCallback(() => {
+    console.info(`Editor startup loading dbIsReady=${db}`);
     if (!db) {
       return;
     }
@@ -199,6 +226,19 @@ export function useIdb() {
   React.useEffect(() => {
     startupLoad();
   }, [startupLoad]);
+
+  React.useEffect(() => {
+    if (!broadcastChannel) {
+      return;
+    }
+    broadcastChannel.onmessage = () => {
+      // console.info("broadcastChannel got message");
+      startupLoad();
+    };
+    return () => {
+      broadcastChannel.onmessage = null;
+    };
+  }, [startupLoad, broadcastChannel]);
 
   const undo = React.useMemo(() => {
     if (!db || !state || !state.undoQuest) {
