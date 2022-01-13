@@ -152,6 +152,45 @@ export function stringParse(str: string): StringToken[] {
       continue;
     }
 
+    /*
+    const paramStrNoValueMatch = str.slice(pos).match(/^\[d(\d+)\]/);
+    if (paramStrNoValueMatch) {
+      flushText();
+      pos += paramStrNoValueMatch[0].length;
+
+      const paramNumber = parseInt(paramStrNoValueMatch[1]);
+      out.push({
+        type: "paramstr",
+        paramNumber,
+      });
+
+      continue;
+    }
+    */
+
+    if (str[pos] === "[" && str[pos + 1] === "d") {
+      let scanPos = pos + 2;
+
+      while (true) {
+        const currentChar = str[scanPos];
+        if (["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"].indexOf(currentChar) === -1) {
+          break;
+        }
+        scanPos++;
+      }
+      const paramNum = parseInt(str.substring(pos + 2, scanPos));
+      if (str[scanPos] === "]") {
+        scanPos++;
+        flushText();
+        pos = scanPos;
+        out.push({
+          type: "paramstr",
+          paramNumber: paramNum,
+        });
+        continue;
+      }
+    }
+
     // And by default feeding text
     if (pos < str.length) {
       text = text + str[pos];
