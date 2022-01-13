@@ -124,6 +124,7 @@ export function useIdb() {
 
   const [broadcastChannel, setBroadcastChannel] = React.useState<BroadcastChannel | undefined>();
   React.useEffect(() => {
+    // tslint:disable-next-line:strict-type-predicates
     if (typeof BroadcastChannel === "undefined") {
       return;
     }
