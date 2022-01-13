@@ -161,7 +161,7 @@ export function useIdb() {
     [db, state],
   );
 
-  React.useEffect(() => {
+  const startupLoad = React.useCallback(() => {
     if (!db) {
       return;
     }
@@ -195,6 +195,10 @@ export function useIdb() {
       toast(`Failed to read from database: ${e.message}`);
     });
   }, [db, setFallbackEmptyState]);
+
+  React.useEffect(() => {
+    startupLoad();
+  }, [startupLoad]);
 
   const undo = React.useMemo(() => {
     if (!db || !state || !state.undoQuest) {
