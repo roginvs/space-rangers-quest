@@ -69,6 +69,29 @@ describe("Checking substitute", function () {
         { type: "text", text: " you" },
       ],
     ],
+    [
+      "Bla\nkek\r\nlol",
+      [
+        {
+          text: "Bla",
+          type: "text",
+        },
+        {
+          type: "newline",
+        },
+        {
+          text: "kek",
+          type: "text",
+        },
+        {
+          type: "newline",
+        },
+        {
+          text: "lol",
+          type: "text",
+        },
+      ],
+    ],
   ] as const) {
     it(`stringCalculate '${str}'`, () => {
       const observed = formatTokens(splitStringToTokens(str));

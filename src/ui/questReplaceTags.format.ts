@@ -1,13 +1,15 @@
 import { assertNever } from "../assertNever";
 import { StringTokenColor, StringTokenFormat, StringTokenTags } from "./questReplaceTags.split";
 
-export type StringTokenStyle = {
-  type: "text";
-  text: string;
-  isClr?: boolean;
-  isFix?: boolean;
-  color?: StringTokenColor;
-};
+export type StringTokenStyle =
+  | {
+      type: "text";
+      text: string;
+      isClr?: boolean;
+      isFix?: boolean;
+      color?: StringTokenColor;
+    }
+  | { type: "newline" };
 
 export type StringTokens = StringTokenStyle[];
 
@@ -28,12 +30,20 @@ export function formatTokens(parsed: StringTokenTags[]): StringTokens {
 
   for (const token of parsed) {
     if (token.type === "text") {
-      out.push({
-        type: "text",
-        text: token.text,
-        isClr: clrCount > 0 || undefined,
-        isFix: fixCount > 0 || undefined,
-        color,
+      token.text.split(/\r\n|\n/).forEach((line, index, arr) => {
+        const haveNext = index != arr.length - 1;
+
+        out.push({
+          type: "text",
+          text: line,
+          isClr: clrCount > 0 || undefined,
+          isFix: fixCount > 0 || undefined,
+          color,
+        });
+
+        if (haveNext) {
+          out.push({ type: "newline" });
+        }
       });
     } else if (token.type === "format") {
       if (!format) {
@@ -56,7 +66,7 @@ export function formatTokens(parsed: StringTokenTags[]): StringTokens {
         if (format) {
           let length = 0;
           for (const token of out.slice(format.startedAt)) {
-            length += token.text.length;
+            length += token.type === "text" ? token.text.length : 0;
           }
           const padNeeded = Math.max(0, format.format.numberOfSpaces - length);
 
