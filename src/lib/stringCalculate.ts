@@ -42,8 +42,8 @@ export function stringCalculate(
       out.push({
         type: "text",
         text: token.text,
-        isClr: clrCount > 0,
-        isFix: fixCount > 0,
+        isClr: clrCount > 0 || undefined,
+        isFix: fixCount > 0 || undefined,
         format,
         color,
       });

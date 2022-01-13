@@ -77,14 +77,13 @@ export function stringParse(str: string): StringToken[] {
   while (pos < str.length) {
     for (const candidate of [...PLAYER_KEYS_TO_REPLACE, ...EASY_TAGS]) {
       const candidateWithBrackes = `<${candidate}>`;
-      let found = false;
+
+      //   console.info("LOOOL", str.slice(pos, pos + candidateWithBrackes.length));
+
       if (str.slice(pos, pos + candidateWithBrackes.length) === candidateWithBrackes) {
         flushText();
         out.push({ type: "tag", tag: candidate });
         pos += candidateWithBrackes.length;
-        found = true;
-      }
-      if (found) {
         continue;
       }
     }

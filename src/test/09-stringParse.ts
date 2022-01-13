@@ -32,7 +32,23 @@ describe("stringParse", () => {
         },
       ],
     ],
-
+    [
+      "Lol <Ranger><Ranger>",
+      [
+        {
+          text: "Lol ",
+          type: "text",
+        },
+        {
+          tag: "Ranger",
+          type: "tag",
+        },
+        {
+          tag: "Ranger",
+          type: "tag",
+        },
+      ],
+    ],
     [
       "A<Ranger><Date> B <FromPlanet>",
 
