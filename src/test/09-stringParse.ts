@@ -3,207 +3,209 @@ import "mocha";
 import { stringParse } from "../lib/stringParse";
 
 describe("stringParse", () => {
-  for (const [str, expected] of [
-    ["", []],
+  for (const [str, expected] of (
     [
-      "Just text",
+      ["", []],
       [
-        {
-          type: "text",
-          text: "Just text",
-        },
-      ],
-    ],
-
-    [
-      "Text <> with diamond",
-      [
-        {
-          type: "text",
-          text: "Text ",
-        },
-        {
-          type: "tag",
-          tag: "",
-        },
-        {
-          type: "text",
-          text: " with diamond",
-        },
-      ],
-    ],
-    [
-      "Lol <Ranger><Ranger>",
-      [
-        {
-          text: "Lol ",
-          type: "text",
-        },
-        {
-          tag: "Ranger",
-          type: "tag",
-        },
-        {
-          tag: "Ranger",
-          type: "tag",
-        },
-      ],
-    ],
-    [
-      "A<Ranger><Date> B <FromPlanet>",
-
-      [
-        {
-          text: "A",
-          type: "text",
-        },
-        {
-          type: "tag",
-          tag: "Ranger",
-        },
-        {
-          type: "tag",
-          tag: "Date",
-        },
-        {
-          text: " B ",
-          type: "text",
-        },
-        {
-          type: "tag",
-          tag: "FromPlanet",
-        },
-      ],
-    ],
-
-    [
-      "<format=right,30>BB</format>",
-      [
-        {
-          format: {
-            kind: "right",
-            numberOfSpaces: 30,
-          },
-          type: "format",
-        },
-        {
-          text: "BB",
-          type: "text",
-        },
-        {
-          tag: "/format",
-          type: "tag",
-        },
-      ],
-    ],
-    [
-      "B<color=2,3,4>C",
-      [
-        {
-          text: "B",
-          type: "text",
-        },
-        {
-          color: {
-            b: 4,
-            g: 3,
-            r: 2,
-          },
-          type: "color",
-        },
-        {
-          text: "C",
-          type: "text",
-        },
-      ],
-    ],
-    [
-      "R [p10]-",
-      [
-        {
-          text: "R ",
-          type: "text",
-        },
-        {
-          paramNumber: 10,
-          type: "param",
-        },
-        {
-          text: "-",
-          type: "text",
-        },
-      ],
-    ],
-    [
-      "R [d8]-",
-      [
-        {
-          text: "R ",
-          type: "text",
-        },
-        {
-          paramNumber: 8,
-          type: "paramstr",
-        },
-        {
-          text: "-",
-          type: "text",
-        },
-      ],
-    ],
-    ...["R [d8:]-", "bla [d ", "lol [d:kek"].map((text) => {
-      return [
-        text,
+        "Just text",
         [
           {
-            text,
+            type: "text",
+            text: "Just text",
+          },
+        ],
+      ],
+
+      [
+        "Text <> with diamond",
+        [
+          {
+            type: "text",
+            text: "Text ",
+          },
+          {
+            type: "tag",
+            tag: "",
+          },
+          {
+            type: "text",
+            text: " with diamond",
+          },
+        ],
+      ],
+      [
+        "Lol <Ranger><Ranger>",
+        [
+          {
+            text: "Lol ",
+            type: "text",
+          },
+          {
+            tag: "Ranger",
+            type: "tag",
+          },
+          {
+            tag: "Ranger",
+            type: "tag",
+          },
+        ],
+      ],
+      [
+        "A<Ranger><Date> B <FromPlanet>",
+
+        [
+          {
+            text: "A",
+            type: "text",
+          },
+          {
+            type: "tag",
+            tag: "Ranger",
+          },
+          {
+            type: "tag",
+            tag: "Date",
+          },
+          {
+            text: " B ",
+            type: "text",
+          },
+          {
+            type: "tag",
+            tag: "FromPlanet",
+          },
+        ],
+      ],
+
+      [
+        "<format=right,30>BB</format>",
+        [
+          {
+            format: {
+              kind: "right",
+              numberOfSpaces: 30,
+            },
+            type: "format",
+          },
+          {
+            text: "BB",
+            type: "text",
+          },
+          {
+            tag: "/format",
+            type: "tag",
+          },
+        ],
+      ],
+      [
+        "B<color=2,3,4>C",
+        [
+          {
+            text: "B",
+            type: "text",
+          },
+          {
+            color: {
+              b: 4,
+              g: 3,
+              r: 2,
+            },
+            type: "color",
+          },
+          {
+            text: "C",
             type: "text",
           },
         ],
-      ] as const;
-    }),
-    //"Incorrect [d] [d1]", "Incorrect [d[d1]"
-    ...["25", "1+2", "{25}", "{10+15}", "[p1]+1", "{2+[p11]}", " { 6  -    3    }    "].map(
-      (formula) => {
+      ],
+      [
+        "R [p10]-",
+        [
+          {
+            text: "R ",
+            type: "text",
+          },
+          {
+            paramNumber: 10,
+            type: "param",
+          },
+          {
+            text: "-",
+            type: "text",
+          },
+        ],
+      ],
+      [
+        "R [d8]-",
+        [
+          {
+            text: "R ",
+            type: "text",
+          },
+          {
+            paramNumber: 8,
+            type: "paramstr",
+          },
+          {
+            text: "-",
+            type: "text",
+          },
+        ],
+      ],
+      ...["R [d8:]-", "bla [d ", "lol [d:kek"].map((text) => {
         return [
-          `AAA [d8:${formula}] BBB`,
+          text,
           [
             {
-              text: "AAA ",
-              type: "text",
-            },
-            {
-              paramNumber: 8,
-              type: "paramstr",
-              paramValueExpression: formula.replace(/^\s*\{/, "").replace(/\}\s*$/, ""),
-            },
-            {
-              text: " BBB",
+              text,
               type: "text",
             },
           ],
         ] as const;
-      },
-    ),
+      }),
+      //"Incorrect [d] [d1]", "Incorrect [d[d1]"
+      ...["25", "1+2", "{25}", "{10+15}", "[p1]+1", "{2+[p11]}", " { 6  -    3    }    "].map(
+        (formula) => {
+          return [
+            `AAA [d8:${formula}] BBB`,
+            [
+              {
+                text: "AAA ",
+                type: "text",
+              },
+              {
+                paramNumber: 8,
+                type: "paramstr",
+                paramValueExpression: formula.replace(/^\s*\{/, "").replace(/\}\s*$/, ""),
+              },
+              {
+                text: " BBB",
+                type: "text",
+              },
+            ],
+          ] as const;
+        },
+      ),
 
-    [
-      "A{2+4}B",
       [
-        {
-          text: "A",
-          type: "text",
-        },
-        {
-          formula: "2+4",
-          type: "formula",
-        },
-        {
-          text: "B",
-          type: "text",
-        },
+        "A{2+4}B",
+        [
+          {
+            text: "A",
+            type: "text",
+          },
+          {
+            formula: "2+4",
+            type: "formula",
+          },
+          {
+            text: "B",
+            type: "text",
+          },
+        ],
       ],
-    ],
-  ] as const) {
+    ] as const
+  ).slice()) {
     it(`Parsing '${str}'`, () => {
       const observed = stringParse(str);
       //console.info("\n\n", JSON.stringify(observed, null, 4), "\n\n");

@@ -145,7 +145,7 @@ export function stringCalculate(
               random,
               diamondIndex,
             );
-            out.push(...newTextTokens);
+            out.push(...newTextTokens.map((token) => ({ ...token, isCrl: true })));
           }
         }
       }

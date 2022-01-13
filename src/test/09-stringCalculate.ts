@@ -38,6 +38,9 @@ describe("Checking substitute", function () {
 
     ["Unknown param [d666]", "Unknown param <clr>UNKNOWN_PARAM<clrEnd>"],
 
+    ["Me <fix>1 2 3</fix> you", ""],
+
+    ["Me <format=right,11>1 2 3</format> you", ""],
     //
     //
     // TODO: What if [d1] refers [d2] which refers [d1]? TGE crashes with stack overflow
