@@ -135,6 +135,35 @@ describe("stringParse", () => {
         },
       ],
     ],
+    [
+      "R [d8:]-",
+      [
+        {
+          text: "R [d8:]-",
+          type: "text",
+        },
+      ],
+    ],
+    ...["25", "1+2", "{25}", "{10+15}", "[p1]+1", "{2+[p11]}"].map((formula) => {
+      return [
+        `AAA [d8:${formula}] BBB`,
+        [
+          {
+            text: "AAA ",
+            type: "text",
+          },
+          {
+            paramNumber: 8,
+            type: "paramstr",
+            paramValueExpression: formula.replace(/^\{/, "").replace(/\}$/, ""),
+          },
+          {
+            text: " BBB",
+            type: "text",
+          },
+        ],
+      ] as const;
+    }),
   ] as const) {
     it(`Parsing '${str}'`, () => {
       const observed = stringParse(str);

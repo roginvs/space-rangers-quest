@@ -188,6 +188,52 @@ export function stringParse(str: string): StringToken[] {
           paramNumber: paramNum,
         });
         continue;
+      } else if (str[scanPos] === ":") {
+        scanPos++;
+
+        let squareBracketsCount = 0;
+        let formulaStartIndex = scanPos;
+        let formulaEndIndex = scanPos;
+        while (true) {
+          if (str[scanPos] === "[") {
+            squareBracketsCount++;
+          } else if (str[scanPos] === "]") {
+            if (squareBracketsCount === 0) {
+              formulaEndIndex = scanPos;
+              scanPos++;
+              break;
+            } else {
+              squareBracketsCount--;
+            }
+          }
+
+          if (scanPos < str.length) {
+            scanPos++;
+          } else {
+            console.warn(`No closing bracket found in '${str}' at ${scanPos}`);
+            pos = scanPos;
+            // maybe flush?
+            continue;
+          }
+        }
+        if (formulaEndIndex > formulaStartIndex) {
+          const formulaWithMaybeCurlyBrackets = str.substring(formulaStartIndex, formulaEndIndex);
+
+          let formula = formulaWithMaybeCurlyBrackets;
+          const insideCurlyBracketsMatch = formulaWithMaybeCurlyBrackets.match(/\s*\{(.*)\}\s*/);
+          if (insideCurlyBracketsMatch) {
+            formula = insideCurlyBracketsMatch[1];
+          }
+
+          flushText();
+          pos = scanPos;
+          out.push({
+            type: "paramstr",
+            paramNumber: paramNum,
+            paramValueExpression: formula,
+          });
+          continue;
+        }
       }
     }
 
