@@ -1,5 +1,14 @@
 import * as React from "react";
 
+/**
+ *
+ * Replaces:
+ *   - <clr> bla bla <clrEnd>
+ *   - <fix> bla bla </fix>
+ *   - <format=left,30>  bla bla </format>
+ *
+ *   - TODO <color=R,G,B> bla bla </color>
+ */
 export function QuestReplaceTags(props: { str: string }) {
   // Я не знаю как это сделать React-way
 
