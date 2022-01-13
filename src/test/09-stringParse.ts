@@ -135,16 +135,18 @@ describe("stringParse", () => {
         },
       ],
     ],
-    //  ...[]
-    [
-      "R [d8:]-",
-      [
-        {
-          text: "R [d8:]-",
-          type: "text",
-        },
-      ],
-    ],
+    ...["R [d8:]-", "bla [d ", "lol [d:kek"].map((text) => {
+      return [
+        text,
+        [
+          {
+            text,
+            type: "text",
+          },
+        ],
+      ] as const;
+    }),
+    //"Incorrect [d] [d1]", "Incorrect [d[d1]"
     ...["25", "1+2", "{25}", "{10+15}", "[p1]+1", "{2+[p11]}", " { 6  -    3    }    "].map(
       (formula) => {
         return [

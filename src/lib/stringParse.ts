@@ -207,13 +207,14 @@ export function stringParse(str: string): StringToken[] {
             }
           }
 
-          if (scanPos < str.length) {
+          if (scanPos < str.length - 1) {
             scanPos++;
           } else {
             console.warn(`No closing bracket found in '${str}' at ${scanPos}`);
-            pos = scanPos;
-            // maybe flush?
-            continue;
+            text = text + str.slice(pos, pos + scanPos);
+            pos = scanPos + 1;
+            flushText();
+            break;
           }
         }
         if (formulaEndIndex > formulaStartIndex) {
