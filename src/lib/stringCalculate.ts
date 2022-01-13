@@ -7,23 +7,18 @@ import { QMParamShowInfo } from "./qmreader";
 import { RandomFunc } from "./randomFunc";
 import { stringParse, StringTokenColor, StringTokenFormat } from "./stringParse";
 
-export type StringTokenCalculated =
-  | {
-      type: "text";
-      text: string;
-      isClr?: boolean;
-      isFix?: boolean;
-      format?: StringTokenFormat;
-      color?: StringTokenColor;
-    }
-  | {
-      type: "ranger";
-      kind: keyof PlayerSubstitute;
-    };
+export type StringTokenCalculated = {
+  type: "text";
+  text: string;
+  isClr?: boolean;
+  isFix?: boolean;
+  format?: StringTokenFormat;
+  color?: StringTokenColor;
+};
 
 export function stringCalculate(
   str: string,
-
+  player: PlayerSubstitute,
   paramValues: ParamValues,
   paramShowInfos: DeepImmutable<QMParamShowInfo[]>,
   random: RandomFunc,
@@ -103,8 +98,9 @@ export function stringCalculate(
         tag === "CurDate"
       ) {
         out.push({
-          type: "ranger",
-          kind: tag,
+          type: "text",
+          text: player[tag],
+          isClr: true,
         });
       } else {
         assertNever(tag);
@@ -140,6 +136,7 @@ export function stringCalculate(
           if (paramValue >= range.from && paramValue <= range.to) {
             const newTextTokens = stringCalculate(
               range.str,
+              player,
               paramValues,
               paramShowInfos,
               random,

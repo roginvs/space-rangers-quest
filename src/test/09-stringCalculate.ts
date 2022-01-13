@@ -1,7 +1,22 @@
 import * as assert from "assert";
 import "mocha";
+import { PlayerSubstitute } from "../lib/qmplayer/playerSubstitute";
 import { createDetermenisticRandom } from "../lib/randomFunc";
 import { stringCalculate } from "../lib/stringCalculate";
+
+const player: PlayerSubstitute = {
+  Ranger: "MyName",
+  Player: "Player",
+  FromPlanet: "FromPlanet",
+  FromStar: "FromStar",
+  ToPlanet: "ToPlanet",
+  ToStar: "<ToStar>",
+  Date: "Date",
+  Day: "Day",
+  Money: "Money",
+  CurDate: "CurDate",
+  lang: "rus",
+};
 
 let debugTextOut = "";
 describe("Checking substitute", function () {
@@ -51,6 +66,7 @@ describe("Checking substitute", function () {
     it(`Substitute '${str}' into '${expected}'`, () => {
       const observed = stringCalculate(
         str,
+        player,
         [10, 20, 30],
         [
           {
