@@ -122,6 +122,22 @@ export function stringParse(str: string): StringToken[] {
       continue;
     }
 
+    const colorMatch = str.slice(pos).match(/^\<color=(\d+),(\d+),(\d+)\>/);
+    if (colorMatch) {
+      flushText();
+
+      pos += colorMatch[0].length;
+
+      const r = parseInt(colorMatch[1]);
+      const g = parseInt(colorMatch[2]);
+      const b = parseInt(colorMatch[3]);
+      out.push({
+        type: "color",
+        color: { r, g, b },
+      });
+      continue;
+    }
+
     // And by default feeding text
     if (pos < str.length) {
       text = text + str[pos];

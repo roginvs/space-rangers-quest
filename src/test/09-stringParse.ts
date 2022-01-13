@@ -80,6 +80,27 @@ describe("stringParse", () => {
         },
       ],
     ],
+    [
+      "B<color=2,3,4>C",
+      [
+        {
+          text: "B",
+          type: "text",
+        },
+        {
+          color: {
+            b: 4,
+            g: 3,
+            r: 2,
+          },
+          type: "color",
+        },
+        {
+          text: "C",
+          type: "text",
+        },
+      ],
+    ],
   ] as const) {
     it(`Parsing '${str}'`, () => {
       const observed = stringParse(str);
