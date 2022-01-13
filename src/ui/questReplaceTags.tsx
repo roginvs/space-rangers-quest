@@ -1,5 +1,28 @@
+import classNames from "classnames";
 import * as React from "react";
+import { formatTokens } from "./questReplaceTags.format";
+import { splitStringToTokens } from "./questReplaceTags.split";
 
+export function QuestReplaceTags(props: { str: string }) {
+  const tags = formatTokens(splitStringToTokens(props.str));
+
+  return (
+    <>
+      <span className="game-text"> </span>
+      {tags.map((tag) => (
+        <span
+          className={classNames("game-text", {
+            "game-fix": tag.isFix,
+            "text-success": tag.isClr,
+          })}
+          // TODO color
+        >
+          {tag.text}
+        </span>
+      ))}
+    </>
+  );
+}
 /**
  *
  * Replaces:
@@ -9,7 +32,7 @@ import * as React from "react";
  *
  *   - TODO <color=R,G,B> bla bla </color>
  */
-export function QuestReplaceTags(props: { str: string }) {
+export function QuestReplaceTags1(props: { str: string }) {
   // Я не знаю как это сделать React-way
 
   /*  x.match(/\<format=(left|right|center),(\d+)\>(.*?)\<\/format\>/)
