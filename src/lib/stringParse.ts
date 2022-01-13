@@ -11,19 +11,6 @@ export interface StringTokenColor {
   g: number;
   b: number;
 }
-export type StringTokenCalculated =
-  | {
-      type: "text";
-      text: string;
-      isClr?: boolean;
-      isFix?: boolean;
-      format?: StringTokenFormat;
-      color?: StringTokenColor;
-    }
-  | {
-      type: "ranger";
-      kind: PlayerSubstitute;
-    };
 
 const EASY_TAGS = ["clr", "clrEnd", "fix", "/fix", "/format", "/color", ""] as const;
 
