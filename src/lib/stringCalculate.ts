@@ -12,7 +12,6 @@ export type StringTokenCalculated = {
   text: string;
   isClr?: boolean;
   isFix?: boolean;
-  format?: StringTokenFormat;
   color?: StringTokenColor;
 };
 
@@ -29,7 +28,14 @@ export function stringCalculate(
   const parsed = stringParse(str);
   let clrCount = 0;
   let fixCount = 0;
-  let format: StringTokenFormat | undefined = undefined;
+
+  let format:
+    | undefined
+    | {
+        format: StringTokenFormat;
+        startedAt: number;
+      } = undefined;
+
   let color: StringTokenColor | undefined = undefined;
 
   for (const token of parsed) {
@@ -39,12 +45,14 @@ export function stringCalculate(
         text: token.text,
         isClr: clrCount > 0 || undefined,
         isFix: fixCount > 0 || undefined,
-        format,
         color,
       });
     } else if (token.type === "format") {
       if (!format) {
-        format = token.format;
+        format = {
+          format: token.format,
+          startedAt: out.length,
+        };
       }
     } else if (token.type === "color") {
       if (!color) {
@@ -57,6 +65,41 @@ export function stringCalculate(
       } else if (tag === "/fix") {
         fixCount--;
       } else if (tag === "/format") {
+        if (format) {
+          let length = 0;
+          for (const token of out.slice(format.startedAt)) {
+            length += token.text.length;
+          }
+          const padNeeded = Math.max(0, format.format.numberOfSpaces - length);
+
+          const leftPad = padNeeded
+            ? format.format.kind === "left"
+              ? new Array(padNeeded).fill(" ").join("")
+              : format.format.kind === "center"
+              ? new Array(Math.floor(padNeeded / 2)).fill(" ").join("")
+              : ""
+            : "";
+          const rightPad = padNeeded
+            ? format.format.kind === "right"
+              ? new Array(padNeeded).fill(" ").join("")
+              : format.format.kind === "center"
+              ? new Array(Math.ceil(padNeeded / 2)).fill(" ").join("")
+              : ""
+            : "";
+
+          if (leftPad) {
+            out.splice(format.startedAt, 0, {
+              type: "text",
+              text: leftPad,
+            });
+          }
+          if (rightPad) {
+            out.push({
+              type: "text",
+              text: rightPad,
+            });
+          }
+        }
         format = undefined;
       } else if (tag === "") {
         // This is diamond
