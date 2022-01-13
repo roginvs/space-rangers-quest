@@ -49,11 +49,11 @@ export type StringToken =
     }
   | {
       type: "param";
-      paramIndex: number;
+      paramNumber: number;
     }
   | {
       type: "paramstr";
-      paramIndex: number;
+      paramNumber: number;
       paramValueExpression?: string;
     }
   | {
@@ -135,6 +135,20 @@ export function stringParse(str: string): StringToken[] {
         type: "color",
         color: { r, g, b },
       });
+      continue;
+    }
+
+    const paramMatch = str.slice(pos).match(/^\[p(\d+)\]/);
+    if (paramMatch) {
+      flushText();
+      pos += paramMatch[0].length;
+
+      const paramNumber = parseInt(paramMatch[1]);
+      out.push({
+        type: "param",
+        paramNumber,
+      });
+
       continue;
     }
 

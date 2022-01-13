@@ -101,6 +101,23 @@ describe("stringParse", () => {
         },
       ],
     ],
+    [
+      "R [p10]-",
+      [
+        {
+          text: "R ",
+          type: "text",
+        },
+        {
+          paramNumber: 10,
+          type: "param",
+        },
+        {
+          text: "-",
+          type: "text",
+        },
+      ],
+    ],
   ] as const) {
     it(`Parsing '${str}'`, () => {
       const observed = stringParse(str);
