@@ -17,7 +17,7 @@ body.game {
 }
 
 .game-text {
-  white-space: pre-wrap;
+  /* white-space: pre-wrap; */
 }
 .game-fix {
   font-family: monospace;

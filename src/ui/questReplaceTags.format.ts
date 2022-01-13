@@ -9,7 +9,7 @@ export type StringTokenStyle =
       isFix?: boolean;
       color?: StringTokenColor;
     }
-  | { type: "newline" };
+  | { type: "newline"; isFix?: boolean };
 
 export type StringTokens = StringTokenStyle[];
 
@@ -42,7 +42,10 @@ export function formatTokens(parsed: StringTokenTags[]): StringTokens {
         });
 
         if (haveNext) {
-          out.push({ type: "newline" });
+          out.push({
+            type: "newline",
+            isFix: fixCount > 0 || undefined,
+          });
         }
       });
     } else if (token.type === "format") {
@@ -88,12 +91,16 @@ export function formatTokens(parsed: StringTokenTags[]): StringTokens {
           if (leftPad) {
             out.splice(format.startedAt, 0, {
               type: "text",
+              isClr: clrCount > 0 || undefined,
+              isFix: fixCount > 0 || undefined,
               text: leftPad,
             });
           }
           if (rightPad) {
             out.push({
               type: "text",
+              isClr: clrCount > 0 || undefined,
+              isFix: fixCount > 0 || undefined,
               text: rightPad,
             });
           }
