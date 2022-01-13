@@ -22,7 +22,7 @@ export interface StringTokenFormat {
 
 export type TagsString = typeof TAGS[number];
 
-export type StringToken =
+export type StringTokenTags =
   | {
       type: "text";
       text: string;
@@ -41,7 +41,7 @@ export type StringToken =
     };
 
 export function splitStringToTokens(str: string) {
-  const out: StringToken[] = [];
+  const out: StringTokenTags[] = [];
 
   let pos = 0;
   let text = "";
