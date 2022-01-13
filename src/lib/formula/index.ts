@@ -7,7 +7,7 @@ import { RandomFunc } from "../randomFunc";
 
 export { MAX_NUMBER } from "./consts";
 
-export function parse(str: string) {
+function parse(str: string) {
   const strNoLineBreaks = str.replace(/\r|\n/g, " ");
   const scanner = createScanner(strNoLineBreaks);
   const ast = parseExpression(scanner);
