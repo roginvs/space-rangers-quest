@@ -169,6 +169,24 @@ describe("stringParse", () => {
         ] as const;
       },
     ),
+
+    [
+      "A{2+4}B",
+      [
+        {
+          text: "A",
+          type: "text",
+        },
+        {
+          formula: "2+4",
+          type: "formula",
+        },
+        {
+          text: "B",
+          type: "text",
+        },
+      ],
+    ],
   ] as const) {
     it(`Parsing '${str}'`, () => {
       const observed = stringParse(str);

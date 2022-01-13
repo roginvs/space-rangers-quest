@@ -152,21 +152,19 @@ export function stringParse(str: string): StringToken[] {
       continue;
     }
 
-    /*
-    const paramStrNoValueMatch = str.slice(pos).match(/^\[d(\d+)\]/);
-    if (paramStrNoValueMatch) {
+    const formulaMatch = str.slice(pos).match(/^{[^}]*}/);
+    if (formulaMatch) {
       flushText();
-      pos += paramStrNoValueMatch[0].length;
+      pos += formulaMatch[0].length;
 
-      const paramNumber = parseInt(paramStrNoValueMatch[1]);
+      const formulaWithBrackets = formulaMatch[0];
       out.push({
-        type: "paramstr",
-        paramNumber,
+        type: "formula",
+        formula: formulaWithBrackets.slice(1, formulaWithBrackets.length - 1),
       });
 
       continue;
     }
-    */
 
     if (str[pos] === "[" && str[pos + 1] === "d") {
       let scanPos = pos + 2;
