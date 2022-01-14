@@ -75,6 +75,7 @@ export function CloudQuestsOverlay({
       onClose({
         ...quest,
         filename: questFromMyList,
+        isPublic: newQuestData.isPublic,
       });
     }
   }, [questFromMyList, myQuests]);
@@ -151,7 +152,7 @@ export function CloudQuestsOverlay({
     const [userquest, userId, questName] = linkToLoad.split("/").slice(-3);
     if (userquest === "userquest" && userId && questName) {
       setBusy(true);
-      loadCustomQuest(userId, questName)
+      loadCustomQuest(userId, decodeURIComponent(questName))
         .then((data) => {
           setBusy(false);
           if (!data) {
@@ -164,7 +165,7 @@ export function CloudQuestsOverlay({
           );
           onClose({
             ...quest,
-            filename: questName,
+            filename: decodeURIComponent(questName),
             isPublic: true,
           });
         })
@@ -233,6 +234,7 @@ export function CloudQuestsOverlay({
                 style={{
                   cursor: "pointer",
                 }}
+                className="mt-1 mb-1"
               >
                 {publicQuestUrl}
               </div>

@@ -806,7 +806,7 @@ orderByChild('createdAt').once("value")).val();
   async function saveCustomQuest(questName: string, data: FirebaseCustomQuest | null) {
     await setFirebaseThisUser(
       FIREBASE_CUSTOM_QUESTS,
-      `${questName}`,
+      `${encodeURIComponent(questName)}`,
       data
         ? {
             ...data,
@@ -819,7 +819,11 @@ orderByChild('createdAt').once("value")).val();
     targetUserId: string | undefined,
     questName: string,
   ): Promise<FirebaseCustomQuest | null> {
-    return await getFirebase(FIREBASE_CUSTOM_QUESTS, targetUserId, `${questName}`);
+    return await getFirebase(
+      FIREBASE_CUSTOM_QUESTS,
+      targetUserId,
+      `${encodeURIComponent(questName)}`,
+    );
   }
   async function getAllMyCustomQuests(): Promise<Record<string, FirebaseCustomQuest> | null> {
     firebaseGoOnline();
@@ -839,7 +843,17 @@ orderByChild('createdAt').once("value")).val();
             //.limitToLast(100)
             .once("value", (snapshot) => {
               if (snapshot) {
-                resolve(snapshot.val());
+                const data = snapshot.val();
+                if (!data || typeof data !== "object") {
+                  resolve(null);
+                } else {
+                  const transformedData: Record<string, FirebaseCustomQuest> = {};
+                  Object.entries(data).forEach(([key, value]) => {
+                    transformedData[decodeURIComponent(key)] = value as any;
+                  });
+                  console.info(data, transformedData);
+                  resolve(transformedData);
+                }
               } else {
                 resolve(null);
               }
