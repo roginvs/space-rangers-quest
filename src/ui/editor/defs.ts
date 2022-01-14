@@ -1,5 +1,5 @@
 export interface FirebaseCustomQuest {
-  quest_qmm_gz_hex: string;
+  quest_qmm_gz_base64: string;
   isPublic: boolean;
   updatedAt: number;
 }

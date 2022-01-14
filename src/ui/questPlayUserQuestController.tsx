@@ -33,7 +33,9 @@ export class QuestPlayUserQuestController extends React.Component<{
     if (!questInfo) {
       throw new Error("No such quest");
     }
-    const quest = parse(Buffer.from(Pako.ungzip(Buffer.from(questInfo.quest_qmm_gz_hex, "hex"))));
+    const quest = parse(
+      Buffer.from(Pako.ungzip(Buffer.from(questInfo.quest_qmm_gz_base64, "base64"))),
+    );
     this.gameSaveKey = `${this.props.userId}/${this.props.questName} ${quest.majorVersion}`;
     const latestLoad = await this.props.store.db.loadCustomGame(this.gameSaveKey);
     this.gameState =
