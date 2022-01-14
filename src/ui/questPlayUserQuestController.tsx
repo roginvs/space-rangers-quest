@@ -1,7 +1,7 @@
 import * as React from "react";
 import { observer } from "mobx-react";
 import { Store } from "./store";
-import { Quest, GameState } from "../lib/qmplayer/funcs";
+import { Quest, GameState, getUIState } from "../lib/qmplayer/funcs";
 import { initGame } from "../lib/qmplayer";
 import { observable, toJS } from "mobx";
 import { parse } from "../lib/qmreader";
@@ -37,9 +37,18 @@ export class QuestPlayUserQuestController extends React.Component<{
       Buffer.from(Pako.ungzip(Buffer.from(questInfo.quest_qmm_gz_base64, "base64"))),
     );
     this.gameSaveKey = `${this.props.userId}/${this.props.questName} ${quest.majorVersion}`;
+
     const latestLoad = await this.props.store.db.loadCustomGame(this.gameSaveKey);
+    if (latestLoad) {
+      try {
+        // Verify it is working
+        getUIState(quest, latestLoad, this.props.store.player);
+        this.gameState = latestLoad;
+      } catch {}
+    }
+
     this.gameState =
-      latestLoad ||
+      this.gameState ||
       initGame(quest, Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2));
 
     this.noMusic = !!(await this.props.store.db.getConfigLocal("noMusic"));
