@@ -77,6 +77,8 @@ export function QuestPlay({
 
   onExit,
   busySaving,
+
+  showTaskInfoOnQuestStart,
 }: {
   quest: Quest;
 
@@ -95,6 +97,8 @@ export function QuestPlay({
 
   onExit: () => void;
   busySaving?: boolean;
+
+  showTaskInfoOnQuestStart?: boolean;
 }) {
   const [width, setWidth] = React.useState(window.innerWidth);
   React.useEffect(() => {
@@ -184,7 +188,9 @@ export function QuestPlay({
             uiState.gameState === "fail" ||
             uiState.gameState === "win"
           ) {
-            const newGameState = initRandomGameAndDoFirstStep(quest, pqiImages);
+            const newGameState = showTaskInfoOnQuestStart
+              ? initRandomGame(quest)
+              : initRandomGameAndDoFirstStep(quest, pqiImages);
             setGameState(newGameState);
           } else {
             setReallyRestart(true);
