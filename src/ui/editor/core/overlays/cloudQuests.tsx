@@ -69,7 +69,9 @@ export function CloudQuestsOverlay({
     const newQuestData =
       myQuests !== null && typeof myQuests !== "string" ? myQuests[questFromMyList] : undefined;
     if (newQuestData) {
-      const quest = parse(Buffer.from(pako.ungzip(Buffer.from(newQuestData.quest_qmm_gz))));
+      const quest = parse(
+        Buffer.from(pako.ungzip(Buffer.from(newQuestData.quest_qmm_gz_hex, "hex"))),
+      );
       onClose({
         ...quest,
         filename: questFromMyList,
@@ -107,7 +109,7 @@ export function CloudQuestsOverlay({
     }
     setBusy(true);
     saveCustomQuest(questName, {
-      quest_qmm_gz: pako.gzip(writeQmm(quest)),
+      quest_qmm_gz_hex: Buffer.from(pako.gzip(writeQmm(quest))).toString("hex"),
       isPublic: !!isPublic,
       updatedAt: Date.now(),
     })
@@ -152,7 +154,7 @@ export function CloudQuestsOverlay({
             return;
           }
 
-          const quest = parse(Buffer.from(pako.ungzip(Buffer.from(data.quest_qmm_gz))));
+          const quest = parse(Buffer.from(pako.ungzip(Buffer.from(data.quest_qmm_gz_hex, "hex"))));
           onClose({
             ...quest,
             filename: questName,

@@ -33,7 +33,7 @@ export class QuestPlayUserQuestController extends React.Component<{
     if (!questInfo) {
       throw new Error("No such quest");
     }
-    const quest = parse(Buffer.from(Pako.ungzip(Buffer.from(questInfo.quest_qmm_gz))));
+    const quest = parse(Buffer.from(Pako.ungzip(Buffer.from(questInfo.quest_qmm_gz_hex, "hex"))));
     this.gameSaveKey = `${this.props.userId}/${this.props.questName} ${quest.majorVersion}`;
     const latestLoad = await this.props.store.db.loadCustomGame(this.gameSaveKey);
     this.gameState =
@@ -77,7 +77,9 @@ export class QuestPlayUserQuestController extends React.Component<{
         player={toJS(this.props.store.player)}
         setGameState={(newState) => {
           if (this.gameSaveKey) {
-            this.props.store.db.saveCustomGame(this.gameSaveKey, newState);
+            this.props.store.db.saveCustomGame(this.gameSaveKey, newState).catch((e) => {
+              console.error(e);
+            });
           }
           this.gameState = newState;
         }}
