@@ -7,7 +7,7 @@ import { Quest } from "../../../../../lib/qmplayer/funcs";
 import { parse } from "../../../../../lib/qmreader";
 import { Game } from "../../../../../packGameData";
 import { DATA_DIR } from "../../../../consts";
-import { QuestWithName } from "../../idb";
+import { QuestWithMetadata } from "../../idb";
 import { useOnDocumentKeyUp } from "../../hooks";
 import { Overlay } from "../../overlay";
 
@@ -25,7 +25,7 @@ export function LoadOverlay({
   onClose,
   questsToLoad,
 }: {
-  onClose: (newQuest: QuestWithName | undefined) => void;
+  onClose: (newQuest: QuestWithMetadata | undefined) => void;
   questsToLoad: Game[];
 }) {
   useOnDocumentKeyUp((e) => {

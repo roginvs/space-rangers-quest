@@ -14,11 +14,11 @@ export interface QuestName {
   readonly filename?: string;
 }
 
-export interface QuestWithName extends Quest, QuestName {
+export interface QuestWithMetadata extends Quest, QuestName {
   isPublic?: boolean;
 }
 
-async function writeQuest(db: IDBDatabase, quest: QuestWithName, index: number) {
+async function writeQuest(db: IDBDatabase, quest: QuestWithMetadata, index: number) {
   const transaction = db.transaction([INDEXEDDB_EDITOR_AUTOSAVE_STORE], "readwrite");
   const objectStore = transaction.objectStore(INDEXEDDB_EDITOR_AUTOSAVE_STORE);
 
@@ -67,7 +67,7 @@ async function readLatestIndex(db: IDBDatabase) {
     openCursorRequest.onerror = (e) => reject(new Error(openCursorRequest.error?.message));
   });
 }
-async function readQuest(db: IDBDatabase, index: number): Promise<QuestWithName | null> {
+async function readQuest(db: IDBDatabase, index: number): Promise<QuestWithMetadata | null> {
   return new Promise<Quest | null>((resolve, reject) => {
     const transaction = db.transaction([INDEXEDDB_EDITOR_AUTOSAVE_STORE], "readonly");
     const objectStore = transaction.objectStore(INDEXEDDB_EDITOR_AUTOSAVE_STORE);
@@ -113,9 +113,9 @@ async function initDatabase() {
 }
 
 interface IDBStoreState {
-  readonly quest: QuestWithName;
-  readonly undoQuest: QuestWithName | null;
-  readonly redoQuest: QuestWithName | null;
+  readonly quest: QuestWithMetadata;
+  readonly undoQuest: QuestWithMetadata | null;
+  readonly redoQuest: QuestWithMetadata | null;
   readonly currentIndex: number;
 }
 
@@ -157,7 +157,7 @@ export function useIdb() {
   }, [setFallbackEmptyState]);
 
   const saveQuest = React.useCallback(
-    (newQuest: QuestWithName) => {
+    (newQuest: QuestWithMetadata) => {
       setState({
         currentIndex: state ? state.currentIndex + 1 : 1,
         undoQuest: state ? state.quest : null,

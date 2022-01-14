@@ -38,7 +38,7 @@ import { useOnDocumentKeyUp, useWindowInnerSize } from "./hooks";
 import { QuestSettings } from "./overlays/questSettings/questSettings";
 import { initRandomGame, QuestPlay } from "../../questPlay";
 import { getLang } from "../../lang";
-import { QuestWithName, useIdb } from "./idb";
+import { QuestWithMetadata, useIdb } from "./idb";
 import { emptyQmm } from "./emptyQmm";
 import { Game } from "../../../packGameData";
 import { LoadOverlay } from "./overlays/load/loadOverlay";
@@ -152,7 +152,7 @@ export function EditorCore({
   );
 
   const onChange = React.useCallback(
-    (newQuest: QuestWithName) => {
+    (newQuest: QuestWithMetadata) => {
       setHoverZones([]);
       setHoverZone(undefined);
       setIsDragging(undefined);

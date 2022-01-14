@@ -3,7 +3,7 @@ import * as React from "react";
 import { writeQmm } from "../../../../lib/qmwriter";
 import { CloudQuestsProps, FirebaseCustomQuest } from "../../defs";
 import { useOnDocumentKeyUp } from "../hooks";
-import { QuestWithName } from "../idb";
+import { QuestWithMetadata } from "../idb";
 import { Overlay } from "../overlay";
 import * as pako from "pako";
 import { toast } from "react-toastify";
@@ -31,8 +31,8 @@ export function CloudQuestsOverlay({
   getAllMyCustomQuests,
   getMyUserId,
 }: {
-  quest: QuestWithName;
-  onClose: (newQuest: QuestWithName | undefined) => void;
+  quest: QuestWithMetadata;
+  onClose: (newQuest: QuestWithMetadata | undefined) => void;
 } & CloudQuestsProps) {
   useOnDocumentKeyUp((e) => {
     if (e.key === "Escape") {
