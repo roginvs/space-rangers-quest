@@ -263,7 +263,9 @@ export function QuestPlay({
                 <button
                   className="btn btn-warning mt-1 mr-1"
                   onClick={() => {
-                    const newGameState = initRandomGameAndDoFirstStep(quest, pqiImages);
+                    const newGameState = showTaskInfoOnQuestStart
+                      ? initRandomGame(quest)
+                      : initRandomGameAndDoFirstStep(quest, pqiImages);
                     setGameState(newGameState);
                     setReallyRestart(false);
                   }}
