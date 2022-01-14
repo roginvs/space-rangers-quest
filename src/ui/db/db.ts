@@ -512,7 +512,7 @@ orderByChild('createdAt').once("value")).val();
         }
       }
       console.info(`Updating public highscores done`);
-    } catch (e) {
+    } catch (e: any) {
       console.warn(`public wining state sync error`, e, e.stack);
     }
   }
@@ -614,7 +614,7 @@ orderByChild('createdAt').once("value")).val();
             }
           }
         }
-      } catch (e) {
+      } catch (e: any) {
         console.warn(`wining state sync error`, e, e.stack);
       }
       console.info(`Sync old syncWithFirebase passed games done`);
@@ -668,7 +668,7 @@ orderByChild('createdAt').once("value")).val();
           - Write a method for writing passed game and add it into "gamePassed"
 
         */
-      } catch (e) {
+      } catch (e: any) {
         console.warn(`wining state sync error`, e, e.stack);
       }
       console.info(`Sync flat syncWithFirebase passed games done`);
