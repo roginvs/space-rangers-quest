@@ -46,19 +46,20 @@ Here is firebase rules:
         ".write": "$uid === auth.uid",
         ".read": true,
       }
-    },
-
+    }, 
+      
     "wonProofs": {
       "$proofId": {
         ".write": "newData.hasChild('userId') && newData.child('userId').val() === auth.uid && newData.hasChild('createdAt') && newData.child('createdAt').val() === now && ! newData.hasChild('validated')",
         ".validate": "data.val() == null",
         ".read": true,
       },
-      ".indexOn": ["userId", "gameName", "createdAt"],
+      ".indexOn": ["userId", "gameName", "aleaSeed"],
       ".read": true,
     }
   }
 }
+
 
 */
 const INDEXEDDB_NAME = "spaceranges2";
