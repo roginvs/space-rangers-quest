@@ -128,10 +128,15 @@ export function CloudQuestsOverlay({
       });
   }, [busy, saveCustomQuest, questName, isPublic, quest]);
 
-  const publicQuestUrl =
-    isPublic && myUserId && questName
-      ? `${location.origin}/#/userquest/${myUserId}/${encodeURIComponent(questName)}`
-      : undefined;
+  const makeQuestPublicUrl = React.useCallback(
+    (targetQuestName: string) =>
+      myUserId
+        ? `${location.origin}/#/userquest/${myUserId}/${encodeURIComponent(targetQuestName)}`
+        : null,
+    [myUserId],
+  );
+
+  const publicQuestUrl = isPublic && questName ? makeQuestPublicUrl(questName) : undefined;
 
   const [activeTab, setActiveTab] = React.useState<"main" | "list">("main");
   React.useEffect(() => {
@@ -284,14 +289,36 @@ export function CloudQuestsOverlay({
                 </select>
 
                 {questFromMyList && (
-                  <div className="d-flex justify-content-center">
-                    <button className="btn btn-primary mr-2" disabled={busy} onClick={loadMyQuest}>
-                      Загрузить {questFromMyList}
-                    </button>
-                    <button className="btn btn-danger ml-2" disabled={busy} onClick={removeMyQuest}>
-                      Удалить {questFromMyList}
-                    </button>
-                  </div>
+                  <>
+                    <div
+                      className="mt-1 mb-3 text-center"
+                      onClick={() => {
+                        copyToClipboard(makeQuestPublicUrl(questFromMyList) || "");
+                        toast("Скопировано в буфер!");
+                      }}
+                      style={{
+                        cursor: "pointer",
+                      }}
+                    >
+                      {makeQuestPublicUrl(questFromMyList)}
+                    </div>
+                    <div className="d-flex justify-content-center">
+                      <button
+                        className="btn btn-primary mr-2"
+                        disabled={busy}
+                        onClick={loadMyQuest}
+                      >
+                        Загрузить {questFromMyList}
+                      </button>
+                      <button
+                        className="btn btn-danger ml-2"
+                        disabled={busy}
+                        onClick={removeMyQuest}
+                      >
+                        Удалить {questFromMyList}
+                      </button>
+                    </div>
+                  </>
                 )}
               </div>
             )}
