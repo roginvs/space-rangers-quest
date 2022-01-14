@@ -471,7 +471,7 @@ export function QuestParamsSettings({ quest, setQuest }: QuestSettingsTabProps) 
                     className={classNames({ active: activeTab === "strings" })}
                     onClick={() => setActiveTab("strings")}
                   >
-                    Формат вывода при игре (по диапазонам)
+                    Формат вывода при игре
                   </NavLink>
                 </NavItem>
               </Nav>
