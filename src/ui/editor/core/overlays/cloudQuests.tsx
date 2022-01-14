@@ -27,7 +27,7 @@ export function CloudQuestsOverlay({
   quest,
   onClose,
   saveCustomQuest,
-  // loadCustomQuest,
+  loadCustomQuest,
   getAllMyCustomQuests,
   getMyUserId,
 }: {
@@ -138,6 +138,36 @@ export function CloudQuestsOverlay({
     }
   }, [loadMyQuests, activeTab]);
 
+  const [linkToLoad, setLinkToLoad] = React.useState("");
+
+  const loadFromLink = React.useCallback(() => {
+    const [userquest, userId, questName] = linkToLoad.split("/").slice(-3);
+    if (userquest === "userquest" && userId && questName) {
+      setBusy(true);
+      loadCustomQuest(userId, questName)
+        .then((data) => {
+          setBusy(false);
+          if (!data) {
+            toast(`Не найдено`);
+            return;
+          }
+
+          const quest = parse(Buffer.from(pako.ungzip(Buffer.from(data.quest_qmm_gz))));
+          onClose({
+            ...quest,
+            filename: questName,
+            isPublic: true,
+          });
+        })
+        .catch((e) => {
+          setBusy(false);
+          toast(`Ошибка: ${e.message}`);
+        });
+    } else {
+      toast(`Неправильная ссылка`);
+    }
+  }, [linkToLoad]);
+
   return (
     <Overlay
       wide={true}
@@ -199,8 +229,29 @@ export function CloudQuestsOverlay({
               </div>
             ) : null}
 
-            <button className="btn btn-primary w-100 mt-2" disabled={busy} onClick={saveToCloud}>
+            <button
+              className="btn btn-primary w-100 mt-2 mb-4"
+              disabled={busy}
+              onClick={saveToCloud}
+            >
               Сохранить
+            </button>
+
+            <label>Загрузить по ссылке:</label>
+            <input
+              className="form-control w-100"
+              type="text"
+              value={linkToLoad}
+              onChange={(e) => setLinkToLoad(e.target.value)}
+              title="Ссылка на квест в облаке"
+            />
+
+            <button
+              className="btn btn-secondary w-100 mt-2 mb-4"
+              disabled={busy}
+              onClick={loadFromLink}
+            >
+              Загрузить
             </button>
           </div>
         </TabPane>
