@@ -269,7 +269,7 @@ export function CloudQuestsOverlay({
 
         <TabPane tabId="list" className="pt-2">
           <div className="mb-3">
-            <label>Загрузить из своих:</label>
+            <label>Открыть из своих:</label>
             {myQuests === null ? (
               <div>Загрузка...</div>
             ) : typeof myQuests === "string" ? (
@@ -312,7 +312,7 @@ export function CloudQuestsOverlay({
                         disabled={busy}
                         onClick={loadMyQuest}
                       >
-                        Загрузить {questFromMyList}
+                        Открыть {questFromMyList}
                       </button>
                       <button
                         className="btn btn-danger ml-2"
