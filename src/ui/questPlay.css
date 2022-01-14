@@ -1,6 +1,6 @@
-p.game { 
-    text-indent: 1rem;
-    margin-bottom: 0.2rem;
+p.game {
+  text-indent: 1rem;
+  margin-bottom: 0.2rem;
 }
 
 a.game.disabled {
@@ -10,14 +10,15 @@ a.game.disabled {
   pointer-events: none;
 }
 
-
 body.game {
   background-color: #eceeef;
   /* padding-top: 2rem; */
   overflow-y: scroll;
 }
 
-
+.game-text {
+  /* white-space: pre-wrap; */
+}
 .game-fix {
   font-family: monospace;
   white-space: pre;

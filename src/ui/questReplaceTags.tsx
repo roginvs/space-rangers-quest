@@ -1,75 +1,48 @@
+import classNames from "classnames";
 import * as React from "react";
+import { formatTokens } from "./questReplaceTags.format";
+import { splitStringToTokens } from "./questReplaceTags.split";
 
 /**
- *
- * Replaces:
- *   - <clr> bla bla <clrEnd>
- *   - <fix> bla bla </fix>
- *   - <format=left,30>  bla bla </format>
- *
- *   - TODO <color=R,G,B> bla bla </color>
+ * Renders text, understand tags:
+ *   - <clr> highlight me <clrEnd>
+ *   - <clr> highlight me too </clr>
+ *   - <fix> use monospace font </fix>
+ *   - <format=left,30>  add spaced in the left (or right or center) </format>
+ *   - <color=R,G,B> Use color </color>
  */
 export function QuestReplaceTags(props: { str: string }) {
-  // Я не знаю как это сделать React-way
+  const tags = formatTokens(splitStringToTokens(props.str));
 
-  /*  x.match(/\<format=(left|right|center),(\d+)\>(.*?)\<\/format\>/)
-[ '<format=left,30>текст</format>',
-'left',
-'30',
-'текст',
-*/
-  let cloneStr = props.str.slice();
+  const nbsp = "\u00A0";
 
-  while (true) {
-    const m = cloneStr.match(/\<format=(left|right|center),(\d+)\>(.*?)\<\/format\>/);
-    if (!m) {
-      break;
-    }
-    const [textToReplace, whereToPad, howManyPadStr, textInTags] = m;
-    const howManyPad = parseInt(howManyPadStr);
-
-    if (
-      !(howManyPad && (whereToPad === "left" || whereToPad === "right" || whereToPad === "center"))
-    ) {
-      cloneStr = cloneStr.replace(textToReplace, textInTags);
-      continue;
-    }
-    let newText = textInTags.slice();
-    while (true) {
-      if (newText.replace(/\<.*?\>/g, "").length >= howManyPad) {
-        break;
-      }
-      if (whereToPad === "left") {
-        newText = " " + newText;
-      } else if (whereToPad === "right") {
-        newText = newText + " ";
-      } else {
-        newText = newText.length % 2 ? " " + newText : newText + " ";
-      }
-    }
-    // console.info(`Replacing part '${textToReplace}' to '${newText}'`)
-    cloneStr = cloneStr.replace(textToReplace, newText);
-  }
-
-  const s =
-    "&nbsp" +
-    cloneStr
-      .replace(/\r\n/g, "<br/>&nbsp")
-      .replace(/\n/g, "<br/>&nbsp")
-      .replace(/<clr>/g, '<span class="text-success">')
-      .replace(/<clrEnd>/g, "</span>")
-      .replace(/<fix>/g, '<span class="game-fix">')
-      .replace(/<\/fix>/g, "</span>");
-
-  // console.info('Replace', str, s)
-  //return {
-  //    __html: s
-  //};
   return (
-    <span
-      dangerouslySetInnerHTML={{
-        __html: s,
-      }}
-    />
+    <>
+      <span className="game-text">{nbsp}</span>
+      {tags.map((tag, index) => (
+        <span
+          key={index}
+          className={classNames("game-text", {
+            "game-fix": tag.isFix,
+            "text-success": tag.type === "text" ? tag.isClr : undefined,
+          })}
+          style={{
+            color:
+              tag.type === "text" && tag.color
+                ? `rgb(${tag.color.r}, ${tag.color.g}, ${tag.color.b})`
+                : undefined,
+          }}
+        >
+          {tag.type === "text" ? (
+            tag.text
+          ) : (
+            <>
+              <br />
+              {nbsp}
+            </>
+          )}
+        </span>
+      ))}
+    </>
   );
 }
