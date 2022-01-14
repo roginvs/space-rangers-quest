@@ -9,8 +9,8 @@ import * as pako from "pako";
 import { toast } from "react-toastify";
 import { parse } from "../../../../lib/qmreader";
 
-function copyToClipboard(text) {
-  var dummy = document.createElement("textarea");
+function copyToClipboard(text: string) {
+  const dummy = document.createElement("textarea");
   // to avoid breaking orgain page when copying more words
   // cant copy when adding below this code
   // dummy.style.display = 'none'
@@ -44,17 +44,15 @@ export function CloudQuestsOverlay({
   const [myQuests, setMyQuests] = React.useState<
     Record<string, FirebaseCustomQuest> | null | string
   >(null);
-  const loadMyQuests = React.useCallback(
-    () =>
-      getAllMyCustomQuests()
-        .then((quests) => {
-          setMyQuests(quests || {});
-        })
-        .catch((e) => {
-          setMyQuests(`Error: ${e.message}`);
-        }),
-    [],
-  );
+  const loadMyQuests = React.useCallback(() => {
+    getAllMyCustomQuests()
+      .then((quests) => {
+        setMyQuests(quests || {});
+      })
+      .catch((e) => {
+        setMyQuests(`Error: ${e.message}`);
+      });
+  }, []);
   React.useEffect(() => {
     loadMyQuests();
   }, [loadMyQuests]);
