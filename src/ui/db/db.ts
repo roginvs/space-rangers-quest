@@ -52,6 +52,7 @@ Here is firebase rules:
 
     "customQuests": {
       "$user_id": {
+        ".read": "$user_id === auth.uid",
         "$quest_name": {
           ".write": "$user_id === auth.uid",
           ".read": "$user_id === auth.uid || data.child('isPublic').val() == true",
