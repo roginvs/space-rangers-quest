@@ -8,6 +8,7 @@ import { Overlay } from "../overlay";
 import * as pako from "pako";
 import { toast } from "react-toastify";
 import { parse } from "../../../../lib/qmreader";
+import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 
 function copyToClipboard(text: string) {
   const dummy = document.createElement("textarea");
@@ -53,9 +54,6 @@ export function CloudQuestsOverlay({
         setMyQuests(`Error: ${e.message}`);
       });
   }, []);
-  React.useEffect(() => {
-    loadMyQuests();
-  }, [loadMyQuests]);
 
   const [questFromMyList, setQuestFromMyList] = React.useState("");
   React.useEffect(() => {
@@ -133,6 +131,13 @@ export function CloudQuestsOverlay({
       ? `${location.origin}/#/userquest/${myUserId}/${encodeURIComponent(questName)}`
       : undefined;
 
+  const [activeTab, setActiveTab] = React.useState<"main" | "list">("main");
+  React.useEffect(() => {
+    if (activeTab === "list") {
+      loadMyQuests();
+    }
+  }, [loadMyQuests, activeTab]);
+
   return (
     <Overlay
       wide={true}
@@ -140,8 +145,67 @@ export function CloudQuestsOverlay({
       headerText={`Загрузка и выгрузка в облако`}
       onClose={() => onClose(undefined)}
     >
-      <div className="row">
-        <div className="col-6">
+      <Nav tabs>
+        <NavItem>
+          <NavLink
+            className={classNames({ active: activeTab === "main" })}
+            onClick={() => setActiveTab("main")}
+          >
+            По ссылке
+          </NavLink>
+        </NavItem>
+
+        <NavItem>
+          <NavLink
+            className={classNames({ active: activeTab === "list" })}
+            onClick={() => setActiveTab("list")}
+          >
+            Список моих квестов
+          </NavLink>
+        </NavItem>
+      </Nav>
+      <TabContent activeTab={activeTab}>
+        <TabPane tabId="main" className="pt-2">
+          <div>
+            <label>Сохранить в облако:</label>
+            <input
+              className="form-control w-100"
+              type="text"
+              value={questName}
+              onChange={(e) => setQuestName(e.target.value)}
+            />
+
+            <label className="form-check-label ml-4">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                checked={!!isPublic}
+                onChange={(e) => setIsPublic(e.target.checked)}
+              />
+              Доступен для всех
+            </label>
+
+            {publicQuestUrl ? (
+              <div
+                onClick={() => {
+                  copyToClipboard(publicQuestUrl);
+                  toast("Скопировано в буфер!");
+                }}
+                style={{
+                  cursor: "pointer",
+                }}
+              >
+                {publicQuestUrl}
+              </div>
+            ) : null}
+
+            <button className="btn btn-primary w-100 mt-2" disabled={busy} onClick={saveToCloud}>
+              Сохранить
+            </button>
+          </div>
+        </TabPane>
+
+        <TabPane tabId="list" className="pt-2">
           <div className="mb-3">
             <label>Загрузить из своих:</label>
             {myQuests === null ? (
@@ -167,19 +231,11 @@ export function CloudQuestsOverlay({
                 </select>
 
                 {questFromMyList && (
-                  <div>
-                    <button
-                      className="btn btn-secondary w-100"
-                      disabled={busy}
-                      onClick={loadMyQuest}
-                    >
+                  <div className="d-flex justify-content-center">
+                    <button className="btn btn-primary mr-2" disabled={busy} onClick={loadMyQuest}>
                       Загрузить {questFromMyList}
                     </button>
-                    <button
-                      className="btn btn-danger w-100"
-                      disabled={busy}
-                      onClick={removeMyQuest}
-                    >
+                    <button className="btn btn-danger ml-2" disabled={busy} onClick={removeMyQuest}>
                       Удалить {questFromMyList}
                     </button>
                   </div>
@@ -187,46 +243,8 @@ export function CloudQuestsOverlay({
               </div>
             )}
           </div>
-        </div>
-
-        <div>
-          <label>Сохранить в облако:</label>
-          <input
-            className="form-control w-100"
-            type="text"
-            value={questName}
-            onChange={(e) => setQuestName(e.target.value)}
-          />
-
-          <label className="form-check-label ml-4">
-            <input
-              className="form-check-input"
-              type="checkbox"
-              checked={!!isPublic}
-              onChange={(e) => setIsPublic(e.target.checked)}
-            />
-            Доступен для всех
-          </label>
-
-          {publicQuestUrl ? (
-            <div
-              onClick={() => {
-                copyToClipboard(publicQuestUrl);
-                toast("Скопировано в буфер!");
-              }}
-              style={{
-                cursor: "pointer",
-              }}
-            >
-              {publicQuestUrl}
-            </div>
-          ) : null}
-
-          <button className="btn btn-primary w-100" disabled={busy} onClick={saveToCloud}>
-            Сохранить
-          </button>
-        </div>
-      </div>
+        </TabPane>
+      </TabContent>
     </Overlay>
   );
 }
