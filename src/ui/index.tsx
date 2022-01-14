@@ -269,6 +269,11 @@ class MainLoader extends React.Component<{}> {
           onExit={() => {
             location.href = `#/`;
           }}
+          cloudQuestProps={{
+            getAllMyCustomQuests: store.db.getAllMyCustomQuests,
+            loadCustomQuest: store.db.loadCustomQuest,
+            saveCustomQuest: store.db.saveCustomQuest,
+          }}
         />
       );
     } else if (tab0 === "quests") {

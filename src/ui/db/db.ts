@@ -13,9 +13,9 @@ import {
   FirebasePublic,
   ConfigLocalOnly,
   FIREBASE_CUSTOM_QUESTS,
-  FirebaseCustomQuest,
 } from "./defs";
 import { WonProofTableRow } from "./defs";
+import { FirebaseCustomQuest } from "../editor/defs";
 
 /*
 Here is firebase rules:
@@ -801,8 +801,11 @@ orderByChild('createdAt').once("value")).val();
   async function saveCustomQuest(questName: string, data: FirebaseCustomQuest) {
     await setFirebaseThisUser(FIREBASE_CUSTOM_QUESTS, `${questName}`, data);
   }
-  async function loadCustomQuest(targetUserId: string | undefined, questName: string) {
-    await getFirebase(FIREBASE_CUSTOM_QUESTS, targetUserId, `${questName}`);
+  async function loadCustomQuest(
+    targetUserId: string | undefined,
+    questName: string,
+  ): Promise<FirebaseCustomQuest | null> {
+    return await getFirebase(FIREBASE_CUSTOM_QUESTS, targetUserId, `${questName}`);
   }
   async function getAllMyCustomQuests(): Promise<Record<string, FirebaseCustomQuest> | null> {
     firebaseGoOnline();

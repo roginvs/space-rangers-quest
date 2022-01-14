@@ -40,9 +40,3 @@ export interface WonProofTableRow {
   gameName: string;
   proof: GameLog;
 }
-
-export interface FirebaseCustomQuest {
-  quest_qmm_gz: Uint8Array;
-  isPublic: boolean;
-  updatedAt: number;
-}
