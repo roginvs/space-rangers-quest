@@ -13,7 +13,7 @@ export type StringTokenCalculated = {
 };
 
 // tslint:disable-next-line:no-useless-cast
-const TAGS = ["clr", "clrEnd", "fix", "/fix", "/format", "/color"] as const;
+const TAGS = ["clr", "clrEnd", "/clr", "fix", "/fix", "/format", "/color"] as const;
 
 export type PadKind = "left" | "right" | "center";
 export interface StringTokenFormat {

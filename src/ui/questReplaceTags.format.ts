@@ -108,7 +108,7 @@ export function formatTokens(parsed: StringTokenTags[]): StringTokens {
         format = undefined;
       } else if (tag === "clr") {
         clrCount++;
-      } else if (tag === "clrEnd") {
+      } else if (tag === "clrEnd" || tag === "/clr") {
         clrCount--;
       } else if (tag === "fix") {
         fixCount++;

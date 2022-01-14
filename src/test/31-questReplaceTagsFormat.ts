@@ -16,6 +16,14 @@ describe("Checking substitute", function () {
       ],
     ],
     [
+      "У вас <clr>40</clr> кредитов",
+      [
+        { type: "text", text: "У вас " },
+        { type: "text", text: "40", isClr: true },
+        { type: "text", text: " кредитов" },
+      ],
+    ],
+    [
       "Me <fix>1 2 3</fix> you",
       [
         { type: "text", text: "Me " },
