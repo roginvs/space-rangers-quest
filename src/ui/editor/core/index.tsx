@@ -574,7 +574,11 @@ export function EditorCore({
         <button
           className={classNames("mr-3", "btn", "btn-light")}
           onClick={() => {
-            setOverlayMode({ kind: "cloudquest" });
+            if (cloudQuestProps.getMyUserId()) {
+              setOverlayMode({ kind: "cloudquest" });
+            } else {
+              toast("Чтобы использовать облако нужно зайти в Firebase!");
+            }
           }}
         >
           <i className="fa fa-cloud fa-fw" title="Загрузка и выгрузка в облако" />
