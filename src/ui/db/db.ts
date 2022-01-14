@@ -319,10 +319,13 @@ export async function getDb(app: firebase.app.App) {
       if (targetUserId) {
         const fullRefPath = `${store}/${targetUserId}/${userPath}`;
         console.info(`Firebase SET fullRefPath=${fullRefPath} value=${JSON.stringify(value)}`);
-        await Promise.race([
+        const setResult = await Promise.race([
           app.database().ref(fullRefPath).set(value),
-          new Promise<void>((r) => setTimeout(r, 10000)),
+          new Promise<void>((r) => setTimeout(r, 60000)),
         ]);
+        if (!setResult) {
+          console.info(`Firebase SET fullRefPath=${fullRefPath} timeout`);
+        }
       }
     } catch (e) {
       console.error(`Error with firebase: `, e);
@@ -360,7 +363,7 @@ export async function getDb(app: firebase.app.App) {
                 })
             : resolve(null);
         }),
-        new Promise<null>((r) => setTimeout(() => r(null), 10000)),
+        new Promise<null>((r) => setTimeout(() => r(null), 60000)),
       ]);
 
       return firebaseResult;
