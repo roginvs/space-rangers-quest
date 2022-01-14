@@ -244,7 +244,7 @@ export function CloudQuestsOverlay({
               Сохранить
             </button>
 
-            <label>Загрузить по ссылке:</label>
+            <label>Открыть квест из ссылки:</label>
             <input
               className="form-control w-100"
               type="text"
@@ -258,7 +258,7 @@ export function CloudQuestsOverlay({
               disabled={busy}
               onClick={loadFromLink}
             >
-              Загрузить
+              Открыть
             </button>
           </div>
         </TabPane>
