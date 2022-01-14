@@ -851,6 +851,10 @@ orderByChild('createdAt').once("value")).val();
     }
   }
 
+  function getMyUserId() {
+    return firebaseUser ? firebaseUser.uid : null;
+  }
+
   console.info(`Returning db instance`);
   return {
     setConfigBoth,
@@ -875,6 +879,7 @@ orderByChild('createdAt').once("value")).val();
     getAllMyCustomQuests,
     saveCustomQuest,
     loadCustomQuest,
+    getMyUserId,
   };
 }
 

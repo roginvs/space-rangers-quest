@@ -9,12 +9,26 @@ import * as pako from "pako";
 import { toast } from "react-toastify";
 import { parse } from "../../../../lib/qmreader";
 
+function copyToClipboard(text) {
+  var dummy = document.createElement("textarea");
+  // to avoid breaking orgain page when copying more words
+  // cant copy when adding below this code
+  // dummy.style.display = 'none'
+  document.body.appendChild(dummy);
+  //Be careful if you use texarea. setAttribute('value', value), which works with "input" does not work with "textarea". – Eduard
+  dummy.value = text;
+  dummy.select();
+  document.execCommand("copy");
+  document.body.removeChild(dummy);
+}
+
 export function CloudQuestsOverlay({
   quest,
   onClose,
   saveCustomQuest,
-  loadCustomQuest,
+  // loadCustomQuest,
   getAllMyCustomQuests,
+  getMyUserId,
 }: {
   quest: QuestWithName;
   onClose: (newQuest: QuestWithName | undefined) => void;
@@ -24,6 +38,8 @@ export function CloudQuestsOverlay({
       onClose(undefined);
     }
   });
+
+  const myUserId = getMyUserId();
 
   const [myQuests, setMyQuests] = React.useState<
     Record<string, FirebaseCustomQuest> | null | string
@@ -114,6 +130,11 @@ export function CloudQuestsOverlay({
       });
   }, [busy, saveCustomQuest, questName, isPublic, quest]);
 
+  const publicQuestUrl =
+    isPublic && myUserId && questName
+      ? `${location.origin}/#/userquest/${myUserId}/${encodeURIComponent(questName)}`
+      : undefined;
+
   return (
     <Overlay
       wide={true}
@@ -188,6 +209,20 @@ export function CloudQuestsOverlay({
             />
             Доступен для всех
           </label>
+
+          {publicQuestUrl ? (
+            <div
+              onClick={() => {
+                copyToClipboard(publicQuestUrl);
+                toast("Скопировано в буфер!");
+              }}
+              style={{
+                cursor: "pointer",
+              }}
+            >
+              {publicQuestUrl}
+            </div>
+          ) : null}
 
           <button className="btn btn-primary w-100" disabled={busy} onClick={saveToCloud}>
             Сохранить

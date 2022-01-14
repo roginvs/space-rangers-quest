@@ -273,6 +273,7 @@ class MainLoader extends React.Component<{}> {
             getAllMyCustomQuests: store.db.getAllMyCustomQuests,
             loadCustomQuest: store.db.loadCustomQuest,
             saveCustomQuest: store.db.saveCustomQuest,
+            getMyUserId: store.db.getMyUserId,
           }}
         />
       );

@@ -11,4 +11,5 @@ export interface CloudQuestsProps {
     questName: string,
   ): Promise<FirebaseCustomQuest | null>;
   getAllMyCustomQuests(): Promise<Record<string, FirebaseCustomQuest> | null>;
+  getMyUserId(): string | null;
 }
