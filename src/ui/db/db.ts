@@ -78,6 +78,7 @@ const INDEXEDDB_NAME = "spaceranges2";
 const INDEXEDDB_CONFIG_STORE_NAME = "config";
 const INDEXEDDB_SAVED_STORE_NAME = "savedgames";
 const INDEXEDDB_WON_STORE_NAME = "wongames";
+const INDEXEDDB_CUSTOM_SAVED_STORE_NAME = "customsavedgames";
 
 type FirebaseStoreType =
   | typeof FIREBASE_USERS_PRIVATE
@@ -93,7 +94,7 @@ export async function getDb(app: firebase.app.App) {
 
   const db = window.indexedDB
     ? await new Promise<IDBDatabase>((resolve, reject) => {
-        const idb = window.indexedDB.open(INDEXEDDB_NAME, 7);
+        const idb = window.indexedDB.open(INDEXEDDB_NAME, 8);
         console.info("idb opened");
         idb.onerror = (e) =>
           reject(
@@ -111,6 +112,7 @@ export async function getDb(app: firebase.app.App) {
             INDEXEDDB_CONFIG_STORE_NAME,
             INDEXEDDB_SAVED_STORE_NAME,
             INDEXEDDB_WON_STORE_NAME,
+            INDEXEDDB_CUSTOM_SAVED_STORE_NAME,
           ]) {
             if (!db.objectStoreNames.contains(storeName)) {
               console.info(`Creating ${storeName} store`);
@@ -855,6 +857,14 @@ orderByChild('createdAt').once("value")).val();
     return firebaseUser ? firebaseUser.uid : null;
   }
 
+  async function saveCustomGame(gameKey: string, saving: GameState | null) {
+    await setLocal(INDEXEDDB_CUSTOM_SAVED_STORE_NAME, gameKey, saving);
+  }
+  async function loadCustomGame(gameKey: string) {
+    const value = await getLocal(INDEXEDDB_CUSTOM_SAVED_STORE_NAME, gameKey);
+    return value as GameState | null;
+  }
+
   console.info(`Returning db instance`);
   return {
     setConfigBoth,
@@ -880,6 +890,9 @@ orderByChild('createdAt').once("value")).val();
     saveCustomQuest,
     loadCustomQuest,
     getMyUserId,
+
+    saveCustomGame,
+    loadCustomGame,
   };
 }
 
