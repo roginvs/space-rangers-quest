@@ -5,6 +5,8 @@ export const FIREBASE_USERS_PRIVATE = `usersPrivate`;
 export const FIREBASE_USERS_PUBLIC = `usersPublic`;
 export const FIREBASE_PUBLIC_WON_PROOF = "wonProofs";
 
+export const FIREBASE_CUSTOM_QUESTS = "customQuests";
+
 export interface ConfigLocalOnly {
   lastLocation: string;
 }
@@ -37,4 +39,10 @@ export interface WonProofTableRow {
   createdAt: number;
   gameName: string;
   proof: GameLog;
+}
+
+export interface FirebaseCustomQuest {
+  quest_qmm_gz: Uint8Array;
+  isPublic: boolean;
+  updatedAt: number;
 }

@@ -12,6 +12,8 @@ import {
   FIREBASE_USERS_PUBLIC,
   FirebasePublic,
   ConfigLocalOnly,
+  FIREBASE_CUSTOM_QUESTS,
+  FirebaseCustomQuest,
 } from "./defs";
 import { WonProofTableRow } from "./defs";
 
@@ -50,7 +52,7 @@ Here is firebase rules:
 
     "customQuests": {
       "$user_id": {
-        "$quest_id": {
+        "$quest_name": {
           ".write": "$user_id === auth.uid",
           ".read": "$user_id === auth.uid || data.child('isPublic').val() == true",
         }
@@ -76,6 +78,11 @@ const INDEXEDDB_CONFIG_STORE_NAME = "config";
 const INDEXEDDB_SAVED_STORE_NAME = "savedgames";
 const INDEXEDDB_WON_STORE_NAME = "wongames";
 
+type FirebaseStoreType =
+  | typeof FIREBASE_USERS_PRIVATE
+  | typeof FIREBASE_USERS_PUBLIC
+  | typeof FIREBASE_PUBLIC_WON_PROOF
+  | typeof FIREBASE_CUSTOM_QUESTS;
 // export interface GameLogDatabase extends GameLog {
 //   created: number;
 // }
@@ -297,17 +304,17 @@ export async function getDb(app: firebase.app.App) {
   /* No actions from this point, only exported functions */
 
   async function setFirebase(
-    store:
-      | typeof FIREBASE_USERS_PRIVATE
-      | typeof FIREBASE_USERS_PUBLIC
-      | typeof FIREBASE_PUBLIC_WON_PROOF,
+    store: FirebaseStoreType,
+    userId: string | undefined,
     userPath: string,
     value: any,
   ) {
     try {
       firebaseGoOnline();
-      if (firebaseUser) {
-        const fullRefPath = `${store}/${firebaseUser.uid}/${userPath}`;
+
+      const targetUserId = userId || (firebaseUser ? firebaseUser.uid : null);
+      if (targetUserId) {
+        const fullRefPath = `${store}/${targetUserId}/${userPath}`;
         console.info(`Firebase SET fullRefPath=${fullRefPath} value=${JSON.stringify(value)}`);
         await Promise.race([
           app.database().ref(fullRefPath).set(value),
@@ -320,21 +327,25 @@ export async function getDb(app: firebase.app.App) {
       firebaseGoOffline();
     }
   }
+
+  async function setFirebaseThisUser(store: FirebaseStoreType, userPath: string, value: any) {
+    return setFirebase(store, undefined, userPath, value);
+  }
+
   async function getFirebase(
-    store:
-      | typeof FIREBASE_USERS_PRIVATE
-      | typeof FIREBASE_USERS_PUBLIC
-      | typeof FIREBASE_PUBLIC_WON_PROOF,
+    store: FirebaseStoreType,
+    userId: string | undefined,
     userPath: string,
   ) {
     try {
       firebaseGoOnline();
       const firebaseResult = await Promise.race([
-        new Promise<any | null>((resolve) =>
-          firebaseUser
+        new Promise<any | null>((resolve) => {
+          const targetUserId = userId || (firebaseUser ? firebaseUser.uid : null);
+          targetUserId
             ? app
                 .database()
-                .ref(`${store}/${firebaseUser.uid}/${userPath}`)
+                .ref(`${store}/${targetUserId}/${userPath}`)
                 .once("value", (snapshot) => {
                   const value = snapshot ? snapshot.val() : null;
                   console.info(
@@ -344,8 +355,8 @@ export async function getDb(app: firebase.app.App) {
                   );
                   resolve(value);
                 })
-            : resolve(null),
-        ),
+            : resolve(null);
+        }),
         new Promise<null>((r) => setTimeout(() => r(null), 10000)),
       ]);
 
@@ -357,9 +368,12 @@ export async function getDb(app: firebase.app.App) {
       firebaseGoOffline();
     }
   }
+  async function getFirebaseThisUser(store: FirebaseStoreType, userPath: string) {
+    return getFirebase(store, undefined, userPath);
+  }
 
   async function setOwnHighscoresName(name: string) {
-    await setFirebase(FIREBASE_USERS_PUBLIC, "info/name", name);
+    await setFirebaseThisUser(FIREBASE_USERS_PUBLIC, "info/name", name);
   }
 
   async function getFirebasePublicHighscores() {
@@ -428,7 +442,11 @@ export async function getDb(app: firebase.app.App) {
   async function setConfigBoth(key: keyof ConfigBoth, value: ConfigBoth[typeof key]) {
     console.info(`setConfig key=${key} value=${JSON.stringify(value)}`);
     await setLocal(INDEXEDDB_CONFIG_STORE_NAME, key, value);
-    await setFirebase(FIREBASE_USERS_PRIVATE, `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`, value);
+    await setFirebaseThisUser(
+      FIREBASE_USERS_PRIVATE,
+      `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`,
+      value,
+    );
   }
 
   async function setConfigLocal(key: keyof ConfigLocalOnly, value: ConfigLocalOnly[typeof key]) {
@@ -483,7 +501,7 @@ orderByChild('createdAt').once("value")).val();
   async function updateFirebaseOwnHighscore() {
     try {
       const allRemotePrivateWons =
-        (await getFirebase(FIREBASE_USERS_PRIVATE, `${INDEXEDDB_WON_STORE_NAME}`)) || {};
+        (await getFirebaseThisUser(FIREBASE_USERS_PRIVATE, `${INDEXEDDB_WON_STORE_NAME}`)) || {};
       let newCount = 0;
       const newProofs: WonProofs = {};
       for (const gameName of Object.keys(allRemotePrivateWons)) {
@@ -496,9 +514,9 @@ orderByChild('createdAt').once("value")).val();
       }
 
       const allRemotePublicWons =
-        (await getFirebase(FIREBASE_USERS_PUBLIC, `gamesWonProofs`)) || {};
+        (await getFirebaseThisUser(FIREBASE_USERS_PUBLIC, `gamesWonProofs`)) || {};
       console.info(`Updating public highscores newCount=${newCount}`);
-      await setFirebase(FIREBASE_USERS_PUBLIC, `gamesWonCount`, newCount);
+      await setFirebaseThisUser(FIREBASE_USERS_PUBLIC, `gamesWonCount`, newCount);
       /*
             await setFirebase(
                 FIREBASE_USERS_PUBLIC,
@@ -514,10 +532,14 @@ orderByChild('createdAt').once("value")).val();
 
             console.info(`Updating firebase public won game=${gameName} seed=${aleaSeed}`);
 
-            await setFirebase(FIREBASE_USERS_PUBLIC, `gamesWonProofs/${gameName}/${aleaSeed}`, {
-              ...gameLog,
-              created,
-            });
+            await setFirebaseThisUser(
+              FIREBASE_USERS_PUBLIC,
+              `gamesWonProofs/${gameName}/${aleaSeed}`,
+              {
+                ...gameLog,
+                created,
+              },
+            );
           }
         }
       }
@@ -538,7 +560,7 @@ orderByChild('createdAt').once("value")).val();
 
       // Config is remote-first
       for (const key of ["player", "lastPlayedGame", "noMusic"] as (keyof ConfigBoth)[]) {
-        const firebaseResult = await getFirebase(
+        const firebaseResult = await getFirebaseThisUser(
           FIREBASE_USERS_PRIVATE,
           `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`,
         );
@@ -549,7 +571,7 @@ orderByChild('createdAt').once("value")).val();
           const localResult = await getLocal(INDEXEDDB_CONFIG_STORE_NAME, key);
           if (localResult) {
             console.info(`Saving firebase config ${key} because there is nothing`);
-            await setFirebase(
+            await setFirebaseThisUser(
               FIREBASE_USERS_PRIVATE,
               `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`,
               localResult,
@@ -578,7 +600,7 @@ orderByChild('createdAt').once("value")).val();
         console.info(`Sync old syncWithFirebase passed games started`);
         const allLocalWons = await getAllLocal(INDEXEDDB_WON_STORE_NAME);
         const allRemoteWons =
-          (await getFirebase(FIREBASE_USERS_PRIVATE, `${INDEXEDDB_WON_STORE_NAME}`)) || {};
+          (await getFirebaseThisUser(FIREBASE_USERS_PRIVATE, `${INDEXEDDB_WON_STORE_NAME}`)) || {};
 
         const allGameNames = Object.keys({
           ...allLocalWons,
@@ -597,7 +619,7 @@ orderByChild('createdAt').once("value")).val();
               console.info(
                 `Sync with firebase: gameName=${gameName} pushing seed=${localSeed} into firebase`,
               );
-              await setFirebase(
+              await setFirebaseThisUser(
                 FIREBASE_USERS_PRIVATE,
                 `${INDEXEDDB_WON_STORE_NAME}/${gameName}/${localSeed}`,
                 localProof,
@@ -714,7 +736,7 @@ orderByChild('createdAt').once("value")).val();
       [proof.aleaSeed]: proof,
     };
     await setLocal(INDEXEDDB_WON_STORE_NAME, gameName, newValues);
-    await setFirebase(
+    await setFirebaseThisUser(
       FIREBASE_USERS_PRIVATE,
       `${INDEXEDDB_WON_STORE_NAME}/${gameName}/${proof.aleaSeed}`,
       proof,
@@ -774,6 +796,13 @@ orderByChild('createdAt').once("value")).val();
         }
     }
     */
+
+  async function saveCustomQuest(questName: string, data: FirebaseCustomQuest) {
+    await setFirebaseThisUser(FIREBASE_CUSTOM_QUESTS, `${questName}`, data);
+  }
+  async function loadCustomQuest(questName: string, data: FirebaseCustomQuest) {
+    await getFirebaseThisUser(FIREBASE_CUSTOM_QUESTS, `${questName}`);
+  }
 
   console.info(`Returning db instance`);
   return {
