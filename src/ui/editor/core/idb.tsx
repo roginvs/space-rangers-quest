@@ -15,7 +15,7 @@ export interface QuestName {
 }
 
 export interface QuestWithName extends Quest, QuestName {
-  // nothing here
+  isPublic?: boolean;
 }
 
 async function writeQuest(db: IDBDatabase, quest: QuestWithName, index: number) {

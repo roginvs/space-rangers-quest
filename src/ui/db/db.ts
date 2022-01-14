@@ -799,7 +799,10 @@ orderByChild('createdAt').once("value")).val();
     */
 
   async function saveCustomQuest(questName: string, data: FirebaseCustomQuest) {
-    await setFirebaseThisUser(FIREBASE_CUSTOM_QUESTS, `${questName}`, data);
+    await setFirebaseThisUser(FIREBASE_CUSTOM_QUESTS, `${questName}`, {
+      ...data,
+      updatedAt: firebase.database.ServerValue.TIMESTAMP,
+    });
   }
   async function loadCustomQuest(
     targetUserId: string | undefined,
