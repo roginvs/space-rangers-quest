@@ -800,8 +800,42 @@ orderByChild('createdAt').once("value")).val();
   async function saveCustomQuest(questName: string, data: FirebaseCustomQuest) {
     await setFirebaseThisUser(FIREBASE_CUSTOM_QUESTS, `${questName}`, data);
   }
-  async function loadCustomQuest(questName: string, data: FirebaseCustomQuest) {
-    await getFirebaseThisUser(FIREBASE_CUSTOM_QUESTS, `${questName}`);
+  async function loadCustomQuest(targetUserId: string | undefined, questName: string) {
+    await getFirebase(FIREBASE_CUSTOM_QUESTS, targetUserId, `${questName}`);
+  }
+  async function getAllMyCustomQuests(): Promise<Record<string, FirebaseCustomQuest> | null> {
+    firebaseGoOnline();
+    try {
+      const data = await new Promise<Record<string, FirebaseCustomQuest> | null>(
+        (resolve, reject) => {
+          if (!firebaseUser) {
+            resolve(null);
+            return;
+          }
+
+          const allMyCustomQuests = app
+            .database()
+            .ref(`${FIREBASE_CUSTOM_QUESTS}/${firebaseUser.uid}`);
+          allMyCustomQuests
+            //.orderByChild("gamesWonCount")
+            //.limitToLast(100)
+            .once("value", (snapshot) => {
+              if (snapshot) {
+                resolve(snapshot.val());
+              } else {
+                resolve(null);
+              }
+            })
+            .catch((e) => reject(e));
+        },
+      );
+      return data;
+    } catch (e) {
+      console.warn(e);
+      return null;
+    } finally {
+      firebaseGoOffline();
+    }
   }
 
   console.info(`Returning db instance`);
@@ -824,6 +858,10 @@ orderByChild('createdAt').once("value")).val();
     setOwnHighscoresName,
 
     getRemotePassings,
+
+    getAllMyCustomQuests,
+    saveCustomQuest,
+    loadCustomQuest,
   };
 }
 
