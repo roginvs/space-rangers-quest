@@ -42,8 +42,6 @@ interface QuestPlayState {
   questLoadProgress: number;
   noMusic?: boolean;
 
-  reallyRestart?: boolean;
-
   error?: Error;
 
   thinkingSavingGame?: boolean;
