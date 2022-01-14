@@ -28,29 +28,55 @@ export function CloudQuestsOverlay({
   const [myQuests, setMyQuests] = React.useState<
     Record<string, FirebaseCustomQuest> | null | string
   >(null);
+  const loadMyQuests = React.useCallback(
+    () =>
+      getAllMyCustomQuests()
+        .then((quests) => {
+          setMyQuests(quests || {});
+        })
+        .catch((e) => {
+          setMyQuests(`Error: ${e.message}`);
+        }),
+    [],
+  );
   React.useEffect(() => {
-    getAllMyCustomQuests()
-      .then((quests) => {
-        setMyQuests(quests || {});
-      })
-      .catch((e) => {
-        setMyQuests(`Error: ${e.message}`);
-      });
-  }, []);
+    loadMyQuests();
+  }, [loadMyQuests]);
 
-  const [myQuestToLoad, setMyQuestToLoad] = React.useState("");
+  const [questFromMyList, setQuestFromMyList] = React.useState("");
+  React.useEffect(() => {
+    if (myQuests !== null && typeof myQuests === "object") {
+      const firstQuest = Object.keys(myQuests)[0];
+      if (firstQuest) {
+        setQuestFromMyList(firstQuest);
+      }
+    }
+  }, [myQuests]);
 
   const loadMyQuest = React.useCallback(() => {
     const newQuestData =
-      myQuests !== null && typeof myQuests !== "string" ? myQuests[myQuestToLoad] : undefined;
+      myQuests !== null && typeof myQuests !== "string" ? myQuests[questFromMyList] : undefined;
     if (newQuestData) {
       const quest = parse(Buffer.from(pako.ungzip(Buffer.from(newQuestData.quest_qmm_gz))));
       onClose({
         ...quest,
-        filename: myQuestToLoad,
+        filename: questFromMyList,
       });
     }
-  }, [myQuestToLoad, myQuests]);
+  }, [questFromMyList, myQuests]);
+  const removeMyQuest = React.useCallback(() => {
+    if (questFromMyList) {
+      if (!confirm("Точно удалить?")) {
+        return;
+      }
+      setMyQuests(null);
+      saveCustomQuest(questFromMyList, null)
+        .then(() => loadMyQuests())
+        .catch((e) => {
+          toast(`Ошибка ${e.message}`);
+        });
+    }
+  }, [questFromMyList]);
 
   const [questName, setQuestName] = React.useState(quest.filename);
   React.useEffect(() => {
@@ -107,9 +133,9 @@ export function CloudQuestsOverlay({
               <div>
                 <select
                   className="form-control mb-1"
-                  value={myQuestToLoad}
+                  value={questFromMyList}
                   size={20}
-                  onChange={(e) => setMyQuestToLoad(e.target.value)}
+                  onChange={(e) => setQuestFromMyList(e.target.value)}
                   onDoubleClick={loadMyQuest}
                 >
                   {Object.entries(myQuests)
@@ -121,10 +147,23 @@ export function CloudQuestsOverlay({
                     ))}
                 </select>
 
-                {myQuestToLoad && (
-                  <button className="btn btn-secondary w-100" disabled={busy} onClick={loadMyQuest}>
-                    Загрузить {myQuestToLoad}
-                  </button>
+                {questFromMyList && (
+                  <div>
+                    <button
+                      className="btn btn-secondary w-100"
+                      disabled={busy}
+                      onClick={loadMyQuest}
+                    >
+                      Загрузить {questFromMyList}
+                    </button>
+                    <button
+                      className="btn btn-danger w-100"
+                      disabled={busy}
+                      onClick={removeMyQuest}
+                    >
+                      Удалить {questFromMyList}
+                    </button>
+                  </div>
                 )}
               </div>
             )}

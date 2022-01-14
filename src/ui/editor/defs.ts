@@ -5,7 +5,7 @@ export interface FirebaseCustomQuest {
 }
 
 export interface CloudQuestsProps {
-  saveCustomQuest(questName: string, data: FirebaseCustomQuest): Promise<void>;
+  saveCustomQuest(questName: string, data: FirebaseCustomQuest | null): Promise<void>;
   loadCustomQuest(
     targetUserId: string | undefined,
     questName: string,

@@ -798,11 +798,17 @@ orderByChild('createdAt').once("value")).val();
     }
     */
 
-  async function saveCustomQuest(questName: string, data: FirebaseCustomQuest) {
-    await setFirebaseThisUser(FIREBASE_CUSTOM_QUESTS, `${questName}`, {
-      ...data,
-      updatedAt: firebase.database.ServerValue.TIMESTAMP,
-    });
+  async function saveCustomQuest(questName: string, data: FirebaseCustomQuest | null) {
+    await setFirebaseThisUser(
+      FIREBASE_CUSTOM_QUESTS,
+      `${questName}`,
+      data
+        ? {
+            ...data,
+            updatedAt: firebase.database.ServerValue.TIMESTAMP,
+          }
+        : null,
+    );
   }
   async function loadCustomQuest(
     targetUserId: string | undefined,
