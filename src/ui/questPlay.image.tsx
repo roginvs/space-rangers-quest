@@ -14,7 +14,7 @@ export function QuestPlayImage({
     <div
       style={{
         position: "relative",
-        height: height,
+        height,
       }}
     >
       {allImagesUrls.map((imageUrl) => (
