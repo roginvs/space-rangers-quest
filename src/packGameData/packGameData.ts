@@ -270,9 +270,8 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
       throw new Error(`Internal error, outputQmmBuffer must always be set`);
     }
 
-    // Always write QMM
     fs.writeFileSync(
-      dataDstPath + "/qm/" + gameName + ".qmm" + ".gz",
+      dataDstPath + "/qm/" + qmShortName + ".gz",
       Buffer.from(pako.gzip(outputQmmBuffer)),
     );
 
