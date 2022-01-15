@@ -116,10 +116,7 @@ export function QuestPlay({
   const uistate = getUIState(quest, gameState, player);
 
   const imageUrl = uistate.imageFileName ? getImageUrl(uistate.imageFileName) : null;
-
-  const imagesPreloaded = getAllImagesToPreload(quest, pqiImages).map((x) => {
-    return <img key={x} src={getImageUrl(x)} style={{ display: "none" }} />;
-  });
+  const allImagesUrls = getAllImagesToPreload(quest, pqiImages).map((x) => getImageUrl(x));
 
   const isMusic = !!musicList;
 
@@ -295,8 +292,7 @@ export function QuestPlay({
                 margin: 5,
               }}
             >
-              {imagesPreloaded}
-              <QuestPlayImage src={imageUrl} />
+              <QuestPlayImage src={imageUrl} allImagesUrls={allImagesUrls} />
             </div>
 
             <div
@@ -367,8 +363,7 @@ export function QuestPlay({
                     padding: 15,
                   }}
                 >
-                  {imagesPreloaded}
-                  <QuestPlayImage src={imageUrl} />
+                  <QuestPlayImage src={imageUrl} allImagesUrls={allImagesUrls} />
                 </div>
               </div>
               <div

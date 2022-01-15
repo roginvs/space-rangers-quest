@@ -30,8 +30,7 @@ import { observer } from "mobx-react";
 import { Store } from "./store";
 
 import { PQImages } from "../lib/pqImages";
-import { Music } from "./questPlay.music";
-import { QuestPlayImage } from "./questPlay.image";
+
 import { QuestPlay } from "./questPlay";
 import { toJS } from "mobx";
 

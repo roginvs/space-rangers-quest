@@ -1,71 +1,42 @@
 import * as React from "react";
 import { DivFadeinCss } from "./common";
 
-export function QuestPlayImage({ src }: { src: string | null }) {
-  const prevSrc = React.useRef<string | null>();
-
-  React.useEffect(() => {
-    return () => {
-      prevSrc.current = src;
-    };
-  }, [src]);
-
-  if (!src) {
-    return null;
-  }
+export function QuestPlayImage({
+  src,
+  allImagesUrls,
+}: {
+  src: string | null;
+  allImagesUrls: string[];
+}) {
+  const [height, setHeight] = React.useState(0);
 
   return (
-    <DivFadeinCss key={src}>
-      <img src={src} style={{ width: "100%" }} />
-    </DivFadeinCss>
-  );
+    <div
+      style={{
+        position: "relative",
+        height: height,
+      }}
+    >
+      {allImagesUrls.map((imageUrl) => (
+        <img
+          key={imageUrl}
+          src={imageUrl}
+          style={{
+            width: "100%",
+            position: "absolute",
+            left: 0,
+            right: 0,
 
-  /*
-  return (
-    <div style={{ width: "100%", position: "relative" }}>
-      <CurrentImage src={src} key={src} />
+            opacity: imageUrl === src ? 1 : 0,
+            transition: "opacity 0.5s linear",
+          }}
+          onLoad={(e) => {
+            if (e.currentTarget.height > height) {
+              setHeight(e.currentTarget.height);
+            }
+          }}
+        />
+      ))}
     </div>
   );
-  */
 }
-
-/*
-function PreviousImage({ src }: { src: string }) {
-  const [left, setLeft] = React.useState(false);
-  React.useEffect(() => {
-    const timerId = setTimeout(() => setLeft(true), 1000);
-
-    return () => {
-      clearTimeout(timerId);
-    };
-  });
-
-  return <img style={{ width: "100%", position: "absolute", left: 0, top: 0 }} src={src} />;
-}
-*/
-
-/*
-function CurrentImage({ src }: { src: string }) {
-  const [entered, setEntered] = React.useState(false);
-  React.useEffect(() => {
-    const timerId = setTimeout(() => setEntered(true), 10);
-
-    return () => {
-      clearTimeout(timerId);
-    };
-  });
-
-  return (
-    <img
-      key={src}
-      style={{
-        width: "100%",
-        opacity: entered ? 1 : 0,
-        position: "relative",
-        transition: "opacity 250ms ease-in",
-      }}
-      src={src}
-    />
-  );
-}
-*/
