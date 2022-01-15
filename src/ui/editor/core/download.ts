@@ -1,7 +1,7 @@
 import { writeQmm } from "../../../lib/qmwriter";
-import { QuestWithName } from "./idb";
+import { QuestWithMetadata } from "./idb";
 
-export function downloadQuest(quest: QuestWithName) {
+export function downloadQuest(quest: QuestWithMetadata) {
   const arrayBuffer = writeQmm(quest);
   const blob = new Blob([arrayBuffer], { type: "application/octet-stream" });
   const url = URL.createObjectURL(blob);

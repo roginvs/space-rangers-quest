@@ -46,6 +46,7 @@ import { ChampionsTabContainer } from "./champions";
 import { firebaseConfig } from "./firebaseConfig";
 import { ChampionsTabContainerNew } from "./champions.new";
 import { EditorContainer } from "./editor";
+import { QuestPlayUserQuestController } from "./questPlayUserQuestController";
 console.info("starting");
 
 const app = firebase.initializeApp(firebaseConfig);
@@ -226,6 +227,7 @@ class MainLoader extends React.Component<{}> {
     }
 
     const { tab0, tab1, tab2 } = store.path;
+
     if (tab0 === "auth") {
       return (
         <AppNavbar store={store}>
@@ -269,6 +271,12 @@ class MainLoader extends React.Component<{}> {
           onExit={() => {
             location.href = `#/`;
           }}
+          cloudQuestProps={{
+            getAllMyCustomQuests: store.db.getAllMyCustomQuests,
+            loadCustomQuest: store.db.loadCustomQuest,
+            saveCustomQuest: store.db.saveCustomQuest,
+            getMyUserId: store.db.getMyUserId,
+          }}
         />
       );
     } else if (tab0 === "quests") {
@@ -284,6 +292,14 @@ class MainLoader extends React.Component<{}> {
         } else {
           return <QuestPlayController key={tab1} store={store} gameName={tab1} />;
         }
+      }
+    } else if (tab0 === "userquest") {
+      // TODO: Better to decodeURIComponent in the store.path method
+      const [userId, questName] = [decodeURIComponent(tab1), decodeURIComponent(tab2)];
+      if (userId && questName) {
+        return <QuestPlayUserQuestController store={store} userId={userId} questName={questName} />;
+      } else {
+        return <Redirect to="#/quests" />;
       }
     }
     return (

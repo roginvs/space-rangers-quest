@@ -38,7 +38,7 @@ import { useOnDocumentKeyUp, useWindowInnerSize } from "./hooks";
 import { QuestSettings } from "./overlays/questSettings/questSettings";
 import { initRandomGame, QuestPlay } from "../../questPlay";
 import { getLang } from "../../lang";
-import { QuestWithName, useIdb } from "./idb";
+import { QuestWithMetadata, useIdb } from "./idb";
 import { emptyQmm } from "./emptyQmm";
 import { Game } from "../../../packGameData";
 import { LoadOverlay } from "./overlays/load/loadOverlay";
@@ -46,6 +46,8 @@ import { writeQmm } from "../../../lib/qmwriter";
 import { HelpOverlay } from "./overlays/helpOverlay";
 import { downloadQuest } from "./download";
 import { QuestName } from "./namechange";
+import { CloudQuestsProps } from "../defs";
+import { CloudQuestsOverlay } from "./overlays/cloudQuests";
 
 // tslint:disable-next-line:no-useless-cast
 export const EDITOR_MOUSE_MODES = ["select", "move", "newLocation", "newJump", "remove"] as const;
@@ -71,9 +73,20 @@ type EditorOverlay =
     }
   | {
       readonly kind: "help";
+    }
+  | {
+      readonly kind: "cloudquest";
     };
 
-export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onExit: () => void }) {
+export function EditorCore({
+  questsToLoad,
+  onExit,
+  cloudQuestProps,
+}: {
+  questsToLoad: Game[];
+  onExit: () => void;
+  cloudQuestProps: CloudQuestsProps;
+}) {
   const { quest, setQuest: saveQuestToIdb, undo, redo } = useIdb();
 
   const [mouseMode, setMouseMode] = React.useState<EditorMouseMode>("select");
@@ -139,7 +152,7 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
   );
 
   const onChange = React.useCallback(
-    (newQuest: QuestWithName) => {
+    (newQuest: QuestWithMetadata) => {
       setHoverZones([]);
       setHoverZone(undefined);
       setIsDragging(undefined);
@@ -558,6 +571,19 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
           <i className="fa fa-download fa-fw" title="Скачать" />
         </button>
 
+        <button
+          className={classNames("mr-3", "btn", "btn-light")}
+          onClick={() => {
+            if (cloudQuestProps.getMyUserId()) {
+              setOverlayMode({ kind: "cloudquest" });
+            } else {
+              toast("Чтобы использовать облако нужно зайти в Firebase!");
+            }
+          }}
+        >
+          <i className="fa fa-cloud fa-fw" title="Загрузка и выгрузка в облако" />
+        </button>
+
         {EDITOR_MOUSE_MODES.map((candidateMode) => (
           <button
             key={candidateMode}
@@ -787,6 +813,17 @@ export function EditorCore({ questsToLoad, onExit }: { questsToLoad: Game[]; onE
             />
           ) : overlayMode.kind === "help" ? (
             <HelpOverlay onClose={() => setOverlayMode(undefined)} />
+          ) : overlayMode.kind === "cloudquest" ? (
+            <CloudQuestsOverlay
+              quest={quest}
+              onClose={(newQuest) => {
+                setOverlayMode(undefined);
+                if (newQuest) {
+                  onChange(newQuest);
+                }
+              }}
+              {...cloudQuestProps}
+            />
           ) : (
             assertNever(overlayMode)
           )
