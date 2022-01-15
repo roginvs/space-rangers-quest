@@ -83,7 +83,7 @@ const music = fs
     return name;
   });
 
-const pqiSR2Parsed = readPqi(dataSrcPath + "/PQI.txt", dataDstPath, dataSrcPath, warns);
+const pqiSR2Parsed = readPqi(dataSrcPath + "/PQI.txt", dataSrcPath, warns);
 console.info(`Found ${Object.keys(pqiSR2Parsed).length} quests in PQI.txt`);
 //let pqiFound: string[] = [];
 

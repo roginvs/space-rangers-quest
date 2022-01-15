@@ -1,12 +1,7 @@
 import { PQImages } from "../lib/pqImages";
 import * as fs from "fs";
 
-export function readPqi(
-  filename: string,
-  dataDstPath: string,
-  dataSrcPath: string,
-  warns: string[],
-) {
+export function readPqi(filename: string, dataSrcPath: string, warns: string[]) {
   const result: {
     [name: string]: PQImages;
   } = {};
@@ -27,7 +22,7 @@ export function readPqi(
     }
     const [data1, data2] = line.split("=");
     const filename = data2.replace(/.*\./g, "").toLowerCase() + ".jpg";
-    if (!fs.existsSync(dataDstPath + "/img/" + filename)) {
+    if (!fs.existsSync(dataSrcPath + "/img/" + filename)) {
       warns.push(`File '${filename}' (${dataSrcPath + "/img/" + filename}) not found`);
       continue;
     }
