@@ -81,6 +81,10 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
     }
     const srcQmName = qmDir + qmShortName;
 
+    if (qmShortName !== "Ministry_eng.qm") {
+      continue;
+    }
+
     const gameName = qmShortName.replace(/(\.qm|\.qmm)$/, "");
     const lang = gameName.endsWith("_eng") ? "eng" : "rus";
     console.info(`Reading ${srcQmName} (lang=${lang} gameName=${gameName}`);
@@ -155,17 +159,16 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
 
         let donorQuestRaw: Buffer | null = null;
         const donorQmShortName =
-          lang === "eng" ? qmDir + qmShortName.replace("_eng.", ".").replace(/.qm$/, ".qmm") : null;
+          lang === "eng" ? qmShortName.replace("_eng.", ".").replace(/.qm$/, ".qmm") : null;
 
         if (donorQmShortName) {
           for (const donorOrigin of fs.readdirSync(dataSrcPath + "/qm")) {
             const donorQmDir = dataSrcPath + "/qm/" + donorOrigin + "/";
-            for (const donorQmShortName of fs.readdirSync(donorQmDir)) {
-              const donorFullQmName = donorQmDir + donorQmShortName;
-              if (fs.existsSync(donorFullQmName)) {
-                donorQuestRaw = fs.readFileSync(donorFullQmName);
-                break;
-              }
+
+            const donorFullQmName = donorQmDir + donorQmShortName;
+            if (fs.existsSync(donorFullQmName)) {
+              donorQuestRaw = fs.readFileSync(donorFullQmName);
+              break;
             }
           }
         }
@@ -177,6 +180,7 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
             ...quest,
             locations: quest.locations.map((l) => {
               const donorLocation = donorQuest.locations.find((dl) => dl.id === l.id);
+
               return {
                 ...l,
                 media: l.media.map((srcMedia, srcMediaIndex) => ({
