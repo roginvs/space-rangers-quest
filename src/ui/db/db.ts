@@ -875,6 +875,9 @@ orderByChild('createdAt').once("value")).val();
   }
 
   async function saveCustomGame(gameKey: string, saving: GameState | null) {
+    // It is ok to save gamestate as it is without JSON encoding
+    // But it caused some issues when saving was a MobX observable
+    // So we save it as a string
     const savingRaw = saving ? JSON.stringify(saving) : saving;
     await setLocal(INDEXEDDB_CUSTOM_SAVED_STORE_NAME, gameKey, savingRaw);
   }
