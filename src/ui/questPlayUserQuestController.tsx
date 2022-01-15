@@ -7,7 +7,7 @@ import { parse } from "../lib/qmreader";
 import Pako from "pako";
 import { initRandomGame, QuestPlay } from "./questPlay";
 
-interface UserQuestControllerProps {
+interface UserQuestControllerState {
   game: null | string | Quest;
 
   gameState: null | GameState;
@@ -24,9 +24,9 @@ export class QuestPlayUserQuestController extends React.Component<
     userId: string;
     questName: string;
   },
-  UserQuestControllerProps
+  UserQuestControllerState
 > {
-  state = {
+  state: UserQuestControllerState = {
     game: null,
     gameState: null,
     gameSaveKey: null,
