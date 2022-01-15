@@ -7,22 +7,31 @@ import { parse } from "../lib/qmreader";
 import Pako from "pako";
 import { initRandomGame, QuestPlay } from "./questPlay";
 
+interface UserQuestControllerProps {
+  game: null | string | Quest;
+
+  gameState: null | GameState;
+
+  gameSaveKey: string | null;
+
+  noMusic: boolean;
+}
+
 @observer
-export class QuestPlayUserQuestController extends React.Component<{
-  store: Store;
-  userId: string;
-  questName: string;
-}> {
-  @observable
-  game: null | string | Quest = null;
-
-  @observable
-  gameState: null | GameState = null;
-
-  gameSaveKey: string | null = null;
-
-  @observable
-  noMusic = false;
+export class QuestPlayUserQuestController extends React.Component<
+  {
+    store: Store;
+    userId: string;
+    questName: string;
+  },
+  UserQuestControllerProps
+> {
+  state = {
+    game: null,
+    gameState: null,
+    gameSaveKey: null,
+    noMusic: false,
+  };
 
   private async load() {
     const questInfo = await this.props.store.db.loadCustomQuest(
@@ -35,44 +44,56 @@ export class QuestPlayUserQuestController extends React.Component<{
     const quest = parse(
       Buffer.from(Pako.ungzip(Buffer.from(questInfo.quest_qmm_gz_base64, "base64"))),
     );
-    this.gameSaveKey = `${this.props.userId}/${this.props.questName} ${quest.majorVersion}`;
+    const gameSaveKey = `${this.props.userId}/${this.props.questName} ${quest.majorVersion}`;
 
-    const latestLoad = await this.props.store.db.loadCustomGame(this.gameSaveKey);
+    let gameState: GameState | null = null;
+    const latestLoad = await this.props.store.db.loadCustomGame(gameSaveKey);
     if (latestLoad) {
       try {
-        // Verify it is working
+        // Verify it is working so UI will not crash
         getUIState(quest, latestLoad, this.props.store.player);
-        this.gameState = latestLoad;
+        gameState = latestLoad;
       } catch {}
     }
 
-    this.gameState = this.gameState || initRandomGame(quest);
+    gameState = gameState || initRandomGame(quest);
 
-    this.noMusic = !!(await this.props.store.db.getConfigLocal("noMusic"));
+    const noMusic = !!(await this.props.store.db.getConfigLocal("noMusic"));
 
-    this.game = quest;
+    const game = quest;
+
+    this.setState({
+      game,
+      gameState,
+      gameSaveKey,
+      noMusic,
+    });
   }
   componentDidMount() {
     this.load().catch((e) => {
-      this.game = `Error: ${e.message}`;
+      this.setState({
+        game: `Error: ${e.message}`,
+        gameState: null,
+        gameSaveKey: null,
+      });
     });
   }
 
   render() {
     const l = this.props.store.l;
-    if (this.game === null || this.gameState === null) {
+    if (this.state.game === null || this.state.gameState === null) {
       return (
         <div className="my-3 container">
           <div className="text-center">{l.loadingQuest}</div>
         </div>
       );
     }
-    if (typeof this.game === "string") {
+    if (typeof this.state.game === "string") {
       return (
         <div className="my-3 container">
           <div className="text-center">
-            {this.game}
-            TODO: back button
+            {this.state.game}
+            {/* TODO: back button */}
           </div>
         </div>
       );
@@ -80,25 +101,29 @@ export class QuestPlayUserQuestController extends React.Component<{
 
     return (
       <QuestPlay
-        quest={this.game}
-        gameState={this.gameState}
+        quest={this.state.game}
+        gameState={this.state.gameState}
         player={toJS(this.props.store.player)}
         setGameState={(newState) => {
-          if (this.gameSaveKey) {
-            this.props.store.db.saveCustomGame(this.gameSaveKey, newState).catch((e) => {
+          if (this.state.gameSaveKey) {
+            this.props.store.db.saveCustomGame(this.state.gameSaveKey, newState).catch((e) => {
               console.error(e);
             });
           }
-          this.gameState = newState;
+          this.setState({
+            gameState: newState,
+          });
         }}
         pqiImages={[]}
         musicList={
-          !this.noMusic
+          !this.state.noMusic
             ? this.props.store.index.dir.music.files.map((fileInfo) => fileInfo.path)
             : undefined
         }
         setIsMusic={(newIsMusic) => {
-          this.noMusic = !newIsMusic;
+          this.setState({
+            noMusic: !newIsMusic,
+          });
           this.props.store.db.setConfigBoth("noMusic", !newIsMusic).catch((e) => console.warn(e));
         }}
         onExit={() => {
