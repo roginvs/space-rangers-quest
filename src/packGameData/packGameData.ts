@@ -15,6 +15,17 @@ import { writeQmm } from "../lib/qmwriter";
 
 /*
 
+This script prepares data and build index.json file
+
+Data is copied from borrowed folder into build-web/data and modified if needed
+ - copy music
+ - copy images and change filename to lowercase
+ - copy qm/qmm and re-save them as qmm with images and compress into .gz
+ - write index.json
+
+
+
+
 TODO to test:
   - SR1 quests have images
     - location
@@ -74,7 +85,6 @@ const pqiSR1Parsed = JSON.parse(
 
 const pqiSR2Parsed = readPqi(dataSrcPath + "/PQI.txt", dataSrcPath, warns);
 console.info(`Found ${Object.keys(pqiSR2Parsed).length} quests in PQI.txt`);
-//let pqiFound: string[] = [];
 
 console.info(`Scanning quests`);
 const seenQuests: string[] = [];
@@ -103,6 +113,7 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
 
     const qmmImagesList = getImagesListFromQmm(quest);
 
+    // This will be initial buffer or repacked quest, depending if original have images or not
     let outputQmmBuffer: Buffer | undefined = undefined;
 
     // If quest have images then do nothing
@@ -286,53 +297,6 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
       Buffer.from(pako.gzip(outputQmmBuffer)),
     );
 
-    // -- start from here
-    /*
-    if (!DEBUG_SPEEDUP_SKIP_COPING) {
-      fs.writeFileSync(dataDstPath + "/qm/" + qmShortName + ".gz", Buffer.from(pako.gzip(data)));
-    }
-
-    const quest = parse(data);
-    const player = new QMPlayer(quest, undefined, lang);
-    player.start();
-
-    const probablyThisQuestImages = allImages.filter((x) =>
-      x.toLowerCase().startsWith(gameName.toLowerCase()),
-    );
-    const randomImages = probablyThisQuestImages.map((filename, fileIndex) => {
-      return {
-        filename,
-        locationIds: quest.locations
-          .map((loc) => loc.id)
-          .filter((id) => (id - 1) % probablyThisQuestImages.length === fileIndex),
-      };
-    });
-
-    const qmmImagesList = getImagesListFromQmm(quest);
-
-    const pqi2Images = pqiSR2Parsed[gameName.toLowerCase()];
-    const pqi1Images = pqiSR1Parsed[gameName];
-    const images = qmmImagesList.length > 0 ? [] : pqi2Images || pqi1Images || randomImages;
-    if (images === randomImages) {
-      warns.push(`No images for ${qmShortName}, using random`);
-    }
-    //if (pqi[gameName.toLowerCase()]) {
-    //pqiFound.push(gameName.toLowerCase());
-    //}
-    if (qmmImagesList.length > 0) {
-      console.info(`Have ${qmmImagesList.length} qmm images`);
-    }
-
-    for (const pqiImage of images) {
-      if (allImages.indexOf(pqiImage.filename.toLowerCase()) < 0) {
-        warns.push(
-          `Image ${pqiImage.filename} is from PQI for ${qmShortName}, ` +
-            `but not found in img dir`,
-        );
-      }
-    }
-    */
-
     const gameFilePath = "qm/" + qmShortName + ".gz";
     const game: Game = {
       filename: gameFilePath,
@@ -362,7 +326,6 @@ index.quests = index.quests.sort(
   (a, b) => a.hardness - b.hardness || (a.gameName > b.gameName ? 1 : -1),
 );
 console.info(`Done read, writing result into ${resultJsonFile}`);
-// fs.writeFileSync(resultJsonFile, new Buffer(pako.gzip(JSON.stringify(index, null, 4))));
 fs.writeFileSync(resultJsonFile, JSON.stringify(index));
 
 if (warns.length === 0) {
