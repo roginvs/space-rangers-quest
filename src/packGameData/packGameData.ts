@@ -172,7 +172,7 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
         if (donorQuestRaw) {
           const donorQuest = parse(donorQuestRaw);
 
-          let donorWarns: string[] = [];
+          const donorWarns: string[] = [];
 
           const updatedQuest: Quest = {
             ...quest,
