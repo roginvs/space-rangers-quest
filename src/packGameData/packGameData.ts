@@ -8,71 +8,18 @@ import { PQImages } from "../lib/pqImages";
 import { readPqi } from "./pqi";
 import { Index, Game } from "./defs";
 
-const pqiSR1Parsed = JSON.parse(fs.readFileSync(__dirname + "/../src/sr1-pqi.json").toString()) as {
+const pqiSR1Parsed = JSON.parse(
+  fs.readFileSync(__dirname + "/../../src/sr1-pqi.json").toString(),
+) as {
   [questName: string]: PQImages;
 };
 
 const warns: string[] = [];
 
-const dataSrcPath = __dirname + "/../borrowed";
-const dataDstPath = __dirname + "/../built-web/data";
+const dataSrcPath = __dirname + "/../../borrowed";
+const dataDstPath = __dirname + "/../../built-web/data";
 
 const resultJsonFile = dataDstPath + "/index.json";
-
-function areThereAnyQmmImages(qmmQuest: QM) {
-  const images: {
-    [imageName: string]: string[];
-  } = {};
-  let tracks: (string | undefined)[] = [];
-  let sounds: (string | undefined)[] = [];
-
-  const addImg = (name: string | undefined, place: string) => {
-    if (!name) {
-      return;
-    }
-    if (images[name]) {
-      images[name].push(place);
-    } else {
-      images[name] = [place];
-    }
-  };
-
-  qmmQuest.params.forEach((p, pid) => {
-    addImg(p.img, `Param p${pid}`);
-    tracks.push(p.track);
-    sounds.push(p.sound);
-  });
-
-  for (const l of qmmQuest.locations) {
-    l.media.map((x) => x.img).forEach((x) => addImg(x, `Loc ${l.id}`));
-    tracks = tracks.concat(...l.media.map((x) => x.track));
-    sounds = sounds.concat(...l.media.map((x) => x.sound));
-
-    l.paramsChanges.forEach((p, pid) => {
-      l.media.map((x) => x.img).forEach((x) => addImg(x, `Loc ${l.id} p${pid + 1}`));
-      tracks.push(p.track);
-      sounds.push(p.sound);
-    });
-  }
-
-  qmmQuest.jumps.forEach((j, jid) => {
-    addImg(j.img, `Jump ${jid}`);
-
-    tracks.push(j.track);
-    sounds.push(j.sound);
-
-    j.paramsChanges.forEach((p, pid) => {
-      addImg(p.img, `Jump ${jid} p${pid}`);
-      tracks.push(p.track);
-      sounds.push(p.sound);
-    });
-  });
-
-  tracks = tracks.filter((x) => x);
-  sounds = sounds.filter((x) => x);
-
-  return Object.keys(images);
-}
 
 console.info(`Creating destination folders`);
 if (!fs.existsSync(dataDstPath)) {
