@@ -6,13 +6,14 @@ import * as fs from "fs";
 import { QMPlayer } from "../lib/qmplayer";
 import { PQImages } from "../lib/pqImages";
 import { readPqi } from "./pqi";
-import { Index, Game } from "./defs";
+import { Index, Game, PQIParsed } from "./defs";
+import { scanAndCopyImages } from "./images";
+import { scanAndCopyMusic } from "./music";
+import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
 
 const pqiSR1Parsed = JSON.parse(
   fs.readFileSync(__dirname + "/../../src/sr1-pqi.json").toString(),
-) as {
-  [questName: string]: PQImages;
-};
+) as PQIParsed;
 
 const warns: string[] = [];
 
@@ -40,48 +41,9 @@ const index: Index = {
   },
 };
 
-const DEBUG_SPEEDUP_SKIP_COPING = false;
+const allImages = scanAndCopyImages(dataSrcPath, dataDstPath, index);
 
-console.info(`Scan and copy images`);
-const allImages = fs
-  .readdirSync(dataSrcPath + "/img")
-  .filter((x) => fs.statSync(dataSrcPath + "/img/" + x).isFile())
-  .map((imgShortName) => {
-    const filePath = "img/" + imgShortName.toLowerCase();
-    if (!DEBUG_SPEEDUP_SKIP_COPING) {
-      fs.writeFileSync(
-        dataDstPath + "/" + filePath,
-        fs.readFileSync(dataSrcPath + "/img/" + imgShortName),
-      );
-    }
-    const fileSize = fs.statSync(dataSrcPath + "/img/" + imgShortName).size;
-    index.dir.images.files.push({ path: filePath, size: fileSize });
-    index.dir.images.totalSize += fileSize;
-
-    return imgShortName.toLowerCase();
-  });
-
-console.info(`Copying music`);
-const music = fs
-  .readdirSync(dataSrcPath + "/music")
-  .filter((x) => {
-    const fullName = dataSrcPath + "/music/" + x;
-    return (
-      fs.statSync(fullName).isFile() &&
-      (fullName.toLowerCase().endsWith(".ogg") || fullName.toLowerCase().endsWith(".mp3"))
-    );
-  })
-  .map((x) => {
-    const name = `music/${x}`;
-    if (!DEBUG_SPEEDUP_SKIP_COPING) {
-      fs.writeFileSync(dataDstPath + "/" + name, fs.readFileSync(dataSrcPath + "/" + name));
-    }
-    const fileSize = fs.statSync(dataDstPath + "/" + name).size;
-    index.dir.music.files.push({ path: name, size: fileSize });
-    index.dir.music.totalSize += fileSize;
-
-    return name;
-  });
+scanAndCopyMusic(dataSrcPath, dataDstPath, index);
 
 const pqiSR2Parsed = readPqi(dataSrcPath + "/PQI.txt", dataSrcPath, warns);
 console.info(`Found ${Object.keys(pqiSR2Parsed).length} quests in PQI.txt`);

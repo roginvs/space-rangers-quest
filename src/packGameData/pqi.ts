@@ -1,10 +1,9 @@
 import { PQImages } from "../lib/pqImages";
 import * as fs from "fs";
+import { PQIParsed } from "./defs";
 
-export function readPqi(filename: string, dataSrcPath: string, warns: string[]) {
-  const result: {
-    [name: string]: PQImages;
-  } = {};
+export function readPqi(filename: string, dataSrcPath: string, warns: string[]): PQIParsed {
+  const result: PQIParsed = {};
 
   if (!fs.existsSync(filename)) {
     warns.push(`==========\nPQI file ${filename} not found, will process without\n======`);

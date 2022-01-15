@@ -31,3 +31,7 @@ export interface Index {
     music: CacheFilesList;
   };
 }
+
+export interface PQIParsed {
+  [questName: string]: PQImages;
+}
