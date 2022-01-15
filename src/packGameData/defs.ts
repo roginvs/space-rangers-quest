@@ -8,6 +8,7 @@ export interface Game {
   taskText: string;
   smallDescription?: string;
   gameName: string;
+  /* TODO: REMOVE ME */
   images: PQImages;
   questOrigin: Origin;
   // oldTgeBehaviour: boolean,

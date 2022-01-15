@@ -4,7 +4,7 @@ import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
 
 export function scanAndCopyMusic(dataSrcPath: string, dataDstPath: string, index: Index) {
   console.info(`Copying music`);
-  const music = fs
+  const allMusic = fs
     .readdirSync(dataSrcPath + "/music")
     .filter((x) => {
       const fullName = dataSrcPath + "/music/" + x;
@@ -24,4 +24,5 @@ export function scanAndCopyMusic(dataSrcPath: string, dataDstPath: string, index
 
       return name;
     });
+  return allMusic;
 }

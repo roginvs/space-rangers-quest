@@ -10,10 +10,9 @@ import { Index, Game, PQIParsed } from "./defs";
 import { scanAndCopyImages } from "./images";
 import { scanAndCopyMusic } from "./music";
 import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
-
-const pqiSR1Parsed = JSON.parse(
-  fs.readFileSync(__dirname + "/../../src/sr1-pqi.json").toString(),
-) as PQIParsed;
+import { addImagesToQuestIfNeeded } from "./quests";
+import { Quest } from "../lib/qmplayer/funcs";
+import { writeQmm } from "../lib/qmwriter";
 
 const warns: string[] = [];
 
@@ -45,6 +44,10 @@ const allImages = scanAndCopyImages(dataSrcPath, dataDstPath, index);
 
 scanAndCopyMusic(dataSrcPath, dataDstPath, index);
 
+const pqiSR1Parsed = JSON.parse(
+  fs.readFileSync(__dirname + "/../../src/sr1-pqi.json").toString(),
+) as PQIParsed;
+
 const pqiSR2Parsed = readPqi(dataSrcPath + "/PQI.txt", dataSrcPath, warns);
 console.info(`Found ${Object.keys(pqiSR2Parsed).length} quests in PQI.txt`);
 //let pqiFound: string[] = [];
@@ -61,20 +64,162 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
       seenQuests.push(qmShortName);
     }
     const srcQmName = qmDir + qmShortName;
-    const lang = origin.endsWith("eng") ? "eng" : "rus";
-    const oldTge = qmShortName.endsWith(".qm") && lang !== "eng"; //origin.startsWith('Tge');
+
     const gameName = qmShortName.replace(/(\.qm|\.qmm)$/, "");
-    // .replace(/_eng$/, '');
-    console.info(`Reading ${srcQmName} (${lang}, oldTge=${oldTge}) gameName=${gameName}`);
+    const lang = gameName.endsWith("_eng") ? "eng" : "rus";
+    console.info(`Reading ${srcQmName} (lang=${lang} gameName=${gameName}`);
 
-    const data = fs.readFileSync(srcQmName);
+    const srcQmQmmBuffer = fs.readFileSync(srcQmName);
 
+    const quest = parse(srcQmQmmBuffer);
+
+    // Why do we need to do this?
+    const player = new QMPlayer(quest, undefined, "rus");
+    player.start();
+
+    const qmmImagesList = getImagesListFromQmm(quest);
+
+    let outputQmmBuffer: Buffer | undefined = undefined;
+
+    // If quest have images then do nothing
+    if (qmmImagesList.length > 0) {
+      outputQmmBuffer = srcQmQmmBuffer;
+      for (const qmmImage of qmmImagesList) {
+        if (allImages.indexOf(qmmImage.toLowerCase() + ".jpg") < 0) {
+          warns.push(
+            `Image ${qmmImage} is from QMM for ${qmShortName}, ` + `but not found in img dir`,
+          );
+        }
+      }
+    } else {
+      // Else lets checkout PQIs
+      const pqi2ImagesData = pqiSR2Parsed[gameName.toLowerCase()];
+      const pqi1ImagesData = pqiSR1Parsed[gameName];
+
+      const pqiImagesData = pqi2ImagesData || pqi1ImagesData;
+      if (pqiImagesData) {
+        const updatedQuest: Quest = {
+          ...quest,
+          locations: quest.locations.map((l) => {
+            const imageFromPQI = pqiImagesData.find((pqiImage) =>
+              pqiImage.locationIds?.includes(l.id),
+            );
+            return {
+              ...l,
+              img: imageFromPQI?.filename,
+            };
+          }),
+          jumps: quest.jumps.map((j) => {
+            const imageFromPQI = pqiImagesData.find((pqiImage) => pqiImage.jumpIds?.includes(j.id));
+            return {
+              ...j,
+              img: imageFromPQI?.filename,
+            };
+          }),
+          params: quest.params.map((p, paramIndex) => {
+            const stParamId = paramIndex + 1;
+            const imageFromPQI = pqiImagesData.find((pqiImage) =>
+              pqiImage.critParams?.includes(stParamId),
+            );
+            if (imageFromPQI && p.type === ParamType.Обычный) {
+              warns.push(
+                `Quest ${qmShortName} has image for param p${stParamId} in PQI but param is not critical!`,
+              );
+              return p;
+            }
+            return {
+              ...p,
+              img: imageFromPQI?.filename,
+            };
+          }),
+        };
+        outputQmmBuffer = writeQmm(updatedQuest);
+      } else {
+        // No PQI, no images from QMM. Maybe donor exists?
+
+        let donorQuestRaw: Buffer | null = null;
+        const donorQmShortName =
+          lang === "eng" ? qmDir + qmShortName.replace("_eng.", ".").replace(/.qm$/, ".qmm") : null;
+
+        if (donorQmShortName) {
+          for (const donorOrigin of fs.readdirSync(dataSrcPath + "/qm")) {
+            const donorQmDir = dataSrcPath + "/qm/" + donorOrigin + "/";
+            for (const donorQmShortName of fs.readdirSync(donorQmDir)) {
+              const donorFullQmName = donorQmDir + donorQmShortName;
+              if (fs.existsSync(donorFullQmName)) {
+                donorQuestRaw = fs.readFileSync(donorFullQmName);
+                break;
+              }
+            }
+          }
+        }
+
+        if (donorQuestRaw) {
+          const donorQuest = parse(donorQuestRaw);
+
+          const updatedQuest: Quest = {
+            ...quest,
+            locations: quest.locations.map((l) => {
+              const donorLocation = donorQuest.locations.find((dl) => dl.id === l.id);
+              return {
+                ...l,
+                media: l.media.map((srcMedia, srcMediaIndex) => ({
+                  ...srcMedia,
+                  img: donorLocation?.media[srcMediaIndex]?.img,
+                })),
+
+                paramsChanges: l.paramsChanges.map((paramChange, srcParamChangeIndex) => ({
+                  ...paramChange,
+                  img: donorLocation?.paramsChanges[srcParamChangeIndex]?.img,
+                })),
+              };
+            }),
+            jumps: quest.jumps.map((j) => {
+              const donorJump = donorQuest.jumps.find((dj) => dj.id === j.id);
+              return {
+                ...j,
+                img: donorJump?.img,
+                paramsChanges: j.paramsChanges.map((paramChange, srcParamChangeIndex) => ({
+                  ...paramChange,
+                  img: donorJump?.paramsChanges[srcParamChangeIndex]?.img,
+                })),
+              };
+            }),
+            params: quest.params.map((p, paramIndex) => {
+              const donorParam = donorQuest.params[paramIndex];
+              return {
+                ...p,
+                img: donorParam?.img,
+              };
+            }),
+          };
+          outputQmmBuffer = writeQmm(updatedQuest);
+        } else {
+          warns.push(`Not possible to find any images for ${qmShortName}!`);
+          outputQmmBuffer = srcQmQmmBuffer;
+        }
+      }
+    }
+
+    // tslint:disable-next-line:strict-type-predicates
+    if (!outputQmmBuffer) {
+      throw new Error(`Internal error, outputQmmBuffer must always be set`);
+    }
+
+    // Always write QMM
+    fs.writeFileSync(
+      dataDstPath + "/qm/" + qmShortName + ".gz",
+      Buffer.from(pako.gzip(outputQmmBuffer)),
+    );
+
+    // -- start from here
+    /*
     if (!DEBUG_SPEEDUP_SKIP_COPING) {
       fs.writeFileSync(dataDstPath + "/qm/" + qmShortName + ".gz", Buffer.from(pako.gzip(data)));
     }
 
     const quest = parse(data);
-    const player = new QMPlayer(quest, undefined, lang); // oldTge
+    const player = new QMPlayer(quest, undefined, lang);
     player.start();
 
     const probablyThisQuestImages = allImages.filter((x) =>
@@ -112,6 +257,7 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
         );
       }
     }
+    */
 
     const gameFilePath = "qm/" + qmShortName + ".gz";
     const game: Game = {
@@ -122,10 +268,9 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
           ? `Сложность: ${quest.hardness}, из ${origin}`
           : `Hardness: ${quest.hardness}, from ${origin}`,
       gameName,
-      images,
+      images: [],
       hardness: quest.hardness,
       questOrigin: origin,
-      // oldTgeBehaviour: oldTge,
       lang,
     };
 
@@ -148,7 +293,7 @@ console.info(`Done read, writing result into ${resultJsonFile}`);
 fs.writeFileSync(resultJsonFile, JSON.stringify(index));
 
 if (warns.length === 0) {
-  console.info("All done, no warnings");
+  console.info("\n\nAll done, no warnings");
 } else {
-  console.info(`Done with warnings:\n${warns.join("\n")}`);
+  console.info(`\n\nDone with warnings:\n\n${warns.join("\n")}`);
 }
