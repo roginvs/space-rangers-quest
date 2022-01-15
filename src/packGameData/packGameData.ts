@@ -122,7 +122,10 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
             );
             return {
               ...l,
-              img: imageFromPQI?.filename,
+              media: l.media.map((m) => ({
+                ...m,
+                img: imageFromPQI?.filename,
+              })),
             };
           }),
           jumps: quest.jumps.map((j) => {
