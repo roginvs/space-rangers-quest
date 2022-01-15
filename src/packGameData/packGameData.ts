@@ -176,37 +176,81 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
         if (donorQuestRaw) {
           const donorQuest = parse(donorQuestRaw);
 
+          let donorWarns: string[] = [];
+
           const updatedQuest: Quest = {
             ...quest,
             locations: quest.locations.map((l) => {
               const donorLocation = donorQuest.locations.find((dl) => dl.id === l.id);
-
+              if (!donorLocation) {
+                donorWarns.push(`L${l.id} is not found in donor quest`);
+              }
               return {
                 ...l,
-                media: l.media.map((srcMedia, srcMediaIndex) => ({
-                  ...srcMedia,
-                  img: donorLocation?.media[srcMediaIndex]?.img,
-                })),
+                media: l.media.map((srcMedia, srcMediaIndex) => {
+                  if (!l.texts[srcMediaIndex]) {
+                    return srcMedia;
+                  }
 
-                paramsChanges: l.paramsChanges.map((paramChange, srcParamChangeIndex) => ({
-                  ...paramChange,
-                  img: donorLocation?.paramsChanges[srcParamChangeIndex]?.img,
-                })),
+                  if (donorLocation && !donorLocation.media[srcMediaIndex]) {
+                    donorWarns.push(`L${l.id}-M${srcMediaIndex} is not found in donor quest`);
+                  }
+                  return {
+                    ...srcMedia,
+                    img: donorLocation?.media[srcMediaIndex]?.img,
+                  };
+                }),
+
+                paramsChanges: l.paramsChanges.map((paramChange, srcParamChangeIndex) => {
+                  if (!quest.params[srcParamChangeIndex].active) {
+                    return paramChange;
+                  }
+                  if (donorLocation && !donorLocation.paramsChanges[srcParamChangeIndex]) {
+                    donorWarns.push(
+                      `L${l.id}-PC${srcParamChangeIndex} is not found in donor quest`,
+                    );
+                  }
+                  return {
+                    ...paramChange,
+                    img: donorLocation?.paramsChanges[srcParamChangeIndex]?.img,
+                  };
+                }),
               };
             }),
             jumps: quest.jumps.map((j) => {
               const donorJump = donorQuest.jumps.find((dj) => dj.id === j.id);
+              if (!donorJump) {
+                donorWarns.push(`J${j.id} is not found in donor quest`);
+              }
               return {
                 ...j,
                 img: donorJump?.img,
-                paramsChanges: j.paramsChanges.map((paramChange, srcParamChangeIndex) => ({
-                  ...paramChange,
-                  img: donorJump?.paramsChanges[srcParamChangeIndex]?.img,
-                })),
+                paramsChanges: j.paramsChanges.map((paramChange, srcParamChangeIndex) => {
+                  if (!quest.params[srcParamChangeIndex].active) {
+                    return paramChange;
+                  }
+
+                  if (donorJump && !donorJump.paramsChanges[srcParamChangeIndex]) {
+                    donorWarns.push(
+                      `J${j.id}-PC${srcParamChangeIndex} is not found in donor quest`,
+                    );
+                  }
+                  return {
+                    ...paramChange,
+                    img: donorJump?.paramsChanges[srcParamChangeIndex]?.img,
+                  };
+                }),
               };
             }),
             params: quest.params.map((p, paramIndex) => {
+              if (!quest.params[paramIndex].active) {
+                return p;
+              }
+
               const donorParam = donorQuest.params[paramIndex];
+              if (!donorParam) {
+                donorWarns.push(`P${paramIndex} is not found in donor quest`);
+              }
               return {
                 ...p,
                 img: donorParam?.img,
@@ -214,6 +258,10 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
             }),
           };
           outputQmmBuffer = writeQmm(updatedQuest);
+
+          if (donorWarns.length > 0) {
+            warns.push(`Donor for ${qmShortName} has warnings: ${donorWarns.join(", ")}`);
+          }
         } else {
           warns.push(`Not possible to find any images for ${qmShortName}!`);
           outputQmmBuffer = srcQmQmmBuffer;
