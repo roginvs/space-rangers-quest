@@ -875,11 +875,20 @@ orderByChild('createdAt').once("value")).val();
   }
 
   async function saveCustomGame(gameKey: string, saving: GameState | null) {
-    await setLocal(INDEXEDDB_CUSTOM_SAVED_STORE_NAME, gameKey, saving);
+    const savingRaw = saving ? JSON.stringify(saving) : saving;
+    await setLocal(INDEXEDDB_CUSTOM_SAVED_STORE_NAME, gameKey, savingRaw);
   }
   async function loadCustomGame(gameKey: string) {
-    const value = await getLocal(INDEXEDDB_CUSTOM_SAVED_STORE_NAME, gameKey);
-    return value as GameState | null;
+    const rawValue = await getLocal(INDEXEDDB_CUSTOM_SAVED_STORE_NAME, gameKey);
+    if (!rawValue) {
+      return null;
+    }
+    try {
+      const value = JSON.parse(rawValue);
+      return value as GameState;
+    } catch (e) {
+      return null;
+    }
   }
 
   console.info(`Returning db instance`);
