@@ -1,4 +1,3 @@
-import { PQImages } from "../pqImages";
 import {
   QM,
   Location,
@@ -532,7 +531,6 @@ export function performJump(
   jumpId: number,
   quest: Quest,
   stateOriginal: GameState,
-  images: PQImages = [],
   dateUnix = new Date().getTime(),
   showDebug = true,
 ): GameState {
@@ -550,7 +548,7 @@ export function performJump(
     performedJumps,
   };
 
-  state = performJumpInternal(jumpId, quest, state, images, random, showDebug);
+  state = performJumpInternal(jumpId, quest, state, random, showDebug);
   return {
     ...state,
     aleaState: alea.exportState(),
@@ -560,7 +558,6 @@ function performJumpInternal(
   jumpId: number,
   quest: Quest,
   stateOriginal: GameState,
-  images: PQImages = [],
   random: RandomFunc,
   showDebug: boolean,
 ): GameState {
@@ -573,13 +570,7 @@ function performJumpInternal(
 
   let state = stateOriginal;
   const jumpForImg = quest.jumps.find((x) => x.id === state.lastJumpId);
-  const image =
-    jumpForImg && jumpForImg.img
-      ? transformImageName(jumpForImg.img)
-      : images
-          .filter((x) => !!x.jumpIds && x.jumpIds.indexOf(jumpId) > -1)
-          .map((x) => x.filename)
-          .shift();
+  const image = jumpForImg && jumpForImg.img ? transformImageName(jumpForImg.img) : undefined;
   if (image) {
     state = {
       ...state,
@@ -592,7 +583,7 @@ function performJumpInternal(
       ...state,
       state: "location",
     };
-    state = calculateLocation(quest, state, images, random, showDebug);
+    state = calculateLocation(quest, state, random, showDebug);
   } else if (state.state === "jump") {
     const jump = quest.jumps.find((x) => x.id === state.lastJumpId);
     if (!jump) {
@@ -603,7 +594,7 @@ function performJumpInternal(
       locationId: jump.toLocationId,
       state: "location",
     };
-    state = calculateLocation(quest, state, images, random, showDebug);
+    state = calculateLocation(quest, state, random, showDebug);
   } else if (state.state === "location") {
     if (!state.possibleJumps.find((x) => x.id === jumpId)) {
       throw new Error(
@@ -655,14 +646,7 @@ function performJumpInternal(
         const qmmImage =
           (state.critParamId !== null && jump.paramsChanges[state.critParamId].img) ||
           quest.params[critParamId].img;
-        const image = qmmImage
-          ? transformImageName(qmmImage)
-          : images
-              .filter(
-                (x) => !!x.critParams && x.critParams.indexOf(state.critParamId as number) > -1,
-              )
-              .map((x) => x.filename)
-              .shift();
+        const image = qmmImage ? transformImageName(qmmImage) : undefined;
         if (image) {
           state = {
             ...state,
@@ -675,7 +659,7 @@ function performJumpInternal(
           locationId: nextLocation.id,
           state: "location",
         };
-        state = calculateLocation(quest, state, images, random, showDebug);
+        state = calculateLocation(quest, state, random, showDebug);
       }
     } else {
       if (critParamsTriggered.length > 0) {
@@ -690,7 +674,7 @@ function performJumpInternal(
           locationId: nextLocation.id,
           state: "location",
         };
-        state = calculateLocation(quest, state, images, random, showDebug);
+        state = calculateLocation(quest, state, random, showDebug);
       } else {
         state = {
           ...state,
@@ -707,17 +691,7 @@ function performJumpInternal(
     const qmmImg =
       (state.critParamId !== null && jump && jump.paramsChanges[state.critParamId].img) ||
       (state.critParamId !== null && quest.params[state.critParamId].img);
-    const image = qmmImg
-      ? transformImageName(qmmImg)
-      : images
-          .filter(
-            (x) =>
-              !!x.critParams &&
-              state.critParamId !== null &&
-              x.critParams.indexOf(state.critParamId) > -1,
-          )
-          .map((x) => x.filename)
-          .shift();
+    const image = qmmImg ? transformImageName(qmmImg) : undefined;
 
     if (image) {
       state = {
@@ -740,7 +714,6 @@ function performJumpInternal(
 function calculateLocation(
   quest: Quest,
   stateOriginal: GameState,
-  images: PQImages,
   random: RandomFunc,
   showDebug: boolean,
 ): GameState {
@@ -768,12 +741,8 @@ function calculateLocation(
 
   const locImgId = calculateLocationShowingTextId(location, state, random, showDebug);
   const imageFromQmm = location.media[locImgId] && location.media[locImgId].img;
-  const imageFromPQI = images.find(
-    (x) => !!x.locationIds && x.locationIds.indexOf(state.locationId) > -1,
-  );
-  const image = imageFromQmm
-    ? transformImageName(imageFromQmm)
-    : imageFromPQI && imageFromPQI.filename;
+
+  const image = imageFromQmm ? transformImageName(imageFromQmm) : undefined;
   if (image) {
     state = {
       ...state,
@@ -1008,12 +977,7 @@ function calculateLocation(
       };
 
       const qmmImg = location.paramsChanges[critParam].img || quest.params[critParam].img;
-      const image = qmmImg
-        ? transformImageName(qmmImg)
-        : images
-            .filter((x) => !!x.critParams && x.critParams.indexOf(critParam) > -1)
-            .map((x) => x.filename)
-            .shift();
+      const image = qmmImg ? transformImageName(qmmImg) : undefined;
       if (image) {
         state = {
           ...state,
@@ -1052,7 +1016,7 @@ function calculateLocation(
           `Performinig autojump from loc=${state.locationId} via jump=${lonenyCurrentJump.id}`,
         );
       }
-      state = performJumpInternal(lonenyCurrentJump.id, quest, state, images, random, showDebug);
+      state = performJumpInternal(lonenyCurrentJump.id, quest, state, random, showDebug);
     }
   } else if (state.state === "critonlocation") {
     // Little bit copy-paste from branch above
@@ -1084,13 +1048,12 @@ function transformImageName(imageName: string): string {
   return filename.endsWith(".jpg") ? filename : filename + ".jpg";
 }
 
-export function getAllImagesToPreload(quest: Quest, images: PQImages) {
-  const imagesPQI = images.map((x) => x.filename);
+export function getAllImagesToPreload(quest: Quest) {
   const imagesQmm = getImagesListFromQmm(quest as QM).map((fileName) =>
     transformImageName(fileName),
   );
   const uniq: { [name: string]: boolean } = {};
-  for (const img of [...imagesPQI, ...imagesQmm]) {
+  for (const img of imagesQmm) {
     uniq[img] = true;
   }
 
@@ -1139,14 +1102,7 @@ export function validateWinningLog(quest: Quest, gameLog: GameLog, showDebug = t
       if (showDebug) {
         console.info(`Validate jumping jumpId=${performedJump.jumpId}`);
       }
-      state = performJump(
-        performedJump.jumpId,
-        quest,
-        state,
-        [],
-        performedJump.dateUnix,
-        showDebug,
-      );
+      state = performJump(performedJump.jumpId, quest, state, performedJump.dateUnix, showDebug);
     } else {
       if (showDebug) {
         console.info(`Validate=false jumpId=${performedJump.jumpId} not found`);

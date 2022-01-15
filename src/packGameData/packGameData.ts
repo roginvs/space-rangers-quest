@@ -90,7 +90,7 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
     const quest = parse(srcQmQmmBuffer);
 
     // Why do we need to do this?
-    const player = new QMPlayer(quest, undefined, "rus");
+    const player = new QMPlayer(quest, "rus");
     player.start();
 
     const qmmImagesList = getImagesListFromQmm(quest);
@@ -331,7 +331,6 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
           ? `Сложность: ${quest.hardness}, из ${origin}`
           : `Hardness: ${quest.hardness}, from ${origin}`,
       gameName,
-      images: [],
       hardness: quest.hardness,
       questOrigin: origin,
       lang,

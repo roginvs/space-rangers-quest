@@ -518,7 +518,6 @@ export function EditorCore({
         gameState={isPlaying}
         player={{ ...quest.strings, lang: "rus", Player: quest.strings.Ranger }}
         setGameState={(newState) => setIsPlaying(newState)}
-        pqiImages={[]}
         musicList={undefined}
         setIsMusic={() => {}}
         l={getLang("rus")}

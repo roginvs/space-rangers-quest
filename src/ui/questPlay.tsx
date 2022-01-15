@@ -21,14 +21,8 @@ export function initRandomGame(quest: Quest) {
   );
   return gameState;
 }
-export function initRandomGameAndDoFirstStep(quest: Quest, images: PQImages) {
-  const gameState = performJump(
-    JUMP_I_AGREE,
-    quest,
-    initRandomGame(quest),
-    images,
-    new Date().getTime(),
-  );
+export function initRandomGameAndDoFirstStep(quest: Quest) {
+  const gameState = performJump(JUMP_I_AGREE, quest, initRandomGame(quest), new Date().getTime());
   return gameState;
 }
 
@@ -71,8 +65,6 @@ export function QuestPlay({
   musicList,
   setIsMusic,
 
-  pqiImages,
-
   l,
 
   onExit,
@@ -87,8 +79,6 @@ export function QuestPlay({
   player: DeepImmutable<Player>;
 
   setGameState: (newGameState: GameState) => void;
-
-  pqiImages: PQImages;
 
   musicList: string[] | undefined;
   setIsMusic: (isMusic: boolean) => void;
@@ -116,7 +106,7 @@ export function QuestPlay({
   const uistate = getUIState(quest, gameState, player);
 
   const imageUrl = uistate.imageFileName ? getImageUrl(uistate.imageFileName) : null;
-  const allImagesUrls = getAllImagesToPreload(quest, pqiImages).map((x) => getImageUrl(x));
+  const allImagesUrls = getAllImagesToPreload(quest).map((x) => getImageUrl(x));
 
   const isMusic = !!musicList;
 
@@ -135,7 +125,7 @@ export function QuestPlay({
               href={location.href}
               onClick={(e) => {
                 e.preventDefault();
-                const newState = performJump(choice.jumpId, quest, gameState, pqiImages);
+                const newState = performJump(choice.jumpId, quest, gameState);
                 setGameState(newState);
 
                 //window.scrollTo(0, isMobile ? 44 : 0);
@@ -187,7 +177,7 @@ export function QuestPlay({
           ) {
             const newGameState = showTaskInfoOnQuestStart
               ? initRandomGame(quest)
-              : initRandomGameAndDoFirstStep(quest, pqiImages);
+              : initRandomGameAndDoFirstStep(quest);
             setGameState(newGameState);
           } else {
             setReallyRestart(true);
@@ -262,7 +252,7 @@ export function QuestPlay({
                   onClick={() => {
                     const newGameState = showTaskInfoOnQuestStart
                       ? initRandomGame(quest)
-                      : initRandomGameAndDoFirstStep(quest, pqiImages);
+                      : initRandomGameAndDoFirstStep(quest);
                     setGameState(newGameState);
                     setReallyRestart(false);
                   }}

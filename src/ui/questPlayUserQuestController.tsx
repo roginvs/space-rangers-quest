@@ -114,7 +114,6 @@ export class QuestPlayUserQuestController extends React.Component<
             gameState: newState,
           });
         }}
-        pqiImages={[]}
         musicList={
           !this.state.noMusic
             ? this.props.store.index.dir.music.files.map((fileInfo) => fileInfo.path)

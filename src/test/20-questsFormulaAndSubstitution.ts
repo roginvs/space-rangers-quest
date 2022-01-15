@@ -84,7 +84,7 @@ describe(`Checking all quests for formulas and params substitution`, function ()
           });
         });
         it(`Creates player and starts (to check init values)`, () => {
-          const player = new QMPlayer(quest, [], "rus");
+          const player = new QMPlayer(quest, "rus");
           player.start();
         });
         it(`Starting/ending text`, () => {

@@ -113,7 +113,7 @@ export class QuestPlayController extends React.Component<
 
     let gameState = await this.props.store.db.getLocalSaving(this.props.gameName);
     if (!gameState) {
-      gameState = initRandomGameAndDoFirstStep(quest, game.images);
+      gameState = initRandomGameAndDoFirstStep(quest);
     }
     this.setState({
       quest,
@@ -188,7 +188,6 @@ export class QuestPlayController extends React.Component<
             gameState: newState,
           });
         }}
-        pqiImages={game.images}
         musicList={
           !this.state.noMusic
             ? this.props.store.index.dir.music.files.map((fileInfo) => fileInfo.path)
@@ -216,12 +215,12 @@ export class QuestPlayController extends React.Component<
   }
 }
 
-function initRandomGameAndDoFirstStep(quest: Quest, images: PQImages) {
+function initRandomGameAndDoFirstStep(quest: Quest) {
   let gameState = initGame(
     quest,
     Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2),
   );
-  gameState = performJump(JUMP_I_AGREE, quest, gameState, images, new Date().getTime());
+  gameState = performJump(JUMP_I_AGREE, quest, gameState, new Date().getTime());
   return gameState;
 }
 

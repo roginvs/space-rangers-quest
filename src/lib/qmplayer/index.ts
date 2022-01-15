@@ -17,11 +17,7 @@ import { DEFAULT_RUS_PLAYER, DEFAULT_ENG_PLAYER } from "./player";
 export class QMPlayer {
   private readonly player = this.lang === "rus" ? DEFAULT_RUS_PLAYER : DEFAULT_ENG_PLAYER;
   private state: GameState;
-  constructor(
-    private readonly quest: QM,
-    private readonly images: PQImages = [],
-    private readonly lang: "rus" | "eng",
-  ) {
+  constructor(private readonly quest: QM, private readonly lang: "rus" | "eng") {
     this.state = initGame(this.quest, Math.random().toString(36));
   }
 
@@ -30,13 +26,13 @@ export class QMPlayer {
   }
 
   public getAllImagesToPreload() {
-    return getAllImagesToPreload(this.quest, this.images);
+    return getAllImagesToPreload(this.quest);
   }
   public getState(): PlayerState {
     return getUIState(this.quest, this.state, this.player);
   }
   performJump(jumpId: number) {
-    this.state = performJump(jumpId, this.quest, this.state, this.images);
+    this.state = performJump(jumpId, this.quest, this.state);
   }
 
   getSaving() {

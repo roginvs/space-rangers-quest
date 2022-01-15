@@ -13,7 +13,6 @@ import {
   JUMP_I_AGREE,
   JUMP_GO_BACK_TO_SHIP,
 } from "../lib/qmplayer";
-import { PQImages } from "../lib/pqImages";
 import { getUIState } from "../lib/qmplayer/funcs";
 import { DEFAULT_RUS_PLAYER } from "../lib/qmplayer/player";
 
@@ -28,7 +27,6 @@ const date3 = new Date("2018-07-22T22:22:36.761Z").getTime();
 const date4 = new Date("2018-07-22T22:30:36.761Z").getTime();
 
 describe(`Using saveAndValidaton.qm, seed 1`, function () {
-  const images: PQImages = [];
   const data = fs.readFileSync(__dirname + `/../../src/test/saveAndValidation.qm`);
   const quest = parse(data);
 
@@ -36,15 +34,15 @@ describe(`Using saveAndValidaton.qm, seed 1`, function () {
     state = initGame(quest, MY_SEED1);
   });
   it(`That seed have 2 jumps`, () => {
-    state = performJump(JUMP_I_AGREE, quest, state, images, date1);
+    state = performJump(JUMP_I_AGREE, quest, state, date1);
     assert.strictEqual(state.possibleJumps.length, 2);
   });
   it(`Jumping`, () => {
-    state = performJump(2, quest, state, images, date1);
-    state = performJump(3, quest, state, images, date1);
-    state = performJump(6, quest, state, images, date1);
+    state = performJump(2, quest, state, date1);
+    state = performJump(3, quest, state, date1);
+    state = performJump(6, quest, state, date1);
     assert.deepStrictEqual(state.paramValues.slice(0, 3), [8, 5, 1]);
-    state = performJump(JUMP_GO_BACK_TO_SHIP, quest, state, images, date1);
+    state = performJump(JUMP_GO_BACK_TO_SHIP, quest, state, date1);
     assert.strictEqual(state.state, "returnedending");
     const uistate = getUIState(quest, state, DEFAULT_RUS_PLAYER);
     assert.strictEqual(uistate.gameState, "win");
@@ -69,7 +67,6 @@ describe(`Using saveAndValidaton.qm, seed 1`, function () {
 });
 
 describe(`Using saveAndValidaton.qm, seed 2`, function () {
-  const images: PQImages = [];
   const data = fs.readFileSync(__dirname + `/../../src/test/saveAndValidation.qm`);
   const quest = parse(data);
 
@@ -77,7 +74,7 @@ describe(`Using saveAndValidaton.qm, seed 2`, function () {
     state = initGame(quest, MY_SEED2);
   });
   it(`That seed have 1 jump`, () => {
-    state = performJump(JUMP_I_AGREE, quest, state, images, date1);
+    state = performJump(JUMP_I_AGREE, quest, state, date1);
     assert.strictEqual(state.possibleJumps.length, 1);
   });
 });
