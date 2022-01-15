@@ -272,7 +272,7 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
 
     // Always write QMM
     fs.writeFileSync(
-      dataDstPath + "/qm/" + qmShortName + ".gz",
+      dataDstPath + "/qm/" + gameName + ".qmm" + ".gz",
       Buffer.from(pako.gzip(outputQmmBuffer)),
     );
 
