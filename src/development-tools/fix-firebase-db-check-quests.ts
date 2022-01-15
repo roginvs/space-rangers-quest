@@ -2,7 +2,7 @@ import admin from "firebase-admin";
 import * as fs from "fs";
 
 import * as pako from "pako";
-import { Index } from "../packGameData";
+import { Index } from "../packGameData/defs";
 import { parse } from "../lib/qmreader";
 import { Quest, validateWinningLog } from "../lib/qmplayer/funcs";
 import { FirebasePublic } from "../ui/db/defs";

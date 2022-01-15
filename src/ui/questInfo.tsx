@@ -14,7 +14,7 @@ import {
   GameLog,
 } from "../lib/qmplayer/funcs";
 import { JUMP_I_AGREE } from "../lib/qmplayer/defs";
-import { Index, Game } from "../packGameData";
+import { Index, Game } from "../packGameData/defs";
 import { AppNavbar } from "./appNavbar";
 import { ButtonDropdown, DropdownMenu, DropdownToggle, DropdownItem } from "reactstrap";
 import { QuestReplaceTags } from "./questReplaceTags";

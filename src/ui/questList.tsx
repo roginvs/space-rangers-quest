@@ -3,7 +3,7 @@ import { Loader, DivFadeinCss } from "./common";
 import { LangTexts } from "./lang";
 import { WonProofs } from "./db/defs";
 import { Player, Lang } from "../lib/qmplayer/player";
-import { Index, Game } from "../packGameData";
+import { Index, Game } from "../packGameData/defs";
 import { ButtonDropdown, DropdownMenu, DropdownToggle, DropdownItem } from "reactstrap";
 import { observer } from "mobx-react";
 import { Store, QUEST_SEARCH_ALL, QUEST_SEARCH_OWN } from "./store";

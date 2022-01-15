@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { Quest } from "../../../../../lib/qmplayer/funcs";
 import { parse } from "../../../../../lib/qmreader";
-import { Game } from "../../../../../packGameData";
+import { Game } from "../../../../../packGameData/defs";
 import { DATA_DIR } from "../../../../consts";
 import { QuestWithMetadata } from "../../idb";
 import { useOnDocumentKeyUp } from "../../hooks";

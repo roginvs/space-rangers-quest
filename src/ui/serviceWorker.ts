@@ -17,7 +17,7 @@ import {
   SKIP_WAITING_MESSAGE_DATA,
   CACHE_MUSIC_NAME_OGG_OLD,
 } from "./consts";
-import { Index } from "../packGameData";
+import { Index } from "../packGameData/defs";
 
 const CACHE_ENGINE_PREFIX = "spacerangers-engine";
 const CACHE_ENGINE_NAME = `${CACHE_ENGINE_PREFIX}-${__VERSION__}`;

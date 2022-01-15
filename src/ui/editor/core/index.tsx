@@ -40,7 +40,7 @@ import { initRandomGame, QuestPlay } from "../../questPlay";
 import { getLang } from "../../lang";
 import { QuestWithMetadata, useIdb } from "./idb";
 import { emptyQmm } from "./emptyQmm";
-import { Game } from "../../../packGameData";
+import { Game } from "../../../packGameData/defs";
 import { LoadOverlay } from "./overlays/load/loadOverlay";
 import { writeQmm } from "../../../lib/qmwriter";
 import { HelpOverlay } from "./overlays/helpOverlay";

@@ -1,47 +1,16 @@
-import { parse, QM, ParamType, ParamCritType, getImagesListFromQmm } from "./lib/qmreader";
+import { parse, QM, ParamType, ParamCritType, getImagesListFromQmm } from "../lib/qmreader";
 
 import * as pako from "pako";
 import * as fs from "fs";
 
-import { QMPlayer } from "./lib/qmplayer";
-import { PQImages } from "./lib/pqImages";
-import { Lang } from "./lib/qmplayer/player";
+import { QMPlayer } from "../lib/qmplayer";
+import { PQImages } from "../lib/pqImages";
 import { readPqi } from "./pqi";
+import { Index, Game } from "./defs";
 
 const pqiSR1Parsed = JSON.parse(fs.readFileSync(__dirname + "/../src/sr1-pqi.json").toString()) as {
   [questName: string]: PQImages;
 };
-
-export type Origin = string;
-
-export interface Game {
-  filename: string;
-  taskText: string;
-  smallDescription?: string;
-  gameName: string;
-  images: PQImages;
-  questOrigin: Origin;
-  // oldTgeBehaviour: boolean,
-  hardness: number;
-  lang: Lang;
-}
-
-export interface CacheFilesList {
-  files: {
-    path: string;
-    size: number;
-  }[];
-  totalSize: number;
-}
-
-export interface Index {
-  quests: Game[];
-  dir: {
-    quests: CacheFilesList;
-    images: CacheFilesList;
-    music: CacheFilesList;
-  };
-}
 
 const warns: string[] = [];
 

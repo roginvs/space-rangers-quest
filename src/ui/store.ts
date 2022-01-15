@@ -1,5 +1,5 @@
 import { observable, computed, action } from "mobx";
-import { Index } from "../packGameData";
+import { Index } from "../packGameData/defs";
 import { DB } from "./db/db";
 import { GameWonProofs } from "./db/defs";
 import { Player } from "../lib/qmplayer/player";

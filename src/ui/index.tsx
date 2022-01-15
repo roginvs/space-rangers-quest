@@ -10,7 +10,7 @@ import "font-awesome/css/font-awesome.css";
 import firebase from "firebase/app";
 import "firebase/database";
 
-import { Index, Game } from "../packGameData";
+import { Index, Game } from "../packGameData/defs";
 
 import { getDb, DB } from "./db/db";
 import { DEFAULT_RUS_PLAYER, Player, DEFAULT_ENG_PLAYER } from "../lib/qmplayer/player";

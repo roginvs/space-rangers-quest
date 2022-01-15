@@ -3,7 +3,7 @@ import * as fs from "fs";
 
 import { FirebasePublic, WonProofTableRow } from "../ui/db/defs";
 import * as pako from "pako";
-import { Index } from "../packGameData";
+import { Index } from "../packGameData/defs";
 import { parse } from "../lib/qmreader";
 import { Quest, validateWinningLog } from "../lib/qmplayer/funcs";
 //const acc = require("~/space-rangers-firebase-root-key.json");

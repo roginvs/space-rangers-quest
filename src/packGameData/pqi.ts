@@ -1,4 +1,4 @@
-import { PQImages } from "./lib/pqImages";
+import { PQImages } from "../lib/pqImages";
 import * as fs from "fs";
 
 export function readPqi(

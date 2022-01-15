@@ -1,4 +1,4 @@
-import { Game } from "../packGameData";
+import { Game } from "../packGameData/defs";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "./qmplayer/defs";
 import { SRDateToString } from "./qmplayer/funcs";
 import { Player } from "./qmplayer/player";
