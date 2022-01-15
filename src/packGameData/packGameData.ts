@@ -20,12 +20,20 @@ TODO to test:
     - location
     - jumps
     - critParams
+    - example quest Boat:
+      - location id = 1
+      - jumps P11 or others
+      - Param 1 or param 2
   - SR2 quests have images
+    - example Ministry:
+      - starting ID=121
+      - Param 1
+    - example Player
+      - Jump 12
   - SR2 eng quests have images
+    - same examples as above
 
 Check English have eng quests origin
-
-Check that images prop is removed from Game
 
 
 */
