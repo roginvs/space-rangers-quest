@@ -10,9 +10,25 @@ import { Index, Game, PQIParsed } from "./defs";
 import { scanAndCopyImages } from "./images";
 import { scanAndCopyMusic } from "./music";
 import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
-import { addImagesToQuestIfNeeded } from "./quests";
 import { Quest } from "../lib/qmplayer/funcs";
 import { writeQmm } from "../lib/qmwriter";
+
+/*
+
+TODO to test:
+  - SR1 quests have images
+    - location
+    - jumps
+    - critParams
+  - SR2 quests have images
+  - SR2 eng quests have images
+
+Check English have eng quests origin
+
+Check that images prop is removed from Game
+
+
+*/
 
 const warns: string[] = [];
 
