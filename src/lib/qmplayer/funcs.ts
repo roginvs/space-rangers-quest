@@ -1094,7 +1094,6 @@ export function getAllImagesToPreload(quest: Quest, images: PQImages) {
     uniq[img] = true;
   }
 
-
   return Object.keys(uniq);
 }
 
