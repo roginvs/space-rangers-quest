@@ -81,10 +81,6 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
     }
     const srcQmName = qmDir + qmShortName;
 
-    if (qmShortName !== "Ministry_eng.qm") {
-      continue;
-    }
-
     const gameName = qmShortName.replace(/(\.qm|\.qmm)$/, "");
     const lang = gameName.endsWith("_eng") ? "eng" : "rus";
     console.info(`Reading ${srcQmName} (lang=${lang} gameName=${gameName}`);
