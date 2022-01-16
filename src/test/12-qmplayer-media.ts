@@ -46,4 +46,40 @@ describe("Media", function () {
     const st = jumpTo("Back");
     assert.strictEqual(st.imageName, "Boat_01");
   });
+
+  it.skip("Media on jump with no description", () => {
+    const st = jumpTo("jumpMediaNoDesc");
+    assert.strictEqual(st.imageName, "Boat_02");
+  });
+  it("Media on jump with no description and go back", () => {
+    jumpTo("jumpMediaNoDesc");
+    const st = jumpTo("Back");
+    assert.strictEqual(st.imageName, "Boat_02");
+  });
+
+  it.skip("Media on jump with description", () => {
+    const st = jumpTo("jumpMediaDesc");
+    assert.strictEqual(st.imageName, "Ministry_02");
+  });
+  it("Media on jump with description and go back", () => {
+    jumpTo("jumpMediaDesc");
+    jumpTo();
+    const st = jumpTo("Back");
+    assert.strictEqual(st.imageName, "Ministry_02");
+  });
+
+  it("Media on critparam own media", () => {
+    const st = jumpTo("SuccessParamMediaOwn");
+    assert.strictEqual(st.imageName, "boat_03");
+  });
+
+  it("Media on critparam jump override", () => {
+    const st = jumpTo("SuccessParamMediaJumpOverride");
+    assert.strictEqual(st.imageName, "drugs_00");
+  });
+
+  it("Media on critparam location override", () => {
+    const st = jumpTo("SuccessParamLocation");
+    assert.strictEqual(st.imageName, "drugs_02");
+  });
 });
