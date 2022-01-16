@@ -568,11 +568,25 @@ function performJumpInternal(
   }
 
   let state = stateOriginal;
-  const lastJumpMedia = quest.jumps.find((x) => x.id === state.lastJumpId);
-  if (lastJumpMedia && lastJumpMedia.img) {
+
+  /*
+   // Before for unknown reasons it used media from last jump
+   // TODO: Test how original game behaves with media
+
+   const lastJumpMedia = quest.jumps.find((x) => x.id === state.lastJumpId);
+   if (lastJumpMedia && lastJumpMedia.img) {
+     state = {
+       ...state,
+       imageName: lastJumpMedia.img,
+     };
+   }
+  */
+
+  const jumpMedia = quest.jumps.find((x) => x.id === jumpId);
+  if (jumpMedia && jumpMedia.img) {
     state = {
       ...state,
-      imageName: lastJumpMedia.img,
+      imageName: jumpMedia.img,
     };
   }
 

@@ -47,7 +47,7 @@ describe("Media", function () {
     assert.strictEqual(st.imageName, "Boat_01");
   });
 
-  it.skip("Media on jump with no description", () => {
+  it("Media on jump with no description", () => {
     const st = jumpTo("jumpMediaNoDesc");
     assert.strictEqual(st.imageName, "Boat_02");
   });
@@ -57,7 +57,7 @@ describe("Media", function () {
     assert.strictEqual(st.imageName, "Boat_02");
   });
 
-  it.skip("Media on jump with description", () => {
+  it("Media on jump with description", () => {
     const st = jumpTo("jumpMediaDesc");
     assert.strictEqual(st.imageName, "Ministry_02");
   });
