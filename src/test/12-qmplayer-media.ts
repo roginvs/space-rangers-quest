@@ -42,11 +42,15 @@ describe("Media", function () {
   it("Media on location", () => {
     const st = jumpTo("locMedia");
     assert.strictEqual(st.imageName, "Boat_01");
+    assert.strictEqual(st.trackName, "track1");
+    assert.strictEqual(st.soundName, "sound1");
   });
   it("Media on location and go back", () => {
     jumpTo("locMedia");
     const st = jumpTo("Back");
     assert.strictEqual(st.imageName, "Boat_01");
+    assert.strictEqual(st.trackName, "track1");
+    assert.strictEqual(st.soundName, null);
   });
 
   it("Media on jump with no description", () => {
@@ -59,36 +63,51 @@ describe("Media", function () {
     jumpTo("jumpMediaNoDesc");
     const st = jumpTo("Back");
     assert.strictEqual(st.imageName, "Boat_02");
+    assert.strictEqual(st.trackName, "track02");
+    assert.strictEqual(st.soundName, null);
   });
 
   it("Media on jump with description", () => {
     const st = jumpTo("jumpMediaDesc");
     assert.strictEqual(st.imageName, "Ministry_02");
+    assert.strictEqual(st.trackName, "track002");
+    assert.strictEqual(st.soundName, "sound002");
   });
   it("Media on jump with description and go back", () => {
     jumpTo("jumpMediaDesc");
-    jumpTo();
+    const st0 = jumpTo();
+    assert.strictEqual(st0.soundName, null);
     const st = jumpTo("Back");
     assert.strictEqual(st.imageName, "Ministry_02");
+    assert.strictEqual(st.trackName, "track002");
+    assert.strictEqual(st0.soundName, null);
   });
 
   it("Media on critparam own media on jump", () => {
     const st = jumpTo("SuccessParamOnJumpMediaOwn");
     assert.strictEqual(st.imageName, "boat_03");
+    assert.strictEqual(st.trackName, "track3");
+    assert.strictEqual(st.soundName, "sound3");
   });
 
   it("Media on critparam jump override", () => {
     const st = jumpTo("SuccessParamMediaJumpOverride");
     assert.strictEqual(st.imageName, "drugs_00");
+    assert.strictEqual(st.trackName, "track05");
+    assert.strictEqual(st.soundName, "sound05");
   });
 
   it("Media on critparam location own", () => {
     const st = jumpTo("SuccessParamLocationOwn");
     assert.strictEqual(st.imageName, "boat_03");
+    assert.strictEqual(st.trackName, "track3");
+    assert.strictEqual(st.soundName, "sound3");
   });
 
   it("Media on critparam location override", () => {
     const st = jumpTo("SuccessParamLocationOverride");
     assert.strictEqual(st.imageName, "drugs_02");
+    assert.strictEqual(st.trackName, "track06");
+    assert.strictEqual(st.soundName, "sound06");
   });
 });
