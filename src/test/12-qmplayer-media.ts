@@ -68,8 +68,8 @@ describe("Media", function () {
     assert.strictEqual(st.imageName, "Ministry_02");
   });
 
-  it("Media on critparam own media", () => {
-    const st = jumpTo("SuccessParamMediaOwn");
+  it("Media on critparam own media on jump", () => {
+    const st = jumpTo("SuccessParamOnJumpMediaOwn");
     assert.strictEqual(st.imageName, "boat_03");
   });
 
@@ -78,8 +78,13 @@ describe("Media", function () {
     assert.strictEqual(st.imageName, "drugs_00");
   });
 
+  it("Media on critparam location own", () => {
+    const st = jumpTo("SuccessParamLocationOwn");
+    assert.strictEqual(st.imageName, "boat_03");
+  });
+
   it("Media on critparam location override", () => {
-    const st = jumpTo("SuccessParamLocation");
+    const st = jumpTo("SuccessParamLocationOverride");
     assert.strictEqual(st.imageName, "drugs_02");
   });
 });
