@@ -15,6 +15,7 @@ import { QuestPlayImage } from "./questPlay.image";
 import { DeepImmutable } from "../lib/qmplayer/deepImmutable";
 import { transformMedianameToUrl } from "./transformMediaNameToUrl";
 import { DATA_DIR } from "./consts";
+import { Sound } from "./questPlay.sound";
 
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
@@ -247,6 +248,8 @@ export function QuestPlay({
           />
         ) : null
       ) : null}
+
+      {isMusic && uistate.soundName ? <Sound url={uistate.soundName} /> : null}
 
       <div
         style={{
