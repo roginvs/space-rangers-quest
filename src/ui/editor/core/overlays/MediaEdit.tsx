@@ -33,6 +33,7 @@ export function MediaEdit({
         placeholder="Фоновый трек"
         value={media.track || ""}
         onChange={(e) => setMedia({ ...media, track: e.target.value })}
+        title="Также поддерживаются абсолютные пути к аудио файлам"
         disabled={disabled}
       />
       <input
@@ -40,6 +41,7 @@ export function MediaEdit({
         placeholder="Звуковой эффект"
         value={media.sound || ""}
         onChange={(e) => setMedia({ ...media, sound: e.target.value })}
+        title="Также поддерживаются абсолютные пути к аудио файлам"
         disabled={disabled}
       />
     </div>
