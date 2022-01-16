@@ -57,6 +57,8 @@ export type GameState = DeepImmutable<{
   };
   daysPassed: number;
   imageName: string | null;
+  trackName: string | null;
+  soundName: string | null;
 
   aleaState: AleaState;
 }> &
@@ -71,6 +73,8 @@ interface PlayerChoice {
 export interface PlayerState {
   text: string;
   imageName: string | null;
+  trackName: string | null;
+  soundName: string | null;
   paramsState: string[];
   choices: PlayerChoice[];
   gameState: "running" | "fail" | "win" | "dead";
@@ -109,6 +113,8 @@ export function initGame(quest: Quest, seed: string): GameState {
     locationVisitCount: {},
     daysPassed: 0,
     imageName: null,
+    trackName: null,
+    soundName: null,
     aleaState: alea.exportState(),
     aleaSeed: seed,
     performedJumps: [],
@@ -279,6 +285,8 @@ export function getUIState(
       ],
       gameState: "running",
       imageName: null,
+      trackName: null,
+      soundName: null,
     };
   } else if (state.state === "jump") {
     const jump = quest.jumps.find((x) => x.id === state.lastJumpId);
@@ -297,6 +305,8 @@ export function getUIState(
       ],
       gameState: "running",
       imageName: state.imageName,
+      trackName: state.trackName,
+      soundName: state.soundName,
     };
   } else if (state.state === "location" || state.state === "critonlocation") {
     const location = quest.locations.find((x) => x.id === state.locationId);
@@ -350,6 +360,8 @@ export function getUIState(
 
       gameState: location.isFailyDeadly ? "dead" : location.isFaily ? "fail" : "running",
       imageName: state.imageName,
+      trackName: state.trackName,
+      soundName: state.soundName,
     };
   } else if (state.state === "critonjump") {
     const critId = state.critParamId;
@@ -386,6 +398,8 @@ export function getUIState(
           ? "fail"
           : "dead",
       imageName: state.imageName,
+      trackName: state.trackName,
+      soundName: state.soundName,
     };
   } else if (state.state === "jumpandnextcrit") {
     const critId = state.critParamId;
@@ -407,6 +421,8 @@ export function getUIState(
       ],
       gameState: "running",
       imageName: state.imageName,
+      trackName: state.trackName,
+      soundName: state.soundName,
     };
   } else if (state.state === "critonlocationlastmessage") {
     const critId = state.critParamId;
@@ -447,6 +463,8 @@ export function getUIState(
           ? "fail"
           : "dead",
       imageName: state.imageName,
+      trackName: state.trackName,
+      soundName: state.soundName,
     };
   } else if (state.state === "returnedending") {
     return {
@@ -455,6 +473,8 @@ export function getUIState(
       choices: [],
       gameState: "win",
       imageName: null,
+      trackName: null,
+      soundName: null,
     };
   } else {
     return assertNever(state.state);
@@ -589,6 +609,18 @@ function performJumpInternal(
       imageName: jumpMedia.img,
     };
   }
+  if (jumpMedia && jumpMedia.track) {
+    state = {
+      ...state,
+      trackName: jumpMedia.track,
+    };
+  }
+
+  // Always clear sound
+  state = {
+    ...state,
+    soundName: jumpMedia?.sound || null,
+  };
 
   if (state.state === "starting") {
     state = {

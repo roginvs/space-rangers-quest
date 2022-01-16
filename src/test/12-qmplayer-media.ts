@@ -36,6 +36,8 @@ describe("Media", function () {
   });
   it("No media in the beginning", () => {
     assert.strictEqual(player.getState().imageName, null);
+    assert.strictEqual(player.getState().trackName, null);
+    assert.strictEqual(player.getState().soundName, null);
   });
   it("Media on location", () => {
     const st = jumpTo("locMedia");
@@ -50,6 +52,8 @@ describe("Media", function () {
   it("Media on jump with no description", () => {
     const st = jumpTo("jumpMediaNoDesc");
     assert.strictEqual(st.imageName, "Boat_02");
+    assert.strictEqual(st.trackName, "track02");
+    assert.strictEqual(st.soundName, "sound02");
   });
   it("Media on jump with no description and go back", () => {
     jumpTo("jumpMediaNoDesc");
