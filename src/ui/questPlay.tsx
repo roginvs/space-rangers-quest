@@ -1,9 +1,9 @@
 import * as React from "react";
 import { PQImages } from "../lib/pqImages";
-import { Quest, GameState, getUIState, getAllImagesToPreload } from "../lib/qmplayer/funcs";
+import { Quest, GameState, getUIState } from "../lib/qmplayer/funcs";
+import { getAllMediaFromQmm } from "../lib/getAllMediaFromQmm";
 import { initGame, performJump, JUMP_I_AGREE } from "../lib/qmplayer";
 import { Player } from "../lib/qmplayer/player";
-import { DATA_DIR } from "./consts";
 import { Loader, DivFadeinCss, ErrorInfo } from "./common";
 import { QuestReplaceTags } from "./questReplaceTags";
 import classnames from "classnames";
@@ -13,6 +13,9 @@ import { Music } from "./questPlay.music";
 import { LangTexts } from "./lang";
 import { QuestPlayImage } from "./questPlay.image";
 import { DeepImmutable } from "../lib/qmplayer/deepImmutable";
+import { transformMedianameToUrl } from "./transformMediaNameToUrl";
+import { DATA_DIR } from "./consts";
+import { Sound } from "./questPlay.sound";
 
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
@@ -50,21 +53,14 @@ const MOBILE_THRESHOLD = 576; // 576px 768px
 
 const MAX_DESKTOP_WIDTH = 1300;
 
-function getImageUrl(name: string) {
-  if (name.startsWith("http://") || name.startsWith("https://")) {
-    return name;
-  }
-
-  return DATA_DIR + "img/" + name;
-}
-
 export function QuestPlay({
   quest,
   gameState,
   setGameState,
   player,
 
-  musicList,
+  defaultMusicList,
+  isMusic,
   setIsMusic,
 
   l,
@@ -82,7 +78,8 @@ export function QuestPlay({
 
   setGameState: (newGameState: GameState) => void;
 
-  musicList: string[] | undefined;
+  defaultMusicList: string[] | undefined;
+  isMusic: boolean;
   setIsMusic: (isMusic: boolean) => void;
 
   l: LangTexts;
@@ -107,10 +104,10 @@ export function QuestPlay({
 
   const uistate = getUIState(quest, gameState, player);
 
-  const imageUrl = uistate.imageFileName ? getImageUrl(uistate.imageFileName) : null;
-  const allImagesUrls = getAllImagesToPreload(quest).map((x) => getImageUrl(x));
-
-  const isMusic = !!musicList;
+  const imageUrl = transformMedianameToUrl(uistate.imageName, "img");
+  const allImagesUrls = Object.keys(getAllMediaFromQmm(quest).images).map((imageName) =>
+    transformMedianameToUrl(imageName, "img"),
+  );
 
   const locationText = (
     <DivFadeinCss key={`${uistate.text}#${gameState.performedJumps.length}`}>
@@ -234,9 +231,26 @@ export function QuestPlay({
 
   return (
     <div className="">
-      {isMusic && musicList ? (
-        <Music urls={musicList.map((fileName) => DATA_DIR + fileName)} />
+      {isMusic ? (
+        uistate.trackName ? (
+          <Music
+            urls={[transformMedianameToUrl(uistate.trackName, "track")]}
+            key={uistate.trackName}
+          />
+        ) : defaultMusicList ? (
+          <Music
+            urls={defaultMusicList.map(
+              (fileName) =>
+                // defaultMusicList is provided as list of ["music/trackName.mp3"]
+                // so transformMedianameToUrl will not work
+                DATA_DIR + fileName,
+            )}
+          />
+        ) : null
       ) : null}
+
+      {isMusic && uistate.soundName ? <Sound url={uistate.soundName} /> : null}
+
       <div
         style={{
           marginLeft: "auto",

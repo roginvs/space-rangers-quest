@@ -1,4 +1,4 @@
-import { parse, QM, ParamType, ParamCritType, getImagesListFromQmm } from "../lib/qmreader";
+import { parse, QM, ParamType, ParamCritType } from "../lib/qmreader";
 import * as fs from "fs";
 
 import { QMPlayer } from "../lib/qmplayer";

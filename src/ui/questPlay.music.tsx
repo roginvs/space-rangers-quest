@@ -19,8 +19,9 @@ function useDocumentHidden() {
   return hidden;
 }
 
-export function Music({ urls }: { urls: string[] }) {
+export function Music({ urls: nullableUrls }: { urls: (string | null)[] }) {
   const audioElement = React.useRef<HTMLAudioElement | null>(null);
+  const urls = nullableUrls.filter((x) => x);
   const [url, setUrl] = React.useState(getRandom(urls));
   const isHidden = useDocumentHidden();
 
@@ -47,6 +48,9 @@ export function Music({ urls }: { urls: string[] }) {
     };
   }, [url, isHidden]);
 
+  if (!url) {
+    return null;
+  }
   return (
     <audio
       autoPlay={!isHidden}

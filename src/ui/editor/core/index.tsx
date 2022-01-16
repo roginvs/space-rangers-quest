@@ -518,7 +518,8 @@ export function EditorCore({
         gameState={isPlaying}
         player={{ ...quest.strings, lang: "rus", Player: quest.strings.Ranger }}
         setGameState={(newState) => setIsPlaying(newState)}
-        musicList={undefined}
+        defaultMusicList={undefined}
+        isMusic={true}
         setIsMusic={() => {}}
         l={getLang("rus")}
         onExit={() => setIsPlaying(null)}
