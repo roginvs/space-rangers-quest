@@ -4,7 +4,6 @@ import { Quest, GameState, getUIState } from "../lib/qmplayer/funcs";
 import { getAllMediaFromQmm } from "../lib/getAllMediaFromQmm";
 import { initGame, performJump, JUMP_I_AGREE } from "../lib/qmplayer";
 import { Player } from "../lib/qmplayer/player";
-import { DATA_DIR } from "./consts";
 import { Loader, DivFadeinCss, ErrorInfo } from "./common";
 import { QuestReplaceTags } from "./questReplaceTags";
 import classnames from "classnames";
@@ -15,6 +14,7 @@ import { LangTexts } from "./lang";
 import { QuestPlayImage } from "./questPlay.image";
 import { DeepImmutable } from "../lib/qmplayer/deepImmutable";
 import { transformMedianameToUrl } from "./transformMediaNameToUrl";
+import { DATA_DIR } from "./consts";
 
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
@@ -230,9 +230,24 @@ export function QuestPlay({
 
   return (
     <div className="">
-      {isMusic && defaultMusicList ? (
-        <Music urls={defaultMusicList.map((fileName) => DATA_DIR + fileName)} />
+      {isMusic ? (
+        uistate.trackName ? (
+          <Music
+            urls={[transformMedianameToUrl(uistate.trackName, "track")]}
+            key={uistate.trackName}
+          />
+        ) : defaultMusicList ? (
+          <Music
+            urls={defaultMusicList.map(
+              (fileName) =>
+                // defaultMusicList is provided as list of ["music/trackName.mp3"]
+                // so transformMedianameToUrl will not work
+                DATA_DIR + fileName,
+            )}
+          />
+        ) : null
       ) : null}
+
       <div
         style={{
           marginLeft: "auto",

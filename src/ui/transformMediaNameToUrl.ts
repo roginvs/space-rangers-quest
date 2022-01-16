@@ -7,6 +7,7 @@ export function transformMedianameToUrl(
   if (!mediaName) {
     return null;
   }
+
   const filename = mediaName.toLowerCase();
   if (filename.startsWith("http://") || filename.startsWith("https://")) {
     // No transformation for absolute urls
@@ -17,6 +18,12 @@ export function transformMedianameToUrl(
     track: ".mp3",
     sound: ".mp3",
   }[kind];
+
+  const folderKind = {
+    img: "img",
+    track: "track",
+    sound: "sound",
+  }[kind];
   const extension = !filename.endsWith(extensionKind) ? extensionKind : "";
-  return DATA_DIR + "img/" + filename + extension;
+  return DATA_DIR + folderKind + "/" + filename + extension;
 }
