@@ -58,7 +58,8 @@ export function QuestPlay({
   setGameState,
   player,
 
-  musicList,
+  defaultMusicList,
+  isMusic,
   setIsMusic,
 
   l,
@@ -76,7 +77,8 @@ export function QuestPlay({
 
   setGameState: (newGameState: GameState) => void;
 
-  musicList: string[] | undefined;
+  defaultMusicList: string[] | undefined;
+  isMusic: boolean;
   setIsMusic: (isMusic: boolean) => void;
 
   l: LangTexts;
@@ -105,8 +107,6 @@ export function QuestPlay({
   const allImagesUrls = Object.keys(getAllMediaFromQmm(quest).images).map((imageName) =>
     transformMedianameToUrl(imageName, "img"),
   );
-
-  const isMusic = !!musicList;
 
   const locationText = (
     <DivFadeinCss key={`${uistate.text}#${gameState.performedJumps.length}`}>
@@ -230,8 +230,8 @@ export function QuestPlay({
 
   return (
     <div className="">
-      {isMusic && musicList ? (
-        <Music urls={musicList.map((fileName) => DATA_DIR + fileName)} />
+      {isMusic && defaultMusicList ? (
+        <Music urls={defaultMusicList.map((fileName) => DATA_DIR + fileName)} />
       ) : null}
       <div
         style={{

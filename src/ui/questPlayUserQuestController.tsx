@@ -114,11 +114,8 @@ export class QuestPlayUserQuestController extends React.Component<
             gameState: newState,
           });
         }}
-        musicList={
-          !this.state.noMusic
-            ? this.props.store.index.dir.music.files.map((fileInfo) => fileInfo.path)
-            : undefined
-        }
+        defaultMusicList={this.props.store.index.dir.music.files.map((fileInfo) => fileInfo.path)}
+        isMusic={!this.state.noMusic}
         setIsMusic={(newIsMusic) => {
           this.setState({
             noMusic: !newIsMusic,
