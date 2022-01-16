@@ -48,7 +48,7 @@ function removeSerialEmptyStrings(input: string[]) {
 
 const MOBILE_THRESHOLD = 576; // 576px 768px
 
-const MAX_DESKTOP_WIDTH = 1000;
+const MAX_DESKTOP_WIDTH = 1200;
 
 function getImageUrl(name: string) {
   if (name.startsWith("http://") || name.startsWith("https://")) {
