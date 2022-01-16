@@ -12,10 +12,11 @@ export function transformMedianameToUrl(
     // No transformation for absolute urls
     return mediaName;
   }
-  const extension = {
+  const extensionKind = {
     img: ".jpg",
     track: ".mp3",
     sound: ".mp3",
   }[kind];
+  const extension = !filename.endsWith(extensionKind) ? extensionKind : "";
   return DATA_DIR + "img/" + filename + extension;
 }
