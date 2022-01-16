@@ -567,6 +567,12 @@ export function performJump(
     performedJumps,
   };
 
+  // Clear sound name before jump
+  state = {
+    ...state,
+    soundName: null,
+  };
+
   state = performJumpInternal(jumpId, quest, state, random, showDebug);
   return {
     ...state,
@@ -603,23 +609,11 @@ function performJumpInternal(
   */
 
   const jumpMedia = quest.jumps.find((x) => x.id === jumpId);
-  if (jumpMedia && jumpMedia.img) {
-    state = {
-      ...state,
-      imageName: jumpMedia.img,
-    };
-  }
-  if (jumpMedia && jumpMedia.track) {
-    state = {
-      ...state,
-      trackName: jumpMedia.track,
-    };
-  }
-
-  // Always clear sound
   state = {
     ...state,
-    soundName: jumpMedia?.sound || null,
+    imageName: jumpMedia?.img || state.imageName,
+    trackName: jumpMedia?.track || state.trackName,
+    soundName: jumpMedia?.sound || state.soundName,
   };
 
   if (state.state === "starting") {
@@ -687,15 +681,19 @@ function performJumpInternal(
           critParamId,
         };
 
-        const newImage =
-          (state.critParamId !== null && jump.paramsChanges[state.critParamId].img) ||
-          quest.params[critParamId].img;
-        if (newImage) {
-          state = {
-            ...state,
-            imageName: newImage,
-          };
-        }
+        state = {
+          ...state,
+          imageName:
+            jump.paramsChanges[critParamId].img || quest.params[critParamId].img || state.imageName,
+          trackName:
+            jump.paramsChanges[critParamId].track ||
+            quest.params[critParamId].track ||
+            state.trackName,
+          soundName:
+            jump.paramsChanges[critParamId].sound ||
+            quest.params[critParamId].sound ||
+            state.soundName,
+        };
       } else {
         state = {
           ...state,
@@ -731,16 +729,28 @@ function performJumpInternal(
       state: "critonjump",
     };
     const jump = quest.jumps.find((x) => x.id === state.lastJumpId);
-    const newImage =
-      (state.critParamId !== null && jump && jump.paramsChanges[state.critParamId].img) ||
-      (state.critParamId !== null && quest.params[state.critParamId].img);
 
-    if (newImage) {
-      state = {
-        ...state,
-        imageName: newImage,
-      };
-    }
+    state = {
+      ...state,
+      imageName:
+        state.critParamId !== null
+          ? (jump && jump.paramsChanges[state.critParamId].img) ||
+            quest.params[state.critParamId].img ||
+            state.imageName
+          : state.imageName,
+      trackName:
+        state.critParamId !== null
+          ? (jump && jump.paramsChanges[state.critParamId].track) ||
+            quest.params[state.critParamId].track ||
+            state.trackName
+          : state.trackName,
+      soundName:
+        state.critParamId !== null
+          ? (jump && jump.paramsChanges[state.critParamId].sound) ||
+            quest.params[state.critParamId].sound ||
+            state.soundName
+          : state.soundName,
+    };
   } else if (state.state === "critonlocation") {
     state = {
       ...state,
@@ -782,13 +792,14 @@ function calculateLocation(
   }
 
   const locImgId = calculateLocationShowingTextId(location, state, random, showDebug);
-  const newImage = location.media[locImgId] && location.media[locImgId].img;
-  if (newImage) {
-    state = {
-      ...state,
-      imageName: newImage,
-    };
-  }
+
+  state = {
+    ...state,
+    imageName: (location.media[locImgId] && location.media[locImgId].img) || state.imageName,
+    trackName: (location.media[locImgId] && location.media[locImgId].track) || state.trackName,
+    soundName: (location.media[locImgId] && location.media[locImgId].sound) || state.soundName,
+  };
+
   if (location.dayPassed) {
     state = {
       ...state,
@@ -1016,14 +1027,19 @@ function calculateLocation(
         critParamId: critParam,
       };
 
-      const newImage = location.paramsChanges[critParam].img || quest.params[critParam].img;
-      if (newImage) {
-        state = {
-          ...state,
-          imageName: newImage,
-        };
-      }
-      // asdasd adasdasd
+      state = {
+        ...state,
+        imageName:
+          location.paramsChanges[critParam].img || quest.params[critParam].img || state.imageName,
+        trackName:
+          location.paramsChanges[critParam].track ||
+          quest.params[critParam].track ||
+          state.trackName,
+        soundName:
+          location.paramsChanges[critParam].sound ||
+          quest.params[critParam].sound ||
+          state.soundName,
+      };
     }
   }
 
