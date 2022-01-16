@@ -9,7 +9,6 @@ import {
   performJump,
   Quest,
   getUIState,
-  getAllImagesToPreload,
   getGameLog,
   GameLog,
 } from "../lib/qmplayer/funcs";

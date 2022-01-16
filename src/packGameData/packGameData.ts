@@ -1,4 +1,4 @@
-import { parse, QM, ParamType, ParamCritType, getImagesListFromQmm } from "../lib/qmreader";
+import { parse, QM, ParamType, ParamCritType } from "../lib/qmreader";
 
 import * as pako from "pako";
 import * as fs from "fs";
@@ -11,6 +11,7 @@ import { scanAndCopyImages } from "./images";
 import { scanAndCopyMusic } from "./music";
 import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
 import { Quest } from "../lib/qmplayer/funcs";
+import { getAllMediaFromQmm } from "../lib/getAllMediaFromQmm";
 import { writeQmm } from "../lib/qmwriter";
 
 /*
@@ -111,7 +112,8 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
     const player = new QMPlayer(quest, "rus");
     player.start();
 
-    const qmmImagesList = getImagesListFromQmm(quest);
+    const qmmMedia = getAllMediaFromQmm(quest);
+    const qmmImagesList = Object.keys(qmmMedia.images);
 
     // This will be initial buffer or repacked quest, depending if original have images or not
     let outputQmmBuffer: Buffer | undefined = undefined;
@@ -120,10 +122,19 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
     if (qmmImagesList.length > 0) {
       outputQmmBuffer = srcQmQmmBuffer;
       for (const qmmImage of qmmImagesList) {
-        if (allImages.indexOf(qmmImage.toLowerCase() + ".jpg") < 0) {
-          warns.push(
-            `Image ${qmmImage} is from QMM for ${qmShortName}, ` + `but not found in img dir`,
-          );
+        // This is quite close to transformMedianameToUrl implementation
+        if (
+          qmmImage.toLowerCase().startsWith("http://") ||
+          qmmImage.toLowerCase().startsWith("https://")
+        ) {
+          // No check for absolute urls
+        } else {
+          const localImageFilename = qmmImage.toLowerCase() + ".jpg";
+          if (allImages.indexOf(localImageFilename) < 0) {
+            warns.push(
+              `Image ${qmmImage} is from QMM for ${qmShortName}, ` + `but not found in img dir`,
+            );
+          }
         }
       }
     } else {

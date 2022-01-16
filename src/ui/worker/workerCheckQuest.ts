@@ -8,7 +8,6 @@ import {
   performJump,
   Quest,
   getUIState,
-  getAllImagesToPreload,
   getGameLog,
   GameLog,
   validateWinningLog,

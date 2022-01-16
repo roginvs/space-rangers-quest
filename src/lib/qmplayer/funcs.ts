@@ -9,7 +9,6 @@ import {
   HEADER_QM_3,
   HEADER_QM_4,
   Jump,
-  getImagesListFromQmm,
 } from "../qmreader";
 import { AleaState, Alea } from "../alea";
 import { calculate } from "../formula";
@@ -57,7 +56,7 @@ export type GameState = DeepImmutable<{
     [locationId: number]: number;
   };
   daysPassed: number;
-  imageFilename: string | null;
+  imageName: string | null;
 
   aleaState: AleaState;
 }> &
@@ -71,7 +70,7 @@ interface PlayerChoice {
 
 export interface PlayerState {
   text: string;
-  imageFileName: string | null;
+  imageName: string | null;
   paramsState: string[];
   choices: PlayerChoice[];
   gameState: "running" | "fail" | "win" | "dead";
@@ -109,7 +108,7 @@ export function initGame(quest: Quest, seed: string): GameState {
     jumpedCount: {},
     locationVisitCount: {},
     daysPassed: 0,
-    imageFilename: null,
+    imageName: null,
     aleaState: alea.exportState(),
     aleaSeed: seed,
     performedJumps: [],
@@ -279,7 +278,7 @@ export function getUIState(
         },
       ],
       gameState: "running",
-      imageFileName: null,
+      imageName: null,
     };
   } else if (state.state === "jump") {
     const jump = quest.jumps.find((x) => x.id === state.lastJumpId);
@@ -297,7 +296,7 @@ export function getUIState(
         },
       ],
       gameState: "running",
-      imageFileName: state.imageFilename,
+      imageName: state.imageName,
     };
   } else if (state.state === "location" || state.state === "critonlocation") {
     const location = quest.locations.find((x) => x.id === state.locationId);
@@ -350,7 +349,7 @@ export function getUIState(
             ],
 
       gameState: location.isFailyDeadly ? "dead" : location.isFaily ? "fail" : "running",
-      imageFileName: state.imageFilename,
+      imageName: state.imageName,
     };
   } else if (state.state === "critonjump") {
     const critId = state.critParamId;
@@ -386,7 +385,7 @@ export function getUIState(
           : param.type === ParamType.Провальный
           ? "fail"
           : "dead",
-      imageFileName: state.imageFilename,
+      imageName: state.imageName,
     };
   } else if (state.state === "jumpandnextcrit") {
     const critId = state.critParamId;
@@ -407,7 +406,7 @@ export function getUIState(
         },
       ],
       gameState: "running",
-      imageFileName: state.imageFilename,
+      imageName: state.imageName,
     };
   } else if (state.state === "critonlocationlastmessage") {
     const critId = state.critParamId;
@@ -447,7 +446,7 @@ export function getUIState(
           : param.type === ParamType.Провальный
           ? "fail"
           : "dead",
-      imageFileName: state.imageFilename,
+      imageName: state.imageName,
     };
   } else if (state.state === "returnedending") {
     return {
@@ -455,7 +454,7 @@ export function getUIState(
       paramsState: [],
       choices: [],
       gameState: "win",
-      imageFileName: null,
+      imageName: null,
     };
   } else {
     return assertNever(state.state);
@@ -569,12 +568,11 @@ function performJumpInternal(
   }
 
   let state = stateOriginal;
-  const jumpForImg = quest.jumps.find((x) => x.id === state.lastJumpId);
-  const image = jumpForImg && jumpForImg.img ? transformImageName(jumpForImg.img) : undefined;
-  if (image) {
+  const lastJumpMedia = quest.jumps.find((x) => x.id === state.lastJumpId);
+  if (lastJumpMedia && lastJumpMedia.img) {
     state = {
       ...state,
-      imageFilename: image,
+      imageName: lastJumpMedia.img,
     };
   }
 
@@ -643,14 +641,13 @@ function performJumpInternal(
           critParamId,
         };
 
-        const qmmImage =
+        const newImage =
           (state.critParamId !== null && jump.paramsChanges[state.critParamId].img) ||
           quest.params[critParamId].img;
-        const image = qmmImage ? transformImageName(qmmImage) : undefined;
-        if (image) {
+        if (newImage) {
           state = {
             ...state,
-            imageFilename: image,
+            imageName: newImage,
           };
         }
       } else {
@@ -688,15 +685,14 @@ function performJumpInternal(
       state: "critonjump",
     };
     const jump = quest.jumps.find((x) => x.id === state.lastJumpId);
-    const qmmImg =
+    const newImage =
       (state.critParamId !== null && jump && jump.paramsChanges[state.critParamId].img) ||
       (state.critParamId !== null && quest.params[state.critParamId].img);
-    const image = qmmImg ? transformImageName(qmmImg) : undefined;
 
-    if (image) {
+    if (newImage) {
       state = {
         ...state,
-        imageFilename: image,
+        imageName: newImage,
       };
     }
   } else if (state.state === "critonlocation") {
@@ -740,13 +736,11 @@ function calculateLocation(
   }
 
   const locImgId = calculateLocationShowingTextId(location, state, random, showDebug);
-  const imageFromQmm = location.media[locImgId] && location.media[locImgId].img;
-
-  const image = imageFromQmm ? transformImageName(imageFromQmm) : undefined;
-  if (image) {
+  const newImage = location.media[locImgId] && location.media[locImgId].img;
+  if (newImage) {
     state = {
       ...state,
-      imageFilename: image,
+      imageName: newImage,
     };
   }
   if (location.dayPassed) {
@@ -976,12 +970,11 @@ function calculateLocation(
         critParamId: critParam,
       };
 
-      const qmmImg = location.paramsChanges[critParam].img || quest.params[critParam].img;
-      const image = qmmImg ? transformImageName(qmmImg) : undefined;
-      if (image) {
+      const newImage = location.paramsChanges[critParam].img || quest.params[critParam].img;
+      if (newImage) {
         state = {
           ...state,
-          imageFilename: image,
+          imageName: newImage,
         };
       }
       // asdasd adasdasd
@@ -1037,27 +1030,6 @@ function calculateLocation(
   }
 
   return state;
-}
-
-function transformImageName(imageName: string): string {
-  const filename = imageName.toLowerCase();
-  if (filename.startsWith("http://") || filename.startsWith("https://")) {
-    // No transformation to absole url
-    return imageName;
-  }
-  return filename.endsWith(".jpg") ? filename : filename + ".jpg";
-}
-
-export function getAllImagesToPreload(quest: Quest) {
-  const imagesQmm = getImagesListFromQmm(quest as QM).map((fileName) =>
-    transformImageName(fileName),
-  );
-  const uniq: { [name: string]: boolean } = {};
-  for (const img of imagesQmm) {
-    uniq[img] = true;
-  }
-
-  return Object.keys(uniq);
 }
 
 /*
