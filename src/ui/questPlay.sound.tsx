@@ -9,13 +9,7 @@ export function Sound({ url }: { url: string | null }) {
       }
       void audioElement.current.play();
     };
-    document.addEventListener("click", play);
-    document.addEventListener("touchstart", play);
     play();
-    return () => {
-      document.removeEventListener("click", play);
-      document.removeEventListener("touchstart", play);
-    };
   }, [url]);
 
   if (!url) {
