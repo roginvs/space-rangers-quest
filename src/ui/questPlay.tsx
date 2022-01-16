@@ -48,6 +48,8 @@ function removeSerialEmptyStrings(input: string[]) {
 
 const MOBILE_THRESHOLD = 576; // 576px 768px
 
+const MAX_DESKTOP_WIDTH = 1300;
+
 function getImageUrl(name: string) {
   if (name.startsWith("http://") || name.startsWith("https://")) {
     return name;
@@ -90,10 +92,10 @@ export function QuestPlay({
 
   showTaskInfoOnQuestStart?: boolean;
 }) {
-  const [width, setWidth] = React.useState(window.innerWidth);
+  const [windowInnerWidth, setWindowInnerWidth] = React.useState(window.innerWidth);
   React.useEffect(() => {
     const onResize = () => {
-      setWidth(window.innerWidth);
+      setWindowInnerWidth(window.innerWidth);
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
@@ -101,7 +103,7 @@ export function QuestPlay({
 
   const [reallyRestart, setReallyRestart] = React.useState(false);
 
-  const isMobile = width < MOBILE_THRESHOLD;
+  const isMobile = windowInnerWidth < MOBILE_THRESHOLD;
 
   const uistate = getUIState(quest, gameState, player);
 
@@ -327,7 +329,7 @@ export function QuestPlay({
               style={{
                 marginLeft: "auto",
                 marginRight: "auto",
-                width: width * 0.9,
+                width: Math.min(windowInnerWidth * 0.9, MAX_DESKTOP_WIDTH),
               }}
             >
               <div
