@@ -229,8 +229,8 @@ export function QuestPlay({
     </>
   );
 
-  return (
-    <div className="">
+  const musicAndSound = (
+    <>
       {isMusic ? (
         uistate.trackName ? (
           <Music
@@ -250,7 +250,28 @@ export function QuestPlay({
       ) : null}
 
       {isMusic && uistate.soundName ? <Sound url={uistate.soundName} /> : null}
+    </>
+  );
 
+  if (!isMobile) {
+    return (
+      <div
+        style={{
+          height: "100vh",
+          position: "relative",
+          backgroundImage: "url('/questplay/background.jpg')",
+          backgroundSize: "cover",
+        }}
+      >
+        {" "}
+        TODO
+      </div>
+    );
+  }
+
+  return (
+    <div className="">
+      {musicAndSound}
       <div
         style={{
           marginLeft: "auto",
