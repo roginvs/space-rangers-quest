@@ -1,0 +1,38 @@
+.gameplay-button {
+  position: fixed;
+  width: 60px;
+  height: 40px;
+  border-radius: 10px 0px 10px 0;
+  z-index: 100;
+  overflow: hidden;
+  border: 1px solid #ababab;
+  background: none;
+}
+
+.gameplay-button-background {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #5d6664;
+  opacity: 0.5;
+}
+.gameplay-button:hover .gameplay-button-background {
+  opacity: 0.8;
+}
+.gameplay-button:hover .gameplay-button-content {
+  color: #dadada;
+}
+
+.gameplay-button-content {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  color: #aaaaaa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

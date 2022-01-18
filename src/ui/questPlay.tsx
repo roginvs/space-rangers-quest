@@ -20,6 +20,7 @@ import { ScrollableContainer } from "./questPlay.scrollcontainer";
 import { QuestPlayFrame } from "./questPlay.frame";
 import { IMAGE_SIZE_X, IMAGE_SIZE_Y } from "./questPlay.consts";
 import { style } from "./questPlay.style";
+import { GamePlayButton } from "./questPlay.button";
 
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
@@ -369,6 +370,10 @@ export function QuestPlay({
             </QuestPlayFrame>
           </div>
         </div>
+
+        <GamePlayButton right={10} bottom={10} onClick={() => {}}>
+          <i className="fa fa-external-link fa-fw" />
+        </GamePlayButton>
       </div>
     );
   }
