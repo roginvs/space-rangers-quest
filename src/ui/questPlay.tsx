@@ -19,6 +19,7 @@ import { Sound } from "./questPlay.sound";
 import { ScrollableContainer } from "./questPlay.scrollcontainer";
 import { QuestPlayFrame } from "./questPlay.frame";
 import { IMAGE_SIZE_X, IMAGE_SIZE_Y } from "./questPlay.consts";
+import { style } from "./questPlay.style";
 
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
@@ -114,7 +115,7 @@ export function QuestPlay({
 
   const locationText = (
     <DivFadeinCss key={`${uistate.text}#${gameState.performedJumps.length}`}>
-      <QuestReplaceTags str={uistate.text} />
+      <QuestReplaceTags str={uistate.text} clrColor={!isMobile ? style.textColorCrl : undefined} />
     </DivFadeinCss>
   );
 
@@ -134,8 +135,19 @@ export function QuestPlay({
                 window.scrollTo(0, isMobile ? 42 : 0);
               }}
               className={"game " + (choice.active ? "" : "disabled")}
+              style={{
+                color: !isMobile
+                  ? choice.active
+                    ? style.textColor
+                    : style.textColorInactive
+                  : undefined,
+              }}
             >
-              <i className="fa fa-angle-double-right" /> <QuestReplaceTags str={choice.text} />
+              <i className="fa fa-angle-double-right" />{" "}
+              <QuestReplaceTags
+                str={choice.text}
+                clrColor={!isMobile && choice.active ? style.textColorCrl : undefined}
+              />
             </a>
           </div>
         );
@@ -157,7 +169,10 @@ export function QuestPlay({
                 minHeight: "1em",
               }}
             >
-              <QuestReplaceTags str={paramText} />
+              <QuestReplaceTags
+                str={paramText}
+                clrColor={!isMobile ? style.textColorCrl : undefined}
+              />
             </div>
           </DivFadeinCss>
         );
@@ -287,7 +302,7 @@ export function QuestPlay({
           >
             <QuestPlayFrame onTop={true} left={50} right={50} top={60} bottom={60}>
               <ScrollableContainer>
-                <div style={{ color: "#9eacac", padding: 10, paddingRight: 30 }}>
+                <div style={{ color: style.textColor, padding: 10, paddingRight: 30 }}>
                   {locationText}
                 </div>
               </ScrollableContainer>
@@ -319,7 +334,27 @@ export function QuestPlay({
           >
             <QuestPlayFrame onTop={true} left={50} right={50} top={60} bottom={60}>
               <ScrollableContainer>
-                <div style={{ color: "#9eacac", padding: 10, paddingRight: 30 }}>{choices}</div>
+                <div style={{ color: style.textColor, padding: 10, paddingRight: 30 }}>
+                  {choices}
+                </div>
+              </ScrollableContainer>
+            </QuestPlayFrame>
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              right: 0,
+              bottom: 0,
+              width: `calc(${IMAGE_SIZE_X}px + 20px + 20px)`,
+              height: `calc(100% - ${IMAGE_SIZE_Y}px - 20px - 20px)`,
+            }}
+          >
+            <QuestPlayFrame onTop={true} left={20} right={20} top={20} bottom={20}>
+              <ScrollableContainer>
+                <div style={{ color: style.textColor, padding: 10, paddingRight: 30 }}>
+                  {params}
+                </div>
               </ScrollableContainer>
             </QuestPlayFrame>
           </div>
