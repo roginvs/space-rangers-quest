@@ -11,12 +11,14 @@ import classnames from "classnames";
 import "./questPlay.css";
 import { Music } from "./questPlay.music";
 import { LangTexts } from "./lang";
-import { QuestPlayImage } from "./questPlay.image";
+import { QuestPlayImage, QuestPlayImageFixed } from "./questPlay.image";
 import { DeepImmutable } from "../lib/qmplayer/deepImmutable";
 import { transformMedianameToUrl } from "./transformMediaNameToUrl";
 import { DATA_DIR } from "./consts";
 import { Sound } from "./questPlay.sound";
 import { ScrollableContainer } from "./questPlay.scrollcontainer";
+import { QuestPlayFrame } from "./questPlay.frame";
+import { IMAGE_SIZE_X, IMAGE_SIZE_Y } from "./questPlay.consts";
 
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
@@ -279,48 +281,31 @@ export function QuestPlay({
               position: "absolute",
               left: 0,
               top: 0,
-              width: "65%",
-              height: "60%",
+              width: `calc(100% - ${IMAGE_SIZE_X}px - 20px - 20px)`,
+              height: `calc(${IMAGE_SIZE_Y}px + 20px + 20px)`,
             }}
           >
-            <div
-              style={{
-                position: "absolute",
-                left: 10,
-                top: 10,
-                right: 10,
-                bottom: 10,
-                backgroundImage: "url('/questplay/frame.png')",
-                backgroundSize: "100% 100%",
-              }}
-            ></div>
-            <div
-              style={{
-                position: "absolute",
-                left: 20,
-                top: 20,
-                right: 20,
-                bottom: 20,
-                backgroundColor: "black",
-                opacity: 0.8,
-              }}
-            ></div>
-            <div
-              style={{
-                position: "absolute",
-                left: 30,
-                top: 20,
-                right: 20,
-                bottom: 30,
-                padding: 30,
-
-                color: "#9eacac",
-              }}
-            >
+            <QuestPlayFrame onTop={true} left={50} right={50} top={60} bottom={60}>
               <ScrollableContainer>
-                <div style={{ padding: 10, paddingRight: 30 }}>{locationText}</div>
+                <div style={{ color: "#9eacac", padding: 10, paddingRight: 30 }}>
+                  {locationText}
+                </div>
               </ScrollableContainer>
-            </div>
+            </QuestPlayFrame>
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              right: 0,
+              top: 0,
+              width: `calc(${IMAGE_SIZE_X}px + 20px + 20px)`,
+              height: `calc(${IMAGE_SIZE_Y}px + 20px + 20px)`,
+            }}
+          >
+            <QuestPlayFrame onTop={false} left={20} right={20} top={20} bottom={10}>
+              <QuestPlayImageFixed src={imageUrl} allImagesUrls={allImagesUrls} />
+            </QuestPlayFrame>
           </div>
         </div>
       </div>
