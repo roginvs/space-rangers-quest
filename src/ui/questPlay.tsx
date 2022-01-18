@@ -321,7 +321,7 @@ export function QuestPlay({
               height: `calc(100% - ${IMAGE_SIZE_Y}px - 20px - 20px)`,
             }}
           >
-            <QuestPlayFrame onTop={true} left={60} right={50} top={40} bottom={60}>
+            <QuestPlayFrame onTop={true} left={70} right={50} top={40} bottom={60}>
               <ScrollableContainer>
                 <div style={{ color: style.textColor, padding: 10, paddingRight: 30 }}>
                   {choices}
