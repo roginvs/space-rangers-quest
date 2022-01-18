@@ -79,17 +79,22 @@ export function LocationOverlay({
         <div className="row mb-2">
           <div className="col-6">
             <form className="form-inline  d-flex flex-nowrap">
-              <select
-                className="form-control ml-2"
-                value={textIndex}
-                onChange={(e) => setTextIndex(parseInt(e.target.value))}
-              >
+              <div className="btn-group" role="group">
                 {range(location.texts.length).map((i) => (
-                  <option key={i} value={i}>
-                    Описание {i + 1}
-                  </option>
+                  <button
+                    type="button"
+                    className={classNames(
+                      "btn",
+                      i === textIndex ? "btn-primary" : "btn-light",
+                      location.texts[i] ? "font-weight-bold" : "text-muted",
+                    )}
+                    onClick={() => setTextIndex(i)}
+                  >
+                    {i + 1}
+                  </button>
                 ))}
-              </select>
+              </div>
+
               <button
                 className="btn btn-light ml-2"
                 onClick={() => {
@@ -103,8 +108,9 @@ export function LocationOverlay({
                   });
                   setTextIndex(location.texts.length);
                 }}
+                title="Добавить"
               >
-                Добавить
+                <i className="fa fa-plus fa-fw" />
               </button>
               <button
                 className="btn btn-light ml-2"
@@ -117,8 +123,9 @@ export function LocationOverlay({
                   });
                   setTextIndex(location.texts.length - 2);
                 }}
+                title="Удалить"
               >
-                Удалить
+                <i className="fa fa-minus fa-fw" />
               </button>
             </form>
           </div>
