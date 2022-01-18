@@ -290,7 +290,7 @@ export function QuestPlay({
             }}
           >
             <QuestPlayFrame onTop={true} left={60} right={50} top={60} bottom={60}>
-              <ScrollableContainer>
+              <ScrollableContainer key={uistate.text}>
                 <div style={{ color: style.textColor, padding: 10, paddingRight: 30 }}>
                   {locationText}
                 </div>
