@@ -10,6 +10,10 @@ export function QuestPlayImage({
 }) {
   const [height, setHeight] = React.useState(0);
 
+  if (allImagesUrls.indexOf(src) < 0) {
+    console.warn(`Image ${src} is not found in allImagesUrls`, allImagesUrls);
+  }
+
   return (
     <div
       style={{
