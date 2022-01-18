@@ -307,6 +307,22 @@ export function QuestPlay({
               <QuestPlayImageFixed src={imageUrl} allImagesUrls={allImagesUrls} />
             </QuestPlayFrame>
           </div>
+
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              bottom: 0,
+              width: `calc(100% - ${IMAGE_SIZE_X}px - 20px - 20px)`,
+              height: `calc(100% - ${IMAGE_SIZE_Y}px - 20px - 20px)`,
+            }}
+          >
+            <QuestPlayFrame onTop={true} left={50} right={50} top={60} bottom={60}>
+              <ScrollableContainer>
+                <div style={{ color: "#9eacac", padding: 10, paddingRight: 30 }}>{choices}</div>
+              </ScrollableContainer>
+            </QuestPlayFrame>
+          </div>
         </div>
       </div>
     );
