@@ -16,6 +16,7 @@ import { DeepImmutable } from "../lib/qmplayer/deepImmutable";
 import { transformMedianameToUrl } from "./transformMediaNameToUrl";
 import { DATA_DIR } from "./consts";
 import { Sound } from "./questPlay.sound";
+import { ScrollableContainer } from "./questPlay.scrollcontainer";
 
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
@@ -312,13 +313,14 @@ export function QuestPlay({
                 right: 30,
                 bottom: 30,
                 padding: 30,
-                paddingTop: 20,
+
                 color: "#9eacac",
-                overflowY: "auto",
                 // display: "none",
               }}
             >
-              {locationText}
+              <ScrollableContainer>
+                <div style={{ padding: 30, paddingTop: 20 }}>{locationText}</div>
+              </ScrollableContainer>
             </div>
           </div>
         </div>
