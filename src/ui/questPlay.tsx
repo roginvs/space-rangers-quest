@@ -222,11 +222,7 @@ export function QuestPlay({
       </button>
 
       <button className="btn btn-light mr-1" onClick={onExit}>
-        {/*<i className="fa fa-share-square-o fa-fw" />*/}
-        {
-          /* this.state.thinkingSavingGame || */
-          { exitButtonContent }
-        }
+        {exitButtonContent}
       </button>
     </>
   );
@@ -355,8 +351,14 @@ export function QuestPlay({
           </div>
         </div>
 
-        <GamePlayButton right={10} bottom={10} onClick={() => {}}>
-          <i className="fa fa-external-link fa-fw" />
+        <GamePlayButton i={2} onClick={onRestartButtonClick}>
+          {restartButtonContent}
+        </GamePlayButton>
+        <GamePlayButton i={1} onClick={onMusicButtonClick}>
+          {musicButtonContent}
+        </GamePlayButton>
+        <GamePlayButton i={0} onClick={onExit}>
+          {exitButtonContent}
         </GamePlayButton>
       </div>
     );
