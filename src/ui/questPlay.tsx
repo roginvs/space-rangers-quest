@@ -285,6 +285,7 @@ export function QuestPlay({
           alignItems: "stretch",
         }}
       >
+        {musicAndSound}
         <div
           style={{
             maxWidth: 1300,
