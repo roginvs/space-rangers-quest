@@ -181,68 +181,51 @@ export function QuestPlay({
     </>
   );
 
+  const exitButtonContent = busySaving ? (
+    <i className="fa fa-refresh fa-spin fa-fw" />
+  ) : (
+    <i className="fa fa-external-link fa-fw" />
+  );
+  const musicButtonContent = (
+    <i className={classnames("fa fa-fw", !isMusic ? "fa-volume-off" : "fa-volume-up")} />
+  );
+  const onMusicButtonClick = React.useCallback(() => {
+    setIsMusic(!isMusic);
+  }, [isMusic]);
+
+  const restartButtonContent = <i className="fa fa-fast-backward fa-fw" />;
+  const onRestartButtonClick = React.useCallback(() => {
+    const uiState = getUIState(quest, gameState, player);
+    if (
+      !uiState ||
+      uiState.gameState === "dead" ||
+      uiState.gameState === "fail" ||
+      uiState.gameState === "win"
+    ) {
+      const newGameState = showTaskInfoOnQuestStart
+        ? initRandomGame(quest)
+        : initRandomGameAndDoFirstStep(quest);
+      setGameState(newGameState);
+    } else {
+      setReallyRestart(true);
+    }
+  }, [gameState, quest, player, showTaskInfoOnQuestStart]);
+
   const controlButtons = (
     <>
-      <button
-        className="btn btn-light mr-1"
-        onClick={() => {
-          const uiState = getUIState(quest, gameState, player);
-          if (
-            !uiState ||
-            uiState.gameState === "dead" ||
-            uiState.gameState === "fail" ||
-            uiState.gameState === "win"
-          ) {
-            const newGameState = showTaskInfoOnQuestStart
-              ? initRandomGame(quest)
-              : initRandomGameAndDoFirstStep(quest);
-            setGameState(newGameState);
-          } else {
-            setReallyRestart(true);
-          }
-          /*
-          let gameState = this.state.gameState;
-          const uiState = gameState ? getUIState(quest, gameState, player) : undefined;
-          if (
-            !uiState ||
-            uiState.gameState === "dead" ||
-            uiState.gameState === "fail" ||
-            uiState.gameState === "win"
-          ) {
-            gameState = initRandomGameAndDoFirstStep(quest, game.images);
-            this.setState({
-              gameState,
-            });
-            this.saveGame(null);
-          } else {
-            this.setState({
-              reallyRestart: true,
-            });
-          }
-          */
-        }}
-      >
-        <i className="fa fa-fast-backward fa-fw" />
+      <button className="btn btn-light mr-1" onClick={onRestartButtonClick}>
+        {restartButtonContent}
       </button>
 
-      <button
-        className="btn btn-light mr-1"
-        onClick={() => {
-          setIsMusic(!isMusic);
-        }}
-      >
-        <i className={classnames("fa fa-fw", !isMusic ? "fa-volume-off" : "fa-volume-up")} />
+      <button className="btn btn-light mr-1" onClick={onMusicButtonClick}>
+        {musicButtonContent}
       </button>
 
       <button className="btn btn-light mr-1" onClick={onExit}>
         {/*<i className="fa fa-share-square-o fa-fw" />*/}
         {
           /* this.state.thinkingSavingGame || */
-          busySaving ? (
-            <i className="fa fa-refresh fa-spin fa-fw" />
-          ) : (
-            <i className="fa fa-external-link fa-fw" />
-          )
+          { exitButtonContent }
         }
       </button>
     </>
