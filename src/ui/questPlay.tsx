@@ -261,10 +261,67 @@ export function QuestPlay({
           position: "relative",
           backgroundImage: "url('/questplay/background.jpg')",
           backgroundSize: "cover",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "stretch",
         }}
       >
-        {" "}
-        TODO
+        <div
+          style={{
+            maxWidth: 1300,
+            width: "100%",
+            position: "relative",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              left: 0,
+              top: 0,
+              width: "65%",
+              height: "60%",
+            }}
+          >
+            <div
+              style={{
+                position: "absolute",
+                left: 10,
+                top: 10,
+                right: 10,
+                bottom: 10,
+                backgroundImage: "url('/questplay/frame.png')",
+                backgroundSize: "100% 100%",
+              }}
+            ></div>
+            <div
+              style={{
+                position: "absolute",
+                left: 20,
+                top: 20,
+                right: 20,
+                bottom: 20,
+                backgroundColor: "black",
+                opacity: 0.8,
+              }}
+            ></div>
+            <div
+              style={{
+                position: "absolute",
+                left: 30,
+                top: 30,
+                right: 30,
+                bottom: 30,
+                padding: 30,
+                paddingTop: 20,
+                color: "#9eacac",
+                overflowY: "auto",
+                // display: "none",
+              }}
+            >
+              {locationText}
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
