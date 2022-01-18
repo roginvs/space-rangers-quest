@@ -12,10 +12,10 @@ export const QuestPlayFrame: React.FC<{
       <div
         style={{
           position: "absolute",
-          left: 20,
-          top: 20,
-          right: 20,
-          bottom: 20,
+          left: "5%",
+          top: "5%",
+          right: "5%",
+          bottom: "5%",
           backgroundColor: "black",
           opacity: 0.8,
         }}
