@@ -104,6 +104,7 @@ export function QuestPlay({
   }, []);
 
   const [reallyRestart, setReallyRestart] = React.useState(false);
+  React.useEffect(() => setReallyRestart(false), [quest, gameState, player]);
 
   const isMobile = windowInnerWidth < MOBILE_THRESHOLD;
 
@@ -193,23 +194,29 @@ export function QuestPlay({
     setIsMusic(!isMusic);
   }, [isMusic]);
 
-  const restartButtonContent = <i className="fa fa-fast-backward fa-fw" />;
+  const restartButtonContent = !reallyRestart ? (
+    <i className="fa fa-step-backward fa-fw" />
+  ) : (
+    <i className="fa fa-fast-backward fa-fw" />
+  );
   const onRestartButtonClick = React.useCallback(() => {
     const uiState = getUIState(quest, gameState, player);
     if (
       !uiState ||
       uiState.gameState === "dead" ||
       uiState.gameState === "fail" ||
-      uiState.gameState === "win"
+      uiState.gameState === "win" ||
+      reallyRestart
     ) {
       const newGameState = showTaskInfoOnQuestStart
         ? initRandomGame(quest)
         : initRandomGameAndDoFirstStep(quest);
       setGameState(newGameState);
+      setReallyRestart(false);
     } else {
       setReallyRestart(true);
     }
-  }, [gameState, quest, player, showTaskInfoOnQuestStart]);
+  }, [gameState, quest, player, showTaskInfoOnQuestStart, reallyRestart]);
 
   const controlButtons = (
     <>
