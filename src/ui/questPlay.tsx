@@ -350,9 +350,19 @@ export function QuestPlay({
               height: `calc(100% - ${IMAGE_SIZE_Y}px - 20px - 20px)`,
             }}
           >
-            <QuestPlayFrame onTop={true} left={20} right={20} top={20} bottom={20}>
+            <QuestPlayFrame onTop={true} left={20} right={20} top={30} bottom={30}>
               <ScrollableContainer>
-                <div style={{ color: style.textColor, padding: 10, paddingRight: 30 }}>
+                <div
+                  style={{
+                    color: style.textColor,
+                    padding: 10,
+                    paddingRight: 30,
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                  }}
+                >
                   {params}
                 </div>
               </ScrollableContainer>
