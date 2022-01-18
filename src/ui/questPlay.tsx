@@ -309,17 +309,16 @@ export function QuestPlay({
               style={{
                 position: "absolute",
                 left: 30,
-                top: 30,
-                right: 30,
+                top: 20,
+                right: 20,
                 bottom: 30,
                 padding: 30,
 
                 color: "#9eacac",
-                // display: "none",
               }}
             >
               <ScrollableContainer>
-                <div style={{ padding: 30, paddingTop: 20 }}>{locationText}</div>
+                <div style={{ padding: 10, paddingRight: 30 }}>{locationText}</div>
               </ScrollableContainer>
             </div>
           </div>
