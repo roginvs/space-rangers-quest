@@ -35,6 +35,8 @@ export function QuestPlayImageFixed({
               opacity: imageUrl === src ? 1 : 0,
               transition: "opacity 0.5s linear",
               backgroundImage: `url("${imageUrl}"`,
+              backgroundSize: "cover",
+              backgroundPosition: "center center",
             }}
           />
         );
