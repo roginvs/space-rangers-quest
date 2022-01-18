@@ -359,15 +359,17 @@ export function QuestPlay({
           </div>
         </div>
 
-        <GamePlayButton i={2} onClick={onRestartButtonClick}>
-          {restartButtonContent}
-        </GamePlayButton>
-        <GamePlayButton i={1} onClick={onMusicButtonClick}>
-          {musicButtonContent}
-        </GamePlayButton>
-        <GamePlayButton i={0} onClick={onExit}>
-          {exitButtonContent}
-        </GamePlayButton>
+        <div
+          style={{
+            position: "absolute",
+            right: 10,
+            bottom: 10,
+          }}
+        >
+          <GamePlayButton onClick={onRestartButtonClick}>{restartButtonContent}</GamePlayButton>
+          <GamePlayButton onClick={onMusicButtonClick}>{musicButtonContent}</GamePlayButton>
+          <GamePlayButton onClick={onExit}>{exitButtonContent}</GamePlayButton>
+        </div>
       </div>
     );
   }
