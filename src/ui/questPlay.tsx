@@ -21,6 +21,7 @@ import { QuestPlayFrame } from "./questPlay.frame";
 import { IMAGE_SIZE_X, IMAGE_SIZE_Y } from "./questPlay.consts";
 import { style } from "./questPlay.style";
 import { GamePlayButton } from "./questPlay.button";
+import { assertNever } from "../assertNever";
 
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
@@ -452,78 +453,7 @@ export function QuestPlay({
             </div>
           </>
         ) : (
-          <>
-            <div
-              style={{
-                position: "fixed",
-                right: 15,
-                bottom: 15,
-              }}
-            >
-              {controlButtons}
-            </div>
-            <div
-              style={{
-                marginLeft: "auto",
-                marginRight: "auto",
-                width: Math.min(windowInnerWidth * 0.9, MAX_DESKTOP_WIDTH),
-              }}
-            >
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                }}
-              >
-                <div
-                  style={{
-                    flex: `0 0 ${(100 / 3) * 2}%`,
-                    maxWidth: `${(100 / 3) * 2}%`,
-                    boxSizing: "border-box",
-                    padding: 15,
-                  }}
-                >
-                  {locationText}
-                </div>
-                <div
-                  style={{
-                    flex: `0 0 ${100 / 3}%`,
-                    maxWidth: `${100 / 3}%`,
-                    padding: 15,
-                  }}
-                >
-                  <QuestPlayImage src={imageUrl} allImagesUrls={allImagesUrls} />
-                </div>
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "row",
-                }}
-              >
-                <div
-                  style={{
-                    flex: `0 0 ${(100 / 3) * 2}%`,
-                    maxWidth: `${(100 / 3) * 2}%`,
-                    boxSizing: "border-box",
-                    padding: 15,
-                  }}
-                >
-                  {choices}
-                </div>
-                <div
-                  style={{
-                    flex: `0 0 ${100 / 3}%`,
-                    maxWidth: `${100 / 3}%`,
-                    padding: 15,
-                    paddingBottom: 65,
-                  }}
-                >
-                  {params}
-                </div>
-              </div>
-            </div>
-          </>
+          assertNever(isMobile)
         )}
       </div>
     </div>
