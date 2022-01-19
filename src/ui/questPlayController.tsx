@@ -1,8 +1,4 @@
 import * as React from "react";
-import { Loader, DivFadeinCss, ErrorInfo } from "./common";
-import { LangTexts } from "./lang";
-import { WonProofs, GameWonProofs } from "./db/defs";
-import { Player, Lang } from "../lib/qmplayer/player";
 import {
   GameState,
   initGame,
@@ -10,16 +6,9 @@ import {
   Quest,
   getUIState,
   getGameLog,
-  GameLog,
 } from "../lib/qmplayer/funcs";
 import { JUMP_I_AGREE } from "../lib/qmplayer/defs";
-import { Index, Game } from "../packGameData/defs";
-import { AppNavbar } from "./appNavbar";
-import { ButtonDropdown, DropdownMenu, DropdownToggle, DropdownItem, Progress } from "reactstrap";
-import { QuestReplaceTags } from "./questReplaceTags";
-import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
-import { SRDateToString } from "../lib/qmplayer/funcs";
-import classnames from "classnames";
+import { Game } from "../packGameData/defs";
 
 import { DATA_DIR } from "./consts";
 import { parse } from "../lib/qmreader";
@@ -28,10 +17,10 @@ import * as pako from "pako";
 import { observer } from "mobx-react";
 import { Store } from "./store";
 
-import { PQImages } from "../lib/pqImages";
-
-import { QuestPlay } from "./questPlay";
+import { QuestPlay } from "./questPlay/questPlay";
 import { toJS } from "mobx";
+import { ErrorInfo } from "./common";
+import { Progress } from "reactstrap";
 
 interface QuestPlayState {
   quest?: Quest;

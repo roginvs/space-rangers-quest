@@ -1,5 +1,4 @@
 import * as React from "react";
-import { DivFadeinCss } from "./common";
 import { IMAGE_SIZE_X, IMAGE_SIZE_Y } from "./questPlay.consts";
 
 export function QuestPlayImageFixed({

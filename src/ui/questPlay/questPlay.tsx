@@ -1,27 +1,26 @@
 import * as React from "react";
-import { PQImages } from "../lib/pqImages";
-import { Quest, GameState, getUIState } from "../lib/qmplayer/funcs";
-import { getAllMediaFromQmm } from "../lib/getAllMediaFromQmm";
-import { initGame, performJump, JUMP_I_AGREE } from "../lib/qmplayer";
-import { Player } from "../lib/qmplayer/player";
-import { Loader, DivFadeinCss, ErrorInfo } from "./common";
-import { QuestReplaceTags } from "./questReplaceTags";
+import { Quest, GameState, getUIState } from "../../lib/qmplayer/funcs";
+import { getAllMediaFromQmm } from "../../lib/getAllMediaFromQmm";
+import { initGame, performJump, JUMP_I_AGREE } from "../../lib/qmplayer";
+import { Player } from "../../lib/qmplayer/player";
+import { Loader, DivFadeinCss, ErrorInfo } from "../common";
+import { QuestReplaceTags } from "../questReplaceTags";
 import classnames from "classnames";
 
 import "./questPlay.css";
 import { Music } from "./questPlay.music";
-import { LangTexts } from "./lang";
+import { LangTexts } from "../lang";
 import { QuestPlayImage, QuestPlayImageFixed } from "./questPlay.image";
-import { DeepImmutable } from "../lib/qmplayer/deepImmutable";
+import { DeepImmutable } from "../../lib/qmplayer/deepImmutable";
 import { transformMedianameToUrl } from "./transformMediaNameToUrl";
-import { DATA_DIR } from "./consts";
+import { DATA_DIR } from "../consts";
 import { Sound } from "./questPlay.sound";
 import { ScrollableContainer } from "./questPlay.scrollcontainer";
 import { QuestPlayFrame } from "./questPlay.frame";
 import { IMAGE_SIZE_X, IMAGE_SIZE_Y } from "./questPlay.consts";
-import { style } from "./questPlay.style";
+import { colors } from "./questPlay.colors";
 import { GamePlayButton } from "./questPlay.button";
-import { assertNever } from "../assertNever";
+import { assertNever } from "../../assertNever";
 
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
@@ -118,7 +117,7 @@ export function QuestPlay({
 
   const locationText = (
     <DivFadeinCss key={`${uistate.text}#${gameState.performedJumps.length}`}>
-      <QuestReplaceTags str={uistate.text} clrColor={!isMobile ? style.textColorCrl : undefined} />
+      <QuestReplaceTags str={uistate.text} clrColor={!isMobile ? colors.textColorCrl : undefined} />
     </DivFadeinCss>
   );
 
@@ -141,15 +140,15 @@ export function QuestPlay({
               style={{
                 color: !isMobile
                   ? choice.active
-                    ? style.textColor
-                    : style.textColorInactive
+                    ? colors.textColor
+                    : colors.textColorInactive
                   : undefined,
               }}
             >
               <i className="fa fa-angle-double-right" />{" "}
               <QuestReplaceTags
                 str={choice.text}
-                clrColor={!isMobile && choice.active ? style.textColorCrl : undefined}
+                clrColor={!isMobile && choice.active ? colors.textColorCrl : undefined}
               />
             </a>
           </div>
@@ -174,7 +173,7 @@ export function QuestPlay({
             >
               <QuestReplaceTags
                 str={paramText}
-                clrColor={!isMobile ? style.textColorCrl : undefined}
+                clrColor={!isMobile ? colors.textColorCrl : undefined}
               />
             </div>
           </DivFadeinCss>
@@ -291,7 +290,7 @@ export function QuestPlay({
           >
             <QuestPlayFrame onTop={true} left={60} right={50} top={60} bottom={60}>
               <ScrollableContainer key={uistate.text}>
-                <div style={{ color: style.textColor, padding: 10, paddingRight: 30 }}>
+                <div style={{ color: colors.textColor, padding: 10, paddingRight: 30 }}>
                   {locationText}
                 </div>
               </ScrollableContainer>
@@ -323,7 +322,7 @@ export function QuestPlay({
           >
             <QuestPlayFrame onTop={true} left={70} right={50} top={40} bottom={60}>
               <ScrollableContainer>
-                <div style={{ color: style.textColor, padding: 10, paddingRight: 30 }}>
+                <div style={{ color: colors.textColor, padding: 10, paddingRight: 30 }}>
                   {choices}
                 </div>
               </ScrollableContainer>
@@ -343,7 +342,7 @@ export function QuestPlay({
               <ScrollableContainer>
                 <div
                   style={{
-                    color: style.textColor,
+                    color: colors.textColor,
                     padding: 10,
                     paddingRight: 30,
                     height: "100%",
