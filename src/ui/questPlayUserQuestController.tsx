@@ -81,13 +81,7 @@ export class QuestPlayUserQuestController extends React.Component<
 
   render() {
     const l = this.props.store.l;
-    if (this.state.game === null || this.state.gameState === null) {
-      return (
-        <div className="my-3 container">
-          <div className="text-center">{l.loadingQuest}</div>
-        </div>
-      );
-    }
+
     if (typeof this.state.game === "string") {
       return (
         <div className="my-3 container">
@@ -95,6 +89,14 @@ export class QuestPlayUserQuestController extends React.Component<
             {this.state.game}
             {/* TODO: back button */}
           </div>
+        </div>
+      );
+    }
+
+    if (this.state.game === null || this.state.gameState === null) {
+      return (
+        <div className="my-3 container">
+          <div className="text-center">{l.loadingQuest}</div>
         </div>
       );
     }

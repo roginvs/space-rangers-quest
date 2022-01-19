@@ -321,11 +321,8 @@ export async function getDb(app: firebase.app.App) {
         console.info(`Firebase SET fullRefPath=${fullRefPath} value=${JSON.stringify(value)}`);
         const setResult = await Promise.race([
           app.database().ref(fullRefPath).set(value),
-          new Promise<void>((r) => setTimeout(r, 60000)),
+          new Promise<void>((r) => setTimeout(r, 60000)).then(() => Promise.reject("Timed out")),
         ]);
-        if (!setResult) {
-          console.info(`Firebase SET fullRefPath=${fullRefPath} timeout`);
-        }
       }
     } catch (e) {
       console.error(`Error with firebase: `, e);
@@ -346,24 +343,32 @@ export async function getDb(app: firebase.app.App) {
     try {
       firebaseGoOnline();
       const firebaseResult = await Promise.race([
-        new Promise<any | null>((resolve) => {
+        new Promise<any | null>((resolve, reject) => {
           const targetUserId = userId || (firebaseUser ? firebaseUser.uid : null);
           targetUserId
             ? app
                 .database()
                 .ref(`${store}/${targetUserId}/${userPath}`)
-                .once("value", (snapshot) => {
-                  const value = snapshot ? snapshot.val() : null;
-                  console.info(
-                    `Firebase GET path=${store}/${
-                      firebaseUser ? firebaseUser.uid : "ERR"
-                    }/${userPath} value=${JSON.stringify(value)}`,
-                  );
-                  resolve(value);
-                })
+                .once(
+                  "value",
+                  (snapshot) => {
+                    const value = snapshot ? snapshot.val() : null;
+                    console.info(
+                      `Firebase GET path=${store}/${
+                        firebaseUser ? firebaseUser.uid : "ERR"
+                      }/${userPath} value=${JSON.stringify(value)}`,
+                    );
+                    resolve(value);
+                  },
+                  (err) => {
+                    reject(err);
+                  },
+                )
             : resolve(null);
         }),
-        new Promise<null>((r) => setTimeout(() => r(null), 60000)),
+        new Promise<null>((r) => setTimeout(() => r(null), 60000)).then(() =>
+          Promise.reject("Firebase read timeout"),
+        ),
       ]);
 
       return firebaseResult;
