@@ -202,11 +202,8 @@ export function QuestPlay({
     setIsMusic(!isMusic);
   }, [isMusic]);
 
-  const restartButtonContent = !reallyRestart ? (
-    <i className="fa fa-step-backward fa-fw" />
-  ) : (
-    <i className="fa fa-fast-backward fa-fw" />
-  );
+  const restartButtonContent = <i className="fa fa-fast-backward fa-fw" />;
+
   const onRestartButtonClick = React.useCallback(() => {
     const uiState = getUIState(quest, gameState, player);
     if (
@@ -377,6 +374,47 @@ export function QuestPlay({
           <GamePlayButton onClick={onMusicButtonClick}>{musicButtonContent}</GamePlayButton>
           <GamePlayButton onClick={onExit}>{exitButtonContent}</GamePlayButton>
         </div>
+
+        {reallyRestart && (
+          <div
+            style={{
+              position: "absolute",
+              right: "30%",
+              left: "30%",
+              bottom: "30%",
+              top: "30%",
+            }}
+          >
+            <QuestPlayFrame onTop={true} left={60} right={50} top={60} bottom={60}>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  height: "100%",
+                }}
+              >
+                <div style={{ marginBottom: 10, color: colors.textColor }}>{l.reallyRestart}</div>
+
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                  <GamePlayButton
+                    onClick={() => {
+                      const newGameState = showTaskInfoOnQuestStart
+                        ? initRandomGame(quest)
+                        : initRandomGameAndDoFirstStep(quest);
+                      setGameState(newGameState);
+                      setReallyRestart(false);
+                    }}
+                  >
+                    {l.yes}
+                  </GamePlayButton>
+                  <GamePlayButton onClick={() => setReallyRestart(false)}>{l.no}</GamePlayButton>
+                </div>
+              </div>
+            </QuestPlayFrame>
+          </div>
+        )}
       </div>
     );
   }
