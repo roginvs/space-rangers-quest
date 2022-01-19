@@ -1,5 +1,9 @@
 import * as React from "react";
 
+/**
+ * This is hacky implementation of frame.
+ * This component will take all space from parent which must be positioned
+ */
 export const QuestPlayFrame: React.FC<{
   left: number;
   top: number;
