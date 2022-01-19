@@ -22,6 +22,14 @@ import { colors } from "./questPlay.colors";
 import { GamePlayButton } from "./questPlay.button";
 import { assertNever } from "../../assertNever";
 
+/*
+
+Styling for desktop version is very very hacky.
+
+TODO: Make a proper frame component, maybe using subimages from the image
+
+*/
+
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
     quest,
