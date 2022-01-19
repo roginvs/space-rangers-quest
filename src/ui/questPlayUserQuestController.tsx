@@ -2,10 +2,10 @@ import * as React from "react";
 import { observer } from "mobx-react";
 import { Store } from "./store";
 import { Quest, GameState, getUIState } from "../lib/qmplayer/funcs";
-import { observable, toJS } from "mobx";
+import { toJS } from "mobx";
 import { parse } from "../lib/qmreader";
 import Pako from "pako";
-import { initRandomGame, QuestPlay } from "./questPlay";
+import { initRandomGame, QuestPlay } from "./questPlay/questPlay";
 
 interface UserQuestControllerState {
   game: null | string | Quest;

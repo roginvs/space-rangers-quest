@@ -1,0 +1,22 @@
+.rcs-custom-scrollbar.rcs-custom-scrollbar {
+  width: 14px;
+}
+
+.rcs-inner-handle.rcs-inner-handle {
+  background-color: #353535;
+
+  /* https://www.magicpattern.design/tools/css-backgrounds */
+  background-color: #1e1e1e;
+  opacity: 1;
+  background-image: repeating-linear-gradient(
+      45deg,
+      #1a1a1a 25%,
+      transparent 25%,
+      transparent 75%,
+      #1a1a1a 75%,
+      #1a1a1a
+    ),
+    repeating-linear-gradient(45deg, #1a1a1a 25%, #1e1e1e 25%, #1e1e1e 75%, #1a1a1a 75%, #1a1a1a);
+  background-position: 0 0, 4px 4px;
+  background-size: 8px 8px;
+}

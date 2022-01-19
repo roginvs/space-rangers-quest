@@ -1,4 +1,4 @@
-import { DATA_DIR } from "./consts";
+import { DATA_DIR } from "../consts";
 
 export function transformMedianameToUrl(
   mediaName: string | null,

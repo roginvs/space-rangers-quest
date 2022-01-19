@@ -1,5 +1,48 @@
 import * as React from "react";
-import { DivFadeinCss } from "./common";
+import { IMAGE_SIZE_X, IMAGE_SIZE_Y } from "./questPlay.consts";
+
+export function QuestPlayImageFixed({
+  src,
+  allImagesUrls,
+}: {
+  src: string | null;
+  allImagesUrls: (string | null)[];
+}) {
+  return (
+    <div
+      style={{
+        width: IMAGE_SIZE_X,
+        height: IMAGE_SIZE_Y,
+        overflow: "hidden",
+        position: "relative",
+      }}
+    >
+      {allImagesUrls.map((imageUrl) => {
+        if (!imageUrl) {
+          return null;
+        }
+        return (
+          <div
+            key={imageUrl}
+            style={{
+              width: "100%",
+              position: "absolute",
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0,
+              opacity: imageUrl === src ? 1 : 0,
+              transition: "opacity 0.5s linear",
+              backgroundImage: `url("${imageUrl}"`,
+              backgroundSize: "cover",
+              backgroundPosition: "center center",
+            }}
+          />
+        );
+      })}
+    </div>
+  );
+}
 
 export function QuestPlayImage({
   src,
