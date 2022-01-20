@@ -9,7 +9,7 @@
   transition: opacity 250ms ease-in;
 }
 
-/* */
+/* TODO: Remove this and do not use */
 .bootstrap-style .game-clr {
   color: #28a745 !important;
 }
