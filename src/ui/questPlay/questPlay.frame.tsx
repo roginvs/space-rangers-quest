@@ -6,7 +6,7 @@ import * as React from "react";
  *
  * @deprecated
  */
-export const QuestPlayFrame: React.FC<{
+export const QuestPlayFrameOld: React.FC<{
   left: number;
   top: number;
   right: number;
