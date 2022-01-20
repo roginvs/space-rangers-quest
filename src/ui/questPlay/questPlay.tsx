@@ -146,7 +146,7 @@ export function QuestPlay({
                 setGameState(newState);
 
                 //window.scrollTo(0, isMobile ? 44 : 0);
-                window.scrollTo(0, isMobile ? 42 : 0);
+                window.scrollTo(0, isMobile ? 62 : 0);
               }}
               className={"game " + (choice.active ? "" : "disabled game-inactive")}
             >
@@ -253,6 +253,37 @@ export function QuestPlay({
     </>
   );
 
+  const reallyRestartContent = reallyRestart ? (
+    <QuestPlayFrameText fitHeight={true}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+        }}
+      >
+        <div style={{ marginBottom: 10 }}>{l.reallyRestart}</div>
+
+        <div style={{ display: "flex", justifyContent: "center" }}>
+          <GamePlayButton
+            onClick={() => {
+              const newGameState = showTaskInfoOnQuestStart
+                ? initRandomGame(quest)
+                : initRandomGameAndDoFirstStep(quest);
+              setGameState(newGameState);
+              setReallyRestart(false);
+            }}
+          >
+            {l.yes}
+          </GamePlayButton>
+          <GamePlayButton onClick={() => setReallyRestart(false)}>{l.no}</GamePlayButton>
+        </div>
+      </div>
+    </QuestPlayFrameText>
+  ) : null;
+
   if (!isMobile) {
     return (
       <div
@@ -280,21 +311,6 @@ export function QuestPlay({
               position: "absolute",
               left: 0,
               top: 0,
-              width: `calc(100% - ${IMAGE_SIZE_X + FRAME_BORDER_X * 2}px)`,
-              height: `calc(${IMAGE_SIZE_Y + FRAME_BORDER_Y * 2}px)`,
-            }}
-          >
-            <QuestPlayFrameText fitHeight={true}>
-              <ScrollableContainer key={uistate.text}>
-                <div style={{ padding: 5, paddingRight: 20 }}>{locationText}</div>
-              </ScrollableContainer>
-            </QuestPlayFrameText>
-          </div>
-
-          <div
-            style={{
-              position: "absolute",
-              left: 0,
               width: `calc(100% - ${IMAGE_SIZE_X + FRAME_BORDER_X * 2}px)`,
               height: `calc(${IMAGE_SIZE_Y + FRAME_BORDER_Y * 2}px)`,
             }}
@@ -379,7 +395,7 @@ export function QuestPlay({
           <GamePlayButton onClick={onExit}>{exitButtonContent}</GamePlayButton>
         </div>
 
-        {reallyRestart && (
+        {reallyRestartContent && (
           <div
             style={{
               position: "absolute",
@@ -389,34 +405,91 @@ export function QuestPlay({
               top: "30%",
             }}
           >
-            <QuestPlayFrameText fitHeight={true}>
-              <div
-                style={{
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "center",
-                  alignItems: "center",
-                  height: "100%",
-                }}
-              >
-                <div style={{ marginBottom: 10 }}>{l.reallyRestart}</div>
+            {reallyRestartContent}
+          </div>
+        )}
+      </div>
+    );
+  }
 
-                <div style={{ display: "flex", justifyContent: "center" }}>
-                  <GamePlayButton
-                    onClick={() => {
-                      const newGameState = showTaskInfoOnQuestStart
-                        ? initRandomGame(quest)
-                        : initRandomGameAndDoFirstStep(quest);
-                      setGameState(newGameState);
-                      setReallyRestart(false);
-                    }}
-                  >
-                    {l.yes}
-                  </GamePlayButton>
-                  <GamePlayButton onClick={() => setReallyRestart(false)}>{l.no}</GamePlayButton>
-                </div>
-              </div>
-            </QuestPlayFrameText>
+  if (1 + 1 === 2) {
+    return (
+      <div
+        style={{
+          minHeight: "100vh",
+          backgroundImage: "url('/questplay/background.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "70% 0px",
+        }}
+        className="new-style"
+      >
+        {musicAndSound}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            padding: 10,
+          }}
+        >
+          <GamePlayButton onClick={onRestartButtonClick}>{restartButtonContent}</GamePlayButton>
+          <GamePlayButton onClick={onMusicButtonClick}>{musicButtonContent}</GamePlayButton>
+          <GamePlayButton onClick={onExit}>{exitButtonContent}</GamePlayButton>
+        </div>
+        <div
+          style={
+            {
+              //
+            }
+          }
+        >
+          <QuestPlayFrameImage fitHeight={false}>
+            <QuestPlayImage src={imageUrl} allImagesUrls={allImagesUrls} />
+          </QuestPlayFrameImage>
+        </div>
+        <div style={{}}>
+          <QuestPlayFrameText fitHeight={false}>
+            <div style={{ padding: 5 }}>{locationText}</div>
+          </QuestPlayFrameText>
+        </div>
+
+        <div
+          style={{
+            display: paramsStrings.filter((x) => x.trim()).length > 0 ? undefined : "none",
+          }}
+        >
+          <QuestPlayFrameText fitHeight={false}>
+            <div
+              style={{
+                padding: 5,
+              }}
+            >
+              {params}
+            </div>
+          </QuestPlayFrameText>
+        </div>
+        <div
+          style={
+            {
+              //
+            }
+          }
+        >
+          <QuestPlayFrameText fitHeight={false}>
+            <div style={{ padding: 5 }}>{choices}</div>
+          </QuestPlayFrameText>
+        </div>
+
+        {reallyRestartContent && (
+          <div
+            style={{
+              position: "fixed",
+              right: "5%",
+              left: "5%",
+              bottom: "30%",
+              top: "30%",
+            }}
+          >
+            {reallyRestartContent}
           </div>
         )}
       </div>

@@ -294,6 +294,7 @@ export const QuestPlayFrameText: React.FC<{
         height: fitHeight ? "100%" : undefined,
         width: "100%",
         position: "relative",
+        minHeight: 100,
       }}
     >
       <QuestPlayFrameBackground />
