@@ -28,14 +28,6 @@ import {
 import { GamePlayButton } from "./questPlay.button";
 import { assertNever } from "../../assertNever";
 
-/*
-
-Styling for desktop version is very very hacky.
-
-TODO: Make a proper frame component, maybe using subimages from the image
-
-*/
-
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
     quest,
@@ -150,7 +142,7 @@ export function QuestPlay({
                 //window.scrollTo(0, isMobile ? 44 : 0);
                 window.scrollTo(0, isMobile ? 62 : 0);
               }}
-              className={"game " + (choice.active ? "" : "game-inactive")}
+              className={choice.active ? "" : "game-inactive"}
             >
               <i className="fa fa-angle-double-right" /> <QuestReplaceTags str={choice.text} />
             </a>
@@ -309,7 +301,7 @@ export function QuestPlay({
         {musicAndSound}
         <div
           style={{
-            maxWidth: 1300,
+            maxWidth: MAX_DESKTOP_WIDTH,
             width: "100%",
             height: "100%",
             position: "relative",
