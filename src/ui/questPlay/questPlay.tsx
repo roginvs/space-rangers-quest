@@ -10,7 +10,7 @@ import classnames from "classnames";
 import "./questPlay.css";
 import { Music } from "./questPlay.music";
 import { LangTexts } from "../lang";
-import { QuestPlayImage } from "./questPlay.image";
+import { QuestPlayImage, QuestPlayImageDesktop } from "./questPlay.image";
 import { DeepImmutable } from "../../lib/qmplayer/deepImmutable";
 import { transformMedianameToUrl } from "./transformMediaNameToUrl";
 import { DATA_DIR } from "../consts";
@@ -351,7 +351,7 @@ export function QuestPlay({
             }}
           >
             <QuestPlayFrameImage fitHeight={true}>
-              <QuestPlayImage src={imageUrl} allImagesUrls={allImagesUrls} />
+              <QuestPlayImageDesktop src={imageUrl} allImagesUrls={allImagesUrls} />
             </QuestPlayFrameImage>
           </div>
 

@@ -275,6 +275,7 @@ export const QuestPlayFrameImage: React.FC<{
           paddingTop: FRAME_BORDER_Y,
           paddingRight: FRAME_BORDER_X,
           paddingBottom: FRAME_BORDER_Y,
+          height: fitHeight ? "100%" : undefined,
         }}
       >
         {children}
