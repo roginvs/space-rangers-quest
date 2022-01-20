@@ -291,8 +291,8 @@ export function QuestPlay({
               top: 0,
               //width: `calc(100% - ${IMAGE_SIZE_X}px - 20px - 20px)`,
               //height: `calc(${IMAGE_SIZE_Y}px + 20px + 20px)`,
-              width: "50%",
-              height: "50%",
+              width: "80%",
+              height: "80%",
               zIndex: 100,
             }}
           >
