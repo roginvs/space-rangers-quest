@@ -1,21 +1,3 @@
-p.game {
-  text-indent: 1rem;
-  margin-bottom: 0.2rem;
-}
-
-a.game.disabled {
-  /* Make the disabled links grayish*/
-  color: gray;
-  /* And disable the pointer events */
-  pointer-events: none;
-}
-
-body.game {
-  background-color: #eceeef;
-  /* padding-top: 2rem; */
-  overflow-y: scroll;
-}
-
 .game-text {
   white-space: pre-wrap;
 }
