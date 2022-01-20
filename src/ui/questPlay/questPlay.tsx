@@ -300,6 +300,7 @@ export function QuestPlay({
           position: "relative",
           backgroundImage: "url('/questplay/background.jpg')",
           backgroundSize: "cover",
+          display: "flex",
           justifyContent: "center",
           alignItems: "stretch",
         }}
