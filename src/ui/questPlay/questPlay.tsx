@@ -16,9 +16,8 @@ import { transformMedianameToUrl } from "./transformMediaNameToUrl";
 import { DATA_DIR } from "../consts";
 import { Sound } from "./questPlay.sound";
 import { ScrollableContainer } from "./questPlay.scrollcontainer";
-import { QuestPlayFrame, QuestPlayFrameText } from "./questPlay.frame";
+import { QuestPlayFrame, QuestPlayFrameImage, QuestPlayFrameText } from "./questPlay.frame";
 import { IMAGE_SIZE_X, IMAGE_SIZE_Y } from "./questPlay.consts";
-import { colors } from "./questPlay.colors";
 import { GamePlayButton } from "./questPlay.button";
 import { assertNever } from "../../assertNever";
 
@@ -125,7 +124,7 @@ export function QuestPlay({
 
   const locationText = (
     <DivFadeinCss key={`${uistate.text}#${gameState.performedJumps.length}`}>
-      <QuestReplaceTags str={uistate.text} clrColor={!isMobile ? colors.textColorCrl : undefined} />
+      <QuestReplaceTags str={uistate.text} />
     </DivFadeinCss>
   );
 
@@ -144,20 +143,9 @@ export function QuestPlay({
                 //window.scrollTo(0, isMobile ? 44 : 0);
                 window.scrollTo(0, isMobile ? 42 : 0);
               }}
-              className={"game " + (choice.active ? "" : "disabled")}
-              style={{
-                color: !isMobile
-                  ? choice.active
-                    ? colors.textColor
-                    : colors.textColorInactive
-                  : undefined,
-              }}
+              className={"game " + (choice.active ? "" : "disabled game-inactive")}
             >
-              <i className="fa fa-angle-double-right" />{" "}
-              <QuestReplaceTags
-                str={choice.text}
-                clrColor={!isMobile && choice.active ? colors.textColorCrl : undefined}
-              />
+              <i className="fa fa-angle-double-right" /> <QuestReplaceTags str={choice.text} />
             </a>
           </div>
         );
@@ -179,10 +167,7 @@ export function QuestPlay({
                 minHeight: "1em",
               }}
             >
-              <QuestReplaceTags
-                str={paramText}
-                clrColor={!isMobile ? colors.textColorCrl : undefined}
-              />
+              <QuestReplaceTags str={paramText} />
             </div>
           </DivFadeinCss>
         );
@@ -275,6 +260,7 @@ export function QuestPlay({
           justifyContent: "center",
           alignItems: "stretch",
         }}
+        className="new-style"
       >
         {musicAndSound}
         <div
@@ -289,29 +275,15 @@ export function QuestPlay({
               position: "absolute",
               left: 0,
               top: 0,
-              //width: `calc(100% - ${IMAGE_SIZE_X}px - 20px - 20px)`,
-              //height: `calc(${IMAGE_SIZE_Y}px + 20px + 20px)`,
-              width: "80%",
-              height: "30%",
-              zIndex: 100,
+              width: `calc(100% - ${IMAGE_SIZE_X}px - 20px - 20px)`,
+              height: `calc(${IMAGE_SIZE_Y}px + 20px + 20px)`,
             }}
           >
             <QuestPlayFrameText fitHeight={true}>
               <ScrollableContainer key={uistate.text}>
-                <div style={{ color: colors.textColor, padding: 5, paddingRight: 20 }}>
-                  {locationText}
-                </div>
+                <div style={{ padding: 5, paddingRight: 20 }}>{locationText}</div>
               </ScrollableContainer>
             </QuestPlayFrameText>
-            {/*
-            <QuestPlayFrame onTop={true} left={60} right={50} top={60} bottom={60}>
-              <ScrollableContainer key={uistate.text}>
-                <div style={{ color: colors.textColor, padding: 10, paddingRight: 30 }}>
-                  {locationText}
-                </div>
-              </ScrollableContainer>
-            </QuestPlayFrame>
-            */}
           </div>
 
           <div
@@ -320,12 +292,12 @@ export function QuestPlay({
               right: 0,
               top: 0,
               width: `calc(${IMAGE_SIZE_X}px + 20px + 20px)`,
-              height: `calc(${IMAGE_SIZE_Y}px + 20px + 20px)`,
+              height: `calc(${IMAGE_SIZE_Y}px + 20px + 20px + 123px)`,
             }}
           >
-            <QuestPlayFrame onTop={false} left={20} right={20} top={20} bottom={10}>
-              <QuestPlayImageFixed src={imageUrl} allImagesUrls={allImagesUrls} />
-            </QuestPlayFrame>
+            <QuestPlayFrameImage fitHeight={false}>
+              <QuestPlayImage src={imageUrl} allImagesUrls={allImagesUrls} />
+            </QuestPlayFrameImage>
           </div>
 
           <div
@@ -339,9 +311,7 @@ export function QuestPlay({
           >
             <QuestPlayFrame onTop={true} left={70} right={50} top={40} bottom={60}>
               <ScrollableContainer>
-                <div style={{ color: colors.textColor, padding: 10, paddingRight: 30 }}>
-                  {choices}
-                </div>
+                <div style={{ padding: 10, paddingRight: 30 }}>{choices}</div>
               </ScrollableContainer>
             </QuestPlayFrame>
           </div>
@@ -359,7 +329,6 @@ export function QuestPlay({
               <ScrollableContainer>
                 <div
                   style={{
-                    color: colors.textColor,
                     padding: 10,
                     paddingRight: 30,
                     height: "100%",
@@ -407,7 +376,7 @@ export function QuestPlay({
                   height: "100%",
                 }}
               >
-                <div style={{ marginBottom: 10, color: colors.textColor }}>{l.reallyRestart}</div>
+                <div style={{ marginBottom: 10 }}>{l.reallyRestart}</div>
 
                 <div style={{ display: "flex", justifyContent: "center" }}>
                   <GamePlayButton
@@ -432,7 +401,7 @@ export function QuestPlay({
   }
 
   return (
-    <div className="">
+    <div className="bootstrap-style">
       {musicAndSound}
       <div
         style={{

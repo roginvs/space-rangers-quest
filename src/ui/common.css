@@ -1,11 +1,15 @@
 /* DivFadeinCss */
 .fade-enter {
-    opacity: 0.01;
-    z-index: 1;
+  opacity: 0.01;
+  z-index: 1;
 }
-  
+
 .fade-enter.fade-enter-active {
-    opacity: 1;
-    transition: opacity 250ms ease-in;
+  opacity: 1;
+  transition: opacity 250ms ease-in;
 }
-  
+
+/* */
+.bootstrap-style .game-clr {
+  color: #28a745 !important;
+}

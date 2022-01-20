@@ -17,10 +17,23 @@ body.game {
 }
 
 .game-text {
-  /* white-space: pre-wrap; */
+  white-space: pre-wrap;
 }
 .game-fix {
   font-family: monospace;
   white-space: pre;
   font-size: 1.2em;
+}
+
+.new-style {
+  color: #9eacac;
+}
+.new-style a {
+  color: #9eacac;
+}
+.new-style .game-inactive {
+  color: #747e80;
+}
+.new-style .game-clr {
+  color: #ffd863;
 }

@@ -257,17 +257,27 @@ const QuestPlayFrameTiles = () => (
   </>
 );
 export const QuestPlayFrameImage: React.FC<{
-  height: number | string;
-}> = ({ children, height }) => {
+  fitHeight: boolean;
+}> = ({ children, fitHeight }) => {
   return (
     <div
       style={{
-        height,
         width: "100%",
+        height: fitHeight ? "100%" : undefined,
         position: "relative",
       }}
     >
-      <QuestPlayFrameBackground>{children}</QuestPlayFrameBackground>
+      <div
+        style={{
+          paddingLeft: FRAME_BORDER_X,
+          paddingTop: FRAME_BORDER_Y,
+          paddingRight: FRAME_BORDER_X,
+          paddingBottom: FRAME_BORDER_Y,
+        }}
+      >
+        {children}
+      </div>
+
       <QuestPlayFrameTiles />
     </div>
   );

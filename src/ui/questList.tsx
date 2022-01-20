@@ -184,7 +184,7 @@ export class QuestList extends React.Component<
                         ) : null}
                       </small>
                     </div>
-                    <p className="mb-1">
+                    <p className="mb-1 bootstrap-style">
                       <QuestReplaceTags str={quest.taskText} />
                     </p>
                     <small>{quest.smallDescription}</small>
