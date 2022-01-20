@@ -94,8 +94,8 @@ const FRAME_PIC_CORNER_HEIGHT_2 = 120;
 const FRAME_PIC_SIZE_X = 1093;
 const FRAME_PIC_SIZE_Y = 825;
 
-const FRAME_HEIGHT = 40;
-const FRAME_WIDTH = 40;
+const FRAME_HEIGHT = 15;
+const FRAME_WIDTH = 15;
 
 const PIC_SCALING_X = FRAME_WIDTH / FRAME_PIC_CORNER_WIDTH;
 const PIC_SCALING_Y = FRAME_HEIGHT / FRAME_PIC_CORNER_HEIGHT;
@@ -173,22 +173,25 @@ export const QuestPlayFrame2: React.FC<{
         }}
       />
 
-      {/*
       <div
         //left
         style={{
           position: "absolute",
           left: 0,
-          top: FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2,
-          bottom: FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2,
-          width: FRAME_PIC_CORNER_WIDTH,
-          background: `url('/questplay/frame.png') -0px center`,
+          top: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
+          bottom: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
+          width: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
+          backgroundImage: `url('/questplay/frame.png')`,
+          backgroundPosition: `-0px center`,
+
           backgroundSize:
-            `${FRAME_PIC_SIZE_X}px ` +
-            `${FRAME_PIC_SIZE_Y - 2 * (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2)}%`,
+            `${FRAME_PIC_SIZE_X * PIC_SCALING_X}px ` +
+            `${
+              (FRAME_PIC_SIZE_Y - 2 * (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2)) *
+              PIC_SCALING_Y
+            }%`,
         }}
       />
-      */}
     </div>
   );
 };
