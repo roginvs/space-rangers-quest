@@ -16,13 +16,15 @@ import { transformMedianameToUrl } from "./transformMediaNameToUrl";
 import { DATA_DIR } from "../consts";
 import { Sound } from "./questPlay.sound";
 import { ScrollableContainer } from "./questPlay.scrollcontainer";
+import { QuestPlayFrameImage, QuestPlayFrameText } from "./questPlay.frame";
 import {
-  FRAME_BORDER_X,
-  FRAME_BORDER_Y,
-  QuestPlayFrameImage,
-  QuestPlayFrameText,
-} from "./questPlay.frame";
-import { IMAGE_SIZE_X, IMAGE_SIZE_Y } from "./questPlay.consts";
+  FRAME_BORDER_DESKTOP_X,
+  FRAME_BORDER_DESKTOP_Y,
+  FRAME_BORDER_MOBILE_X,
+  FRAME_BORDER_MOBILE_Y,
+  NATIVE_IMAGE_SIZE_X,
+  NATIVE_IMAGE_SIZE_Y,
+} from "./questPlay.consts";
 import { GamePlayButton } from "./questPlay.button";
 import { assertNever } from "../../assertNever";
 
@@ -253,8 +255,11 @@ export function QuestPlay({
     </>
   );
 
+  const frameBorderX = isMobile ? FRAME_BORDER_MOBILE_X : FRAME_BORDER_DESKTOP_X;
+  const frameBorderY = isMobile ? FRAME_BORDER_MOBILE_Y : FRAME_BORDER_DESKTOP_Y;
+
   const reallyRestartContent = reallyRestart ? (
-    <QuestPlayFrameText fitHeight={true}>
+    <QuestPlayFrameText fitHeight={true} frameBorderX={frameBorderX} frameBorderY={frameBorderY}>
       <div
         style={{
           display: "flex",
@@ -285,6 +290,9 @@ export function QuestPlay({
   ) : null;
 
   if (!isMobile) {
+    const IMAGE_SIZE_X = NATIVE_IMAGE_SIZE_X + 2 * frameBorderX;
+    const IMAGE_SIZE_Y = NATIVE_IMAGE_SIZE_Y + 2 * frameBorderY;
+
     return (
       <div
         style={{
@@ -311,11 +319,15 @@ export function QuestPlay({
               position: "absolute",
               left: 0,
               top: 0,
-              width: `calc(100% - ${IMAGE_SIZE_X + FRAME_BORDER_X * 2}px)`,
-              height: `calc(${IMAGE_SIZE_Y + FRAME_BORDER_Y * 2}px)`,
+              width: `calc(100% - ${IMAGE_SIZE_X}px)`,
+              height: `calc(${IMAGE_SIZE_Y}px)`,
             }}
           >
-            <QuestPlayFrameText fitHeight={true}>
+            <QuestPlayFrameText
+              fitHeight={true}
+              frameBorderX={frameBorderX}
+              frameBorderY={frameBorderY}
+            >
               <ScrollableContainer key={uistate.text}>
                 <div style={{ padding: 5, paddingRight: 20 }}>{locationText}</div>
               </ScrollableContainer>
@@ -327,11 +339,15 @@ export function QuestPlay({
               position: "absolute",
               left: 0,
               bottom: 0,
-              width: `calc(100% - ${IMAGE_SIZE_X + FRAME_BORDER_X * 2}px)`,
-              height: `calc(100% - ${IMAGE_SIZE_Y + FRAME_BORDER_Y * 2}px)`,
+              width: `calc(100% - ${IMAGE_SIZE_X}px)`,
+              height: `calc(100% - ${IMAGE_SIZE_Y}px)`,
             }}
           >
-            <QuestPlayFrameText fitHeight={true}>
+            <QuestPlayFrameText
+              fitHeight={true}
+              frameBorderX={frameBorderX}
+              frameBorderY={frameBorderY}
+            >
               <ScrollableContainer
                 // TODO: Use proper key = join choices
                 key={uistate.text}
@@ -346,11 +362,15 @@ export function QuestPlay({
               position: "absolute",
               right: 0,
               top: 0,
-              width: `calc(${IMAGE_SIZE_X + FRAME_BORDER_X * 2}px)`,
-              height: `calc(${IMAGE_SIZE_Y + FRAME_BORDER_Y * 2}px)`,
+              width: `calc(${IMAGE_SIZE_X}px)`,
+              height: `calc(${IMAGE_SIZE_Y}px)`,
             }}
           >
-            <QuestPlayFrameImage fitHeight={true}>
+            <QuestPlayFrameImage
+              fitHeight={true}
+              frameBorderX={frameBorderX}
+              frameBorderY={frameBorderY}
+            >
               <QuestPlayImageDesktop src={imageUrl} allImagesUrls={allImagesUrls} />
             </QuestPlayFrameImage>
           </div>
@@ -360,11 +380,15 @@ export function QuestPlay({
               position: "absolute",
               right: 0,
               bottom: 0,
-              width: `calc(${IMAGE_SIZE_X + FRAME_BORDER_X * 2}px)`,
-              height: `calc(100% - ${IMAGE_SIZE_Y + FRAME_BORDER_Y * 2}px)`,
+              width: `calc(${IMAGE_SIZE_X}px)`,
+              height: `calc(100% - ${IMAGE_SIZE_Y}px)`,
             }}
           >
-            <QuestPlayFrameText fitHeight={true}>
+            <QuestPlayFrameText
+              fitHeight={true}
+              frameBorderX={frameBorderX}
+              frameBorderY={frameBorderY}
+            >
               <ScrollableContainer>
                 <div
                   style={{
@@ -439,12 +463,20 @@ export function QuestPlay({
           display: imageUrl ? undefined : "none",
         }}
       >
-        <QuestPlayFrameImage fitHeight={false}>
+        <QuestPlayFrameImage
+          fitHeight={false}
+          frameBorderX={frameBorderX}
+          frameBorderY={frameBorderY}
+        >
           <QuestPlayImageMobile src={imageUrl} allImagesUrls={allImagesUrls} />
         </QuestPlayFrameImage>
       </div>
       <div style={{}}>
-        <QuestPlayFrameText fitHeight={false}>
+        <QuestPlayFrameText
+          fitHeight={false}
+          frameBorderX={frameBorderX}
+          frameBorderY={frameBorderY}
+        >
           <div style={{ padding: 5 }}>{locationText}</div>
         </QuestPlayFrameText>
       </div>
@@ -454,7 +486,11 @@ export function QuestPlay({
           display: paramsStrings.filter((x) => x.trim()).length > 0 ? undefined : "none",
         }}
       >
-        <QuestPlayFrameText fitHeight={false}>
+        <QuestPlayFrameText
+          fitHeight={false}
+          frameBorderX={frameBorderX}
+          frameBorderY={frameBorderY}
+        >
           <div
             style={{
               padding: 5,
@@ -471,7 +507,11 @@ export function QuestPlay({
           }
         }
       >
-        <QuestPlayFrameText fitHeight={false}>
+        <QuestPlayFrameText
+          fitHeight={false}
+          frameBorderX={frameBorderX}
+          frameBorderY={frameBorderY}
+        >
           <div style={{ padding: 5 }}>{choices}</div>
         </QuestPlayFrameText>
       </div>
