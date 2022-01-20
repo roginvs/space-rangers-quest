@@ -11,6 +11,7 @@ const devServer /*: webpackDevServer.Configuration */ = {
   contentBase: "./built-web",
   port: 4099,
   hot: true,
+  disableHostCheck: true,
   // inline: false, // for serviceWorker development tests
 };
 
@@ -40,9 +41,10 @@ const config = (env, argv) => {
       filename: "[name].js",
       chunkFilename: "[id].js",
       path: __dirname + "/built-web",
-      globalObject: /* This is small workaround for workers scope and HotModuleReplacementPlugin */ MODE_DEVELOPMENT
-        ? "this"
-        : undefined,
+      globalObject:
+        /* This is small workaround for workers scope and HotModuleReplacementPlugin */ MODE_DEVELOPMENT
+          ? "this"
+          : undefined,
     },
 
     plugins: [
