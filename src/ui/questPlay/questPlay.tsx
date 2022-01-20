@@ -289,8 +289,11 @@ export function QuestPlay({
               position: "absolute",
               left: 0,
               top: 0,
-              width: `calc(100% - ${IMAGE_SIZE_X}px - 20px - 20px)`,
-              height: `calc(${IMAGE_SIZE_Y}px + 20px + 20px)`,
+              //width: `calc(100% - ${IMAGE_SIZE_X}px - 20px - 20px)`,
+              //height: `calc(${IMAGE_SIZE_Y}px + 20px + 20px)`,
+              width: "50%",
+              height: "50%",
+              zIndex: 100,
             }}
           >
             <QuestPlayFrame2 height={"100%"}>testing</QuestPlayFrame2>
