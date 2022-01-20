@@ -87,27 +87,178 @@ v_      |_  _|____|___________|_
         |
 */
 
-const FRAME_PIC_CORNER_WIDTH = 75;
-const FRAME_PIC_CORNER_HEIGHT = 55;
-const FRAME_PIC_CORNER_WIDTH_2 = 80;
-const FRAME_PIC_CORNER_HEIGHT_2 = 120;
-const FRAME_PIC_SIZE_X = 1093;
-const FRAME_PIC_SIZE_Y = 825;
+const FRAME_WIDTH = 30;
+const FRAME_HEIGHT = 30;
 
-const FRAME_HEIGHT = 80;
-const FRAME_WIDTH = 80;
+const backgroundSize = "100% 100%";
 
-const PIC_SCALING_X = FRAME_WIDTH / FRAME_PIC_CORNER_WIDTH;
-const PIC_SCALING_Y = FRAME_HEIGHT / FRAME_PIC_CORNER_HEIGHT;
+const FRAME_BORDER_X = FRAME_WIDTH / 2;
+const FRAME_BORDER_Y = FRAME_HEIGHT / 2;
 
-const IMAGE_PADDING_X = 20;
-const IMAGE_PADDING_Y = 25;
+const QuestPlayFrameBackground: React.FC<{}> = ({ children }) => (
+  <div
+    style={{
+      position: "absolute",
+      left: FRAME_BORDER_X,
+      top: FRAME_BORDER_Y,
+      right: FRAME_BORDER_X,
+      bottom: FRAME_BORDER_Y,
+      backgroundColor: "black",
+      opacity: 0.8,
+    }}
+  >
+    {children}
+  </div>
+);
 
-export const QuestPlayFrame2: React.FC<{
+const QuestPlayFrameTiles = () => (
+  <>
+    <div
+      style={{
+        position: "absolute",
+        left: 0,
+        top: 0,
+        width: FRAME_WIDTH,
+        height: FRAME_HEIGHT * 3,
+        backgroundImage: "url('/questplay/frame-left-top.png')",
+        backgroundSize,
+      }}
+    />
+    <div
+      style={{
+        position: "absolute",
+        left: FRAME_WIDTH,
+        top: 0,
+        width: FRAME_WIDTH * 2,
+        height: FRAME_HEIGHT,
+        backgroundImage: "url('/questplay/frame-left-top-2.png')",
+        backgroundSize,
+      }}
+    />
+
+    <div
+      style={{
+        position: "absolute",
+        left: FRAME_WIDTH * 3,
+        right: FRAME_WIDTH * 3,
+        top: 0,
+        height: FRAME_HEIGHT,
+        backgroundImage: "url('/questplay/frame-top.png')",
+        backgroundSize,
+      }}
+    />
+
+    <div
+      style={{
+        position: "absolute",
+        right: FRAME_WIDTH,
+        top: 0,
+        width: FRAME_WIDTH * 2,
+        height: FRAME_HEIGHT,
+        backgroundImage: "url('/questplay/frame-right-top-2.png')",
+        backgroundSize,
+      }}
+    />
+
+    <div
+      style={{
+        position: "absolute",
+        right: 0,
+        top: 0,
+        width: FRAME_WIDTH,
+        height: FRAME_HEIGHT * 3,
+        backgroundImage: "url('/questplay/frame-right-top.png')",
+        backgroundSize,
+      }}
+    />
+
+    <div
+      style={{
+        position: "absolute",
+        left: 0,
+        top: FRAME_HEIGHT * 3,
+        bottom: FRAME_HEIGHT * 3,
+        width: FRAME_WIDTH,
+        backgroundImage: "url('/questplay/frame-left.png')",
+        backgroundSize,
+      }}
+    />
+
+    <div
+      style={{
+        position: "absolute",
+        right: 0,
+        top: FRAME_HEIGHT * 3,
+        bottom: FRAME_HEIGHT * 3,
+        width: FRAME_WIDTH,
+        backgroundImage: "url('/questplay/frame-right.png')",
+        backgroundSize,
+      }}
+    />
+
+    <div
+      style={{
+        position: "absolute",
+        left: 0,
+        bottom: 0,
+        width: FRAME_WIDTH,
+        height: FRAME_HEIGHT * 3,
+        backgroundImage: "url('/questplay/frame-left-bottom.png')",
+        backgroundSize,
+      }}
+    />
+    <div
+      style={{
+        position: "absolute",
+        left: FRAME_WIDTH,
+        bottom: 0,
+        width: FRAME_WIDTH * 2,
+        height: FRAME_HEIGHT,
+        backgroundImage: "url('/questplay/frame-left-bottom-2.png')",
+        backgroundSize,
+      }}
+    />
+
+    <div
+      style={{
+        position: "absolute",
+        left: FRAME_WIDTH * 3,
+        right: FRAME_WIDTH * 3,
+        bottom: 0,
+        height: FRAME_HEIGHT,
+        backgroundImage: "url('/questplay/frame-bottom.png')",
+        backgroundSize,
+      }}
+    />
+
+    <div
+      style={{
+        position: "absolute",
+        right: FRAME_WIDTH,
+        bottom: 0,
+        width: FRAME_WIDTH * 2,
+        height: FRAME_HEIGHT,
+        backgroundImage: "url('/questplay/frame-right-bottom-2.png')",
+        backgroundSize,
+      }}
+    />
+
+    <div
+      style={{
+        position: "absolute",
+        right: 0,
+        bottom: 0,
+        width: FRAME_WIDTH,
+        height: FRAME_HEIGHT * 3,
+        backgroundImage: "url('/questplay/frame-right-bottom.png')",
+        backgroundSize,
+      }}
+    />
+  </>
+);
+export const QuestPlayFrameImage: React.FC<{
   height: number | string;
 }> = ({ children, height }) => {
-  const backgroundSize =
-    `${FRAME_PIC_SIZE_X * PIC_SCALING_X}px ` + `${FRAME_PIC_SIZE_Y * PIC_SCALING_Y}px`;
   return (
     <div
       style={{
@@ -116,163 +267,37 @@ export const QuestPlayFrame2: React.FC<{
         position: "relative",
       }}
     >
-      {children}
+      <QuestPlayFrameBackground>{children}</QuestPlayFrameBackground>
+      <QuestPlayFrameTiles />
+    </div>
+  );
+};
 
+export const QuestPlayFrameText: React.FC<{
+  fitHeight: boolean;
+}> = ({ children, fitHeight }) => {
+  return (
+    <div
+      style={{
+        height: fitHeight ? "100%" : undefined,
+        width: "100%",
+        position: "relative",
+      }}
+    >
+      <QuestPlayFrameBackground />
+      <QuestPlayFrameTiles />
       <div
-        // left-top
         style={{
-          position: "absolute",
-          left: 0,
-          top: 0,
-          width: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
-          height: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
-          backgroundImage: "url('/questplay/frame.png')",
-          backgroundSize,
+          paddingLeft: FRAME_WIDTH,
+          paddingRight: FRAME_WIDTH,
+          paddingTop: FRAME_HEIGHT,
+          paddingBottom: FRAME_HEIGHT,
+          position: "relative",
+          height: fitHeight ? "100%" : undefined,
         }}
-      />
-
-      <div
-        // left-top-top
-        style={{
-          position: "absolute",
-          left: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
-          top: 0,
-          width: FRAME_PIC_CORNER_WIDTH_2 * PIC_SCALING_X,
-          height: FRAME_PIC_CORNER_HEIGHT * PIC_SCALING_Y,
-          backgroundImage: `url('/questplay/frame.png')`,
-          backgroundPosition: `${-FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X}px ` + `0px`,
-          backgroundSize,
-        }}
-      />
-
-      <div
-        // bottom-left
-        style={{
-          position: "absolute",
-          left: 0,
-          bottom: 0,
-          width: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
-          height: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
-          backgroundImage: `url('/questplay/frame.png')`,
-          backgroundSize,
-          backgroundPosition: "left bottom",
-        }}
-      />
-
-      <div
-        // bottom-left-left
-        style={{
-          position: "absolute",
-          left: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
-          bottom: 0,
-          width: FRAME_PIC_CORNER_WIDTH_2 * PIC_SCALING_X,
-          height: FRAME_PIC_CORNER_HEIGHT * PIC_SCALING_Y,
-          backgroundImage: `url('/questplay/frame.png')`,
-          backgroundSize,
-          backgroundPosition: `-${FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X}px bottom`,
-        }}
-      />
-
-      <div
-        //left
-        style={{
-          position: "absolute",
-          left: 0,
-          top: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
-          bottom: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
-          width: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
-          backgroundImage: `url('/questplay/frame.png')`,
-          backgroundPosition: `-0px center`,
-
-          backgroundSize:
-            `${FRAME_PIC_SIZE_X * PIC_SCALING_X}px ` +
-            `${
-              (FRAME_PIC_SIZE_Y - 2 * (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2)) *
-              PIC_SCALING_Y
-            }%`,
-        }}
-      />
-
-      <div
-        // top-right
-        style={{
-          position: "absolute",
-          right: 0,
-          top: 0,
-          width: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
-          height: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
-          backgroundImage: "url('/questplay/frame.png')",
-          backgroundPosition: `right top`,
-          backgroundSize,
-        }}
-      />
-
-      <div
-        // top-right-right
-        style={{
-          position: "absolute",
-          right: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
-          top: 0,
-          width: FRAME_PIC_CORNER_WIDTH_2 * PIC_SCALING_X,
-          height: FRAME_PIC_CORNER_HEIGHT * PIC_SCALING_Y,
-          backgroundImage: `url('/questplay/frame.png')`,
-          backgroundPosition:
-            `-${
-              (FRAME_PIC_SIZE_X - FRAME_PIC_CORNER_WIDTH - FRAME_PIC_CORNER_WIDTH_2) * PIC_SCALING_X
-            }px ` + `0px`,
-          backgroundSize,
-        }}
-      />
-
-      <div
-        // bottom-right
-        style={{
-          position: "absolute",
-          right: 0,
-          bottom: 0,
-          width: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
-          height: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
-          backgroundImage: `url('/questplay/frame.png')`,
-          backgroundSize,
-          backgroundPosition: "right bottom",
-        }}
-      />
-
-      <div
-        // bottom-rigt-right
-        style={{
-          position: "absolute",
-          right: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
-          bottom: 0,
-          width: FRAME_PIC_CORNER_WIDTH_2 * PIC_SCALING_X,
-          height: FRAME_PIC_CORNER_HEIGHT * PIC_SCALING_Y,
-          backgroundImage: `url('/questplay/frame.png')`,
-          backgroundSize,
-          backgroundPosition: `-${
-            (FRAME_PIC_SIZE_X - FRAME_PIC_CORNER_WIDTH - FRAME_PIC_CORNER_WIDTH_2) * PIC_SCALING_X
-          }px bottom`,
-        }}
-      />
-
-      <div
-        //right
-        style={{
-          position: "absolute",
-          right: 0,
-          top: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
-          bottom: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
-          width: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
-          backgroundImage: `url('/questplay/frame.png')`,
-          backgroundPosition: `right ` + `center`,
-
-          backgroundSize:
-            `${FRAME_PIC_SIZE_X * PIC_SCALING_X}px ` +
-            `${
-              (FRAME_PIC_SIZE_Y - 2 * (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2)) *
-              PIC_SCALING_Y
-            }%`,
-        }}
-      />
+      >
+        {children}
+      </div>
     </div>
   );
 };
