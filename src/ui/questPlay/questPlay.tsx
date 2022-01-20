@@ -10,13 +10,18 @@ import classnames from "classnames";
 import "./questPlay.css";
 import { Music } from "./questPlay.music";
 import { LangTexts } from "../lang";
-import { QuestPlayImage, QuestPlayImageFixed } from "./questPlay.image";
+import { QuestPlayImage } from "./questPlay.image";
 import { DeepImmutable } from "../../lib/qmplayer/deepImmutable";
 import { transformMedianameToUrl } from "./transformMediaNameToUrl";
 import { DATA_DIR } from "../consts";
 import { Sound } from "./questPlay.sound";
 import { ScrollableContainer } from "./questPlay.scrollcontainer";
-import { QuestPlayFrame, QuestPlayFrameImage, QuestPlayFrameText } from "./questPlay.frame";
+import {
+  FRAME_BORDER_X,
+  FRAME_BORDER_Y,
+  QuestPlayFrameImage,
+  QuestPlayFrameText,
+} from "./questPlay.frame";
 import { IMAGE_SIZE_X, IMAGE_SIZE_Y } from "./questPlay.consts";
 import { GamePlayButton } from "./questPlay.button";
 import { assertNever } from "../../assertNever";
@@ -256,7 +261,6 @@ export function QuestPlay({
           position: "relative",
           backgroundImage: "url('/questplay/background.jpg')",
           backgroundSize: "cover",
-          display: "flex",
           justifyContent: "center",
           alignItems: "stretch",
         }}
@@ -267,6 +271,7 @@ export function QuestPlay({
           style={{
             maxWidth: 1300,
             width: "100%",
+            height: "100%",
             position: "relative",
           }}
         >
@@ -275,8 +280,8 @@ export function QuestPlay({
               position: "absolute",
               left: 0,
               top: 0,
-              width: `calc(100% - ${IMAGE_SIZE_X}px - 20px - 20px)`,
-              height: `calc(${IMAGE_SIZE_Y}px + 20px + 20px)`,
+              width: `calc(100% - ${IMAGE_SIZE_X + FRAME_BORDER_X * 2}px)`,
+              height: `calc(${IMAGE_SIZE_Y + FRAME_BORDER_Y * 2}px)`,
             }}
           >
             <QuestPlayFrameText fitHeight={true}>
@@ -289,15 +294,16 @@ export function QuestPlay({
           <div
             style={{
               position: "absolute",
-              right: 0,
-              top: 0,
-              width: `calc(${IMAGE_SIZE_X}px + 20px + 20px)`,
-              height: `calc(${IMAGE_SIZE_Y}px + 20px + 20px + 123px)`,
+              left: 0,
+              width: `calc(100% - ${IMAGE_SIZE_X + FRAME_BORDER_X * 2}px)`,
+              height: `calc(${IMAGE_SIZE_Y + FRAME_BORDER_Y * 2}px)`,
             }}
           >
-            <QuestPlayFrameImage fitHeight={false}>
-              <QuestPlayImage src={imageUrl} allImagesUrls={allImagesUrls} />
-            </QuestPlayFrameImage>
+            <QuestPlayFrameText fitHeight={true}>
+              <ScrollableContainer key={uistate.text}>
+                <div style={{ padding: 5, paddingRight: 20 }}>{locationText}</div>
+              </ScrollableContainer>
+            </QuestPlayFrameText>
           </div>
 
           <div
@@ -305,15 +311,32 @@ export function QuestPlay({
               position: "absolute",
               left: 0,
               bottom: 0,
-              width: `calc(100% - ${IMAGE_SIZE_X}px - 20px - 20px)`,
-              height: `calc(100% - ${IMAGE_SIZE_Y}px - 20px - 20px)`,
+              width: `calc(100% - ${IMAGE_SIZE_X + FRAME_BORDER_X * 2}px)`,
+              height: `calc(100% - ${IMAGE_SIZE_Y + FRAME_BORDER_Y * 2}px)`,
             }}
           >
-            <QuestPlayFrame onTop={true} left={70} right={50} top={40} bottom={60}>
-              <ScrollableContainer>
-                <div style={{ padding: 10, paddingRight: 30 }}>{choices}</div>
+            <QuestPlayFrameText fitHeight={true}>
+              <ScrollableContainer
+                // TODO: Use proper key = join choices
+                key={uistate.text}
+              >
+                <div style={{ padding: 5, paddingRight: 20 }}>{choices}</div>
               </ScrollableContainer>
-            </QuestPlayFrame>
+            </QuestPlayFrameText>
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              right: 0,
+              top: 0,
+              width: `calc(${IMAGE_SIZE_X + FRAME_BORDER_X * 2}px)`,
+              height: `calc(${IMAGE_SIZE_Y + FRAME_BORDER_Y * 2}px)`,
+            }}
+          >
+            <QuestPlayFrameImage fitHeight={true}>
+              <QuestPlayImage src={imageUrl} allImagesUrls={allImagesUrls} />
+            </QuestPlayFrameImage>
           </div>
 
           <div
@@ -321,16 +344,17 @@ export function QuestPlay({
               position: "absolute",
               right: 0,
               bottom: 0,
-              width: `calc(${IMAGE_SIZE_X}px + 20px + 20px)`,
-              height: `calc(100% - ${IMAGE_SIZE_Y}px - 20px - 20px)`,
+              width: `calc(${IMAGE_SIZE_X + FRAME_BORDER_X * 2}px)`,
+              height: `calc(100% - ${IMAGE_SIZE_Y + FRAME_BORDER_Y * 2}px)`,
             }}
           >
-            <QuestPlayFrame onTop={true} left={20} right={20} top={30} bottom={30}>
+            <QuestPlayFrameText fitHeight={true}>
               <ScrollableContainer>
                 <div
                   style={{
-                    padding: 10,
-                    paddingRight: 30,
+                    padding: 5,
+                    paddingRight: 20,
+                    paddingBottom: 20,
                     height: "100%",
                     display: "flex",
                     flexDirection: "column",
@@ -340,10 +364,9 @@ export function QuestPlay({
                   {params}
                 </div>
               </ScrollableContainer>
-            </QuestPlayFrame>
+            </QuestPlayFrameText>
           </div>
         </div>
-
         <div
           style={{
             position: "absolute",
@@ -366,7 +389,7 @@ export function QuestPlay({
               top: "30%",
             }}
           >
-            <QuestPlayFrame onTop={true} left={60} right={50} top={60} bottom={60}>
+            <QuestPlayFrameText fitHeight={true}>
               <div
                 style={{
                   display: "flex",
@@ -393,7 +416,7 @@ export function QuestPlay({
                   <GamePlayButton onClick={() => setReallyRestart(false)}>{l.no}</GamePlayButton>
                 </div>
               </div>
-            </QuestPlayFrame>
+            </QuestPlayFrameText>
           </div>
         )}
       </div>

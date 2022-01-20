@@ -1,6 +1,9 @@
 import * as React from "react";
 import { IMAGE_SIZE_X, IMAGE_SIZE_Y } from "./questPlay.consts";
 
+/**
+ * @deprecated
+ */
 export function QuestPlayImageFixed({
   src,
   allImagesUrls,

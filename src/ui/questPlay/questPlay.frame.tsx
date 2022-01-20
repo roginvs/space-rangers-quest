@@ -3,6 +3,8 @@ import * as React from "react";
 /**
  * This is hacky implementation of frame.
  * This component will take all space from parent which must be positioned
+ *
+ * @deprecated
  */
 export const QuestPlayFrame: React.FC<{
   left: number;
@@ -92,8 +94,8 @@ const FRAME_HEIGHT = 30;
 
 const backgroundSize = "100% 100%";
 
-const FRAME_BORDER_X = FRAME_WIDTH / 2;
-const FRAME_BORDER_Y = FRAME_HEIGHT / 2;
+export const FRAME_BORDER_X = FRAME_WIDTH / 2;
+export const FRAME_BORDER_Y = FRAME_HEIGHT / 2;
 
 const QuestPlayFrameBackground: React.FC<{}> = ({ children }) => (
   <div
