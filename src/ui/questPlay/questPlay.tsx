@@ -303,7 +303,7 @@ export function QuestPlay({
           justifyContent: "center",
           alignItems: "stretch",
         }}
-        className="new-style"
+        className="game-root"
       >
         {musicAndSound}
         <div
@@ -444,7 +444,7 @@ export function QuestPlay({
         backgroundSize: "cover",
         backgroundPosition: "70% 0px",
       }}
-      className="new-style"
+      className="game-root"
     >
       {musicAndSound}
       <div

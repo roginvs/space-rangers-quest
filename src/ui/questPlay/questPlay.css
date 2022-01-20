@@ -7,18 +7,18 @@
   font-size: 1.2em;
 }
 
-.new-style {
+.game-root {
   color: #9eacac;
 }
-.new-style a {
+.game-root a {
   color: #9eacac;
   pointer-events: none;
 }
 
-.new-style .game-inactive {
+.game-root .game-inactive {
   /* color: #747e80; */
   color: #60696b;
 }
-.new-style .game-clr {
+.game-root .game-clr {
   color: #ffd863;
 }
