@@ -76,7 +76,7 @@ export const QuestPlayFrame: React.FC<{
 |       <----> CORNER_WIDTH
 |       ______________________v_
 |       |    |    |           |
-v_      |____|____|___________|_
+v_      |_  _|____|___________|_
 |       |    |                ^
 |_      |____|                \ CORNER_HEIGHT
 ^       |    |
@@ -94,8 +94,8 @@ const FRAME_PIC_CORNER_HEIGHT_2 = 120;
 const FRAME_PIC_SIZE_X = 1093;
 const FRAME_PIC_SIZE_Y = 825;
 
-const FRAME_HEIGHT = 15;
-const FRAME_WIDTH = 15;
+const FRAME_HEIGHT = 35;
+const FRAME_WIDTH = 35;
 
 const PIC_SCALING_X = FRAME_WIDTH / FRAME_PIC_CORNER_WIDTH;
 const PIC_SCALING_Y = FRAME_HEIGHT / FRAME_PIC_CORNER_HEIGHT;
@@ -192,6 +192,89 @@ export const QuestPlayFrame2: React.FC<{
             }%`,
         }}
       />
+
+      <div
+        // top-right
+        style={{
+          position: "absolute",
+          right: 0,
+          top: 0,
+          width: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
+          height: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
+          backgroundImage: "url('/questplay/frame.png')",
+          backgroundPosition: `+${FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X}px top`,
+          backgroundSize,
+        }}
+      />
+
+      <div
+        // top-right-right
+        style={{
+          position: "absolute",
+          right: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
+          top: 0,
+          width: FRAME_PIC_CORNER_WIDTH_2 * PIC_SCALING_X,
+          height: FRAME_PIC_CORNER_HEIGHT * PIC_SCALING_Y,
+          backgroundImage: `url('/questplay/frame.png')`,
+          backgroundPosition:
+            `-${
+              (FRAME_PIC_SIZE_X - FRAME_PIC_CORNER_WIDTH - FRAME_PIC_CORNER_WIDTH_2) * PIC_SCALING_X
+            }px ` + `0px`,
+          backgroundSize,
+        }}
+      />
+
+      <div
+        // bottom-right
+        style={{
+          position: "absolute",
+          right: 0,
+          bottom: 0,
+          width: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
+          height: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
+          backgroundImage: `url('/questplay/frame.png')`,
+          backgroundSize,
+          backgroundPosition: "right bottom",
+        }}
+      />
+
+      <div
+        // bottom-rigt-right
+        style={{
+          position: "absolute",
+          right: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
+          bottom: 0,
+          width: FRAME_PIC_CORNER_WIDTH_2 * PIC_SCALING_X,
+          height: FRAME_PIC_CORNER_HEIGHT * PIC_SCALING_Y,
+          backgroundImage: `url('/questplay/frame.png')`,
+          backgroundSize,
+          backgroundPosition: `-${
+            (FRAME_PIC_SIZE_X - FRAME_PIC_CORNER_WIDTH - FRAME_PIC_CORNER_WIDTH_2) * PIC_SCALING_X
+          }px bottom`,
+        }}
+      />
+
+      {/*
+      <div
+        //left
+        style={{
+          position: "absolute",
+          left: 0,
+          top: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
+          bottom: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
+          width: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
+          backgroundImage: `url('/questplay/frame.png')`,
+          backgroundPosition: `-0px center`,
+
+          backgroundSize:
+            `${FRAME_PIC_SIZE_X * PIC_SCALING_X}px ` +
+            `${
+              (FRAME_PIC_SIZE_Y - 2 * (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2)) *
+              PIC_SCALING_Y
+            }%`,
+        }}
+      />
+      */}
     </div>
   );
 };
