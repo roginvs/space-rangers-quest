@@ -207,22 +207,6 @@ export function QuestPlay({
     }
   }, [gameState, quest, player, showTaskInfoOnQuestStart, reallyRestart]);
 
-  const controlButtons = (
-    <>
-      <button className="btn btn-light mr-1" onClick={onRestartButtonClick}>
-        {restartButtonContent}
-      </button>
-
-      <button className="btn btn-light mr-1" onClick={onMusicButtonClick}>
-        {musicButtonContent}
-      </button>
-
-      <button className="btn btn-light mr-1" onClick={onExit}>
-        {exitButtonContent}
-      </button>
-    </>
-  );
-
   const musicAndSound = (
     <>
       {isMusic ? (
@@ -493,13 +477,7 @@ export function QuestPlay({
           </div>
         </QuestPlayFrameText>
       </div>
-      <div
-        style={
-          {
-            //
-          }
-        }
-      >
+      <div style={{}}>
         <QuestPlayFrameText
           fitHeight={false}
           frameBorderX={frameBorderX}
