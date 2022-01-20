@@ -32,7 +32,8 @@ body.game {
   color: #9eacac;
 }
 .new-style .game-inactive {
-  color: #747e80;
+  /* color: #747e80; */
+  color: #60696b;
 }
 .new-style .game-clr {
   color: #ffd863;
