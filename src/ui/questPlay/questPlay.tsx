@@ -150,7 +150,7 @@ export function QuestPlay({
                 //window.scrollTo(0, isMobile ? 44 : 0);
                 window.scrollTo(0, isMobile ? 62 : 0);
               }}
-              className={"game " + (choice.active ? "" : "disabled game-inactive")}
+              className={"game " + (choice.active ? "" : "game-inactive")}
             >
               <i className="fa fa-angle-double-right" /> <QuestReplaceTags str={choice.text} />
             </a>
