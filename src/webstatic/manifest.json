@@ -1,22 +1,22 @@
 {
-    "name": "Квесты из Космических Рейнджеров",
-    "short_name": "Квесты КР",
-    "description": "Сборник текстовых квестов из Космических Рейнджеров",
-    "start_url": "./#/",
-    "display": "standalone",
-    "theme_color": "#eceeef",
-    "background_color": "#eceeef",
-    "orientation": "portrait",
-    "icons": [
-        {
-            "src": "favicon.png",
-            "sizes": "128x128",
-            "type": "image/png"
-        },
-        {
-            "src": "favicon512.png",
-            "sizes": "512x512",
-            "type": "image/png"
-        }
-    ]
+  "name": "Квесты из Космических Рейнджеров",
+  "short_name": "Квесты КР",
+  "description": "Сборник текстовых квестов из Космических Рейнджеров",
+  "start_url": "./#/",
+  "display": "standalone",
+  "theme_color": "#000000",
+  "background_color": "#eceeef",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "favicon.png",
+      "sizes": "128x128",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
