@@ -412,174 +412,83 @@ export function QuestPlay({
     );
   }
 
-  if (1 + 1 === 2) {
-    return (
-      <div
-        style={{
-          minHeight: "100vh",
-          backgroundImage: "url('/questplay/background.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "70% 0px",
-        }}
-        className="new-style"
-      >
-        {musicAndSound}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            padding: 10,
-          }}
-        >
-          <GamePlayButton onClick={onRestartButtonClick}>{restartButtonContent}</GamePlayButton>
-          <GamePlayButton onClick={onMusicButtonClick}>{musicButtonContent}</GamePlayButton>
-          <GamePlayButton onClick={onExit}>{exitButtonContent}</GamePlayButton>
-        </div>
-        <div
-          style={
-            {
-              //
-            }
-          }
-        >
-          <QuestPlayFrameImage fitHeight={false}>
-            <QuestPlayImage src={imageUrl} allImagesUrls={allImagesUrls} />
-          </QuestPlayFrameImage>
-        </div>
-        <div style={{}}>
-          <QuestPlayFrameText fitHeight={false}>
-            <div style={{ padding: 5 }}>{locationText}</div>
-          </QuestPlayFrameText>
-        </div>
-
-        <div
-          style={{
-            display: paramsStrings.filter((x) => x.trim()).length > 0 ? undefined : "none",
-          }}
-        >
-          <QuestPlayFrameText fitHeight={false}>
-            <div
-              style={{
-                padding: 5,
-              }}
-            >
-              {params}
-            </div>
-          </QuestPlayFrameText>
-        </div>
-        <div
-          style={
-            {
-              //
-            }
-          }
-        >
-          <QuestPlayFrameText fitHeight={false}>
-            <div style={{ padding: 5 }}>{choices}</div>
-          </QuestPlayFrameText>
-        </div>
-
-        {reallyRestartContent && (
-          <div
-            style={{
-              position: "fixed",
-              right: "5%",
-              left: "5%",
-              bottom: "30%",
-              top: "30%",
-            }}
-          >
-            {reallyRestartContent}
-          </div>
-        )}
-      </div>
-    );
-  }
-
   return (
-    <div className="bootstrap-style">
+    <div
+      style={{
+        minHeight: "100vh",
+        backgroundImage: "url('/questplay/background.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "70% 0px",
+      }}
+      className="new-style"
+    >
       {musicAndSound}
       <div
         style={{
-          marginLeft: "auto",
-          marginRight: "auto",
-          marginTop: isMobile ? 0 : "2rem",
+          display: "flex",
+          justifyContent: "center",
+          padding: 10,
         }}
       >
-        {reallyRestart ? (
-          <>
-            <div className="text-center m-2">
-              <div>{l.reallyRestart}</div>
-              <div>
-                <button
-                  className="btn btn-warning mt-1 mr-1"
-                  onClick={() => {
-                    const newGameState = showTaskInfoOnQuestStart
-                      ? initRandomGame(quest)
-                      : initRandomGameAndDoFirstStep(quest);
-                    setGameState(newGameState);
-                    setReallyRestart(false);
-                  }}
-                >
-                  <i className="fa fa-refresh fa-fw" /> {l.yes}
-                </button>
-
-                <button className="btn btn-secondary mt-1" onClick={() => setReallyRestart(false)}>
-                  <i className="fa fa-reply fa-fw" /> {l.no}
-                </button>
-              </div>
-            </div>
-          </>
-        ) : isMobile ? (
-          <>
-            <div
-              style={{
-                margin: 5,
-                textAlign: "center",
-              }}
-            >
-              {controlButtons}
-            </div>
-
-            <div
-              style={{
-                margin: 5,
-              }}
-            >
-              <QuestPlayImage src={imageUrl} allImagesUrls={allImagesUrls} />
-            </div>
-
-            <div
-              style={{
-                margin: 5,
-              }}
-            >
-              {locationText}
-            </div>
-
-            <div
-              style={{
-                marginTop: 25,
-                marginBottom: 25,
-                marginLeft: "auto",
-                marginRight: "auto",
-              }}
-            >
-              {params}
-            </div>
-
-            <div
-              style={{
-                margin: 5,
-              }}
-            >
-              {choices}
-            </div>
-          </>
-        ) : (
-          assertNever(isMobile)
-        )}
+        <GamePlayButton onClick={onRestartButtonClick}>{restartButtonContent}</GamePlayButton>
+        <GamePlayButton onClick={onMusicButtonClick}>{musicButtonContent}</GamePlayButton>
+        <GamePlayButton onClick={onExit}>{exitButtonContent}</GamePlayButton>
       </div>
+      <div
+        style={{
+          display: imageUrl ? undefined : "none",
+        }}
+      >
+        <QuestPlayFrameImage fitHeight={false}>
+          <QuestPlayImage src={imageUrl} allImagesUrls={allImagesUrls} />
+        </QuestPlayFrameImage>
+      </div>
+      <div style={{}}>
+        <QuestPlayFrameText fitHeight={false}>
+          <div style={{ padding: 5 }}>{locationText}</div>
+        </QuestPlayFrameText>
+      </div>
+
+      <div
+        style={{
+          display: paramsStrings.filter((x) => x.trim()).length > 0 ? undefined : "none",
+        }}
+      >
+        <QuestPlayFrameText fitHeight={false}>
+          <div
+            style={{
+              padding: 5,
+            }}
+          >
+            {params}
+          </div>
+        </QuestPlayFrameText>
+      </div>
+      <div
+        style={
+          {
+            //
+          }
+        }
+      >
+        <QuestPlayFrameText fitHeight={false}>
+          <div style={{ padding: 5 }}>{choices}</div>
+        </QuestPlayFrameText>
+      </div>
+
+      {reallyRestartContent && (
+        <div
+          style={{
+            position: "fixed",
+            right: "5%",
+            left: "5%",
+            bottom: "30%",
+            top: "30%",
+          }}
+        >
+          {reallyRestartContent}
+        </div>
+      )}
     </div>
   );
 }
