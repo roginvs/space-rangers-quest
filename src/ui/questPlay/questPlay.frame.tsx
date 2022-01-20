@@ -106,6 +106,8 @@ const IMAGE_PADDING_Y = 25;
 export const QuestPlayFrame2: React.FC<{
   height: number | string;
 }> = ({ children, height }) => {
+  const backgroundSize =
+    `${FRAME_PIC_SIZE_X * PIC_SCALING_X}px ` + `${FRAME_PIC_SIZE_Y * PIC_SCALING_Y}px`;
   return (
     <div
       style={{
@@ -124,9 +126,8 @@ export const QuestPlayFrame2: React.FC<{
           top: 0,
           width: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
           height: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
-          background: "url('/questplay/frame.png')",
-          backgroundSize:
-            `${FRAME_PIC_SIZE_X * PIC_SCALING_X}px ` + `${FRAME_PIC_SIZE_Y * PIC_SCALING_Y}px`,
+          backgroundImage: "url('/questplay/frame.png')",
+          backgroundSize,
         }}
       />
 
@@ -138,37 +139,41 @@ export const QuestPlayFrame2: React.FC<{
           top: 0,
           width: FRAME_PIC_CORNER_WIDTH_2 * PIC_SCALING_X,
           height: FRAME_PIC_CORNER_HEIGHT * PIC_SCALING_Y,
-          background:
-            `url('/questplay/frame.png') ` +
-            `${-FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X}px ` +
-            `0px`,
+          backgroundImage: `url('/questplay/frame.png')`,
+          backgroundPosition: `${-FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X}px ` + `0px`,
+          backgroundSize,
         }}
       />
 
-      {/*
       <div
-        // left-bottom
+        // bottom-left
         style={{
           position: "absolute",
           left: 0,
           bottom: 0,
-          width: FRAME_PIC_CORNER_WIDTH,
-          height: FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2,
-          background: `url('/questplay/frame.png') left bottom`,
-        }}
-      />
-      <div
-        //left-bottom
-        style={{
-          position: "absolute",
-          left: FRAME_PIC_CORNER_WIDTH,
-          bottom: 0,
-          width: FRAME_PIC_CORNER_WIDTH_2,
-          height: FRAME_PIC_CORNER_HEIGHT,
-          background: `url('/questplay/frame.png') -${FRAME_PIC_CORNER_WIDTH}px bottom`,
+          width: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
+          height: (FRAME_PIC_CORNER_HEIGHT + FRAME_PIC_CORNER_HEIGHT_2) * PIC_SCALING_Y,
+          backgroundImage: `url('/questplay/frame.png')`,
+          backgroundSize,
+          backgroundPosition: "left bottom",
         }}
       />
 
+      <div
+        // bottom-left-left
+        style={{
+          position: "absolute",
+          left: FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X,
+          bottom: 0,
+          width: FRAME_PIC_CORNER_WIDTH_2 * PIC_SCALING_X,
+          height: FRAME_PIC_CORNER_HEIGHT * PIC_SCALING_Y,
+          backgroundImage: `url('/questplay/frame.png')`,
+          backgroundSize,
+          backgroundPosition: `-${FRAME_PIC_CORNER_WIDTH * PIC_SCALING_X}px bottom`,
+        }}
+      />
+
+      {/*
       <div
         //left
         style={{
