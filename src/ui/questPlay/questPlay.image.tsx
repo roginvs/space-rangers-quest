@@ -1,7 +1,38 @@
 import * as React from "react";
-import { IMAGE_SIZE_X, IMAGE_SIZE_Y } from "./questPlay.consts";
 
-export function QuestPlayImageFixed({
+export function QuestPlayImageMobile({
+  src,
+  allImagesUrls,
+}: {
+  src: string | null;
+  allImagesUrls: (string | null)[];
+}) {
+  if (allImagesUrls.indexOf(src) < 0) {
+    console.warn(`Image ${src} is not found in allImagesUrls`, allImagesUrls);
+  }
+
+  return (
+    <>
+      {allImagesUrls.map((imageUrl) => {
+        if (!imageUrl) {
+          return null;
+        }
+        return (
+          <img
+            key={imageUrl}
+            src={imageUrl}
+            style={{
+              width: "100%",
+              display: imageUrl === src ? undefined : "none",
+            }}
+          />
+        );
+      })}
+    </>
+  );
+}
+
+export function QuestPlayImageDesktop({
   src,
   allImagesUrls,
 }: {
@@ -11,10 +42,10 @@ export function QuestPlayImageFixed({
   return (
     <div
       style={{
-        width: IMAGE_SIZE_X,
-        height: IMAGE_SIZE_Y,
-        overflow: "hidden",
         position: "relative",
+        height: "100%",
+        width: "100%",
+        overflow: "hidden",
       }}
     >
       {allImagesUrls.map((imageUrl) => {
@@ -36,57 +67,6 @@ export function QuestPlayImageFixed({
               backgroundImage: `url("${imageUrl}"`,
               backgroundSize: "cover",
               backgroundPosition: "center center",
-            }}
-          />
-        );
-      })}
-    </div>
-  );
-}
-
-export function QuestPlayImage({
-  src,
-  allImagesUrls,
-}: {
-  src: string | null;
-  allImagesUrls: (string | null)[];
-}) {
-  const [height, setHeight] = React.useState(0);
-
-  if (allImagesUrls.indexOf(src) < 0) {
-    console.warn(`Image ${src} is not found in allImagesUrls`, allImagesUrls);
-  }
-
-  return (
-    <div
-      style={{
-        position: "relative",
-        height: src ? height : 0,
-        width: "100%",
-        overflow: "hidden",
-      }}
-    >
-      {allImagesUrls.map((imageUrl) => {
-        if (!imageUrl) {
-          return null;
-        }
-        return (
-          <img
-            key={imageUrl}
-            src={imageUrl}
-            style={{
-              width: "100%",
-              position: "absolute",
-              left: 0,
-              right: 0,
-
-              opacity: imageUrl === src ? 1 : 0,
-              transition: "opacity 0.5s linear",
-            }}
-            onLoad={(e) => {
-              if (e.currentTarget.height > height) {
-                setHeight(e.currentTarget.height);
-              }
             }}
           />
         );

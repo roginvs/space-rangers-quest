@@ -132,7 +132,7 @@ export class QuestInfo extends React.Component<
             </small>
           </div>
         </div>
-        <div className="mb-3">
+        <div className="mb-3 bootstrap-style">
           <QuestReplaceTags str={getGameTaskText(game.taskText, player)} />
         </div>
         <div className="row">

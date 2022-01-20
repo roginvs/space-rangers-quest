@@ -50,12 +50,6 @@ export class QuestPlayController extends React.Component<
   componentDidMount() {
     this.loadData().catch((e) => this.setState({ error: e }));
   }
-  componentWillUnmount() {
-    document.getElementsByTagName("body")[0].className = "";
-  }
-  componentWillMount() {
-    document.getElementsByTagName("body")[0].className = "game";
-  }
 
   async loadData() {
     const game = this.props.store.index.quests.find((x) => x.gameName === this.props.gameName);

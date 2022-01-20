@@ -11,7 +11,7 @@ import { splitStringToTokens } from "./questReplaceTags.split";
  *   - <format=left,30>  add spaced in the left (or right or center) </format>
  *   - <color=R,G,B> Use color </color>
  */
-export function QuestReplaceTags(props: { str: string; clrColor?: string }) {
+export function QuestReplaceTags(props: { str: string }) {
   const tags = formatTokens(splitStringToTokens(props.str));
 
   const nbsp = "\u00A0";
@@ -24,14 +24,12 @@ export function QuestReplaceTags(props: { str: string; clrColor?: string }) {
           key={index}
           className={classNames("game-text", {
             "game-fix": tag.isFix,
-            "text-success": tag.type === "text" && !props.clrColor ? tag.isClr : undefined,
+            "game-clr": tag.type === "text" ? tag.isClr : undefined,
           })}
           style={{
             color:
               tag.type === "text" && tag.color
                 ? `rgb(${tag.color.r}, ${tag.color.g}, ${tag.color.b})`
-                : tag.type === "text" && props.clrColor && tag.isClr
-                ? props.clrColor
                 : undefined,
           }}
         >
