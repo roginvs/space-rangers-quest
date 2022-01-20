@@ -27,6 +27,7 @@ import {
 } from "./questPlay.consts";
 import { GamePlayButton } from "./questPlay.button";
 import { assertNever } from "../../assertNever";
+import { useDarkTheme } from "./questPlay.metatheme";
 
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
@@ -108,6 +109,8 @@ export function QuestPlay({
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  useDarkTheme();
 
   const [reallyRestart, setReallyRestart] = React.useState(false);
   React.useEffect(() => setReallyRestart(false), [quest, gameState, player]);
