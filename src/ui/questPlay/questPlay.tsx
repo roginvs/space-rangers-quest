@@ -16,7 +16,7 @@ import { transformMedianameToUrl } from "./transformMediaNameToUrl";
 import { DATA_DIR } from "../consts";
 import { Sound } from "./questPlay.sound";
 import { ScrollableContainer } from "./questPlay.scrollcontainer";
-import { QuestPlayFrame } from "./questPlay.frame";
+import { QuestPlayFrame, QuestPlayFrame2 } from "./questPlay.frame";
 import { IMAGE_SIZE_X, IMAGE_SIZE_Y } from "./questPlay.consts";
 import { colors } from "./questPlay.colors";
 import { GamePlayButton } from "./questPlay.button";
@@ -293,6 +293,8 @@ export function QuestPlay({
               height: `calc(${IMAGE_SIZE_Y}px + 20px + 20px)`,
             }}
           >
+            <QuestPlayFrame2 height={"100%"}>testing</QuestPlayFrame2>
+            {/*
             <QuestPlayFrame onTop={true} left={60} right={50} top={60} bottom={60}>
               <ScrollableContainer key={uistate.text}>
                 <div style={{ color: colors.textColor, padding: 10, paddingRight: 30 }}>
@@ -300,6 +302,7 @@ export function QuestPlay({
                 </div>
               </ScrollableContainer>
             </QuestPlayFrame>
+            */}
           </div>
 
           <div

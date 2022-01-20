@@ -64,3 +64,43 @@ export const QuestPlayFrame: React.FC<{
     </>
   );
 };
+
+/*
+
+  CORNER_HEIGHT
+/
+|
+|
+|            <----> CORNER_WIDTH_2           
+|
+|       <----> CORNER_WIDTH
+|_      ______________________v 
+^       |    |    |           |
+|       |    |____|___________|
+|       |    |                ^
+v_      |____|                \ CORNER_HEIGHT_2
+        |    |
+        |    |
+        |
+        |
+        |
+        |
+*/
+
+const CORNER_WIDTH = 80;
+const CORNER_HEIGHT = 180;
+const CORNER_WIDTH_2 = 100;
+const CORNER_HEIGHT_2 = 55;
+
+export const QuestPlayFrame2: React.FC<{
+  height: number | string;
+}> = ({ children, height }) => {
+  return (
+    <div
+      style={{
+        height,
+        width: "100%",
+      }}
+    ></div>
+  );
+};
