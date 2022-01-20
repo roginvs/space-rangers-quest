@@ -17,6 +17,8 @@
 .game-root .game-inactive {
   /* color: #747e80; */
   color: #60696b;
+  pointer-events: none;
+  cursor: default;
 }
 .game-root .game-clr {
   color: #ffd863;

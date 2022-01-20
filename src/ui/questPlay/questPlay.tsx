@@ -139,6 +139,9 @@ export function QuestPlay({
               href={location.href}
               onClick={(e) => {
                 e.preventDefault();
+                if (!choice.active) {
+                  return;
+                }
                 const newState = performJump(choice.jumpId, quest, gameState);
                 setGameState(newState);
 
