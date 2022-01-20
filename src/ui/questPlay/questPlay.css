@@ -12,7 +12,6 @@
 }
 .game-root a {
   color: #9eacac;
-  pointer-events: none;
 }
 
 .game-root .game-inactive {
