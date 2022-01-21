@@ -12,7 +12,9 @@ export function QuestStringsSettings({ quest, setQuest }: QuestSettingsTabProps)
       {[...stringsKeys, ...legacyStringsKeys].map((key) => (
         <div key={key} className="d-flex align-items-center mb-2">
           <label
-            className={"form-check-label " + (legacyStringsKeys.includes(key) ? "text-muted" : "")}
+            className={
+              "form-check-label " + (legacyStringsKeys.find((x) => x === key) ? "text-muted" : "")
+            }
             style={{ flexShrink: 0 }}
           >
             {"<"}
