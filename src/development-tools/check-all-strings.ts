@@ -3,6 +3,7 @@ import * as fs from "fs";
 
 const dataSrcPath = __dirname + "/../../borrowed";
 
+const tags: Record<string, number> = {};
 let scannedQuests = 0;
 for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
   // console.info(`Scanning origin ${origin}`);
@@ -19,13 +20,27 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
     const quest = parse(data);
 
     const check = (str: string, place = "", isDiamond = false) => {
-      str = str.split("<fix><format>").join("");
-      str = str.split("<format><fix>").join("");
+      // str = str.split("<fix><format>").join("");
+      // str = str.split("<format><fix>").join("");
 
-      if (str.indexOf("<format>") > -1) {
-        console.info(`${srcQmName} ${place} ${str}`);
+      while (true) {
+        const m = str.match(/\<([^\>]*)\>/);
+        //const m = str.match(/<([a-zA-Z\=0-9\,]*)>/);
+        if (!m) {
+          return;
+        }
+
+        if (m) {
+          const tag = m[1];
+          tags[tag] = (tags[tag] || 0) + 1;
+
+          //console.info(`${srcQmName} ${place} ${str}`);
+        }
+        str = str.slice((m.index || 0) + m[0].length);
       }
     };
+
+    check("Lol kek <blablababab=22,334,fix> 2");
 
     check(quest.taskText, "start");
     check(quest.successText, "success");
@@ -63,3 +78,5 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
 }
 
 console.info(`Scanned ${scannedQuests} quests`);
+
+console.info(tags);
