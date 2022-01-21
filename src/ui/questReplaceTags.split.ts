@@ -77,7 +77,7 @@ export function splitStringToTokens(str: string) {
 
       pos += formatMatch[0].length;
 
-      const whereToPad = formatMatch[1];
+      const whereToPad = formatMatch[1] || undefined;
       const howManyPd = formatMatch[2] ? parseInt(formatMatch[2]) : undefined;
 
       out.push({
