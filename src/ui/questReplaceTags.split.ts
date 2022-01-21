@@ -34,11 +34,11 @@ export type StringTokenTags =
     }
   | {
       type: "format";
-      format: StringTokenFormat;
+      format?: StringTokenFormat;
     }
   | {
       type: "color";
-      color: StringTokenColor;
+      color?: StringTokenColor;
     };
 
 export function splitStringToTokens(str: string) {
@@ -71,38 +71,41 @@ export function splitStringToTokens(str: string) {
       continue;
     }
 
-    const formatMatch = str.slice(pos).match(/^\<format=(left|right|center),(\d+)\>/);
+    const formatMatch = str.slice(pos).match(/^\<format=?(left|right|center)?,?(\d+)?\>/);
     if (formatMatch) {
       flushText();
 
       pos += formatMatch[0].length;
 
       const whereToPad = formatMatch[1];
-      const howManyPd = parseInt(formatMatch[2]);
+      const howManyPd = formatMatch[2] ? parseInt(formatMatch[2]) : undefined;
 
       out.push({
         type: "format",
-        format: {
-          kind: whereToPad as PadKind,
-          numberOfSpaces: howManyPd,
-        },
+        format:
+          whereToPad !== undefined && howManyPd !== undefined
+            ? {
+                kind: whereToPad as PadKind,
+                numberOfSpaces: howManyPd,
+              }
+            : undefined,
       });
 
       continue;
     }
 
-    const colorMatch = str.slice(pos).match(/^\<color=(\d+),(\d+),(\d+)\>/);
+    const colorMatch = str.slice(pos).match(/^\<color=?(\d+)?,?(\d+)?,?(\d+)?\>/);
     if (colorMatch) {
       flushText();
 
       pos += colorMatch[0].length;
 
-      const r = parseInt(colorMatch[1]);
-      const g = parseInt(colorMatch[2]);
-      const b = parseInt(colorMatch[3]);
+      const r = colorMatch[1] ? parseInt(colorMatch[1]) : undefined;
+      const g = colorMatch[2] ? parseInt(colorMatch[2]) : undefined;
+      const b = colorMatch[3] ? parseInt(colorMatch[3]) : undefined;
       out.push({
         type: "color",
-        color: { r, g, b },
+        color: r !== undefined && g !== undefined && b !== undefined ? { r, g, b } : undefined,
       });
       continue;
     }

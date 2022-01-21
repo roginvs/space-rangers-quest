@@ -78,6 +78,22 @@ describe("Checking substitute", function () {
       ],
     ],
     [
+      "Me <format=center>!</format> you",
+      [
+        { type: "text", text: "Me " },
+        { type: "text", text: "!" },
+        { type: "text", text: " you" },
+      ],
+    ],
+    [
+      "Me <format=>!</format> you",
+      [
+        { type: "text", text: "Me " },
+        { type: "text", text: "!" },
+        { type: "text", text: " you" },
+      ],
+    ],
+    [
       "Bla\nkek\r\nlol",
       [
         {

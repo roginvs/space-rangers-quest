@@ -49,14 +49,14 @@ export function formatTokens(parsed: StringTokenTags[]): StringTokens {
         }
       });
     } else if (token.type === "format") {
-      if (!format) {
+      if (!format && token.format) {
         format = {
           format: token.format,
           startedAt: out.length,
         };
       }
     } else if (token.type === "color") {
-      if (!color) {
+      if (!color && token.color) {
         color = token.color;
       }
     } else if (token.type === "tag") {

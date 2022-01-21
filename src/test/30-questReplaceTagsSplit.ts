@@ -80,6 +80,42 @@ describe("stringParse", () => {
           },
         ],
       ],
+
+      [
+        "B<color>CD",
+        [
+          {
+            text: "B",
+            type: "text",
+          },
+          {
+            color: undefined,
+            type: "color",
+          },
+          {
+            text: "CD",
+            type: "text",
+          },
+        ],
+      ],
+
+      [
+        "B<format>CD",
+        [
+          {
+            text: "B",
+            type: "text",
+          },
+          {
+            format: undefined,
+            type: "format",
+          },
+          {
+            text: "CD",
+            type: "text",
+          },
+        ],
+      ],
     ] as const
   ).slice()) {
     it(`Splitting '${str}'`, () => {
