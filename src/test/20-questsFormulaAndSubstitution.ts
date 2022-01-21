@@ -3,7 +3,7 @@ import * as assert from "assert";
 import "mocha";
 
 import { QMPlayer, GameState } from "../lib/qmplayer";
-import { parse, QM } from "../lib/qmreader";
+import { ParamType, parse, QM } from "../lib/qmreader";
 import { substitute } from "../lib/substitution";
 import * as formula from "../lib/formula";
 import { PlayerSubstitute } from "../lib/qmplayer/playerSubstitute";
@@ -145,6 +145,18 @@ describe(`Checking all quests for formulas and params substitution`, function ()
             p.showingInfo.forEach((range) => {
               check(range.str, `Param ${i} range`, true);
             });
+          });
+        });
+        it(`Params critText`, () => {
+          quest.params.forEach((p, i) => {
+            if (p.type === ParamType.Обычный) {
+              return;
+            }
+            if (p.critValueString) {
+              check(p.critValueString, `Param [p${i + 1}] critText`, true);
+            } else {
+              //   throw new Error(`Param ${i} has no critValueString`);
+            }
           });
         });
       });
