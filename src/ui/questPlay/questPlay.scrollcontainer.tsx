@@ -68,7 +68,39 @@ export const ScrollableContainer: React.FC<{}> = ({ children }) => {
 
   React.useEffect(() => updateBarTop(), [updateBarTop]);
 
-  console.info("render", barHeight, barTop);
+  //console.info("render", barHeight, barTop);
+
+  const isMouseDown = React.useRef(false);
+
+  React.useEffect(() => {
+    const onMouseUp = () => {
+      isMouseDown.current = false;
+    };
+    document.addEventListener("mouseup", onMouseUp);
+    return () => {
+      document.removeEventListener("mouseup", onMouseUp);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const onMouseMove = (e: MouseEvent) => {
+      // console.info("kek", isMouseDown.current, ref.current);
+      if (!isMouseDown.current) {
+        return;
+      }
+      const div = ref.current;
+      if (!div) {
+        return;
+      }
+
+      const scrollTopChange = (e.movementY * div.scrollHeight) / div.clientHeight;
+      div.scrollTop += scrollTopChange;
+    };
+    document.addEventListener("mousemove", onMouseMove);
+    return () => {
+      document.removeEventListener("mousemove", onMouseMove);
+    };
+  });
 
   // A workaround with small overflow to hide browser scrollbar
   return (
@@ -96,8 +128,12 @@ export const ScrollableContainer: React.FC<{}> = ({ children }) => {
             width: MY_SCROLL_WIDTH,
             top: barTop,
             height: barHeight,
+            userSelect: "none",
           }}
           className="rcs-inner-handle"
+          onMouseDown={(e) => {
+            isMouseDown.current = true;
+          }}
         />
       )}
     </div>
