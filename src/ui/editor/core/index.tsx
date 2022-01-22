@@ -675,7 +675,7 @@ export function EditorCore({
         />
 
         <button className={classNames("ml-auto", "btn", "btn-light")} onClick={onExit}>
-          <i className="fa fa-external-link fa-fw" title="Выход" />
+          <i className="fa fa-sign-out fa-fw" title="Выход" />
         </button>
 
         <span className="mx-2" />

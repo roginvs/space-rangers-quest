@@ -183,7 +183,7 @@ export function QuestPlay({
   const exitButtonContent = busySaving ? (
     <i className="fa fa-refresh fa-spin fa-fw" />
   ) : (
-    <i className="fa fa-external-link fa-fw" />
+    <i className="fa fa-sign-out fa-fw" />
   );
   const musicButtonContent = (
     <i className={classnames("fa fa-fw", !isMusic ? "fa-volume-off" : "fa-volume-up")} />
