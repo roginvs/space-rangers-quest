@@ -70,6 +70,17 @@ export const ScrollableContainer: React.FC<{}> = ({ children }) => {
 
   //console.info("render", barHeight, barTop);
 
+  React.useEffect(() => {
+    const onResize = () => {
+      updateBarHeight();
+      updateBarTop();
+    };
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+    };
+  }, [updateBarHeight, updateBarTop]);
+
   const isMouseDown = React.useRef(false);
 
   React.useEffect(() => {

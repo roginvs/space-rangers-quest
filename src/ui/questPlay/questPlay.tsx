@@ -311,7 +311,7 @@ export function QuestPlay({
               frameBorderX={frameBorderX}
               frameBorderY={frameBorderY}
             >
-              <div style={{ padding: 5, height: "100%" }}>
+              <div style={{ padding: 5, paddingBottom: 10, height: "100%" }}>
                 <ScrollableContainer key={uistate.text}>{locationText}</ScrollableContainer>
               </div>
             </QuestPlayFrameText>
@@ -331,7 +331,7 @@ export function QuestPlay({
               frameBorderX={frameBorderX}
               frameBorderY={frameBorderY}
             >
-              <div style={{ padding: 5, height: "100%" }}>
+              <div style={{ padding: 5, paddingBottom: 10, height: "100%" }}>
                 <ScrollableContainer
                   // TODO: Use proper key = join choices
                   key={uistate.text}
@@ -385,9 +385,12 @@ export function QuestPlay({
                     }}
                   >
                     {params}
-                    {new Array(0).fill(0).map((_, i) => (
-                      <div style={{ border: "1px solid green" }}>{i}</div>
-                    ))}
+                    {
+                      // Just for testing
+                      new Array(0).fill(0).map((_, i) => (
+                        <div style={{ border: "1px solid green" }}>{i}</div>
+                      ))
+                    }
                   </div>
                 </ScrollableContainer>
               </div>
