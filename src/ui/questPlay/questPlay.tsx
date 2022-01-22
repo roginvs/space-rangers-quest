@@ -219,7 +219,7 @@ export function QuestPlay({
       document.documentElement.requestFullscreen().catch((e) => console.warn(e));
     } else {
       if (document.exitFullscreen) {
-        document.exitFullscreen();
+        document.exitFullscreen().catch((e) => console.warn(e));
       }
     }
   }, []);
