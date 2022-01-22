@@ -213,6 +213,17 @@ export function QuestPlay({
     }
   }, [gameState, quest, player, showTaskInfoOnQuestStart, reallyRestart]);
 
+  const fullscreenButtonContent = <i className="fa fa-arrows-alt fa-fw" />;
+  const onFullscreenButtonClick = React.useCallback(() => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((e) => console.warn(e));
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  }, []);
+
   const musicAndSound = (
     <>
       {isMusic ? (
@@ -405,6 +416,9 @@ export function QuestPlay({
         >
           <GamePlayButton onClick={onRestartButtonClick}>{restartButtonContent}</GamePlayButton>
           <GamePlayButton onClick={onMusicButtonClick}>{musicButtonContent}</GamePlayButton>
+          <GamePlayButton onClick={onFullscreenButtonClick}>
+            {fullscreenButtonContent}
+          </GamePlayButton>
           <GamePlayButton onClick={onExit}>{exitButtonContent}</GamePlayButton>
         </div>
 
@@ -445,6 +459,7 @@ export function QuestPlay({
       >
         <GamePlayButton onClick={onRestartButtonClick}>{restartButtonContent}</GamePlayButton>
         <GamePlayButton onClick={onMusicButtonClick}>{musicButtonContent}</GamePlayButton>
+        <GamePlayButton onClick={onFullscreenButtonClick}>{fullscreenButtonContent}</GamePlayButton>
         <GamePlayButton onClick={onExit}>{exitButtonContent}</GamePlayButton>
       </div>
       <div
