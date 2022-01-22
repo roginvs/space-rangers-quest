@@ -61,7 +61,7 @@ function removeSerialEmptyStrings(input: string[]) {
   return output;
 }
 
-const MOBILE_THRESHOLD = 576; // 576px 768px
+const MOBILE_THRESHOLD = 768; // 576px 768px
 
 const MAX_DESKTOP_WIDTH = 1300;
 
