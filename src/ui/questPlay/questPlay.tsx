@@ -311,9 +311,9 @@ export function QuestPlay({
               frameBorderX={frameBorderX}
               frameBorderY={frameBorderY}
             >
-              <ScrollableContainer key={uistate.text}>
-                <div style={{ padding: 5, paddingRight: 20 }}>{locationText}</div>
-              </ScrollableContainer>
+              <div style={{ padding: 5, height: "100%" }}>
+                <ScrollableContainer key={uistate.text}>{locationText}</ScrollableContainer>
+              </div>
             </QuestPlayFrameText>
           </div>
 
@@ -331,12 +331,14 @@ export function QuestPlay({
               frameBorderX={frameBorderX}
               frameBorderY={frameBorderY}
             >
-              <ScrollableContainer
-                // TODO: Use proper key = join choices
-                key={uistate.text}
-              >
-                <div style={{ padding: 5, paddingRight: 20 }}>{choices}</div>
-              </ScrollableContainer>
+              <div style={{ padding: 5, height: "100%" }}>
+                <ScrollableContainer
+                  // TODO: Use proper key = join choices
+                  key={uistate.text}
+                >
+                  {choices}
+                </ScrollableContainer>
+              </div>
             </QuestPlayFrameText>
           </div>
 
@@ -372,21 +374,23 @@ export function QuestPlay({
               frameBorderX={frameBorderX}
               frameBorderY={frameBorderY}
             >
-              <ScrollableContainer>
-                <div
-                  style={{
-                    padding: 5,
-                    paddingRight: 20,
-                    paddingBottom: 20,
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  {params}
-                </div>
-              </ScrollableContainer>
+              <div style={{ padding: 5, paddingBottom: 20, height: "100%" }}>
+                <ScrollableContainer>
+                  <div
+                    style={{
+                      minHeight: "100%",
+                      display: "flex",
+                      flexDirection: "column",
+                      justifyContent: "center",
+                    }}
+                  >
+                    {params}
+                    {new Array(0).fill(0).map((_, i) => (
+                      <div style={{ border: "1px solid green" }}>{i}</div>
+                    ))}
+                  </div>
+                </ScrollableContainer>
+              </div>
             </QuestPlayFrameText>
           </div>
         </div>

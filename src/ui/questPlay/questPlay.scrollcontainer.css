@@ -1,9 +1,7 @@
-.rcs-custom-scrollbar.rcs-custom-scrollbar {
-  width: 14px;
-}
-
 .rcs-inner-handle.rcs-inner-handle {
   background-color: #353535;
+
+  border-radius: 5px;
 
   /* https://www.magicpattern.design/tools/css-backgrounds */
   background-color: #1e1e1e;
