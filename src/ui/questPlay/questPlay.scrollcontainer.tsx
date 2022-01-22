@@ -31,6 +31,13 @@ const MY_SCROLL_WIDTH = 15;
 
 const WORKAROUND_GAP = 5;
 
+/**
+ * This component is a container with own scrollbar
+ * It takes 100% height
+ *
+ * Currently it is not using resize observer so use key prop to force rerender
+ * Same applies to scrollToTop - just use key prop
+ */
 export const ScrollableContainer: React.FC<{}> = ({ children }) => {
   const browserScrollWidth = React.useMemo(() => getDefaultScrollBarWidth() + WORKAROUND_GAP, []);
 
@@ -53,7 +60,7 @@ export const ScrollableContainer: React.FC<{}> = ({ children }) => {
     }
   }, []);
 
-  // TODO: Maybe add mutation observer?
+  // TODO: Maybe add mutation or resize observer?
   React.useEffect(() => updateBarHeight(), [updateBarHeight]);
 
   const updateBarTop = React.useCallback(() => {

@@ -333,8 +333,7 @@ export function QuestPlay({
             >
               <div style={{ padding: 5, paddingBottom: 10, height: "100%" }}>
                 <ScrollableContainer
-                  // TODO: Use proper key = join choices
-                  key={uistate.text}
+                  key={uistate.choices.map((c) => `${c.text} ${c.jumpId} ${c.active}`).join("#")}
                 >
                   {choices}
                 </ScrollableContainer>
@@ -375,7 +374,7 @@ export function QuestPlay({
               frameBorderY={frameBorderY}
             >
               <div style={{ padding: 5, paddingBottom: 20, height: "100%" }}>
-                <ScrollableContainer>
+                <ScrollableContainer key={uistate.paramsState.map((p) => p).join("#")}>
                   <div
                     style={{
                       minHeight: "100%",
