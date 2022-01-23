@@ -108,12 +108,25 @@ export const HEADER_QM_3 = 0x423a35d3; // 48 parameters
 export const HEADER_QM_4 = 0x423a35d4; // 96 parameters
 export const HEADER_QMM_6 = 0x423a35d6;
 export const HEADER_QMM_7 = 0x423a35d7;
+
+/**
+ *
+ * This is a workaround to tell player to keep old TGE behavior if quest is
+ * resaved as new version.
+ *
+ *
+ * 0x423a35d7 = 1111111127
+ * 0x69f6bd7  = 0111111127
+ */
+export const HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR = 0x69f6bd7;
+
 export type HeaderMagic =
   | typeof HEADER_QM_3
   | typeof HEADER_QM_2
   | typeof HEADER_QM_4
   | typeof HEADER_QMM_6
-  | typeof HEADER_QMM_7;
+  | typeof HEADER_QMM_7
+  | typeof HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR;
 
 interface QMBase {
   givingRace: number;
@@ -138,10 +151,23 @@ interface QMBase {
 }
 
 function parseBase(r: Reader, header: HeaderMagic): QMBase {
-  if (header === HEADER_QMM_6 || header === HEADER_QMM_7) {
-    const majorVersion = header === HEADER_QMM_7 ? r.int32() : undefined;
-    const minorVersion = header === HEADER_QMM_7 ? r.int32() : undefined;
-    const changeLogString = header === HEADER_QMM_7 ? r.readString(true) : undefined;
+  if (
+    header === HEADER_QMM_6 ||
+    header === HEADER_QMM_7 ||
+    header === HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR
+  ) {
+    const majorVersion =
+      header === HEADER_QMM_7 || header === HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR
+        ? r.int32()
+        : undefined;
+    const minorVersion =
+      header === HEADER_QMM_7 || header === HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR
+        ? r.int32()
+        : undefined;
+    const changeLogString =
+      header === HEADER_QMM_7 || header === HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR
+        ? r.readString(true)
+        : undefined;
 
     const givingRace = r.byte();
     const whenDone = r.byte();
@@ -921,7 +947,10 @@ export function parse(data: Buffer): QM {
 
   const base = parseBase(r, header);
 
-  const isQmm = header === HEADER_QMM_6 || header === HEADER_QMM_7;
+  const isQmm =
+    header === HEADER_QMM_6 ||
+    header === HEADER_QMM_7 ||
+    header === HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR;
   const params: QMParam[] = [];
   for (let i = 0; i < base.paramsCount; i++) {
     params.push(isQmm ? parseParamQmm(r) : parseParam(r));

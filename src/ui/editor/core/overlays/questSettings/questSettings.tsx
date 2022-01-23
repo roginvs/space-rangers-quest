@@ -8,12 +8,13 @@ import { Overlay } from "../../overlay";
 import { QuestGridSettings } from "./gridSettings";
 import { QuestJumpSettings } from "./jumpsSettings";
 import { QuestMainSettings } from "./mainSettings";
+import { CompatabilitySettings as CompatabilitySettings } from "./compatabilitySettings";
 import { QuestParamsSettings } from "./paramsSettings";
 import { QuestStringsSettings } from "./stringsSettings";
 import { QuestVersionSettings } from "./versionSettings";
 
 // tslint:disable-next-line:no-useless-cast
-const TABS = ["main", "params", "strings", "grid", "jumps", "version"] as const;
+const TABS = ["main", "params", "strings", "grid", "jumps", "version", "compatability"] as const;
 
 export function QuestSettings({
   initialQuest,
@@ -72,6 +73,7 @@ export function QuestSettings({
     grid: "Сетка",
     jumps: "Переходы",
     version: "Версия",
+    compatability: "Совместимость",
   };
 
   return (
@@ -114,6 +116,9 @@ export function QuestSettings({
             </TabPane>
             <TabPane tabId="version">
               <QuestVersionSettings quest={quest} setQuest={setQuest} />
+            </TabPane>
+            <TabPane tabId="compatability">
+              <CompatabilitySettings quest={quest} setQuest={setQuest} />
             </TabPane>
           </TabContent>
         </div>

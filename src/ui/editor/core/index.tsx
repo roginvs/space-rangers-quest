@@ -28,7 +28,7 @@ import {
   moveAllLocationsFromTopBottom,
   snapToGrid,
 } from "./utils";
-import { Jump, Location, parse } from "../../../lib/qmreader";
+import { HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR, Jump, Location, parse } from "../../../lib/qmreader";
 import { LocationHover } from "./hovers/location";
 import { Overlay } from "./overlay";
 import { LocationOverlay } from "./overlays/jumpsAndLocations/location";
@@ -566,6 +566,11 @@ export function EditorCore({
           className={classNames("mr-3", "btn", "btn-light")}
           onClick={() => {
             downloadQuest(quest);
+            if (quest.header === HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR) {
+              toast(
+                `ВНИМАНИЕ: этот файл не будет читаться TGE! Чтобы это исправить зайдите в настройки квеста`,
+              );
+            }
           }}
         >
           <i className="fa fa-download fa-fw" title="Скачать" />

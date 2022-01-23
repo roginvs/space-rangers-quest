@@ -9,6 +9,7 @@ import {
   HEADER_QM_3,
   HEADER_QM_4,
   Jump,
+  HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR,
 } from "../qmreader";
 import { AleaState, Alea } from "../alea";
 import { calculate } from "../formula";
@@ -812,7 +813,10 @@ function calculateLocation(
   const critParamsTriggered = paramsUpdate.critParamsTriggered;
 
   const oldTgeBehaviour =
-    quest.header === HEADER_QM_2 || quest.header === HEADER_QM_3 || quest.header === HEADER_QM_4;
+    quest.header === HEADER_QM_2 ||
+    quest.header === HEADER_QM_3 ||
+    quest.header === HEADER_QM_4 ||
+    quest.header === HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR;
 
   const allJumpsFromThisLocation = quest.jumps
     .filter((x) => x.fromLocationId === state.locationId)
