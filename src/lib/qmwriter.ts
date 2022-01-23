@@ -1,6 +1,12 @@
+import { assertNever } from "../assertNever";
 import { DeepImmutable } from "./qmplayer/deepImmutable";
 import {
+  HEADER_QMM_6,
   HEADER_QMM_7,
+  HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR,
+  HEADER_QM_2,
+  HEADER_QM_3,
+  HEADER_QM_4,
   JumpParameterCondition,
   LocationType,
   ParameterChange,
@@ -116,7 +122,18 @@ function isJumpParameterConditionChanged(
 
 export function writeQmm(quest: DeepImmutable<QM>) {
   const w = new Writer();
-  w.int32(HEADER_QMM_7);
+  if (
+    quest.header === HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR ||
+    quest.header === HEADER_QM_2 ||
+    quest.header === HEADER_QM_3 ||
+    quest.header === HEADER_QM_4
+  ) {
+    w.int32(HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR);
+  } else if (quest.header === HEADER_QMM_7 || quest.header === HEADER_QMM_6) {
+    w.int32(HEADER_QMM_7);
+  } else {
+    assertNever(quest.header);
+  }
   w.int32(quest.majorVersion === undefined ? 1 : quest.majorVersion);
   w.int32(quest.minorVersion === undefined ? 0 : quest.minorVersion);
 
