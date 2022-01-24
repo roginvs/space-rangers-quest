@@ -255,6 +255,12 @@ export function getLang(lang: Lang) {
 }
 
 function guessBrowserLang(): Lang {
+  // tslint:disable-next-line:strict-type-predicates
+  if (typeof navigator === "undefined") {
+    // To run inside tests
+    return "rus";
+  }
+
   const browserLanguages = navigator.languages || [
     navigator.language || (navigator as any).userLanguage || "ru",
   ];
