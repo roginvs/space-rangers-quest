@@ -146,26 +146,44 @@ export class QuestList extends React.Component<
           </div>
           {questsToShow.length > 0 ? (
             <>
-              {questsToShowUnpassed.length > 0 ? (
-                <button
-                  className="btn btn-block btn-primary mb-3"
-                  style={{
-                    whiteSpace: "normal",
-                  }}
-                  onClick={() => {
-                    const idx = Math.floor(Math.random() * questsToShowUnpassed.length);
-                    const quest = questsToShowUnpassed[idx];
-                    location.href = `#/quests/${quest.gameName}`;
-                  }}
-                >
-                  <div className="d-flex align-items-center justify-content-center">
-                    <span className="mr-1">
-                      <i className="fa fa-random fa-fw" />
-                    </span>
-                    <span>{l.startRandomUnpassed}</span>
-                  </div>
-                </button>
-              ) : null}
+              <button
+                className="btn btn-block btn-primary mb-3"
+                style={{
+                  whiteSpace: "normal",
+                }}
+                disabled={questsToShowUnpassed.length === 0}
+                onClick={() => {
+                  const idx = Math.floor(Math.random() * questsToShowUnpassed.length);
+                  const quest = questsToShowUnpassed[idx];
+                  if (!quest) {
+                    return;
+                  }
+                  location.href = `#/quests/${quest.gameName}`;
+                }}
+              >
+                <div className="d-flex align-items-center justify-content-center">
+                  {questsToShowUnpassed.length > 0 ? (
+                    <>
+                      <span className="mr-1">
+                        <i className="fa fa-random fa-fw" />
+                      </span>
+                      <span>
+                        {l.startRandomUnpassed} ({questsToShow.length - questsToShowUnpassed.length}
+                        /{questsToShow.length})
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <span className="mr-1">
+                        <i className="fa fa-thumbs-up  fa-fw" />
+                      </span>
+                      <span>
+                        {l.allQuestPassed} ({questsToShow.length})
+                      </span>
+                    </>
+                  )}
+                </div>
+              </button>
 
               <div className="list-group">
                 {questsToShow.map((quest) => (

@@ -46,6 +46,8 @@ const RUS = {
   search: "Поиск",
   nothingFound: "Ничего не найдено",
   startRandomUnpassed: "Выбрать случайный из непройденного",
+  allQuestPassed: "Все квесты пройдены!",
+
   passed: "Пройден",
   startFromTheStart: "Начать сначала",
   startFromLastSave: "Загрузить сохранение",
@@ -167,6 +169,8 @@ const ENG: LangTexts = {
   search: "Search",
   nothingFound: "Nothing is found",
   startRandomUnpassed: "Choose a randome quest from those you have not completed",
+  allQuestPassed: " All quests are completed!",
+
   passed: "Complete",
   startFromTheStart: "Start over",
   startFromLastSave: "Start saving",
