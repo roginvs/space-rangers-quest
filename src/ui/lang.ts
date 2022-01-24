@@ -254,7 +254,7 @@ export function getLang(lang: Lang) {
   }
 }
 
-export function guessBrowserLang(): Lang {
+function guessBrowserLang(): Lang {
   const browserLanguages = navigator.languages || [
     navigator.language || (navigator as any).userLanguage || "ru",
   ];
@@ -276,3 +276,5 @@ export function guessBrowserLang(): Lang {
   }
   return "eng";
 }
+
+export const browserDefaultLang = guessBrowserLang();

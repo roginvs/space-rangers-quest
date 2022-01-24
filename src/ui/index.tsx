@@ -30,7 +30,7 @@ import {
   Container,
 } from "reactstrap";
 import { INDEX_JSON } from "./consts";
-import { getLang, guessBrowserLang, LangTexts } from "./lang";
+import { getLang, browserDefaultLang, LangTexts } from "./lang";
 import { assertNever } from "../assertNever";
 
 import { OfflineModeTabContainer } from "./offlineMode";
@@ -47,7 +47,7 @@ import { firebaseConfig } from "./firebaseConfig";
 import { ChampionsTabContainerNew } from "./champions.new";
 import { EditorContainer } from "./editor";
 import { QuestPlayUserQuestController } from "./questPlayUserQuestController";
-console.info("starting");
+console.info(`Starting the app (buildAt=${new Date(__VERSION__).toISOString()})`);
 
 const app = firebase.initializeApp(firebaseConfig);
 // const app = firebase.initializeApp({} as typeof config);
@@ -72,14 +72,13 @@ class MainLoader extends React.Component<{}> {
       const db = await getDb(app);
       let player = await db.getConfigLocal("player");
       if (!player) {
-        const browserLang = guessBrowserLang();
         console.info(`Welcome, a new user!`);
         player =
-          browserLang === "rus"
+          browserDefaultLang === "rus"
             ? DEFAULT_RUS_PLAYER
-            : browserLang === "eng"
+            : browserDefaultLang === "eng"
             ? DEFAULT_ENG_PLAYER
-            : assertNever(browserLang);
+            : assertNever(browserDefaultLang);
         await db.setConfigBoth("player", player);
       }
 
@@ -188,7 +187,7 @@ class MainLoader extends React.Component<{}> {
       (async () => {
         if (navigator.storage) {
           const alreadyPersisted = await navigator.storage.persisted();
-          console.info(`Storage current persist status=${alreadyPersisted}`);
+          // console.info(`Storage current persist status=${alreadyPersisted}`);
           store.storageIsPersisted = alreadyPersisted;
 
           if (!alreadyPersisted && navigator.serviceWorker && navigator.serviceWorker.controller) {
@@ -211,7 +210,7 @@ class MainLoader extends React.Component<{}> {
     const store = this.store;
 
     if (!store) {
-      const l = getLang(guessBrowserLang()); // Not from store because obviously store if not ready yet
+      const l = getLang(browserDefaultLang); // Not from store because obviously store if not ready yet
       if (this.loadingStage === undefined) {
         return <Loader text={l.loading} />;
       } else if (this.loadingStage === "index") {
@@ -319,7 +318,6 @@ if (
   document.location.hostname === "localhost" ||
   document.location.hostname === "127.0.0.1"
 ) {
-  console.info("Mounting main component");
   ReactDOM.render(<MainLoader />, root);
 } else {
   console.info("Mounting redirect");

@@ -89,13 +89,17 @@ type FirebaseStoreType =
 //   created: number;
 // }
 
+function debug(...args: any[]) {
+  //console.info(...args);
+}
+
 export async function getDb(app: firebase.app.App) {
-  console.info("Starting to get db");
+  debug("Starting to get db");
 
   const db = window.indexedDB
     ? await new Promise<IDBDatabase>((resolve, reject) => {
         const idb = window.indexedDB.open(INDEXEDDB_NAME, 8);
-        console.info("idb opened");
+        debug("idb opened");
         idb.onerror = (e) =>
           reject(
             new Error(
@@ -104,9 +108,9 @@ export async function getDb(app: firebase.app.App) {
           );
         idb.onsuccess = (e: any) => resolve(e.target.result);
         idb.onupgradeneeded = (e: any) => {
-          console.info("onupgradeneeded");
+          debug("onupgradeneeded");
           const db: IDBDatabase = e.target.result;
-          // console.info(`Old version=${db.}`)
+          // debug(`Old version=${db.}`)
 
           for (const storeName of [
             INDEXEDDB_CONFIG_STORE_NAME,
@@ -115,19 +119,19 @@ export async function getDb(app: firebase.app.App) {
             INDEXEDDB_CUSTOM_SAVED_STORE_NAME,
           ]) {
             if (!db.objectStoreNames.contains(storeName)) {
-              console.info(`Creating ${storeName} store`);
+              debug(`Creating ${storeName} store`);
               db.createObjectStore(storeName, {
                 // keyPath: false,
                 autoIncrement: false,
               });
             } else {
-              console.info(`It containt ${storeName} store`);
+              debug(`It containt ${storeName} store`);
             }
           }
         };
       })
     : undefined;
-  console.info(db ? "Got indexedDB" : "IndexedDB is not available, will use localStorage");
+  debug(db ? "Got indexedDB" : "IndexedDB is not available, will use localStorage");
   // await new Promise<void>(resolve => setTimeout(resolve, 1));
 
   async function getLocal(storeName: string, key: string) {
@@ -260,35 +264,33 @@ export async function getDb(app: firebase.app.App) {
   function firebaseGoOffline() {
     firebaseDatabaseOnlineConnections--;
     if (firebaseDatabaseOnlineConnections <= 0) {
-      console.info(`Firebase goes offline, no consumers`);
+      debug(`Firebase goes offline, no consumers`);
       try {
         app.database().goOffline();
       } catch (e) {
         console.warn(`Error with firebase`, e);
       }
     } else {
-      console.info(
-        `Firebase will not go offline, have ${firebaseDatabaseOnlineConnections} consumers`,
-      );
+      debug(`Firebase will not go offline, have ${firebaseDatabaseOnlineConnections} consumers`);
     }
   }
   function firebaseGoOnline() {
     firebaseDatabaseOnlineConnections++;
     if (firebaseDatabaseOnlineConnections === 1) {
-      console.info(`We are the first firebase online consumer, going online`);
+      debug(`We are the first firebase online consumer, going online`);
       try {
         app.database().goOnline();
       } catch (e) {
         console.warn(`Error with firebase`, e);
       }
     } else {
-      console.info(`Now firebase have ${firebaseDatabaseOnlineConnections} connections`);
+      debug(`Now firebase have ${firebaseDatabaseOnlineConnections} connections`);
     }
   }
   try {
     app.auth().onAuthStateChanged(function (user) {
       firebaseUser = user;
-      console.info(`on auth changed = ${firebaseUser ? firebaseUser.uid : "<null>"}`);
+      debug(`on auth changed = ${firebaseUser ? firebaseUser.uid : "<null>"}`);
     });
 
     app
@@ -296,7 +298,7 @@ export async function getDb(app: firebase.app.App) {
       .ref(".info/connected")
       .on("value", (snap) => {
         const firebaseOnline = snap && snap.val();
-        console.info(`Firebase online=${firebaseOnline}`);
+        debug(`Firebase online=${firebaseOnline}`);
       });
 
     firebaseGoOffline();
@@ -318,7 +320,7 @@ export async function getDb(app: firebase.app.App) {
       const targetUserId = userId || (firebaseUser ? firebaseUser.uid : null);
       if (targetUserId) {
         const fullRefPath = `${store}/${targetUserId}/${userPath}`;
-        console.info(`Firebase SET fullRefPath=${fullRefPath} value=${JSON.stringify(value)}`);
+        debug(`Firebase SET fullRefPath=${fullRefPath} value=${JSON.stringify(value)}`);
         const setResult = await Promise.race([
           app.database().ref(fullRefPath).set(value),
           new Promise<void>((r) => setTimeout(r, 60000)).then(() => Promise.reject("Timed out")),
@@ -353,7 +355,7 @@ export async function getDb(app: firebase.app.App) {
                   "value",
                   (snapshot) => {
                     const value = snapshot ? snapshot.val() : null;
-                    console.info(
+                    debug(
                       `Firebase GET path=${store}/${
                         firebaseUser ? firebaseUser.uid : "ERR"
                       }/${userPath} value=${JSON.stringify(value)}`,
@@ -424,7 +426,7 @@ export async function getDb(app: firebase.app.App) {
   /*
     async function getLocalAndFirebase(storeName: string, key: string) {
         const localResult = await getLocal(storeName, key);
-        console.info(
+        debug(
             `getLocal store=${storeName} key=${key} localResult=${JSON.stringify(
                 localResult
             )}`
@@ -435,7 +437,7 @@ export async function getDb(app: firebase.app.App) {
         );
 
         if (firebaseResult !== undefined && firebaseResult !== null) {
-            console.info(
+            debug(
                 `getFirebase store=${storeName} key=${key} firebaseResult=${JSON.stringify(
                     firebaseResult
                 )}`
@@ -443,7 +445,7 @@ export async function getDb(app: firebase.app.App) {
             await setLocal(storeName, key, firebaseResult);
             return firebaseResult;
         }
-        console.info(
+        debug(
             `getLocal store=${storeName} key=${key} no_firebase_result`
         );
         return localResult;
@@ -451,7 +453,7 @@ export async function getDb(app: firebase.app.App) {
     */
 
   async function setConfigBoth(key: keyof ConfigBoth, value: ConfigBoth[typeof key]) {
-    console.info(`setConfig key=${key} value=${JSON.stringify(value)}`);
+    debug(`setConfig key=${key} value=${JSON.stringify(value)}`);
     await setLocal(INDEXEDDB_CONFIG_STORE_NAME, key, value);
     await setFirebaseThisUser(
       FIREBASE_USERS_PRIVATE,
@@ -461,7 +463,7 @@ export async function getDb(app: firebase.app.App) {
   }
 
   async function setConfigLocal(key: keyof ConfigLocalOnly, value: ConfigLocalOnly[typeof key]) {
-    console.info(`setConfig key=${key} value=${JSON.stringify(value)}`);
+    debug(`setConfig key=${key} value=${JSON.stringify(value)}`);
     await setLocal(INDEXEDDB_CONFIG_STORE_NAME, key, value);
   }
 
@@ -526,7 +528,7 @@ orderByChild('createdAt').once("value")).val();
 
       const allRemotePublicWons =
         (await getFirebaseThisUser(FIREBASE_USERS_PUBLIC, `gamesWonProofs`)) || {};
-      console.info(`Updating public highscores newCount=${newCount}`);
+      debug(`Updating public highscores newCount=${newCount}`);
       await setFirebaseThisUser(FIREBASE_USERS_PUBLIC, `gamesWonCount`, newCount);
       /*
             await setFirebase(
@@ -541,7 +543,7 @@ orderByChild('createdAt').once("value")).val();
             const gameLog = newProofs[gameName][aleaSeed];
             const created = firebase.database.ServerValue.TIMESTAMP;
 
-            console.info(`Updating firebase public won game=${gameName} seed=${aleaSeed}`);
+            debug(`Updating firebase public won game=${gameName} seed=${aleaSeed}`);
 
             await setFirebaseThisUser(
               FIREBASE_USERS_PUBLIC,
@@ -554,7 +556,7 @@ orderByChild('createdAt').once("value")).val();
           }
         }
       }
-      console.info(`Updating public highscores done`);
+      debug(`Updating public highscores done`);
     } catch (e: any) {
       console.warn(`public wining state sync error`, e, e.stack);
     }
@@ -567,7 +569,7 @@ orderByChild('createdAt').once("value")).val();
     }
     firebaseGoOnline();
     try {
-      console.info(`SyncWithFirebase started`);
+      debug(`SyncWithFirebase started`);
 
       // Config is remote-first
       for (const key of ["player", "lastPlayedGame", "noMusic"] as (keyof ConfigBoth)[]) {
@@ -576,23 +578,23 @@ orderByChild('createdAt').once("value")).val();
           `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`,
         );
         if (firebaseResult) {
-          console.info(`Taking config ${key} from firebase`);
+          debug(`Taking config ${key} from firebase`);
           await setLocal(INDEXEDDB_CONFIG_STORE_NAME, key, firebaseResult);
         } else if (firebaseResult === null) {
           const localResult = await getLocal(INDEXEDDB_CONFIG_STORE_NAME, key);
           if (localResult) {
-            console.info(`Saving firebase config ${key} because there is nothing`);
+            debug(`Saving firebase config ${key} because there is nothing`);
             await setFirebaseThisUser(
               FIREBASE_USERS_PRIVATE,
               `${INDEXEDDB_CONFIG_STORE_NAME}/${key}`,
               localResult,
             );
           } else {
-            console.info(`Config key ${key} no in local, neither in firebase`);
+            debug(`Config key ${key} no in local, neither in firebase`);
           }
         }
       }
-      console.info(`Sync syncWithFirebase config done`);
+      debug(`Sync syncWithFirebase config done`);
 
       /*
         // Local saving always overwrite remote
@@ -605,10 +607,10 @@ orderByChild('createdAt').once("value")).val();
                 savingRaw
             );
         }
-        console.info(`Sync syncWithFirebase local savings done`);
+        debug(`Sync syncWithFirebase local savings done`);
         */
       try {
-        console.info(`Sync old syncWithFirebase passed games started`);
+        debug(`Sync old syncWithFirebase passed games started`);
         const allLocalWons = await getAllLocal(INDEXEDDB_WON_STORE_NAME);
         const allRemoteWons =
           (await getFirebaseThisUser(FIREBASE_USERS_PRIVATE, `${INDEXEDDB_WON_STORE_NAME}`)) || {};
@@ -627,7 +629,7 @@ orderByChild('createdAt').once("value")).val();
               continue;
             }
             if (!thisGameRemoteWons[localSeed]) {
-              console.info(
+              debug(
                 `Sync with firebase: gameName=${gameName} pushing seed=${localSeed} into firebase`,
               );
               await setFirebaseThisUser(
@@ -644,7 +646,7 @@ orderByChild('createdAt').once("value")).val();
               continue;
             }
             if (!thisGameLocalWons[remoteSeed]) {
-              console.info(
+              debug(
                 `Sync with firebase: gameName=${gameName} fetching seed=${remoteSeed} from firebase`,
               );
 
@@ -660,9 +662,9 @@ orderByChild('createdAt').once("value")).val();
       } catch (e: any) {
         console.warn(`wining state sync error`, e, e.stack);
       }
-      console.info(`Sync old syncWithFirebase passed games done`);
+      debug(`Sync old syncWithFirebase passed games done`);
 
-      console.info(`Sync flat syncWithFirebase passed games started`);
+      debug(`Sync flat syncWithFirebase passed games started`);
 
       const localConfig = await getConfigLocal("player");
       const rangerName = localConfig ? localConfig.Ranger : "";
@@ -676,7 +678,7 @@ orderByChild('createdAt').once("value")).val();
           for (const aleaSeed of Object.keys(proofs)) {
             const proof = proofs[aleaSeed];
             if (!allRemoteWons[aleaSeed]) {
-              console.info(`Pushing ${aleaSeed} into remote wons`);
+              debug(`Pushing ${aleaSeed} into remote wons`);
               await setRemoteWon(aleaSeed, {
                 rangerName,
                 createdAt: firebase.database.ServerValue.TIMESTAMP as any as number,
@@ -696,7 +698,7 @@ orderByChild('createdAt').once("value")).val();
           const gameName = row.gameName;
           const values = (await getLocal(INDEXEDDB_WON_STORE_NAME, gameName)) || {};
           if (!values[aleaSeed]) {
-            console.info(`Polling ${aleaSeed} from remote wons`);
+            debug(`Polling ${aleaSeed} from remote wons`);
             const newValues = {
               ...values,
               [aleaSeed]: row.proof,
@@ -714,18 +716,18 @@ orderByChild('createdAt').once("value")).val();
       } catch (e: any) {
         console.warn(`wining state sync error`, e, e.stack);
       }
-      console.info(`Sync flat syncWithFirebase passed games done`);
+      debug(`Sync flat syncWithFirebase passed games done`);
 
       await updateFirebaseOwnHighscore();
-      console.info(`Own highscores synced`);
+      debug(`Own highscores synced`);
 
       const localName = await getConfigLocal("player");
       if (localName) {
         await setOwnHighscoresName(localName.Ranger || "");
       }
-      console.info(`Public ranger name synced`);
+      debug(`Public ranger name synced`);
 
-      console.info(`Sync with firebase finished`);
+      debug(`Sync with firebase finished`);
     } finally {
       firebaseGoOffline();
     }
@@ -856,7 +858,7 @@ orderByChild('createdAt').once("value")).val();
                   Object.entries(data).forEach(([key, value]) => {
                     transformedData[decodeURIComponent(key)] = value as any;
                   });
-                  console.info(data, transformedData);
+                  debug(data, transformedData);
                   resolve(transformedData);
                 }
               } else {
@@ -899,7 +901,7 @@ orderByChild('createdAt').once("value")).val();
     }
   }
 
-  console.info(`Returning db instance`);
+  debug(`Returning db instance`);
   return {
     setConfigBoth,
     setConfigLocal,
