@@ -385,7 +385,12 @@ export function QuestPlay({
               frameBorderY={frameBorderY}
             >
               <div style={{ padding: 5, paddingBottom: 20, height: "100%" }}>
-                <ScrollableContainer key={uistate.paramsState.map((p) => p).join("#")}>
+                <ScrollableContainer
+                  // No key here
+                  key="params"
+                  forceMeRecalculateHeight={paramsStrings}
+                  //key={uistate.paramsState.map((p) => p).join("#")}
+                >
                   <div
                     style={{
                       minHeight: "100%",
