@@ -114,7 +114,7 @@ export class QuestList extends React.Component<
             .reduce((acc, val) => (acc + val) % 1000, 0),
         };
       })
-      .sort((a, b) => a.orderValue - b.orderValue)
+      .sort((a, b) => a.orderValue - b.orderValue || (a.gameName > b.gameName ? 1 : -1))
       .map((x) => x.gameName);
     const passedGamesInPassingOrder = allQuestsForThisUser
       .map((quest, index) => ({
