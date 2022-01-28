@@ -4,7 +4,7 @@ import { LangTexts } from "./lang";
 import { WonProofs } from "./db/defs";
 import { Player, Lang } from "../lib/qmplayer/player";
 import { Index, Game } from "../packGameData/defs";
-import { ButtonDropdown, DropdownMenu, DropdownToggle, DropdownItem } from "reactstrap";
+import { ButtonDropdown, DropdownMenu, DropdownToggle, DropdownItem, Progress } from "reactstrap";
 import { observer } from "mobx-react";
 import { Store, QUEST_SEARCH_ALL, QUEST_SEARCH_OWN } from "./store";
 
@@ -92,7 +92,8 @@ export class QuestList extends React.Component<
             quest.taskText.toLowerCase().indexOf(store.questsListSearch.toLowerCase()) > -1
           : true,
       );
-    const questsToShowUnpassed = questsToShow.filter((x) => x.passedAt === false);
+
+    const allQuestsForThisUserPassed = allQuestsForThisUser.filter((quest) => quest.passedAt);
 
     const allGamesInPseudoRandomOrder = allQuestsForThisUser
       .map((quest) => ({
@@ -189,46 +190,42 @@ export class QuestList extends React.Component<
               />
             </div>
           </div>
+
           {questsToShow.length > 0 ? (
             <>
-              <button
-                className="btn btn-block btn-primary mb-3"
-                style={{
-                  whiteSpace: "normal",
-                }}
-                disabled={questsToShowUnpassed.length === 0}
-                onClick={() => {
-                  const idx = Math.floor(Math.random() * questsToShowUnpassed.length);
-                  const quest = questsToShowUnpassed[idx];
-                  if (!quest) {
-                    return;
-                  }
-                  location.href = `#/quests/${quest.gameName}`;
-                }}
-              >
-                <div className="d-flex align-items-center justify-content-center">
-                  {questsToShowUnpassed.length > 0 ? (
-                    <>
-                      <span className="mr-1">
-                        <i className="fa fa-random fa-fw" />
-                      </span>
-                      <span>
-                        {l.startRandomUnpassed} ({questsToShow.length - questsToShowUnpassed.length}
-                        /{questsToShow.length})
-                      </span>
-                    </>
-                  ) : (
-                    <>
-                      <span className="mr-1">
-                        <i className="fa fa-thumbs-up  fa-fw" />
-                      </span>
-                      <span>
-                        {l.allQuestPassed} ({questsToShow.length})
-                      </span>
-                    </>
-                  )}
+              <div className="row mb-2 mt-0">
+                {proposedSlots.filter((x) => x).length > 0 && true ? (
+                  proposedSlots.map((slotGameName) =>
+                    slotGameName ? (
+                      <div className="col-md-4 col-12" key={slotGameName}>
+                        <button
+                          className="btn btn-block btn-primary py-2 mb-1"
+                          style={{
+                            whiteSpace: "normal",
+                          }}
+                          onClick={() => {
+                            location.href = `#/quests/${slotGameName}`;
+                          }}
+                        >
+                          <i className="fa fa-fw fa-star mr-1" />
+                          {slotGameName}
+                        </button>
+                      </div>
+                    ) : null,
+                  )
+                ) : (
+                  <div className="col-12 text-center text-success">{l.allQuestPassed}</div>
+                )}
+              </div>
+
+              <div className="mb-4">
+                <div className="text-center">
+                  {allQuestsForThisUserPassed.length}/{allQuestsForThisUser.length}
                 </div>
-              </button>
+                <Progress
+                  value={(allQuestsForThisUserPassed.length / allQuestsForThisUser.length) * 100}
+                />
+              </div>
 
               <div className="list-group">
                 {questsToShow.map((quest) => (
