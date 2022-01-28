@@ -96,14 +96,24 @@ export class QuestList extends React.Component<
     const allQuestsForThisUserPassed = allQuestsForThisUser.filter((quest) => quest.passedAt);
 
     const allGamesInPseudoRandomOrder = allQuestsForThisUser
-      .map((quest) => ({
-        gameName: quest.gameName,
-        orderValue: quest.gameName
-          .split("")
-          .map((char) => char.charCodeAt(0))
-          .map((charCode, index) => charCode * 953 * (index % 7) + quest.hardness * 449)
-          .reduce((acc, val) => (acc + val) % 1000, 0),
-      }))
+      .map((quest) => {
+        // Tried to find combination which moves some nice quests to the beginning
+        // const somePrimeNumbers = [3, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503];
+        // const somePrimeNumbers = [439, 443, 467, 479, 487, 491, 499, 503];
+        // const somePrimeNumbers = [953, 967, 971, 977, 983, 991, 997];
+        const somePrimeNumbers = [967, 971, 977, 983, 991, 997];
+        return {
+          gameName: quest.gameName,
+          orderValue: quest.gameName
+            .split("")
+            .map((char) => char.charCodeAt(0))
+            .map(
+              (charCode, index) =>
+                charCode * somePrimeNumbers[index % somePrimeNumbers.length] + quest.hardness * 727,
+            )
+            .reduce((acc, val) => (acc + val) % 1000, 0),
+        };
+      })
       .sort((a, b) => a.orderValue - b.orderValue)
       .map((x) => x.gameName);
     const passedGamesInPassingOrder = allQuestsForThisUser
