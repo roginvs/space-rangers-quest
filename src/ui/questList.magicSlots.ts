@@ -22,20 +22,49 @@ export function getMagicSlots<T>(
   removedInChronologicalOrder: T[],
   slotsCount = 3,
 ): T[] {
-  const slots = itemsInInitialOrder.slice(0, slotsCount);
+  // Quite stupid implementation
 
+  // We can not iterate more than itemsInInitialOrder.length times
+  // Because each iteraction we should replace one item in slots
+  let healthCheckMaxIterations = itemsInInitialOrder.length + slotsCount + 10;
+
+  const slots = itemsInInitialOrder.slice(0, slotsCount);
   let nextItemIndex = slots.length;
-  for (const passedGame of removedInChronologicalOrder) {
-    const indexInSlots = slots.indexOf(passedGame);
-    if (indexInSlots < 0) {
-      console.warn(`Cannot find item in array, maybe you duplicated object?`, passedGame);
-      continue;
+  while (true) {
+    let slotCandidateIndex = -1;
+    let removedCandidateIndex = -1;
+    for (let i = 0; i < slots.length; i++) {
+      if (!slots[i]) {
+        // This slot is already empty
+        continue;
+      }
+      const removedIndex = removedInChronologicalOrder.indexOf(slots[i]);
+      if (removedIndex < 0) {
+        // This slot is not passed, try next slot
+        continue;
+      }
+
+      if (removedCandidateIndex === -1 || removedIndex < removedCandidateIndex) {
+        // This slot was passed before, so it will be our new candidate
+
+        slotCandidateIndex = i;
+        removedCandidateIndex = removedIndex;
+      }
     }
 
-    // We know that it might be out of bounds
-    // It is fine - we return undefined in that case
-    slots[indexInSlots] = itemsInInitialOrder[nextItemIndex];
-    nextItemIndex++;
+    if (slotCandidateIndex < 0 || removedCandidateIndex < 0) {
+      // No more items to propose because all slots are not passed yet
+      break;
+    } else {
+      slots[slotCandidateIndex] = itemsInInitialOrder[nextItemIndex];
+      nextItemIndex++;
+    }
+
+    healthCheckMaxIterations--;
+    if (healthCheckMaxIterations === 0) {
+      console.error("Infinite loop detected");
+      return new Array(slotsCount).fill(undefined);
+    }
   }
 
   return slots;

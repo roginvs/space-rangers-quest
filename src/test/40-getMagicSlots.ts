@@ -39,4 +39,11 @@ describe(`getMagicSlots`, () => {
       getMagicSlots(["A", "B", "C", "D", "E", "F"], ["B", "A", "E", "C", "F", "D"], 3),
       [undefined, undefined, undefined],
     ));
+
+  it(`Passing order did not follow suggestions`, () =>
+    assert.deepStrictEqual(getMagicSlots(["A", "B", "C", "D", "E", "F"], ["D", "B"], 3), [
+      "A",
+      "E",
+      "C",
+    ]));
 });
