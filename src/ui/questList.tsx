@@ -13,6 +13,7 @@ import { getGameTaskText } from "../lib/getGameTaskText";
 import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
 import { SRDateToString } from "../lib/qmplayer/funcs";
 import { QuestReplaceTags } from "./questReplaceTags";
+import { getMagicSlots } from "./questList.magicSlots";
 
 interface QuestListState {
   dropdownOpen: boolean;
@@ -50,11 +51,8 @@ export class QuestList extends React.Component<
       .map((x) => x.questOrigin)
       .reduce((acc, d) => (acc.indexOf(d) > -1 ? acc : acc.concat(d)), [] as string[]);
 
-    const questsToShow = index.quests
+    const allQuestsForThisUser = index.quests
       .filter((quest) => quest.lang === player.lang)
-      .filter((quest) =>
-        store.questsListTab !== QUEST_SEARCH_ALL ? quest.questOrigin === store.questsListTab : true,
-      )
       .map((quest) => ({
         ...quest,
         passedAt: (() => {
@@ -82,7 +80,12 @@ export class QuestList extends React.Component<
           return new Date(firstPassedAt);
         })(),
         taskText: getGameTaskText(quest.taskText, player),
-      }))
+      }));
+
+    const questsToShow = allQuestsForThisUser
+      .filter((quest) =>
+        store.questsListTab !== QUEST_SEARCH_ALL ? quest.questOrigin === store.questsListTab : true,
+      )
       .filter((quest) =>
         store.questsListSearch
           ? quest.gameName.toLowerCase().indexOf(store.questsListSearch.toLowerCase()) > -1 ||
@@ -90,6 +93,34 @@ export class QuestList extends React.Component<
           : true,
       );
     const questsToShowUnpassed = questsToShow.filter((x) => x.passedAt === false);
+
+    const allGamesInPseudoRandomOrder = allQuestsForThisUser
+      .map((quest) => ({
+        gameName: quest.gameName,
+        orderValue: quest.gameName
+          .split("")
+          .map((char) => char.charCodeAt(0))
+          .map((charCode, index) => charCode * 953 * (index % 7) + quest.hardness * 449)
+          .reduce((acc, val) => (acc + val) % 1000, 0),
+      }))
+      .sort((a, b) => a.orderValue - b.orderValue)
+      .map((x) => x.gameName);
+    const passedGamesInPassingOrder = allQuestsForThisUser
+      .map((quest, index) => ({
+        gameName: quest.gameName,
+        order:
+          quest.passedAt === undefined || quest.passedAt === false
+            ? 0
+            : quest.passedAt === true
+            ? index
+            : quest.passedAt.getTime(),
+      }))
+      .filter((x) => x.order > 0)
+      .sort((a, b) => a.order - b.order)
+      .map((x) => x.gameName);
+
+    const proposedSlots = getMagicSlots(allGamesInPseudoRandomOrder, passedGamesInPassingOrder, 3);
+    console.info(allGamesInPseudoRandomOrder, passedGamesInPassingOrder, proposedSlots);
 
     return (
       <AppNavbar store={this.props.store}>
