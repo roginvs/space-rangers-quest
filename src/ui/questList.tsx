@@ -57,7 +57,13 @@ export class QuestList extends React.Component<
       )
       .map((quest) => ({
         ...quest,
-        passed: (() => {
+        passedAt: (() => {
+          // Returns:
+          //  - undefined if still loading
+          //  - false if not passed
+          //  - Date object when first passed
+          //  - true is passed but date is unknown
+
           if (!passedQuests) {
             return undefined;
           }
@@ -65,7 +71,15 @@ export class QuestList extends React.Component<
           if (typeof passed !== "object" || Object.keys(passed).length < 1) {
             return false;
           }
-          return true;
+          const firstPassedAt = Math.min(
+            ...Object.keys(passed).map(
+              (key) => passed[key].performedJumps.slice(-1).pop()?.dateUnix || Infinity,
+            ),
+          );
+          if (firstPassedAt === Infinity) {
+            return true;
+          }
+          return new Date(firstPassedAt);
         })(),
         taskText: getGameTaskText(quest.taskText, player),
       }))
@@ -75,7 +89,7 @@ export class QuestList extends React.Component<
             quest.taskText.toLowerCase().indexOf(store.questsListSearch.toLowerCase()) > -1
           : true,
       );
-    const questsToShowUnpassed = questsToShow.filter((x) => x.passed === false);
+    const questsToShowUnpassed = questsToShow.filter((x) => x.passedAt === false);
 
     return (
       <AppNavbar store={this.props.store}>
@@ -195,9 +209,9 @@ export class QuestList extends React.Component<
                     <div className="d-flex w-100 justify-content-between">
                       <h5 className="mb-1">{quest.gameName}</h5>
                       <small>
-                        {quest.passed === undefined ? (
+                        {quest.passedAt === undefined ? (
                           <i className="text-muted fa fa-spin circle-o-notch" />
-                        ) : quest.passed === true ? (
+                        ) : quest.passedAt !== false ? (
                           <span>{l.passed}</span>
                         ) : null}
                       </small>
