@@ -92,7 +92,6 @@ export class ChampionsTabContainer extends React.Component<
                 })),
               }))
           : null;
-        this.validateAll().catch((e) => console.warn(e));
       })
       .catch((e) => console.error(e));
   }
@@ -115,7 +114,7 @@ export class ChampionsTabContainer extends React.Component<
           continue;
         }
         try {
-          console.info(`User ${champion.userId} validating game=${questToValidate.gameName}`);
+          // console.info(`User ${champion.userId} validating game=${questToValidate.gameName}`);
           questToValidate.validateStatus = "inprogress";
 
           const thisGameProofs = champion.gamesWonProofs[questToValidate.gameName];
@@ -137,6 +136,15 @@ export class ChampionsTabContainer extends React.Component<
     }
   }
 
+  private validateWasStarted = false;
+  private doInitialValidation() {
+    if (this.validateWasStarted) {
+      return;
+    }
+    this.validateWasStarted = true;
+    this.validateAll().catch((e) => console.warn(e));
+  }
+
   render() {
     const store = this.props.store;
     const l = store.l;
@@ -145,7 +153,7 @@ export class ChampionsTabContainer extends React.Component<
     return (
       <DivFadeinCss key="champions" className="text-center container my-3">
         {champions ? (
-          <div>
+          <div onClick={() => this.doInitialValidation()}>
             {this.haveValidationFailed ? (
               <div className="alert alert-primary">{l.questValidationErrorsInfo}</div>
             ) : null}
