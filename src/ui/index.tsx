@@ -52,6 +52,10 @@ console.info(`Starting the app (buildAt=${new Date(__VERSION__).toISOString()})`
 const app = firebase.initializeApp(firebaseConfig);
 // const app = firebase.initializeApp({} as typeof config);
 
+function debug(...args: any) {
+  //console.info(...args)
+}
+
 @observer
 class MainLoader extends React.Component<{}> {
   @observable
@@ -72,7 +76,7 @@ class MainLoader extends React.Component<{}> {
       const db = await getDb(app);
       let player = await db.getConfigLocal("player");
       if (!player) {
-        console.info(`Welcome, a new user!`);
+        debug(`Welcome, a new user!`);
         player =
           browserDefaultLang === "rus"
             ? DEFAULT_RUS_PLAYER
@@ -116,15 +120,15 @@ class MainLoader extends React.Component<{}> {
           const registrationOld = await navigator.serviceWorker.getRegistration();
 
           if (registrationOld) {
-            console.info(`Service worker have old registration`);
+            debug(`Service worker have old registration`);
           } else {
-            console.info(`Service worker do not have old registration, will register now`);
+            debug(`Service worker do not have old registration, will register now`);
           }
           const reg = registrationOld || (await navigator.serviceWorker.register("/sw.js"));
           store.serviceWorkerRegistered = true;
 
           function updateStore() {
-            console.info(
+            debug(
               `serviceWorker installing=${reg.installing ? reg.installing.state : "null"} ` +
                 `waiting=${reg.waiting ? reg.waiting.state : "null"} ` +
                 `active=${reg.active ? reg.active.state : "null"} `,
@@ -145,7 +149,7 @@ class MainLoader extends React.Component<{}> {
           }
           updateStore();
           reg.addEventListener("updatefound", () => {
-            console.info(`SW regisration: updatefound`);
+            debug(`SW regisration: updatefound`);
             updateStore();
           });
 
@@ -177,7 +181,7 @@ class MainLoader extends React.Component<{}> {
         store.serviceWorkerController = navigator.serviceWorker.controller
           ? navigator.serviceWorker.controller.state
           : null;
-        console.info(
+        debug(
           `serviceWorker controller=${
             navigator.serviceWorker.controller ? navigator.serviceWorker.controller.state : "null"
           }`,
@@ -187,12 +191,12 @@ class MainLoader extends React.Component<{}> {
       (async () => {
         if (navigator.storage) {
           const alreadyPersisted = await navigator.storage.persisted();
-          // console.info(`Storage current persist status=${alreadyPersisted}`);
+          debug(`Storage current persist status=${alreadyPersisted}`);
           store.storageIsPersisted = alreadyPersisted;
 
           if (!alreadyPersisted && navigator.serviceWorker && navigator.serviceWorker.controller) {
             const requestedPersist = await navigator.storage.persist();
-            console.info(`Storage requested persist status=${requestedPersist}`);
+            debug(`Storage requested persist status=${requestedPersist}`);
             store.storageIsPersisted = requestedPersist;
           }
         }
@@ -320,7 +324,7 @@ if (
 ) {
   ReactDOM.render(<MainLoader />, root);
 } else {
-  console.info("Mounting redirect");
+  debug("Mounting redirect");
   const newLocation = document.location.href.replace(/^http:\/\//, "https://");
   ReactDOM.render(
     <div className="p-1 text-center">
