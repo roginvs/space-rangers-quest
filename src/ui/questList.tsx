@@ -131,7 +131,7 @@ export class QuestList extends React.Component<
       .map((x) => x.gameName);
 
     const proposedSlots = getMagicSlots(allGamesInPseudoRandomOrder, passedGamesInPassingOrder, 3);
-    console.info(allGamesInPseudoRandomOrder, passedGamesInPassingOrder, proposedSlots);
+    // console.info(allGamesInPseudoRandomOrder, passedGamesInPassingOrder, proposedSlots);
 
     return (
       <AppNavbar store={this.props.store}>
