@@ -1131,7 +1131,7 @@ export function getGameLog(state: GameState): GameLog {
   };
 }
 
-export function validateWinningLog(quest: Quest, gameLog: GameLog, showDebug = true) {
+export function validateWinningLog(quest: Quest, gameLog: GameLog, showDebug = false) {
   let state = initGame(quest, gameLog.aleaSeed);
   for (const performedJump of gameLog.performedJumps) {
     const uiState = getUIState(quest, state, DEFAULT_RUS_PLAYER, showDebug);
