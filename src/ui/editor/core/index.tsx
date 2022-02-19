@@ -36,7 +36,7 @@ import { JumpHover } from "./hovers/jump";
 import { JumpOverlay } from "./overlays/jumpsAndLocations/jump";
 import { useOnDocumentKeyUp, useWindowInnerSize } from "./hooks";
 import { QuestSettings } from "./overlays/questSettings/questSettings";
-import { initRandomGame, QuestPlay } from "../../questPlay/questPlay";
+import { QuestPlay } from "../../questPlay/questPlay";
 import { getLang } from "../../lang";
 import { QuestWithMetadata, useIdb } from "./idb";
 import { emptyQmm } from "./emptyQmm";

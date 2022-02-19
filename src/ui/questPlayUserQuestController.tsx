@@ -5,7 +5,7 @@ import { Quest, GameState, getUIState } from "../lib/qmplayer/funcs";
 import { toJS } from "mobx";
 import { parse } from "../lib/qmreader";
 import Pako from "pako";
-import { initRandomGame, QuestPlay } from "./questPlay/questPlay";
+import { QuestPlay } from "./questPlay/questPlay";
 
 interface UserQuestControllerState {
   game: null | string | Quest;
