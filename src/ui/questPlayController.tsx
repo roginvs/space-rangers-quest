@@ -93,7 +93,7 @@ export class QuestPlayController extends React.Component<
     });
     const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))) as Quest;
 
-    let gameState = await this.props.store.db.getLocalSaving(this.props.gameName);
+    const gameState = await this.props.store.db.getLocalSaving(this.props.gameName);
 
     this.setState({
       quest,

@@ -152,8 +152,7 @@ export class QuestInfo extends React.Component<
                   .catch((e) => console.error(e));
               }}
             >
-              <i className="fa fa-rocket" />
-              {l.startFromTheStart}
+              <i className="fa fa-rocket" /> {l.startFromTheStart}
             </button>
           </div>
           <div className="col-md-4">

@@ -117,16 +117,52 @@ export function QuestPlay({
 
   const isMobile = windowInnerWidth < MOBILE_THRESHOLD;
 
-  const createNewGameState = React.useCallback(() => {
-    return initRandomGame(quest, !showTaskInfoOnQuestStart);
-  }, [showTaskInfoOnQuestStart, quest]);
-
   React.useEffect(() => {
     if (!gameState) {
-      const newGameState = createNewGameState();
+      const newGameState = initRandomGame(quest, !showTaskInfoOnQuestStart);
       setGameState(newGameState);
     }
   }, [gameState, setGameState]);
+
+  const exitButtonContent = busySaving ? (
+    <i className="fa fa-refresh fa-spin fa-fw" />
+  ) : (
+    <i className="fa fa-sign-out fa-fw" />
+  );
+  const musicButtonContent = (
+    <i className={classnames("fa fa-fw", !isMusic ? "fa-volume-off" : "fa-volume-up")} />
+  );
+  const onMusicButtonClick = React.useCallback(() => {
+    setIsMusic(!isMusic);
+  }, [isMusic]);
+
+  const restartButtonContent = <i className="fa fa-fast-backward fa-fw" />;
+
+  const onRestartButtonClick = React.useCallback(() => {
+    if (!gameState) {
+      return;
+    }
+    const uiState = getUIState(quest, gameState, player);
+    if (
+      !uiState ||
+      uiState.gameState === "dead" ||
+      uiState.gameState === "fail" ||
+      uiState.gameState === "win" ||
+      reallyRestart
+    ) {
+      const newGameState = initRandomGame(quest, false);
+      setGameState(newGameState);
+      setReallyRestart(false);
+    } else {
+      setReallyRestart(true);
+    }
+  }, [gameState, quest, player, showTaskInfoOnQuestStart, reallyRestart]);
+
+  const fullscreenButtonContent = <i className="fa fa-arrows-alt fa-fw" />;
+  const onFullscreenButtonClick = React.useCallback(() => {
+    toggleFullscreen();
+  }, []);
+
   if (!gameState) {
     return null;
   }
@@ -194,42 +230,6 @@ export function QuestPlay({
     </>
   );
 
-  const exitButtonContent = busySaving ? (
-    <i className="fa fa-refresh fa-spin fa-fw" />
-  ) : (
-    <i className="fa fa-sign-out fa-fw" />
-  );
-  const musicButtonContent = (
-    <i className={classnames("fa fa-fw", !isMusic ? "fa-volume-off" : "fa-volume-up")} />
-  );
-  const onMusicButtonClick = React.useCallback(() => {
-    setIsMusic(!isMusic);
-  }, [isMusic]);
-
-  const restartButtonContent = <i className="fa fa-fast-backward fa-fw" />;
-
-  const onRestartButtonClick = React.useCallback(() => {
-    const uiState = getUIState(quest, gameState, player);
-    if (
-      !uiState ||
-      uiState.gameState === "dead" ||
-      uiState.gameState === "fail" ||
-      uiState.gameState === "win" ||
-      reallyRestart
-    ) {
-      const newGameState = createNewGameState();
-      setGameState(newGameState);
-      setReallyRestart(false);
-    } else {
-      setReallyRestart(true);
-    }
-  }, [gameState, quest, player, showTaskInfoOnQuestStart, reallyRestart, createNewGameState]);
-
-  const fullscreenButtonContent = <i className="fa fa-arrows-alt fa-fw" />;
-  const onFullscreenButtonClick = React.useCallback(() => {
-    toggleFullscreen();
-  }, []);
-
   const musicAndSound = (
     <>
       {isMusic ? (
@@ -273,7 +273,7 @@ export function QuestPlay({
         <div style={{ display: "flex", justifyContent: "center" }}>
           <GamePlayButton
             onClick={() => {
-              const newGameState = createNewGameState();
+              const newGameState = initRandomGame(quest, false);
               setGameState(newGameState);
               setReallyRestart(false);
             }}
