@@ -23,6 +23,8 @@ export function QuestPlayImageMobile({
             src={imageUrl}
             style={{
               width: "100%",
+              // This is needed to force the image to be over frame background
+              position: "relative",
               display: imageUrl === src ? undefined : "none",
             }}
           />
