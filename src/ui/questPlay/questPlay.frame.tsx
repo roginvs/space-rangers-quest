@@ -181,6 +181,7 @@ const QuestPlayFrameTiles = ({ frameBorderX, frameBorderY }: FrameBorderProps) =
     </>
   );
 };
+
 export const QuestPlayFrameImage: React.FC<
   {
     fitHeight: boolean;
@@ -211,6 +212,9 @@ export const QuestPlayFrameImage: React.FC<
   );
 };
 
+/**
+ * It renders children over the frame. This is needed for scroll to work
+ */
 export const QuestPlayFrameText: React.FC<
   {
     fitHeight: boolean;
