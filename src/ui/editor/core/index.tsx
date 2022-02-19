@@ -523,6 +523,7 @@ export function EditorCore({
         setIsMusic={() => {}}
         l={getLang("rus")}
         onExit={() => setIsPlaying(null)}
+        showTaskInfoOnQuestStart={true}
       />
     );
   }
@@ -665,7 +666,7 @@ export function EditorCore({
           className={classNames("ml-3", "btn", "btn-light")}
           onClick={() => {
             if (quest.locations.find((loc) => loc.isStarting)) {
-              setIsPlaying(null);
+              setIsPlaying({ gameState: null });
             } else {
               toast("Нет начальной локации!");
             }
