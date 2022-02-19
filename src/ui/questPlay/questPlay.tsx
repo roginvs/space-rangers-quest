@@ -195,8 +195,13 @@ export function QuestPlay({
                 const newState = performJump(choice.jumpId, quest, gameState);
                 setGameState(newState);
 
-                //window.scrollTo(0, isMobile ? 44 : 0);
-                window.scrollTo(0, isMobile ? 62 : 0);
+                if (isMobile) {
+                  // Timeout to allow the re-render to finish
+                  // This is to solve case when there was no image but next state have image
+                  setTimeout(() => window.scrollTo(0, 62), 100);
+                } else {
+                  // Desktop version do not have scroll
+                }
               }}
               className={choice.active ? "" : "game-inactive"}
             >
