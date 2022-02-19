@@ -194,6 +194,7 @@ export const QuestPlayFrameImage: React.FC<
         position: "relative",
       }}
     >
+      <QuestPlayFrameBackground frameBorderX={frameBorderX} frameBorderY={frameBorderY} />
       <div
         style={{
           paddingLeft: frameBorderX,
@@ -205,7 +206,6 @@ export const QuestPlayFrameImage: React.FC<
       >
         {children}
       </div>
-
       <QuestPlayFrameTiles frameBorderX={frameBorderX} frameBorderY={frameBorderY} />
     </div>
   );
