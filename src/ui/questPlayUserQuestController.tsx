@@ -91,7 +91,7 @@ export class QuestPlayUserQuestController extends React.Component<
       );
     }
 
-    if (this.state.game === null || this.state.gameState === null) {
+    if (this.state.game === null) {
       return (
         <div className="my-3 container">
           <div className="text-center">{l.loadingQuest}</div>
