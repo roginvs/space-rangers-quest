@@ -26,8 +26,8 @@ import {
   NATIVE_IMAGE_SIZE_Y,
 } from "./questPlay.consts";
 import { GamePlayButton } from "./questPlay.button";
-import { assertNever } from "../../assertNever";
 import { useDarkTheme } from "./questPlay.metatheme";
+import { toggleFullscreen } from "./fullscreen";
 
 export function initRandomGame(quest: Quest) {
   const gameState = initGame(
@@ -215,13 +215,7 @@ export function QuestPlay({
 
   const fullscreenButtonContent = <i className="fa fa-arrows-alt fa-fw" />;
   const onFullscreenButtonClick = React.useCallback(() => {
-    if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((e) => console.warn(e));
-    } else {
-      if (document.exitFullscreen) {
-        document.exitFullscreen().catch((e) => console.warn(e));
-      }
-    }
+    toggleFullscreen();
   }, []);
 
   const musicAndSound = (

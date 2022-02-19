@@ -25,6 +25,7 @@ import classnames from "classnames";
 import { observer } from "mobx-react";
 import { Store } from "./store";
 import { getGameTaskText } from "../lib/getGameTaskText";
+import { toggleFullscreen } from "./questPlay/fullscreen";
 
 interface QuestInfoState {
   lastSavedGameState?: GameState | null;
@@ -141,12 +142,18 @@ export class QuestInfo extends React.Component<
               className={classnames("btn btn-block mb-2", {
                 "btn-primary": !this.state.lastSavedGameState,
               })}
-              onClick={async () => {
-                await this.props.store.db.saveGame(this.props.gameName, null);
-                location.hash = `/quests/${gameName}/play`;
+              onClick={() => {
+                toggleFullscreen(true);
+                this.props.store.db
+                  .saveGame(this.props.gameName, null)
+                  .then(() => {
+                    location.hash = `/quests/${gameName}/play`;
+                  })
+                  .catch((e) => console.error(e));
               }}
             >
-              <i className="fa fa-rocket" /> {l.startFromTheStart}
+              <i className="fa fa-rocket" />
+              {l.startFromTheStart}
             </button>
           </div>
           <div className="col-md-4">
