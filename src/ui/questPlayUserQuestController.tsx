@@ -56,8 +56,6 @@ export class QuestPlayUserQuestController extends React.Component<
       } catch {}
     }
 
-    gameState = gameState || initRandomGame(quest);
-
     const noMusic = !!(await this.props.store.db.getConfigLocal("noMusic"));
 
     const game = quest;

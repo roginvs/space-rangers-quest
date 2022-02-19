@@ -93,7 +93,7 @@ export function EditorCore({
 
   const [overlayMode, setOverlayMode] = React.useState<EditorOverlay | undefined>(undefined);
 
-  const [isPlaying, setIsPlaying] = React.useState<GameState | null>(null);
+  const [isPlaying, setIsPlaying] = React.useState<{ gameState: GameState | null } | null>(null);
 
   // DEBUGGING
   /*
@@ -515,9 +515,9 @@ export function EditorCore({
     return (
       <QuestPlay
         quest={quest}
-        gameState={isPlaying}
+        gameState={isPlaying.gameState}
         player={{ ...quest.strings, lang: "rus", Player: quest.strings.Ranger }}
-        setGameState={(newState) => setIsPlaying(newState)}
+        setGameState={(newState) => setIsPlaying({ gameState: newState })}
         defaultMusicList={undefined}
         isMusic={true}
         setIsMusic={() => {}}
@@ -665,7 +665,7 @@ export function EditorCore({
           className={classNames("ml-3", "btn", "btn-light")}
           onClick={() => {
             if (quest.locations.find((loc) => loc.isStarting)) {
-              setIsPlaying(initRandomGame(quest));
+              setIsPlaying(null);
             } else {
               toast("Нет начальной локации!");
             }

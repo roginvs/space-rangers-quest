@@ -25,7 +25,7 @@ import { Progress } from "reactstrap";
 interface QuestPlayState {
   quest?: Quest;
   game?: Game;
-  gameState?: GameState;
+  gameState?: GameState | null;
   questLoadProgress: number;
   noMusic?: boolean;
 
@@ -94,12 +94,10 @@ export class QuestPlayController extends React.Component<
     const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))) as Quest;
 
     let gameState = await this.props.store.db.getLocalSaving(this.props.gameName);
-    if (!gameState) {
-      gameState = initRandomGameAndDoFirstStep(quest);
-    }
+
     this.setState({
       quest,
-      gameState,
+      gameState: gameState,
     });
   }
 
@@ -130,7 +128,7 @@ export class QuestPlayController extends React.Component<
       );
     }
 
-    if (!quest || !gameState || !game) {
+    if (!quest || !game || gameState === undefined) {
       const percents = Math.round(this.state.questLoadProgress * 100);
       return (
         <div className="my-3 container">
@@ -192,15 +190,6 @@ export class QuestPlayController extends React.Component<
       />
     );
   }
-}
-
-function initRandomGameAndDoFirstStep(quest: Quest) {
-  let gameState = initGame(
-    quest,
-    Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2),
-  );
-  gameState = performJump(JUMP_I_AGREE, quest, gameState, new Date().getTime());
-  return gameState;
 }
 
 function removeSerialEmptyStrings(input: string[]) {

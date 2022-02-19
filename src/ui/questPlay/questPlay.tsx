@@ -29,16 +29,16 @@ import { GamePlayButton } from "./questPlay.button";
 import { useDarkTheme } from "./questPlay.metatheme";
 import { toggleFullscreen } from "./fullscreen";
 
-export function initRandomGame(quest: Quest) {
+function initRandomGame(quest: Quest, doFirstStep: boolean) {
   const gameState = initGame(
     quest,
     Math.random().toString(36).slice(2) + Math.random().toString(36).slice(2),
   );
-  return gameState;
-}
-export function initRandomGameAndDoFirstStep(quest: Quest) {
-  const gameState = performJump(JUMP_I_AGREE, quest, initRandomGame(quest), new Date().getTime());
-  return gameState;
+  if (!doFirstStep) {
+    return gameState;
+  }
+  const afterFirstStep = performJump(JUMP_I_AGREE, quest, gameState, new Date().getTime());
+  return afterFirstStep;
 }
 
 function removeSerialEmptyStrings(input: string[]) {
@@ -84,7 +84,7 @@ export function QuestPlay({
 }: {
   quest: Quest;
 
-  gameState: GameState;
+  gameState: GameState | null;
 
   player: DeepImmutable<Player>;
 
@@ -116,6 +116,20 @@ export function QuestPlay({
   React.useEffect(() => setReallyRestart(false), [quest, gameState, player]);
 
   const isMobile = windowInnerWidth < MOBILE_THRESHOLD;
+
+  const createNewGameState = React.useCallback(() => {
+    return initRandomGame(quest, !showTaskInfoOnQuestStart);
+  }, [showTaskInfoOnQuestStart, quest]);
+
+  React.useEffect(() => {
+    if (!gameState) {
+      const newGameState = createNewGameState();
+      setGameState(newGameState);
+    }
+  }, [gameState, setGameState]);
+  if (!gameState) {
+    return null;
+  }
 
   const uistate = getUIState(quest, gameState, player);
 
@@ -203,15 +217,13 @@ export function QuestPlay({
       uiState.gameState === "win" ||
       reallyRestart
     ) {
-      const newGameState = showTaskInfoOnQuestStart
-        ? initRandomGame(quest)
-        : initRandomGameAndDoFirstStep(quest);
+      const newGameState = createNewGameState();
       setGameState(newGameState);
       setReallyRestart(false);
     } else {
       setReallyRestart(true);
     }
-  }, [gameState, quest, player, showTaskInfoOnQuestStart, reallyRestart]);
+  }, [gameState, quest, player, showTaskInfoOnQuestStart, reallyRestart, createNewGameState]);
 
   const fullscreenButtonContent = <i className="fa fa-arrows-alt fa-fw" />;
   const onFullscreenButtonClick = React.useCallback(() => {
@@ -261,9 +273,7 @@ export function QuestPlay({
         <div style={{ display: "flex", justifyContent: "center" }}>
           <GamePlayButton
             onClick={() => {
-              const newGameState = showTaskInfoOnQuestStart
-                ? initRandomGame(quest)
-                : initRandomGameAndDoFirstStep(quest);
+              const newGameState = createNewGameState();
               setGameState(newGameState);
               setReallyRestart(false);
             }}
