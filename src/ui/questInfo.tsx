@@ -161,7 +161,8 @@ export class QuestInfo extends React.Component<
                 "btn-primary": !!this.state.lastSavedGameState,
                 disabled: !this.state.lastSavedGameState,
               })}
-              onClick={async () => {
+              onClick={() => {
+                toggleFullscreen(true);
                 location.hash = `/quests/${gameName}/play`;
               }}
             >
