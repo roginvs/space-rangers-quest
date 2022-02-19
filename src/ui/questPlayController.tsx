@@ -97,7 +97,7 @@ export class QuestPlayController extends React.Component<
 
     this.setState({
       quest,
-      gameState: gameState,
+      gameState,
     });
   }
 
