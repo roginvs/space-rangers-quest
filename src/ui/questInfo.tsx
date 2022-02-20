@@ -143,13 +143,13 @@ export class QuestInfo extends React.Component<
                 "btn-primary": !this.state.lastSavedGameState,
               })}
               onClick={() => {
-                toggleFullscreen(true);
                 this.props.store.db
                   .saveGame(this.props.gameName, null)
                   .then(() => {
                     location.hash = `/quests/${gameName}/play`;
                   })
                   .catch((e) => console.error(e));
+                toggleFullscreen(true);
               }}
             >
               <i className="fa fa-rocket" /> {l.startFromTheStart}
@@ -162,8 +162,8 @@ export class QuestInfo extends React.Component<
                 disabled: !this.state.lastSavedGameState,
               })}
               onClick={() => {
-                toggleFullscreen(true);
                 location.hash = `/quests/${gameName}/play`;
+                toggleFullscreen(true);
               }}
             >
               {this.state.lastSavedGameState === undefined ? (
