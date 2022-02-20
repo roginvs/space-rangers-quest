@@ -198,7 +198,15 @@ export function QuestPlay({
                 if (isMobile) {
                   // Timeout to allow the re-render to finish
                   // This is to solve case when there was no image but next state have image
-                  setTimeout(() => window.scrollTo(0, 62), 100);
+                  setTimeout(
+                    () =>
+                      window.scrollTo({
+                        left: 0,
+                        top: 62,
+                        behavior: "smooth",
+                      }),
+                    10,
+                  );
                 } else {
                   // Desktop version do not have scroll
                 }
