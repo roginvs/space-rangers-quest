@@ -11,7 +11,7 @@ export function toggleFullscreen(forceFullscreenState?: boolean) {
     } else {
       const browserPrefixes = ["webkit", "moz", "ms", "o"];
       const unknownElem = elem as unknown as Record<string, unknown>;
-      for (const key of browserPrefixes.map((prefix) => `${prefix}RequestFullScree`)) {
+      for (const key of browserPrefixes.map((prefix) => `${prefix}RequestFullScreen`)) {
         const func = unknownElem[key];
         if (typeof func === "function") {
           func();
