@@ -7,7 +7,7 @@ export function QuestPlayImageMobile({
   src: string | null;
   allImagesUrls: (string | null)[];
 }) {
-  if (allImagesUrls.indexOf(src) < 0) {
+  if (src && allImagesUrls.indexOf(src) < 0) {
     console.warn(`Image ${src} is not found in allImagesUrls`, allImagesUrls);
   }
 
