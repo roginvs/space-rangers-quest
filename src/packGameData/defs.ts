@@ -28,6 +28,8 @@ export interface Index {
     quests: CacheFilesList;
     images: CacheFilesList;
     music: CacheFilesList;
+    track: CacheFilesList;
+    sound: CacheFilesList;
   };
 }
 

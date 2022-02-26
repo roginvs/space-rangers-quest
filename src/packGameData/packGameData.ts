@@ -61,7 +61,7 @@ console.info(`Creating destination folders`);
 if (!fs.existsSync(dataDstPath)) {
   fs.mkdirSync(dataDstPath);
 }
-for (const d of ["img", "qm", "music"]) {
+for (const d of ["img", "qm", "music", "track", "sound"]) {
   if (!fs.existsSync(dataDstPath + "/" + d)) {
     fs.mkdirSync(dataDstPath + "/" + d);
   }
