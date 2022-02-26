@@ -199,18 +199,25 @@ export class Store {
     if (this.musicCacheInstallInfo) {
       return;
     }
+    const DOWNLOAD_AUDIBLE_MEDIA_KEYS = ["music", "sound", "track"] as const;
     this.musicCacheInstallInfo = {
       currentFile: "",
-      sizeTotal: this.index.dir.music.totalSize,
+      sizeTotal: DOWNLOAD_AUDIBLE_MEDIA_KEYS.map((key) => this.index.dir[key].totalSize).reduce(
+        (acc, cur) => acc + cur,
+        0,
+      ),
+
       downloaded: 0,
     };
     const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
-    for (const f of this.index.dir.music.files) {
-      this.musicCacheInstallInfo.currentFile = f.path;
-      const url = DATA_DIR + f.path;
-      const data = await fetch(url);
-      await cacheMusic.put(url, data);
-      this.musicCacheInstallInfo.downloaded += f.size;
+    for (const key of DOWNLOAD_AUDIBLE_MEDIA_KEYS) {
+      for (const f of this.index.dir[key].files) {
+        this.musicCacheInstallInfo.currentFile = f.path;
+        const url = DATA_DIR + f.path;
+        const data = await fetch(url);
+        await cacheMusic.put(url, data);
+        this.musicCacheInstallInfo.downloaded += f.size;
+      }
     }
     this.musicCache = "yes";
     this.musicCacheInstallInfo = undefined;
