@@ -8,7 +8,7 @@ import { PQImages } from "../lib/pqImages";
 import { readPqi } from "./pqi";
 import { Index, Game, PQIParsed } from "./defs";
 import { scanAndCopyImages } from "./images";
-import { scanAndCopyMusic } from "./music";
+import { scanAndCopyMusicAndSoundAndTrack } from "./music";
 import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
 import { Quest } from "../lib/qmplayer/funcs";
 import { getAllMediaFromQmm } from "../lib/getAllMediaFromQmm";
@@ -80,7 +80,7 @@ const index: Index = {
 
 const allImages = scanAndCopyImages(dataSrcPath, dataDstPath, index);
 
-scanAndCopyMusic(dataSrcPath, dataDstPath, index);
+const audibleMedia = scanAndCopyMusicAndSoundAndTrack(dataSrcPath, dataDstPath, index);
 
 const pqiSR1Parsed = JSON.parse(
   fs.readFileSync(__dirname + "/../../src/sr1-pqi.json").toString(),
@@ -296,6 +296,41 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
         } else {
           warns.push(`Not possible to find any images for ${qmShortName}!`);
           outputQmmBuffer = srcQmQmmBuffer;
+        }
+      }
+    }
+
+    const qmmSoundList = Object.keys(qmmMedia.sounds);
+    for (const qmmSound of qmmSoundList) {
+      // This is quite close to transformMedianameToUrl implementation
+      if (
+        qmmSound.toLowerCase().startsWith("http://") ||
+        qmmSound.toLowerCase().startsWith("https://")
+      ) {
+        // No check for absolute urls
+      } else {
+        const localSoundFilename = qmmSound.toLowerCase() + ".mp3";
+        if (audibleMedia.sound.indexOf(localSoundFilename) < 0) {
+          warns.push(
+            `Sound ${qmmSound} is from QMM for ${qmShortName}, ` + `but not found in sound dir`,
+          );
+        }
+      }
+    }
+    const qmmTrackList = Object.keys(qmmMedia.tracks);
+    for (const qmmTrack of qmmTrackList) {
+      // This is quite close to transformMedianameToUrl implementation
+      if (
+        qmmTrack.toLowerCase().startsWith("http://") ||
+        qmmTrack.toLowerCase().startsWith("https://")
+      ) {
+        // No check for absolute urls
+      } else {
+        const localTrackFilename = qmmTrack.toLowerCase() + ".mp3";
+        if (audibleMedia.sound.indexOf(localTrackFilename) < 0) {
+          warns.push(
+            `Track ${qmmTrack} is from QMM for ${qmShortName}, ` + `but not found in sound dir`,
+          );
         }
       }
     }
