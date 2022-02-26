@@ -8,10 +8,7 @@ export function scanAndCopyMusic(dataSrcPath: string, dataDstPath: string, index
     .readdirSync(dataSrcPath + "/music")
     .filter((x) => {
       const fullName = dataSrcPath + "/music/" + x;
-      return (
-        fs.statSync(fullName).isFile() &&
-        (fullName.toLowerCase().endsWith(".ogg") || fullName.toLowerCase().endsWith(".mp3"))
-      );
+      return fs.statSync(fullName).isFile() && fullName.toLowerCase().endsWith(".mp3");
     })
     .map((x) => {
       const name = `music/${x}`;

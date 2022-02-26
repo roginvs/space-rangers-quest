@@ -73,6 +73,8 @@ const index: Index = {
     quests: { files: [], totalSize: 0 },
     images: { files: [], totalSize: 0 },
     music: { files: [], totalSize: 0 },
+    track: { files: [], totalSize: 0 },
+    sound: { files: [], totalSize: 0 },
   },
 };
 
