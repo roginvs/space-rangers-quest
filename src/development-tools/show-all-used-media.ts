@@ -17,13 +17,24 @@ const quest = parse(data);
 const media = getAllMediaFromQmm(quest);
 
 console.info(`All images:`);
-Object.keys(media.images).forEach((img) => console.info(img));
+Object.keys(media.images)
+  .sort()
+  .forEach((img) => console.info("  " + img));
 console.info("");
 
 console.info(`All sounds:`);
-Object.keys(media.sounds).forEach((sound) => console.info(sound));
+Object.keys(media.sounds)
+  .sort()
+  .forEach((sound) => console.info("  " + sound));
 console.info("");
 
 console.info(`All track:`);
-Object.keys(media.tracks).forEach((track) => console.info(track));
+Object.keys(media.tracks)
+  .sort()
+  .forEach((track) =>
+    console.info(
+      "  " + track + "  ",
+      // + media.tracks[track].join(", ")
+    ),
+  );
 console.info("");
