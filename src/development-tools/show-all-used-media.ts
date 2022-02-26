@@ -6,13 +6,20 @@ import { getAllMediaFromQmm } from "../lib/getAllMediaFromQmm";
 
 /*
 
+# Convert from png to jpg
 for f in *.png; do convert $f -quality 90 $(basename $f .png).jpg; done
 
+# Convert from wav to mp3
 for f in *.wav; do ffmpeg -i $f -acodec mp3 -ab 256k $(basename $f .wav).mp3; done
 
 
 # Generate silence
 ffmpeg -f lavfi -i anullsrc=r=11025:cl=mono -t 3 -acodec mp3 Nation.None.mp3
+
+
+# Fix files which have .mp3 extension but actually ogg
+for f in *.mp3; do mv $f $(basename $f .mp3).ogg; done
+for f in *.ogg; do ffmpeg -i $f -acodec mp3 -ab 256k $(basename $f .ogg).mp3; done
 
 */
 
