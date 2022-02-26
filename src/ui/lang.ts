@@ -86,7 +86,7 @@ const RUS = {
     "Картинки и музыку можно установить отдельно здесь",
 
   images: "Картинки",
-  music: "Музыка",
+  musicAndSound: "Музыка и звуки",
   installing: "Установка",
   installed: "Установлено",
   uninstall: "Удалить",
@@ -208,7 +208,7 @@ const ENG: LangTexts = {
     "Pics and music can be installed separately here",
 
   images: "Pictures",
-  music: "Music",
+  musicAndSound: "Music and sound",
   installing: "Installing",
   installed: "Installed",
   uninstall: "Uninstall",
