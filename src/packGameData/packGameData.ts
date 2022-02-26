@@ -310,6 +310,7 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
         // No check for absolute urls
       } else {
         const localSoundFilename = qmmSound.toLowerCase() + ".mp3";
+        // console.info(localSoundFilename, audibleMedia.sound);
         if (audibleMedia.sound.indexOf(localSoundFilename) < 0) {
           warns.push(
             `Sound ${qmmSound} is from QMM for ${qmShortName}, ` + `but not found in sound dir`,
@@ -327,9 +328,10 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
         // No check for absolute urls
       } else {
         const localTrackFilename = qmmTrack.toLowerCase() + ".mp3";
-        if (audibleMedia.sound.indexOf(localTrackFilename) < 0) {
+        // console.info(localTrackFilename, audibleMedia.track);
+        if (audibleMedia.track.indexOf(localTrackFilename) < 0) {
           warns.push(
-            `Track ${qmmTrack} is from QMM for ${qmShortName}, ` + `but not found in sound dir`,
+            `Track ${qmmTrack} is from QMM for ${qmShortName}, ` + `but not found in track dir`,
           );
         }
       }

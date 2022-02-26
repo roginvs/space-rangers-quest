@@ -8,6 +8,7 @@ import { getAllMediaFromQmm } from "../lib/getAllMediaFromQmm";
 
 for f in *.png; do convert $f -quality 90 $(basename $f .png).jpg; done
 
+for f in *.wav; do ffmpeg -i $f -acodec mp3 -ab 256k $(basename $f .wav).mp3; done
 */
 
 const data = fs.readFileSync(process.argv[2]);
