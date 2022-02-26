@@ -37,6 +37,7 @@ export function Music({ urls: nullableUrls }: { urls: (string | null)[] }) {
       if (!audioElement.current) {
         return;
       }
+      audioElement.current.volume = 0.8;
       void audioElement.current.play();
     };
     document.addEventListener("click", play);
