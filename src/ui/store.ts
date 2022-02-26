@@ -199,6 +199,7 @@ export class Store {
     if (this.musicCacheInstallInfo) {
       return;
     }
+    // tslint:disable-next-line:no-useless-cast
     const DOWNLOAD_AUDIBLE_MEDIA_KEYS = ["music", "sound", "track"] as const;
     this.musicCacheInstallInfo = {
       currentFile: "",
@@ -274,6 +275,18 @@ export class Store {
     }
     await caches.delete(CACHE_IMAGES_NAME);
     this.imagesCache = "no";
+  }
+
+  @computed
+  get defaultMusicList() {
+    const musicFolderList = this.index.dir.music.files.map((fileInfo) => fileInfo.path);
+    const trackFolderList = this.index.dir.track.files.map((fileInfo) => fileInfo.path);
+    const USE_TRACKS_FOLDER = true;
+    if (USE_TRACKS_FOLDER) {
+      return [...musicFolderList, ...trackFolderList];
+    } else {
+      return musicFolderList;
+    }
   }
 }
 

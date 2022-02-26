@@ -12,7 +12,7 @@ for f in *.wav; do ffmpeg -i $f -acodec mp3 -ab 256k $(basename $f .wav).mp3; do
 
 
 # Generate silence
-ffmpeg -f lavfi -i anullsrc=r=11025:cl=mono -t 30 -acodec mp3 Nation.None.mp3
+ffmpeg -f lavfi -i anullsrc=r=11025:cl=mono -t 3 -acodec mp3 Nation.None.mp3
 
 */
 
