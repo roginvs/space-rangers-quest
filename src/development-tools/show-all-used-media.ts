@@ -9,6 +9,11 @@ import { getAllMediaFromQmm } from "../lib/getAllMediaFromQmm";
 for f in *.png; do convert $f -quality 90 $(basename $f .png).jpg; done
 
 for f in *.wav; do ffmpeg -i $f -acodec mp3 -ab 256k $(basename $f .wav).mp3; done
+
+
+# Generate silence
+ffmpeg -f lavfi -i anullsrc=r=11025:cl=mono -t 30 -acodec mp3 Nation.None.mp3
+
 */
 
 const data = fs.readFileSync(process.argv[2]);
@@ -26,7 +31,12 @@ console.info("");
 console.info(`All sounds:`);
 Object.keys(media.sounds)
   .sort()
-  .forEach((sound) => console.info("  " + sound));
+  .forEach((sound) =>
+    console.info(
+      "  " + sound + "  ",
+      //+ media.sounds[sound].join(", ")
+    ),
+  );
 console.info("");
 
 console.info(`All track:`);
@@ -35,7 +45,7 @@ Object.keys(media.tracks)
   .forEach((track) =>
     console.info(
       "  " + track + "  ",
-      // + media.tracks[track].join(", ")
+      //+ media.tracks[track].join(", ")
     ),
   );
 console.info("");
