@@ -45,15 +45,15 @@ export function getAllMediaFromQmm(qmmQuest: Quest) {
     });
   }
 
-  qmmQuest.jumps.forEach((j, jid) => {
-    addSeenMedia(images, j.img, `Jump ${jid}`);
-    addSeenMedia(tracks, j.track, `Jump ${jid}`);
-    addSeenMedia(sounds, j.sound, `Jump ${jid}`);
+  qmmQuest.jumps.forEach((j) => {
+    addSeenMedia(images, j.img, `Jump ${j.id}`);
+    addSeenMedia(tracks, j.track, `Jump ${j.id}`);
+    addSeenMedia(sounds, j.sound, `Jump ${j.id}`);
 
     j.paramsChanges.forEach((p, pid) => {
-      addSeenMedia(images, p.img, `Jump ${jid} p${pid}`);
-      addSeenMedia(tracks, p.track, `Jump ${jid} p${pid}`);
-      addSeenMedia(sounds, p.sound, `Jump ${jid} p${pid}`);
+      addSeenMedia(images, p.img, `Jump ${j.id} p${pid}`);
+      addSeenMedia(tracks, p.track, `Jump ${j.id} p${pid}`);
+      addSeenMedia(sounds, p.sound, `Jump ${j.id} p${pid}`);
     });
   });
 

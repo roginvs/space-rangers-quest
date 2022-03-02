@@ -13,6 +13,7 @@ import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
 import { Quest } from "../lib/qmplayer/funcs";
 import { getAllMediaFromQmm } from "../lib/getAllMediaFromQmm";
 import { writeQmm } from "../lib/qmwriter";
+import { checkQuest } from "./checkQuest";
 
 /*
 
@@ -336,6 +337,8 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
         }
       }
     }
+
+    checkQuest(quest, (warn) => warns.push(`${qmShortName}: ${warn}`));
 
     // tslint:disable-next-line:strict-type-predicates
     if (!outputQmmBuffer) {

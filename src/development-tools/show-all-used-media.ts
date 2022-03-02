@@ -52,7 +52,14 @@ Object.keys(media.tracks)
   .forEach((track) =>
     console.info(
       "  " + track + "  ",
-      //+ media.tracks[track].join(", ")
+      // + media.tracks[track].join(", ")
     ),
   );
 console.info("");
+
+/*
+quest.jumps
+  .map((j) => j.id)
+  .sort((a, b) => a - b)
+  .forEach((id) => console.info(id));
+*/
