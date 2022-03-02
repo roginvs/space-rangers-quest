@@ -32,6 +32,7 @@ const RUS = {
   fromStar: "С системы",
   toPlanet: "Прилетел на планету",
   toStar: "В системе",
+  defaultCompensation: "Награда за квест",
 
   lang: "Язык/Language",
   rus: "Русский",
@@ -155,6 +156,7 @@ const ENG: LangTexts = {
   fromStar: "From the system",
   toPlanet: "Arrived at the planet",
   toStar: "In the system",
+  defaultCompensation: "Default compensation",
 
   lang: "Язык/Language",
   rus: "Русский",

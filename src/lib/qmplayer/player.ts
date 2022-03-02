@@ -19,7 +19,7 @@ export const DEFAULT_RUS_PLAYER: Player = {
   FromStar: "Солнечная",
   ToPlanet: "Боннасис",
   ToStar: "Процион",
-  Money: "65535",
+  Money: "10000",
 
   lang: "rus",
   allowBackButton: false,
@@ -32,7 +32,7 @@ export const DEFAULT_ENG_PLAYER: Player = {
   FromStar: "FromStar",
   ToPlanet: "ToPlanet",
   ToStar: "ToStar",
-  Money: "65535",
+  Money: "10000",
 
   lang: "eng",
   allowBackButton: false,

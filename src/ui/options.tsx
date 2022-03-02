@@ -109,6 +109,17 @@ export class OptionsTabContainer extends React.Component<
                 onChange={(e) => updatePlayer("ToStar", e.target.value)}
               />
             </div>
+
+            <div className="form-group col-md-6">
+              <label>{l.defaultCompensation}</label>
+              <input
+                type="text"
+                className="form-control"
+                placeholder=""
+                value={player.Money}
+                onChange={(e) => updatePlayer("Money", e.target.value)}
+              />
+            </div>
           </div>
         </form>
         <div className="text-center">
