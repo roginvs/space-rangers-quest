@@ -89,6 +89,8 @@ export function EditorCore({
 }) {
   const { quest, setQuest: saveQuestToIdb, undo, redo } = useIdb();
 
+  // (window as any).quest = quest;
+
   const [mouseMode, setMouseMode] = React.useState<EditorMouseMode>("select");
 
   const [overlayMode, setOverlayMode] = React.useState<EditorOverlay | undefined>(undefined);

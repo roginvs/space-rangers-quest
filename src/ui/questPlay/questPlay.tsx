@@ -263,7 +263,9 @@ export function QuestPlay({
         ) : null
       ) : null}
 
-      {isMusic && uistate.soundName ? <Sound url={uistate.soundName} /> : null}
+      {isMusic && uistate.soundName ? (
+        <Sound url={transformMedianameToUrl(uistate.soundName, "sound")} />
+      ) : null}
     </>
   );
 

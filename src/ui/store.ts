@@ -58,6 +58,9 @@ export function splitByBuckets<T>(array: T[], amountOfBuckets: number) {
   return buckets;
 }
 
+// tslint:disable-next-line:no-useless-cast
+const DOWNLOAD_AUDIBLE_MEDIA_KEYS = ["music", "sound", "track"] as const;
+
 export class Store {
   constructor(public index: Index, public app: firebase.app.App, public db: DB, player: Player) {
     window.addEventListener("hashchange", this.setPath);
@@ -173,9 +176,14 @@ export class Store {
   async queryCacheInfo() {
     const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
     let somethingMissingMusic = false;
-    for (const f of this.index.dir.music.files) {
-      if (!(await cacheMusic.match(DATA_DIR + f.path))) {
-        somethingMissingMusic = true;
+    for (const key of DOWNLOAD_AUDIBLE_MEDIA_KEYS) {
+      for (const f of this.index.dir[key].files) {
+        if (!(await cacheMusic.match(DATA_DIR + f.path))) {
+          somethingMissingMusic = true;
+          break;
+        }
+      }
+      if (somethingMissingMusic) {
         break;
       }
     }
@@ -201,16 +209,22 @@ export class Store {
     }
     this.musicCacheInstallInfo = {
       currentFile: "",
-      sizeTotal: this.index.dir.music.totalSize,
+      sizeTotal: DOWNLOAD_AUDIBLE_MEDIA_KEYS.map((key) => this.index.dir[key].totalSize).reduce(
+        (acc, cur) => acc + cur,
+        0,
+      ),
+
       downloaded: 0,
     };
     const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
-    for (const f of this.index.dir.music.files) {
-      this.musicCacheInstallInfo.currentFile = f.path;
-      const url = DATA_DIR + f.path;
-      const data = await fetch(url);
-      await cacheMusic.put(url, data);
-      this.musicCacheInstallInfo.downloaded += f.size;
+    for (const key of DOWNLOAD_AUDIBLE_MEDIA_KEYS) {
+      for (const f of this.index.dir[key].files) {
+        this.musicCacheInstallInfo.currentFile = f.path;
+        const url = DATA_DIR + f.path;
+        const data = await fetch(url);
+        await cacheMusic.put(url, data);
+        this.musicCacheInstallInfo.downloaded += f.size;
+      }
     }
     this.musicCache = "yes";
     this.musicCacheInstallInfo = undefined;
@@ -267,6 +281,18 @@ export class Store {
     }
     await caches.delete(CACHE_IMAGES_NAME);
     this.imagesCache = "no";
+  }
+
+  @computed
+  get defaultMusicList() {
+    const musicFolderList = this.index.dir.music.files.map((fileInfo) => fileInfo.path);
+    const trackFolderList = this.index.dir.track.files.map((fileInfo) => fileInfo.path);
+    const USE_TRACKS_FOLDER = true;
+    if (USE_TRACKS_FOLDER) {
+      return [...musicFolderList, ...trackFolderList];
+    } else {
+      return musicFolderList;
+    }
   }
 }
 

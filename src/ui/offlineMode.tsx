@@ -185,7 +185,7 @@ export class OfflineModeTabContainer extends React.Component<
           </div>
 
           <div className="card">
-            <div className="card-header">{l.music}</div>
+            <div className="card-header">{l.musicAndSound}</div>
             <div className="card-body">
               {store.musicCacheInstallInfo ? (
                 <>
