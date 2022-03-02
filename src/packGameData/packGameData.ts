@@ -376,10 +376,7 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
 }
 
 index.quests = index.quests.sort(
-  // Sort by hardness first
-  // If hardness is zero then sort it as 100
-  // If hardness is the same then use gameName
-  (a, b) => (a.hardness || 100) - (b.hardness || 100) || (a.gameName > b.gameName ? 1 : -1),
+  (a, b) => a.hardness - b.hardness || (a.gameName > b.gameName ? 1 : -1),
 );
 console.info(`Done read, writing result into ${resultJsonFile}`);
 fs.writeFileSync(resultJsonFile, JSON.stringify(index));
