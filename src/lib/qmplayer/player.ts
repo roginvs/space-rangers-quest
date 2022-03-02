@@ -20,7 +20,9 @@ export const DEFAULT_RUS_PLAYER: Player = {
   ToPlanet: "Боннасис",
   ToStar: "Процион",
   Money: "65535",
+
   lang: "rus",
+  allowBackButton: false,
 };
 export const DEFAULT_ENG_PLAYER: Player = {
   // TODO: move from this file
@@ -33,4 +35,5 @@ export const DEFAULT_ENG_PLAYER: Player = {
   Money: "65535",
 
   lang: "eng",
+  allowBackButton: false,
 };
