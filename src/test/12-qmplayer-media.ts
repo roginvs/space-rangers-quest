@@ -110,4 +110,23 @@ describe("Media", function () {
     assert.strictEqual(st.trackName, "track06");
     assert.strictEqual(st.soundName, "sound06");
   });
+
+  it("Media track is cleaned", () => {
+    {
+      const st1 = jumpTo("locMedia");
+      assert.strictEqual(st1.trackName, "track1");
+    }
+    {
+      const st2 = jumpTo("Back");
+      assert.strictEqual(st2.trackName, "track1");
+    }
+    {
+      const st3 = jumpTo("cleanTrack");
+      assert.strictEqual(st3.trackName, null);
+    }
+    {
+      const st4 = jumpTo("Back");
+      assert.strictEqual(st4.trackName, null);
+    }
+  });
 });
