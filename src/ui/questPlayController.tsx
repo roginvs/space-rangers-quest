@@ -186,9 +186,7 @@ export class QuestPlayController extends React.Component<
           location.hash = `/quests/${this.props.gameName}`;
         }}
         busySaving={!!this.state.thinkingSavingWin}
-        l={toJS(this.props.store.l)}
         showTaskInfoOnQuestStart={false}
-        allowBackButton={!!player.allowBackButton}
       />
     );
   }

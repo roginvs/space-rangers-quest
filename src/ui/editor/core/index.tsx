@@ -518,15 +518,18 @@ export function EditorCore({
       <QuestPlay
         quest={quest}
         gameState={isPlaying.gameState}
-        player={{ ...quest.strings, lang: "rus", Player: quest.strings.Ranger }}
+        player={{
+          ...quest.strings,
+          lang: "rus",
+          allowBackButton: true,
+          Player: quest.strings.Ranger,
+        }}
         setGameState={(newState) => setIsPlaying({ gameState: newState })}
         defaultMusicList={undefined}
         isMusic={true}
         setIsMusic={() => {}}
-        l={getLang("rus")}
         onExit={() => setIsPlaying(null)}
         showTaskInfoOnQuestStart={true}
-        allowBackButton={true}
       />
     );
   }

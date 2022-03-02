@@ -9,7 +9,7 @@ import classnames from "classnames";
 
 import "./questPlay.css";
 import { Music } from "./questPlay.music";
-import { LangTexts } from "../lang";
+import { getLang, LangTexts } from "../lang";
 import { QuestPlayImageMobile, QuestPlayImageDesktop } from "./questPlay.image";
 import { DeepImmutable } from "../../lib/qmplayer/deepImmutable";
 import { transformMedianameToUrl } from "./transformMediaNameToUrl";
@@ -124,14 +124,10 @@ export function QuestPlay({
   isMusic,
   setIsMusic,
 
-  l,
-
   onExit,
   busySaving,
 
   showTaskInfoOnQuestStart,
-
-  allowBackButton: allowBack,
 }: {
   quest: Quest;
 
@@ -145,15 +141,13 @@ export function QuestPlay({
   isMusic: boolean;
   setIsMusic: (isMusic: boolean) => void;
 
-  l: LangTexts;
-
   onExit: () => void;
   busySaving?: boolean;
 
   showTaskInfoOnQuestStart: boolean;
-
-  allowBackButton: boolean;
 }) {
+  const l = getLang(player.lang);
+
   const [windowInnerWidth, setWindowInnerWidth] = React.useState(window.innerWidth);
   React.useEffect(() => {
     const onResize = () => {
@@ -501,7 +495,7 @@ export function QuestPlay({
           }}
         >
           <GamePlayButton onClick={onRestartButtonClick}>{restartButtonContent}</GamePlayButton>
-          {allowBack && (
+          {player.allowBackButton && (
             <GamePlayButton disabled={previousGameState === null} onClick={onBackButtonClick}>
               {backButtonContent}
             </GamePlayButton>
