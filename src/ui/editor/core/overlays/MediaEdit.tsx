@@ -33,7 +33,10 @@ export function MediaEdit({
         placeholder="Фоновый трек"
         value={media.track || ""}
         onChange={(e) => setMedia({ ...media, track: e.target.value })}
-        title="Также поддерживаются абсолютные пути к аудио файлам"
+        title={
+          "Также поддерживаются абсолютные пути к аудио файлам\n" +
+          "Специальное значение Quest сбрасывает музыку к дефолтной"
+        }
         disabled={disabled}
       />
       <input

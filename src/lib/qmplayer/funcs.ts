@@ -211,6 +211,13 @@ function getParamsState(quest: Quest, state: GameState, player: Player, random: 
   return paramsState;
 }
 
+function replaceSpecialTrackName(trackName: string | null) {
+  if (trackName === "Quest") {
+    return null;
+  }
+  return trackName;
+}
+
 function calculateLocationShowingTextId(
   location: DeepImmutable<Location>,
   state: GameState,
@@ -306,7 +313,7 @@ export function getUIState(
       ],
       gameState: "running",
       imageName: state.imageName,
-      trackName: state.trackName,
+      trackName: replaceSpecialTrackName(state.trackName),
       soundName: state.soundName,
     };
   } else if (state.state === "location" || state.state === "critonlocation") {
@@ -361,7 +368,7 @@ export function getUIState(
 
       gameState: location.isFailyDeadly ? "dead" : location.isFaily ? "fail" : "running",
       imageName: state.imageName,
-      trackName: state.trackName,
+      trackName: replaceSpecialTrackName(state.trackName),
       soundName: state.soundName,
     };
   } else if (state.state === "critonjump") {
@@ -399,7 +406,7 @@ export function getUIState(
           ? "fail"
           : "dead",
       imageName: state.imageName,
-      trackName: state.trackName,
+      trackName: replaceSpecialTrackName(state.trackName),
       soundName: state.soundName,
     };
   } else if (state.state === "jumpandnextcrit") {
@@ -422,7 +429,7 @@ export function getUIState(
       ],
       gameState: "running",
       imageName: state.imageName,
-      trackName: state.trackName,
+      trackName: replaceSpecialTrackName(state.trackName),
       soundName: state.soundName,
     };
   } else if (state.state === "critonlocationlastmessage") {
@@ -464,7 +471,7 @@ export function getUIState(
           ? "fail"
           : "dead",
       imageName: state.imageName,
-      trackName: state.trackName,
+      trackName: replaceSpecialTrackName(state.trackName),
       soundName: state.soundName,
     };
   } else if (state.state === "returnedending") {
@@ -613,7 +620,7 @@ function performJumpInternal(
   state = {
     ...state,
     imageName: jumpMedia?.img || state.imageName,
-    trackName: jumpMedia?.track || state.trackName,
+    trackName: replaceSpecialTrackName(jumpMedia?.track || state.trackName),
     soundName: jumpMedia?.sound || state.soundName,
   };
 
@@ -686,10 +693,11 @@ function performJumpInternal(
           ...state,
           imageName:
             jump.paramsChanges[critParamId].img || quest.params[critParamId].img || state.imageName,
-          trackName:
+          trackName: replaceSpecialTrackName(
             jump.paramsChanges[critParamId].track ||
-            quest.params[critParamId].track ||
-            state.trackName,
+              quest.params[critParamId].track ||
+              state.trackName,
+          ),
           soundName:
             jump.paramsChanges[critParamId].sound ||
             quest.params[critParamId].sound ||
@@ -739,12 +747,13 @@ function performJumpInternal(
             quest.params[state.critParamId].img ||
             state.imageName
           : state.imageName,
-      trackName:
+      trackName: replaceSpecialTrackName(
         state.critParamId !== null
           ? (jump && jump.paramsChanges[state.critParamId].track) ||
-            quest.params[state.critParamId].track ||
-            state.trackName
+              quest.params[state.critParamId].track ||
+              state.trackName
           : state.trackName,
+      ),
       soundName:
         state.critParamId !== null
           ? (jump && jump.paramsChanges[state.critParamId].sound) ||
@@ -797,7 +806,9 @@ function calculateLocation(
   state = {
     ...state,
     imageName: (location.media[locImgId] && location.media[locImgId].img) || state.imageName,
-    trackName: (location.media[locImgId] && location.media[locImgId].track) || state.trackName,
+    trackName: replaceSpecialTrackName(
+      (location.media[locImgId] && location.media[locImgId].track) || state.trackName,
+    ),
     soundName: (location.media[locImgId] && location.media[locImgId].sound) || state.soundName,
   };
 
@@ -1035,10 +1046,11 @@ function calculateLocation(
         ...state,
         imageName:
           location.paramsChanges[critParam].img || quest.params[critParam].img || state.imageName,
-        trackName:
+        trackName: replaceSpecialTrackName(
           location.paramsChanges[critParam].track ||
-          quest.params[critParam].track ||
-          state.trackName,
+            quest.params[critParam].track ||
+            state.trackName,
+        ),
         soundName:
           location.paramsChanges[critParam].sound ||
           quest.params[critParam].sound ||

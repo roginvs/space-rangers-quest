@@ -125,7 +125,7 @@ describe("Media", function () {
       assert.strictEqual(st3.trackName, null);
     }
     {
-      const st4 = jumpTo("Back");
+      const st4 = jumpTo("back");
       assert.strictEqual(st4.trackName, null);
     }
   });
