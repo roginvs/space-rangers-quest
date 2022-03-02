@@ -526,6 +526,7 @@ export function EditorCore({
         l={getLang("rus")}
         onExit={() => setIsPlaying(null)}
         showTaskInfoOnQuestStart={true}
+        allowBackButton={true}
       />
     );
   }

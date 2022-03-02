@@ -188,6 +188,7 @@ export class QuestPlayController extends React.Component<
         busySaving={!!this.state.thinkingSavingWin}
         l={toJS(this.props.store.l)}
         showTaskInfoOnQuestStart={false}
+        allowBackButton={!!player.allowBackButton}
       />
     );
   }

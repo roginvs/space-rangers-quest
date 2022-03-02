@@ -131,7 +131,7 @@ export function QuestPlay({
 
   showTaskInfoOnQuestStart,
 
-  allowBack,
+  allowBackButton: allowBack,
 }: {
   quest: Quest;
 
@@ -152,7 +152,7 @@ export function QuestPlay({
 
   showTaskInfoOnQuestStart: boolean;
 
-  allowBack?: boolean;
+  allowBackButton: boolean;
 }) {
   const [windowInnerWidth, setWindowInnerWidth] = React.useState(window.innerWidth);
   React.useEffect(() => {

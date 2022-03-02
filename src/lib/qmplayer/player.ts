@@ -9,6 +9,7 @@ export interface Player {
   ToPlanet: string;
   ToStar: string;
   lang: Lang;
+  allowBackButton?: boolean;
 }
 export const DEFAULT_RUS_PLAYER: Player = {
   // TODO: move from this file
