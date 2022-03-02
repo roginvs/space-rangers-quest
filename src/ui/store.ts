@@ -58,6 +58,9 @@ export function splitByBuckets<T>(array: T[], amountOfBuckets: number) {
   return buckets;
 }
 
+// tslint:disable-next-line:no-useless-cast
+const DOWNLOAD_AUDIBLE_MEDIA_KEYS = ["music", "sound", "track"] as const;
+
 export class Store {
   constructor(public index: Index, public app: firebase.app.App, public db: DB, player: Player) {
     window.addEventListener("hashchange", this.setPath);
@@ -173,9 +176,14 @@ export class Store {
   async queryCacheInfo() {
     const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
     let somethingMissingMusic = false;
-    for (const f of this.index.dir.music.files) {
-      if (!(await cacheMusic.match(DATA_DIR + f.path))) {
-        somethingMissingMusic = true;
+    for (const key of DOWNLOAD_AUDIBLE_MEDIA_KEYS) {
+      for (const f of this.index.dir[key].files) {
+        if (!(await cacheMusic.match(DATA_DIR + f.path))) {
+          somethingMissingMusic = true;
+          break;
+        }
+      }
+      if (somethingMissingMusic) {
         break;
       }
     }
@@ -199,8 +207,6 @@ export class Store {
     if (this.musicCacheInstallInfo) {
       return;
     }
-    // tslint:disable-next-line:no-useless-cast
-    const DOWNLOAD_AUDIBLE_MEDIA_KEYS = ["music", "sound", "track"] as const;
     this.musicCacheInstallInfo = {
       currentFile: "",
       sizeTotal: DOWNLOAD_AUDIBLE_MEDIA_KEYS.map((key) => this.index.dir[key].totalSize).reduce(
