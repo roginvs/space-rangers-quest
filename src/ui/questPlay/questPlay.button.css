@@ -22,6 +22,10 @@
 .gameplay-button:hover .gameplay-button-background {
   opacity: 0.8;
 }
+.gameplay-button:disabled .gameplay-button-background {
+  opacity: 0.5; /* Keep previous opacity */
+}
+
 .gameplay-button:hover .gameplay-button-content {
   color: #dadada;
 }
@@ -36,4 +40,8 @@
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.gameplay-button:disabled .gameplay-button-content {
+  color: #777777;
 }

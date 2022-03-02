@@ -61,6 +61,55 @@ function removeSerialEmptyStrings(input: string[]) {
   return output;
 }
 
+/**
+ * Remembers states, clears history on quest state
+ */
+function usePrevGameState<T extends object, Q extends object>(quest: T, state: Q | null): Q | null {
+  const statesHistory = React.useRef<{
+    quest: T;
+    states: Q[];
+  }>({
+    quest,
+    states: [],
+  });
+  if (quest !== statesHistory.current.quest) {
+    statesHistory.current = {
+      quest,
+      states: [],
+    };
+  }
+
+  if (!state) {
+    statesHistory.current.states = [];
+    return null;
+  }
+
+  // First, ensure that current state is always last
+  if (statesHistory.current.states.slice(-1).shift() !== state) {
+    statesHistory.current.states.push(state);
+  }
+
+  // console.info(`States`, statesHistory.current.states);
+
+  // No state to revert
+  if (statesHistory.current.states.length === 1) {
+    return null;
+  }
+
+  // Check that current state is not from the past. If so, then remove all changes after this from the history
+  // A B C D E F D -> A B C D
+  const thisStateIndex = statesHistory.current.states.indexOf(state);
+  if (thisStateIndex < statesHistory.current.states.length - 1) {
+    statesHistory.current.states.splice(thisStateIndex);
+  }
+
+  const prevState = statesHistory.current.states.slice(-2).shift();
+  if (prevState === undefined) {
+    return null;
+  }
+  return prevState;
+}
+
 const MOBILE_THRESHOLD = 768; // 576px 768px
 
 const MAX_DESKTOP_WIDTH = 1300;
@@ -81,6 +130,8 @@ export function QuestPlay({
   busySaving,
 
   showTaskInfoOnQuestStart,
+
+  allowBack,
 }: {
   quest: Quest;
 
@@ -100,6 +151,8 @@ export function QuestPlay({
   busySaving?: boolean;
 
   showTaskInfoOnQuestStart: boolean;
+
+  allowBack?: boolean;
 }) {
   const [windowInnerWidth, setWindowInnerWidth] = React.useState(window.innerWidth);
   React.useEffect(() => {
@@ -123,6 +176,15 @@ export function QuestPlay({
       setGameState(newGameState);
     }
   }, [gameState, setGameState]);
+
+  const previousGameState = usePrevGameState(quest, gameState);
+
+  const backButtonContent = <i className="fa fa-fw fa-step-backward" />;
+  const onBackButtonClick = React.useCallback(() => {
+    if (previousGameState) {
+      setGameState(previousGameState);
+    }
+  }, [previousGameState, setGameState]);
 
   const exitButtonContent = busySaving ? (
     <i className="fa fa-refresh fa-spin fa-fw" />
@@ -439,6 +501,11 @@ export function QuestPlay({
           }}
         >
           <GamePlayButton onClick={onRestartButtonClick}>{restartButtonContent}</GamePlayButton>
+          {allowBack && (
+            <GamePlayButton disabled={previousGameState === null} onClick={onBackButtonClick}>
+              {backButtonContent}
+            </GamePlayButton>
+          )}
           <GamePlayButton onClick={onMusicButtonClick}>{musicButtonContent}</GamePlayButton>
           <GamePlayButton onClick={onFullscreenButtonClick}>
             {fullscreenButtonContent}
