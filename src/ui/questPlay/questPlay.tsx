@@ -99,7 +99,7 @@ export function QuestPlay({
   onExit: () => void;
   busySaving?: boolean;
 
-  showTaskInfoOnQuestStart?: boolean;
+  showTaskInfoOnQuestStart: boolean;
 }) {
   const [windowInnerWidth, setWindowInnerWidth] = React.useState(window.innerWidth);
   React.useEffect(() => {
