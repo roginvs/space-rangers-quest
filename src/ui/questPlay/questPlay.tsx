@@ -543,6 +543,11 @@ export function QuestPlay({
         }}
       >
         <GamePlayButton onClick={onRestartButtonClick}>{restartButtonContent}</GamePlayButton>
+        {player.allowBackButton && (
+          <GamePlayButton disabled={previousGameState === null} onClick={onBackButtonClick}>
+            {backButtonContent}
+          </GamePlayButton>
+        )}
         <GamePlayButton onClick={onMusicButtonClick}>{musicButtonContent}</GamePlayButton>
         <GamePlayButton onClick={onFullscreenButtonClick}>{fullscreenButtonContent}</GamePlayButton>
         <GamePlayButton onClick={onExit}>{exitButtonContent}</GamePlayButton>
