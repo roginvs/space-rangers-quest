@@ -124,6 +124,8 @@ export function initGame(quest: Quest, seed: string): GameState {
   return state;
 }
 
+export const TRACK_NAME_RESET_DEFAULT_MUSIC = "Quest";
+
 export function SRDateToString(
   daysToAdd: number,
   lang: Lang,
@@ -212,7 +214,7 @@ function getParamsState(quest: Quest, state: GameState, player: Player, random: 
 }
 
 function replaceSpecialTrackName(trackName: string | null) {
-  if (trackName === "Quest") {
+  if (trackName === TRACK_NAME_RESET_DEFAULT_MUSIC) {
     return null;
   }
   return trackName;

@@ -10,7 +10,7 @@ import { Index, Game, PQIParsed } from "./defs";
 import { scanAndCopyImages } from "./images";
 import { scanAndCopyMusicAndSoundAndTrack } from "./music";
 import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
-import { Quest } from "../lib/qmplayer/funcs";
+import { Quest, TRACK_NAME_RESET_DEFAULT_MUSIC } from "../lib/qmplayer/funcs";
 import { getAllMediaFromQmm } from "../lib/getAllMediaFromQmm";
 import { writeQmm } from "../lib/qmwriter";
 import { checkQuest } from "./checkQuest";
@@ -327,6 +327,8 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
         qmmTrack.toLowerCase().startsWith("https://")
       ) {
         // No check for absolute urls
+      } else if (qmmTrack === TRACK_NAME_RESET_DEFAULT_MUSIC) {
+        // Special name to reset music to default random
       } else {
         const localTrackFilename = qmmTrack.toLowerCase() + ".mp3";
         // console.info(localTrackFilename, audibleMedia.track);
