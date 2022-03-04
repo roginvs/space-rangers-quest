@@ -6,6 +6,7 @@ export class DivFadeinCss extends React.Component<
   {
     className?: string;
     tagName?: "div";
+    style?: React.CSSProperties;
   },
   {
     entered: boolean;
@@ -38,6 +39,7 @@ export class DivFadeinCss extends React.Component<
     const TagName = this.props.tagName || "div";
     return (
       <TagName
+        style={this.props.style}
         className={
           "fade-enter" +
           (this.state.entered ? " fade-enter-active" : "") +
