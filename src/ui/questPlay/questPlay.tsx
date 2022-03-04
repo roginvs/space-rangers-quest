@@ -231,7 +231,12 @@ export function QuestPlay({
   );
 
   const locationText = (
-    <DivFadeinCss key={`${uistate.text}#${gameState.performedJumps.length}`}>
+    <DivFadeinCss
+      key={`${uistate.text}#${gameState.performedJumps.length}`}
+      style={{
+        overflowX: "auto",
+      }}
+    >
       <QuestReplaceTags str={uistate.text} />
     </DivFadeinCss>
   );
