@@ -93,20 +93,19 @@ async function initDatabase() {
       // toast("IndexedDB error: " + idb.error?.message);
     };
 
-    idb.onsuccess = (e: any) => resolve(e.target.result);
-    idb.onupgradeneeded = (e: any) => {
+    idb.onsuccess = (e) => resolve(idb.result);
+    idb.onupgradeneeded = (event) => {
       console.info("onupgradeneeded");
-      const db: IDBDatabase = e.target.result;
-      // console.info(`Old version=${db.}`)
+      const db = idb.result;
 
-      if (!db.objectStoreNames.contains(INDEXEDDB_EDITOR_AUTOSAVE_STORE)) {
+      console.info(`Old version=${event.oldVersion}`);
+
+      if (event.oldVersion < 7) {
         console.info(`Creating ${INDEXEDDB_EDITOR_AUTOSAVE_STORE} store`);
         db.createObjectStore(INDEXEDDB_EDITOR_AUTOSAVE_STORE, {
           // keyPath: false,
           autoIncrement: false,
         });
-      } else {
-        console.info(`It contains ${INDEXEDDB_EDITOR_AUTOSAVE_STORE} store`);
       }
     };
   });
