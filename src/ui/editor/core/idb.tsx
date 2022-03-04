@@ -74,8 +74,9 @@ async function readQuest(db: IDBDatabase, index: number): Promise<QuestWithMetad
 
     const request = objectStore.get(index);
     request.onsuccess = () => {
-      if (request.result) {
-        resolve(request.result);
+      const result = request.result;
+      if (result) {
+        resolve(result);
       } else {
         resolve(null);
       }
