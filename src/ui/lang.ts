@@ -257,6 +257,11 @@ export function getLang(lang: Lang) {
 }
 
 function guessBrowserLang(): Lang {
+  // Пущай уже русский язык будет всегда, потому как бот гугла индексирует по-английски
+  return "rus";
+}
+
+function guessBrowserLangOld(): Lang {
   // tslint:disable-next-line:strict-type-predicates
   if (typeof navigator === "undefined") {
     // To run inside tests
