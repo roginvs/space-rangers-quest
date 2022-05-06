@@ -14,6 +14,7 @@ import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
 import { SRDateToString } from "../lib/qmplayer/funcs";
 import { QuestReplaceTags } from "./questReplaceTags";
 import { getMagicSlots } from "./questList.magicSlots";
+import { computed } from "mobx";
 
 interface QuestListState {
   dropdownOpen: boolean;
@@ -41,18 +42,20 @@ export class QuestList extends React.Component<
       window.scrollTo(0, this.props.store.lastQuestListScroll);
     }
   }
-  render() {
-    const { l, player, index } = this.props.store;
-    const passedQuests = this.props.store.wonProofs;
-    const store = this.props.store;
 
-    const origins = index.quests
-      .filter((x) => x.lang === player.lang)
+  @computed
+  get origins() {
+    return this.props.store.index.quests
+      .filter((x) => x.lang === this.props.store.player.lang)
       .map((x) => x.questOrigin)
       .reduce((acc, d) => (acc.indexOf(d) > -1 ? acc : acc.concat(d)), [] as string[]);
+  }
 
-    const allQuestsForThisUser = index.quests
-      .filter((quest) => quest.lang === player.lang)
+  @computed
+  get allQuestsForThisUser() {
+    const passedQuests = this.props.store.wonProofs;
+    return this.props.store.index.quests
+      .filter((quest) => quest.lang === this.props.store.player.lang)
       .map((quest) => ({
         ...quest,
         passedAt: (() => {
@@ -79,10 +82,14 @@ export class QuestList extends React.Component<
           }
           return new Date(firstPassedAt);
         })(),
-        taskText: getGameTaskText(quest.taskText, player),
+        taskText: getGameTaskText(quest.taskText, this.props.store.player),
       }));
+  }
 
-    const questsToShow = allQuestsForThisUser
+  @computed
+  get questsToShow() {
+    const store = this.props.store;
+    return this.allQuestsForThisUser
       .filter((quest) =>
         store.questsListTab !== QUEST_SEARCH_ALL ? quest.questOrigin === store.questsListTab : true,
       )
@@ -92,10 +99,11 @@ export class QuestList extends React.Component<
             quest.taskText.toLowerCase().indexOf(store.questsListSearch.toLowerCase()) > -1
           : true,
       );
+  }
 
-    const allQuestsForThisUserPassed = allQuestsForThisUser.filter((quest) => quest.passedAt);
-
-    const allGamesInPseudoRandomOrder = allQuestsForThisUser
+  @computed
+  get proposedSlots() {
+    const allGamesInPseudoRandomOrder = this.allQuestsForThisUser
       .map((quest) => {
         // Tried to find combination which moves some nice quests to the beginning
         // const somePrimeNumbers = [3, 439, 443, 449, 457, 461, 463, 467, 479, 487, 491, 499, 503];
@@ -116,7 +124,7 @@ export class QuestList extends React.Component<
       })
       .sort((a, b) => a.orderValue - b.orderValue || (a.gameName > b.gameName ? 1 : -1))
       .map((x) => x.gameName);
-    const passedGamesInPassingOrder = allQuestsForThisUser
+    const passedGamesInPassingOrder = this.allQuestsForThisUser
       .map((quest, index) => ({
         gameName: quest.gameName,
         order:
@@ -131,6 +139,18 @@ export class QuestList extends React.Component<
       .map((x) => x.gameName);
 
     const proposedSlots = getMagicSlots(allGamesInPseudoRandomOrder, passedGamesInPassingOrder, 3);
+
+    return proposedSlots;
+  }
+
+  render() {
+    const { l } = this.props.store;
+
+    const store = this.props.store;
+
+    const allQuestsForThisUser = this.allQuestsForThisUser;
+    const allQuestsForThisUserPassed = this.allQuestsForThisUser.filter((quest) => quest.passedAt);
+
     // console.info(allGamesInPseudoRandomOrder, passedGamesInPassingOrder, proposedSlots);
 
     return (
@@ -164,7 +184,7 @@ export class QuestList extends React.Component<
                     {l.all}
                   </DropdownItem>
                   <DropdownItem divider />
-                  {origins.map((originName) => (
+                  {this.origins.map((originName) => (
                     <DropdownItem
                       key={originName}
                       onClick={() => (store.questsListTab = originName)}
@@ -201,11 +221,11 @@ export class QuestList extends React.Component<
             </div>
           </div>
 
-          {questsToShow.length > 0 ? (
+          {this.questsToShow.length > 0 ? (
             <>
               <div className="row mb-2 mt-0">
-                {proposedSlots.filter((x) => x).length > 0 && true ? (
-                  proposedSlots.map((slotGameName) =>
+                {this.proposedSlots.filter((x) => x).length > 0 && true ? (
+                  this.proposedSlots.map((slotGameName) =>
                     slotGameName ? (
                       <div className="col-md-4 col-12" key={slotGameName}>
                         <button
@@ -238,7 +258,7 @@ export class QuestList extends React.Component<
               </div>
 
               <div className="list-group">
-                {questsToShow.map((quest) => (
+                {this.questsToShow.map((quest) => (
                   <a
                     href={`#/quests/${quest.gameName}`}
                     key={quest.gameName}
