@@ -6,6 +6,7 @@ type SoundAndTrackIndexDir = Pick<Index["dir"], "sound" | "track">;
 export function scanAndCopySoundAndTrack(
   dataSrcPath: string,
   dataDstPath: string,
+  onWarn: (warnMsg: string) => void,
 ): SoundAndTrackIndexDir {
   const indexDir: SoundAndTrackIndexDir = {
     sound: {
@@ -17,6 +18,22 @@ export function scanAndCopySoundAndTrack(
       files: [],
     },
   };
+
+  const trackRandomIgnoreFileName = dataSrcPath + "/track/randomignore.txt";
+
+  let tracksRandomIngore = fs.existsSync(trackRandomIgnoreFileName)
+    ? fs
+        .readFileSync(trackRandomIgnoreFileName)
+        .toString()
+        .split("\n")
+        .map((fName) => fName.trim().toLowerCase())
+        .filter((fName) => fName)
+    : undefined;
+  if (!tracksRandomIngore) {
+    onWarn(
+      `No ${trackRandomIgnoreFileName} file found, all tracks will be used in random shuffle `,
+    );
+  }
 
   // tslint:disable-next-line:no-useless-cast
   for (const folderName of ["sound", "track"] as const) {
@@ -47,17 +64,28 @@ export function scanAndCopySoundAndTrack(
           });
         } else {
           console.error(`\n\n\n\TODO: read randomingore.txt\n\n\n`);
+          const foundInIngoreList = tracksRandomIngore
+            ? tracksRandomIngore.includes(fileShortName)
+            : false;
+
           indexDir[folderName].files.push({
             fileName: fileShortName,
             filePath: folderName + "/",
             size: fileSize,
             // TODO TODO
-            useForRandomMusic: true,
+            useForRandomMusic: !foundInIngoreList,
           });
+          if (foundInIngoreList) {
+            tracksRandomIngore = tracksRandomIngore?.filter((fName) => fName !== fileShortName);
+          }
         }
         indexDir[folderName].totalSize += fileSize;
       });
   }
+
+  tracksRandomIngore?.forEach((fname) =>
+    onWarn(`Tracks ingore file have '${fname}' line but this track is not found`),
+  );
 
   return indexDir;
 }

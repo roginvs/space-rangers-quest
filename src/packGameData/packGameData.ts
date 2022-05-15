@@ -70,7 +70,9 @@ for (const d of ["img", "qm", "track", "sound"]) {
 
 const indexDirImages = scanAndCopyImages(dataSrcPath, dataDstPath);
 
-const indexDirAudibleMedia = scanAndCopySoundAndTrack(dataSrcPath, dataDstPath);
+const indexDirAudibleMedia = scanAndCopySoundAndTrack(dataSrcPath, dataDstPath, (warn) =>
+  warns.push(warn),
+);
 
 const index: Index = {
   quests: [],
