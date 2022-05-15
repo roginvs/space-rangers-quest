@@ -42,14 +42,14 @@ export function scanAndCopySoundAndTrack(
         if (folderName === "sound") {
           indexDir[folderName].files.push({
             fileName: fileShortName,
-            filePath: folderName,
+            filePath: folderName + "/",
             size: fileSize,
           });
         } else {
           console.error(`\n\n\n\TODO: read randomingore.txt\n\n\n`);
           indexDir[folderName].files.push({
             fileName: fileShortName,
-            filePath: folderName,
+            filePath: folderName + "/",
             size: fileSize,
             // TODO TODO
             useForRandomMusic: true,
