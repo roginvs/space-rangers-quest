@@ -110,16 +110,26 @@ export class QuestList extends React.Component<
         // const somePrimeNumbers = [439, 443, 467, 479, 487, 491, 499, 503];
         // const somePrimeNumbers = [953, 967, 971, 977, 983, 991, 997];
         const somePrimeNumbers = [967, 971, 977, 983, 991, 997];
+
+        const isQuestFromTheGame =
+          quest.questOrigin.startsWith("SR ") || quest.questOrigin.startsWith("КР ");
+
+        const computedOrderValue = quest.gameName
+          .split("")
+          .map((char) => char.charCodeAt(0))
+          .map(
+            (charCode, index) =>
+              charCode * somePrimeNumbers[index % somePrimeNumbers.length] + quest.hardness * 727,
+          )
+          .reduce((acc, val) => (acc + val) % 1000, 0);
+        const hardcodedOrderValueForFansQuests = 2000;
+        const orderValue = isQuestFromTheGame
+          ? computedOrderValue
+          : hardcodedOrderValueForFansQuests;
+
         return {
           gameName: quest.gameName,
-          orderValue: quest.gameName
-            .split("")
-            .map((char) => char.charCodeAt(0))
-            .map(
-              (charCode, index) =>
-                charCode * somePrimeNumbers[index % somePrimeNumbers.length] + quest.hardness * 727,
-            )
-            .reduce((acc, val) => (acc + val) % 1000, 0),
+          orderValue,
         };
       })
       .sort((a, b) => a.orderValue - b.orderValue || (a.gameName > b.gameName ? 1 : -1))
