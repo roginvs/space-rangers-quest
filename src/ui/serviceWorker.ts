@@ -57,7 +57,9 @@ self.addEventListener("install", (event) => {
         `Serviceworker opened quests cache='${CACHE_QUESTS_NAME}', ` +
           `downloading quests size=${data.dir.quests.totalSize}`,
       );
-      await cacheQuests.addAll(data.dir.quests.files.map((quest) => DATA_DIR + quest.path));
+      await cacheQuests.addAll(
+        data.dir.quests.files.map((quest) => DATA_DIR + quest.filePath + quest.fileName),
+      );
 
       /*
             await Promise.all((async quest => {

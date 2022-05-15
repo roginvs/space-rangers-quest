@@ -14,11 +14,17 @@ export interface Game {
   lang: Lang;
 }
 
-export interface CacheFilesList {
-  files: {
-    path: string;
-    size: number;
-  }[];
+interface CacheFile {
+  fileName: string;
+  /** This path have ending slash */
+  filePath: string;
+  size: number;
+}
+interface CacheFileTrack extends CacheFile {
+  useForRandomMusic: boolean;
+}
+export interface CacheFilesList<T extends CacheFile = CacheFile> {
+  files: T[];
   totalSize: number;
 }
 
@@ -27,8 +33,7 @@ export interface Index {
   dir: {
     quests: CacheFilesList;
     images: CacheFilesList;
-    music: CacheFilesList;
-    track: CacheFilesList;
+    track: CacheFilesList<CacheFileTrack>;
     sound: CacheFilesList;
   };
 }
