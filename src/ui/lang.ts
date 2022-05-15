@@ -256,15 +256,47 @@ export function getLang(lang: Lang) {
   }
 }
 
-function guessBrowserLang(): Lang {
-  // Пущай уже русский язык будет всегда, потому как бот гугла индексирует по-английски
-  return "rus";
+function isBot() {
+  if (!window.indexedDB) {
+    return true;
+  }
+  if (navigator.webdriver) {
+    return true;
+  }
+  if (/bot|google|baidu|bing|msn|teoma|slurp|yandex/i.test(navigator.userAgent)) {
+    return true;
+  }
+  if (
+    /spider|crawl|APIs-Google|AdsBot|Googlebot|mediapartners|Google Favicon|FeedFetcher/i.test(
+      navigator.userAgent,
+    )
+  ) {
+    return true;
+  }
+  if (
+    /Google-Read-Aloud|DuplexWeb-Google|googleweblight|duckduck|yahoo|ecosia|ia_archiver|facebook/i.test(
+      navigator.userAgent,
+    )
+  ) {
+    return true;
+  }
+  if (
+    /instagram|pinterest|reddit|slack|twitter|whatsapp|youtube|semrush/i.test(navigator.userAgent)
+  ) {
+    return true;
+  }
+  return false;
 }
 
-function guessBrowserLangOld(): Lang {
+function guessBrowserLang(): Lang {
   // tslint:disable-next-line:strict-type-predicates
   if (typeof navigator === "undefined") {
     // To run inside tests
+    return "rus";
+  }
+
+  if (isBot()) {
+    // Это чтобы индексировалась русская версия
     return "rus";
   }
 
