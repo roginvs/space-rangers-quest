@@ -174,6 +174,9 @@ export class Store {
   @observable musicCacheInstallInfo: CacheInstallInfo | undefined;
 
   async queryCacheInfo() {
+    // To remove use
+    // await caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key))))
+    //
     const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
     let somethingMissingMusic = false;
     for (const key of DOWNLOAD_AUDIBLE_MEDIA_KEYS) {
