@@ -27,6 +27,9 @@ export function scanAndCopySoundAndTrack(
         .toString()
         .split("\n")
         .map((fName) => fName.trim().toLowerCase())
+        // Ignore whatever follows # symbol
+        .map((fName) => fName.split("#")[0])
+        .map((fName) => fName.trim())
         .filter((fName) => fName)
     : undefined;
   if (!tracksRandomIngore) {
@@ -66,7 +69,7 @@ export function scanAndCopySoundAndTrack(
           const foundInIngoreList = tracksRandomIngore
             ? tracksRandomIngore.includes(fileShortName)
             : false;
-
+          console.info(`  ${fileShortName} useForRandomMusic=${!foundInIngoreList}`);
           indexDir[folderName].files.push({
             fileName: fileShortName,
             filePath: folderName + "/",
