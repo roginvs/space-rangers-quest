@@ -63,7 +63,6 @@ export function scanAndCopySoundAndTrack(
             size: fileSize,
           });
         } else {
-          console.error(`\n\n\n\TODO: read randomingore.txt\n\n\n`);
           const foundInIngoreList = tracksRandomIngore
             ? tracksRandomIngore.includes(fileShortName)
             : false;
