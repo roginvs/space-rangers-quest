@@ -74,7 +74,6 @@ export function scanAndCopySoundAndTrack(
             fileName: fileShortName,
             filePath: folderName + "/",
             size: fileSize,
-            // TODO TODO
             useForRandomMusic: !foundInIngoreList,
           });
           if (foundInIngoreList) {
