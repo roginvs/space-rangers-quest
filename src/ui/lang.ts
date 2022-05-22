@@ -103,6 +103,7 @@ const RUS = {
 
   validatingInfo: "Прохождения проверяются, это займёт какое-то время",
   validationComplete: "Проверка завершена. Показываются проверенные результаты",
+  championsDisabled: "Таблица чемпионов временно не работает из-за лимитов firebase",
   championName: "Имя рейнджера",
   championWonGames: "Пройдено квестов",
   championGameNames: "Список пройденный квестов",
@@ -226,6 +227,7 @@ const ENG: LangTexts = {
 
   validatingInfo: "Quest game passing is validating. Please be patient",
   validationComplete: "Validation is complete. Only validated results are shown now",
+  championsDisabled: "Championship table is temporarely disabled due to firebase limits",
   championName: "Ranger's name",
   championWonGames: "Amount of passed quests",
   championGameNames: "Список пройденный квестов",

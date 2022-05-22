@@ -28,6 +28,27 @@ export class ChampionsTabContainer extends React.Component<
   },
   {}
 > {
+  render() {
+    const l = this.props.store.l;
+
+    // console.info(champions);
+    return (
+      <DivFadeinCss key="championsstub" className="text-center container my-3">
+        <div>
+          <div className="alert alert-primary">{l.championsDisabled}</div>
+        </div>
+      </DivFadeinCss>
+    );
+  }
+}
+
+@observer
+export class ChampionsTabContainerOld extends React.Component<
+  {
+    store: Store;
+  },
+  {}
+> {
   @observable
   champions: FirebasePublicWithValidateStatus[] | null | undefined = undefined;
 
