@@ -30,5 +30,9 @@ export function scanAndCopyImages(dataSrcPath: string, dataDstPath: string) {
 
       return imgShortName.toLowerCase();
     });
+  console.info(
+    `  Copied ${indexDir.images.files.length} files, ${indexDir.images.totalSize} bytes total ` +
+      `(~${Math.round(indexDir.images.totalSize / 1024 / 1024)}mb)`,
+  );
   return indexDir;
 }
