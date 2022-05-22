@@ -59,7 +59,7 @@ export function splitByBuckets<T>(array: T[], amountOfBuckets: number) {
 }
 
 // tslint:disable-next-line:no-useless-cast
-const DOWNLOAD_AUDIBLE_MEDIA_KEYS = ["music", "sound", "track"] as const;
+const DOWNLOAD_AUDIBLE_MEDIA_KEYS = ["sound", "track"] as const;
 
 export class Store {
   constructor(public index: Index, public app: firebase.app.App, public db: DB, player: Player) {
@@ -174,11 +174,14 @@ export class Store {
   @observable musicCacheInstallInfo: CacheInstallInfo | undefined;
 
   async queryCacheInfo() {
+    // To remove use
+    // await caches.keys().then(keys => Promise.all(keys.map(key => caches.delete(key))))
+    //
     const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
     let somethingMissingMusic = false;
     for (const key of DOWNLOAD_AUDIBLE_MEDIA_KEYS) {
       for (const f of this.index.dir[key].files) {
-        if (!(await cacheMusic.match(DATA_DIR + f.path))) {
+        if (!(await cacheMusic.match(DATA_DIR + f.filePath + f.fileName))) {
           somethingMissingMusic = true;
           break;
         }
@@ -194,7 +197,7 @@ export class Store {
     const cacheImages = await caches.open(CACHE_IMAGES_NAME);
     let somethingMissingImages = false;
     for (const f of this.index.dir.images.files) {
-      if (!(await cacheImages.match(DATA_DIR + f.path))) {
+      if (!(await cacheImages.match(DATA_DIR + f.filePath + f.fileName))) {
         somethingMissingImages = true;
         break;
       }
@@ -219,8 +222,8 @@ export class Store {
     const cacheMusic = await caches.open(CACHE_MUSIC_NAME_MP3);
     for (const key of DOWNLOAD_AUDIBLE_MEDIA_KEYS) {
       for (const f of this.index.dir[key].files) {
-        this.musicCacheInstallInfo.currentFile = f.path;
-        const url = DATA_DIR + f.path;
+        this.musicCacheInstallInfo.currentFile = f.fileName;
+        const url = DATA_DIR + f.filePath + f.fileName;
         const data = await fetch(url);
         await cacheMusic.put(url, data);
         this.musicCacheInstallInfo.downloaded += f.size;
@@ -249,7 +252,7 @@ export class Store {
       await Promise.all(
         filesBuckets.map(async (filesBucket) => {
           for (const file of filesBucket) {
-            const url = DATA_DIR + file.path;
+            const url = DATA_DIR + file.filePath + file.fileName;
             const data = await fetch(url);
             await cacheImages.put(url, data);
             imagesCacheInstallInfo.downloaded += file.size;
@@ -258,8 +261,8 @@ export class Store {
       );
     } else {
       for (const f of this.index.dir.images.files) {
-        this.imagesCacheInstallInfo.currentFile = f.path;
-        const url = DATA_DIR + f.path;
+        this.imagesCacheInstallInfo.currentFile = f.fileName;
+        const url = DATA_DIR + f.filePath + f.fileName;
         const data = await fetch(url);
         await cacheImages.put(url, data);
         this.imagesCacheInstallInfo.downloaded += f.size;
@@ -285,14 +288,10 @@ export class Store {
 
   @computed
   get defaultMusicList() {
-    const musicFolderList = this.index.dir.music.files.map((fileInfo) => fileInfo.path);
-    const trackFolderList = this.index.dir.track.files.map((fileInfo) => fileInfo.path);
-    const USE_TRACKS_FOLDER = true;
-    if (USE_TRACKS_FOLDER) {
-      return [...musicFolderList, ...trackFolderList];
-    } else {
-      return musicFolderList;
-    }
+    const trackFolderList = this.index.dir.track.files
+      .filter((fileInfo) => fileInfo.useForRandomMusic)
+      .map((fileInfo) => fileInfo.filePath + fileInfo.fileName);
+    return trackFolderList;
   }
 }
 

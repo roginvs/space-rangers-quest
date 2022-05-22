@@ -8,7 +8,7 @@ import { PQImages } from "../lib/pqImages";
 import { readPqi } from "./pqi";
 import { Index, Game, PQIParsed } from "./defs";
 import { scanAndCopyImages } from "./images";
-import { scanAndCopyMusicAndSoundAndTrack } from "./music";
+import { scanAndCopySoundAndTrack } from "./music";
 import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
 import { Quest, TRACK_NAME_RESET_DEFAULT_MUSIC } from "../lib/qmplayer/funcs";
 import { getAllMediaFromQmm } from "../lib/getAllMediaFromQmm";
@@ -20,7 +20,7 @@ import { checkQuest } from "./checkQuest";
 This script prepares data and build index.json file
 
 Data is copied from borrowed folder into build-web/data and modified if needed
- - copy music
+ - copy tracks
  - copy images and change filename to lowercase
  - copy qm/qmm and re-save them as qmm with images and compress into .gz
  - write index.json
@@ -62,26 +62,26 @@ console.info(`Creating destination folders`);
 if (!fs.existsSync(dataDstPath)) {
   fs.mkdirSync(dataDstPath);
 }
-for (const d of ["img", "qm", "music", "track", "sound"]) {
+for (const d of ["img", "qm", "track", "sound"]) {
   if (!fs.existsSync(dataDstPath + "/" + d)) {
     fs.mkdirSync(dataDstPath + "/" + d);
   }
 }
 
+const indexDirImages = scanAndCopyImages(dataSrcPath, dataDstPath);
+
+const indexDirAudibleMedia = scanAndCopySoundAndTrack(dataSrcPath, dataDstPath, (warn) =>
+  warns.push(warn),
+);
+
 const index: Index = {
   quests: [],
   dir: {
     quests: { files: [], totalSize: 0 },
-    images: { files: [], totalSize: 0 },
-    music: { files: [], totalSize: 0 },
-    track: { files: [], totalSize: 0 },
-    sound: { files: [], totalSize: 0 },
+    ...indexDirImages,
+    ...indexDirAudibleMedia,
   },
 };
-
-const allImages = scanAndCopyImages(dataSrcPath, dataDstPath, index);
-
-const audibleMedia = scanAndCopyMusicAndSoundAndTrack(dataSrcPath, dataDstPath, index);
 
 const pqiSR1Parsed = JSON.parse(
   fs.readFileSync(__dirname + "/../../src/sr1-pqi.json").toString(),
@@ -133,7 +133,11 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
           // No check for absolute urls
         } else {
           const localImageFilename = qmmImage.toLowerCase() + ".jpg";
-          if (allImages.indexOf(localImageFilename) < 0) {
+          if (
+            !index.dir.images.files.find(
+              (imageCandidate) => imageCandidate.fileName === localImageFilename,
+            )
+          ) {
             warns.push(
               `Image ${qmmImage} is from QMM for ${qmShortName}, ` + `but not found in img dir`,
             );
@@ -312,7 +316,11 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
       } else {
         const localSoundFilename = qmmSound.toLowerCase() + ".mp3";
         // console.info(localSoundFilename, audibleMedia.sound);
-        if (audibleMedia.sound.indexOf(localSoundFilename) < 0) {
+        if (
+          !index.dir.sound.files.find(
+            (soundCandidate) => soundCandidate.fileName === localSoundFilename,
+          )
+        ) {
           warns.push(
             `Sound ${qmmSound} is from QMM for ${qmShortName}, ` + `but not found in sound dir`,
           );
@@ -332,7 +340,11 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
       } else {
         const localTrackFilename = qmmTrack.toLowerCase() + ".mp3";
         // console.info(localTrackFilename, audibleMedia.track);
-        if (audibleMedia.track.indexOf(localTrackFilename) < 0) {
+        if (
+          !index.dir.track.files.find(
+            (soundCandidate) => soundCandidate.fileName === localTrackFilename,
+          )
+        ) {
           warns.push(
             `Track ${qmmTrack} is from QMM for ${qmShortName}, ` + `but not found in track dir`,
           );
@@ -370,7 +382,8 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
 
     const gzFileSize = fs.statSync(dataDstPath + "/qm/" + qmShortName + ".gz").size;
     index.dir.quests.files.push({
-      path: gameFilePath,
+      fileName: qmShortName + ".gz",
+      filePath: "qm/",
       size: gzFileSize,
     });
     index.dir.quests.totalSize += gzFileSize;

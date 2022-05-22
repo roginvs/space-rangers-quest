@@ -2,25 +2,52 @@ import * as fs from "fs";
 import { Index } from "./defs";
 import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
 
-export function scanAndCopyMusicAndSoundAndTrack(
+type SoundAndTrackIndexDir = Pick<Index["dir"], "sound" | "track">;
+export function scanAndCopySoundAndTrack(
   dataSrcPath: string,
   dataDstPath: string,
-  index: Index,
-) {
-  const copyAudibleMedia = (folderName: "music" | "sound" | "track") => {
+  onWarn: (warnMsg: string) => void,
+): SoundAndTrackIndexDir {
+  const indexDir: SoundAndTrackIndexDir = {
+    sound: {
+      totalSize: 0,
+      files: [],
+    },
+    track: {
+      totalSize: 0,
+      files: [],
+    },
+  };
+
+  const trackRandomIgnoreFileName = dataSrcPath + "/track/randomignore.txt";
+
+  let tracksRandomIngore = fs.existsSync(trackRandomIgnoreFileName)
+    ? fs
+        .readFileSync(trackRandomIgnoreFileName)
+        .toString()
+        .split("\n")
+        .map((fName) => fName.trim().toLowerCase())
+        .filter((fName) => fName)
+    : undefined;
+  if (!tracksRandomIngore) {
+    onWarn(
+      `No ${trackRandomIgnoreFileName} file found, all tracks will be used in random shuffle `,
+    );
+  }
+
+  // tslint:disable-next-line:no-useless-cast
+  for (const folderName of ["sound", "track"] as const) {
     console.info(`Copying ${folderName}`);
-    const audibleList = fs
-      .readdirSync(dataSrcPath + "/" + folderName)
+    fs.readdirSync(dataSrcPath + "/" + folderName)
       .filter((x) => {
         const fullName = dataSrcPath + "/" + folderName + "/" + x;
         return fs.statSync(fullName).isFile() && fullName.toLowerCase().endsWith(".mp3");
       })
-      .map((fileShortInitialName) => {
+      .forEach((fileShortInitialName) => {
         // No lowercase for random music because it was already chched
         // And it is never linked from other source, player just player whatever in the folder
         // (Sounds and Tracks are linked from qmm file)
-        const fileShortName =
-          folderName !== "music" ? fileShortInitialName.toLowerCase() : fileShortInitialName;
+        const fileShortName = fileShortInitialName.toLowerCase();
         const name = `${folderName}/${fileShortName}`;
         if (!DEBUG_SPEEDUP_SKIP_COPING) {
           fs.writeFileSync(
@@ -29,16 +56,36 @@ export function scanAndCopyMusicAndSoundAndTrack(
           );
         }
         const fileSize = fs.statSync(dataDstPath + "/" + name).size;
-        index.dir[folderName].files.push({ path: name, size: fileSize });
-        index.dir[folderName].totalSize += fileSize;
+        if (folderName === "sound") {
+          indexDir[folderName].files.push({
+            fileName: fileShortName,
+            filePath: folderName + "/",
+            size: fileSize,
+          });
+        } else {
+          console.error(`\n\n\n\TODO: read randomingore.txt\n\n\n`);
+          const foundInIngoreList = tracksRandomIngore
+            ? tracksRandomIngore.includes(fileShortName)
+            : false;
 
-        return fileShortName;
+          indexDir[folderName].files.push({
+            fileName: fileShortName,
+            filePath: folderName + "/",
+            size: fileSize,
+            // TODO TODO
+            useForRandomMusic: !foundInIngoreList,
+          });
+          if (foundInIngoreList) {
+            tracksRandomIngore = tracksRandomIngore?.filter((fName) => fName !== fileShortName);
+          }
+        }
+        indexDir[folderName].totalSize += fileSize;
       });
-    return audibleList;
-  };
-  return {
-    music: copyAudibleMedia("music"),
-    sound: copyAudibleMedia("sound"),
-    track: copyAudibleMedia("track"),
-  };
+  }
+
+  tracksRandomIngore?.forEach((fname) =>
+    onWarn(`Tracks ingore file have '${fname}' line but this track is not found`),
+  );
+
+  return indexDir;
 }
