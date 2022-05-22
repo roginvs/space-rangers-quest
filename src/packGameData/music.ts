@@ -69,7 +69,7 @@ export function scanAndCopySoundAndTrack(
           const foundInIngoreList = tracksRandomIngore
             ? tracksRandomIngore.includes(fileShortName)
             : false;
-          console.info(`  ${fileShortName} useForRandomMusic=${!foundInIngoreList}`);
+          console.info(`  [${foundInIngoreList ? " " : "r"}] ${fileShortName}`);
           indexDir[folderName].files.push({
             fileName: fileShortName,
             filePath: folderName + "/",
@@ -83,6 +83,11 @@ export function scanAndCopySoundAndTrack(
         }
         indexDir[folderName].totalSize += fileSize;
       });
+
+    console.info(
+      `  Copied ${indexDir[folderName].files.length} files, ${indexDir[folderName].totalSize} bytes total ` +
+        `(~${Math.round(indexDir[folderName].totalSize / 1024 / 1024)}mb)`,
+    );
   }
 
   tracksRandomIngore?.forEach((fname) =>
