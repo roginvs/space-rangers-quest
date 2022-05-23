@@ -5,9 +5,15 @@ import "./questPlay.button.css";
 export const GamePlayButton: React.FC<{
   onClick: () => void;
   disabled?: boolean;
-}> = ({ children, onClick, disabled }) => {
+  ariaLabel: string;
+}> = ({ children, onClick, disabled, ariaLabel }) => {
   return (
-    <button className="gameplay-button" onClick={onClick} disabled={disabled}>
+    <button
+      className="gameplay-button"
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={ariaLabel}
+    >
       <div className="gameplay-button-background" />
       <div
         className={classNames("gameplay-button-content", {

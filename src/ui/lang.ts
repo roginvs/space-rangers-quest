@@ -60,7 +60,12 @@ const RUS = {
 
   loadingQuest: "Загрузка квеста",
 
+  restart: "Начать сначала",
+  stepBack: "Шаг назад",
   reallyRestart: "Начать сначала?",
+  toggleMusic: "Музыка",
+  toggleFullscreen: "На весь экран",
+  exit: "Выход",
   yes: "Да",
   no: "Нет",
 
@@ -185,7 +190,12 @@ const ENG: LangTexts = {
 
   loadingQuest: "Quest loading",
 
+  restart: "Restart",
+  stepBack: "Step back",
   reallyRestart: "Really restart?",
+  toggleMusic: "Music",
+  toggleFullscreen: "Fullscreen",
+  exit: "Exit",
   yes: "Yes",
   no: "No",
 

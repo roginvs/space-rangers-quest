@@ -353,10 +353,13 @@ export function QuestPlay({
               setGameState(newGameState);
               setReallyRestart(false);
             }}
+            ariaLabel={l.yes}
           >
             {l.yes}
           </GamePlayButton>
-          <GamePlayButton onClick={() => setReallyRestart(false)}>{l.no}</GamePlayButton>
+          <GamePlayButton onClick={() => setReallyRestart(false)} ariaLabel={l.no}>
+            {l.no}
+          </GamePlayButton>
         </div>
       </div>
     </QuestPlayFrameText>
@@ -499,17 +502,27 @@ export function QuestPlay({
             bottom: 10,
           }}
         >
-          <GamePlayButton onClick={onRestartButtonClick}>{restartButtonContent}</GamePlayButton>
+          <GamePlayButton ariaLabel={l.restart} onClick={onRestartButtonClick}>
+            {restartButtonContent}
+          </GamePlayButton>
           {player.allowBackButton && (
-            <GamePlayButton disabled={previousGameState === null} onClick={onBackButtonClick}>
+            <GamePlayButton
+              disabled={previousGameState === null}
+              onClick={onBackButtonClick}
+              ariaLabel={l.stepBack}
+            >
               {backButtonContent}
             </GamePlayButton>
           )}
-          <GamePlayButton onClick={onMusicButtonClick}>{musicButtonContent}</GamePlayButton>
-          <GamePlayButton onClick={onFullscreenButtonClick}>
+          <GamePlayButton onClick={onMusicButtonClick} ariaLabel={l.toggleMusic}>
+            {musicButtonContent}
+          </GamePlayButton>
+          <GamePlayButton onClick={onFullscreenButtonClick} ariaLabel={l.toggleFullscreen}>
             {fullscreenButtonContent}
           </GamePlayButton>
-          <GamePlayButton onClick={onExit}>{exitButtonContent}</GamePlayButton>
+          <GamePlayButton onClick={onExit} ariaLabel={l.exit}>
+            {exitButtonContent}
+          </GamePlayButton>
         </div>
 
         {reallyRestartContent && (
@@ -547,15 +560,27 @@ export function QuestPlay({
           padding: 10,
         }}
       >
-        <GamePlayButton onClick={onRestartButtonClick}>{restartButtonContent}</GamePlayButton>
+        <GamePlayButton onClick={onRestartButtonClick} ariaLabel={l.restart}>
+          {restartButtonContent}
+        </GamePlayButton>
         {player.allowBackButton && (
-          <GamePlayButton disabled={previousGameState === null} onClick={onBackButtonClick}>
+          <GamePlayButton
+            disabled={previousGameState === null}
+            onClick={onBackButtonClick}
+            ariaLabel={l.stepBack}
+          >
             {backButtonContent}
           </GamePlayButton>
         )}
-        <GamePlayButton onClick={onMusicButtonClick}>{musicButtonContent}</GamePlayButton>
-        <GamePlayButton onClick={onFullscreenButtonClick}>{fullscreenButtonContent}</GamePlayButton>
-        <GamePlayButton onClick={onExit}>{exitButtonContent}</GamePlayButton>
+        <GamePlayButton onClick={onMusicButtonClick} ariaLabel={l.toggleMusic}>
+          {musicButtonContent}
+        </GamePlayButton>
+        <GamePlayButton onClick={onFullscreenButtonClick} ariaLabel={l.toggleFullscreen}>
+          {fullscreenButtonContent}
+        </GamePlayButton>
+        <GamePlayButton onClick={onExit} ariaLabel={l.exit}>
+          {exitButtonContent}
+        </GamePlayButton>
       </div>
       <div
         style={{
