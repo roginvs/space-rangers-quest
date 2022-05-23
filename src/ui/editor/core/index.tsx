@@ -557,6 +557,7 @@ export function EditorCore({
               enableSaveOnNoChanges: true,
             });
           }}
+          aria-label="Создать новый"
         >
           <i className="fa fa-file-o fa-fw" title="Новый" />
         </button>
@@ -565,12 +566,14 @@ export function EditorCore({
           onClick={() => {
             setOverlayMode({ kind: "load" });
           }}
+          aria-label="Открыть"
         >
           <i className="fa fa-folder-open-o fa-fw" title="Открыть" />
         </button>
 
         <button
           className={classNames("mr-3", "btn", "btn-light")}
+          aria-label="Скачать"
           onClick={() => {
             downloadQuest(quest);
             if (quest.header === HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR) {
@@ -585,6 +588,7 @@ export function EditorCore({
 
         <button
           className={classNames("mr-3", "btn", "btn-light")}
+          aria-label="Загрузка и выгрузка в облако"
           onClick={() => {
             if (cloudQuestProps.getMyUserId()) {
               setOverlayMode({ kind: "cloudquest" });
@@ -601,6 +605,19 @@ export function EditorCore({
             key={candidateMode}
             className={classNames("btn", mouseMode === candidateMode ? "btn-info" : "btn-light")}
             onClick={() => setMouseMode(candidateMode)}
+            aria-label={
+              candidateMode === "move"
+                ? "Двигать (2) [Вместе с Ctrl - копировать]"
+                : candidateMode === "select"
+                ? "Выделять (1)"
+                : candidateMode === "newJump"
+                ? "Новый переход (4)"
+                : candidateMode === "newLocation"
+                ? "Новая локация (3)"
+                : candidateMode === "remove"
+                ? "Удалить (5)"
+                : assertNever(candidateMode)
+            }
           >
             {candidateMode === "move" ? (
               <i className="fa fa-arrows fa-fw" title="Двигать (2) [Вместе с Ctrl - копировать]" />
@@ -623,6 +640,7 @@ export function EditorCore({
           onClick={() => {
             setOverlayMode({ kind: "questsettings", enableSaveOnNoChanges: false });
           }}
+          aria-label="Редактировать общую информацию по квесту"
         >
           <i className="fa fa-wrench fa-fw" title="Редактировать общую информацию по квесту" />
         </button>
@@ -632,6 +650,7 @@ export function EditorCore({
           onClick={() => {
             setZoom(zoom / 1.2);
           }}
+          aria-label="Масштаб уменьшить"
         >
           <i className="fa fa-search-minus fa-fw" title="Zoom out" />
         </button>
@@ -640,6 +659,7 @@ export function EditorCore({
           onClick={() => {
             setZoom(zoom * 1.2);
           }}
+          aria-label="Масштаб увеличить"
         >
           <i className="fa fa-search-plus fa-fw" title="Zoom in" />
         </button>
@@ -648,6 +668,7 @@ export function EditorCore({
           className={classNames("ml-3", "btn", "btn-light")}
           onClick={undo || undefined}
           disabled={!undo}
+          aria-label="Отменить (ctrl+z)"
         >
           <i className="fa fa-undo fa-fw" title="Отменить (ctrl+z)" />
         </button>
@@ -655,6 +676,7 @@ export function EditorCore({
           className={classNames("btn", "btn-light")}
           onClick={redo || undefined}
           disabled={!redo}
+          aria-label="Повторить (ctrl+shift+z)"
         >
           <i className="fa fa-repeat fa-fw" title="Повторить (ctrl+shift+z)" />
         </button>
@@ -664,6 +686,7 @@ export function EditorCore({
           onClick={() => {
             setOverlayMode({ kind: "help" });
           }}
+          aria-label="Справка"
         >
           <i className="fa fa-question-circle-o fa-fw" title="Справка" />
         </button>
@@ -677,6 +700,7 @@ export function EditorCore({
               toast("Нет начальной локации!");
             }
           }}
+          aria-label="Играть"
         >
           <i className="fa fa-play-circle fa-fw" title="Играть" />
         </button>
@@ -686,7 +710,11 @@ export function EditorCore({
           setQuest={(newQuest) => onChange({ ...quest, filename: newQuest.filename })}
         />
 
-        <button className={classNames("ml-auto", "btn", "btn-light")} onClick={onExit}>
+        <button
+          className={classNames("ml-auto", "btn", "btn-light")}
+          onClick={onExit}
+          aria-label="Выход"
+        >
           <i className="fa fa-sign-out fa-fw" title="Выход" />
         </button>
 

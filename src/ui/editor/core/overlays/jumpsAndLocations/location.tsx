@@ -109,6 +109,7 @@ export function LocationOverlay({
                   setTextIndex(location.texts.length);
                 }}
                 title="Добавить"
+                aria-label="Добавить"
               >
                 <i className="fa fa-plus fa-fw" />
               </button>
@@ -124,6 +125,7 @@ export function LocationOverlay({
                   setTextIndex(location.texts.length - 2);
                 }}
                 title="Удалить"
+                aria-label="Удалить"
               >
                 <i className="fa fa-minus fa-fw" />
               </button>

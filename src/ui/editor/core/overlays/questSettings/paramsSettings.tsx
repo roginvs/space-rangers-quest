@@ -136,6 +136,9 @@ function QuestParamShowingRangeSettings({
                     ? "pointer"
                     : "not-allowed",
                 }}
+                role="button"
+                aria-disabled={!param.active || param.showingInfo.length <= 1}
+                aria-label="Удалить диапазон"
                 onClick={() => {
                   if (!param.active) {
                     return;

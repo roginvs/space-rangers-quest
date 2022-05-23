@@ -84,6 +84,8 @@ function ParamCondition({
           onClick={() =>
             onChange({ ...condition, mustEqualValuesEqual: !condition.mustEqualValuesEqual })
           }
+          role="button"
+          aria-label="Поменять кратно или не кратно"
         >
           <i className="fa fa-exchange" />
         </label>
@@ -112,6 +114,8 @@ function ParamCondition({
           className="form-check-label ml-1"
           style={{ cursor: "pointer" }}
           onClick={() => onChange({ ...condition, mustModValuesMod: !condition.mustModValuesMod })}
+          role="button"
+          aria-label="Поменять делится или не делится"
         >
           <i className="fa fa-exchange" />
         </label>

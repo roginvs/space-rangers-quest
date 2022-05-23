@@ -34,7 +34,13 @@ export const Overlay: React.FC<{
       >
         <h5 className="card-header d-flex flex-row justify-content-between">
           <span>{headerText}</span>
-          <i className="fa fa-times" style={{ cursor: "pointer" }} onClick={onClose} />
+          <i
+            role="button"
+            aria-label="Закрыть"
+            className="fa fa-times"
+            style={{ cursor: "pointer" }}
+            onClick={onClose}
+          />
         </h5>
         <div className="card-body">{children}</div>
       </div>
