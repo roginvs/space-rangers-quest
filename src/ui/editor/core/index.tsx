@@ -203,7 +203,7 @@ export function EditorCore({
     }
 
     // TODO: This do not work well when scrolling
-    const onMove = (e: MouseEvent) => {
+    const onMouseMove = (e: MouseEvent) => {
       const mouseCoords = getMouseCoordsInCanvas(e);
 
       if (isDragging) {
@@ -236,9 +236,9 @@ export function EditorCore({
         }
       }
     };
-    document.addEventListener("mousemove", onMove);
+    document.addEventListener("mousemove", onMouseMove);
     return () => {
-      document.removeEventListener("mousemove", onMove);
+      document.removeEventListener("mousemove", onMouseMove);
     };
   }, [hoverZones, isDragging, overlayMode, isPlaying, quest]);
 
