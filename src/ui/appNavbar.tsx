@@ -39,6 +39,7 @@ export class AppNavbar extends React.Component<{
             {l.hi} {player.Player}
           </NavbarBrand>
           <NavbarToggler
+            aria-label={l.menu}
             onClick={() => {
               this.navbarIsOpen = !this.navbarIsOpen;
             }}

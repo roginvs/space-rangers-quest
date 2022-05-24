@@ -3,6 +3,7 @@ import { assertNever } from "../assertNever";
 
 const RUS = {
   hi: "Привет, ",
+  menu: "Меню",
   quests: "Квесты",
   options: "Опции",
   installMode: "Приложение",
@@ -133,6 +134,7 @@ export type LangTexts = typeof RUS;
 
 const ENG: LangTexts = {
   hi: "Hi, ",
+  menu: "Menu",
   quests: "Quests",
   options: "Option",
   installMode: "Application",
