@@ -34,6 +34,9 @@ const RUS = {
   toPlanet: "Прилетел на планету",
   toStar: "В системе",
   defaultCompensation: "Награда за квест",
+  enableBackButton: "Кнопка назад",
+  backButtonDisabled: "Выключена (нормальный режим)",
+  backButtonEnabled: "Включена (читерский режим)",
 
   lang: "Язык/Language",
   rus: "Русский",
@@ -165,6 +168,9 @@ const ENG: LangTexts = {
   toPlanet: "Arrived at the planet",
   toStar: "In the system",
   defaultCompensation: "Default compensation",
+  enableBackButton: "Back button",
+  backButtonDisabled: "Disabled (normal mode)",
+  backButtonEnabled: "Enabled (cheater mode)",
 
   lang: "Язык/Language",
   rus: "Русский",

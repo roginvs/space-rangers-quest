@@ -120,6 +120,18 @@ export class OptionsTabContainer extends React.Component<
                 onChange={(e) => updatePlayer("Money", e.target.value)}
               />
             </div>
+
+            <div className="form-group col-md-6">
+              <label>{l.enableBackButton}</label>
+              <select
+                className="form-control"
+                value={player.allowBackButton ? "1" : "0"}
+                onChange={(e) => updatePlayer("allowBackButton", e.target.value === "1")}
+              >
+                <option value="1">{l.backButtonEnabled}</option>
+                <option value="0">{l.backButtonDisabled}</option>
+              </select>
+            </div>
           </div>
         </form>
         <div className="text-center">
