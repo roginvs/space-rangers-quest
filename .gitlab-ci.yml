@@ -3,7 +3,7 @@ pages:
   stage: deploy
   script:
     - rm -R built-web || true
-    - npm install
+    - npm install --legacy-peer-deps
     - mkdir built-web
     - npm run prettier-check
     - npm run test
