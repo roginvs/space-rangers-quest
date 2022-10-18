@@ -67,8 +67,6 @@ export class Store {
     this.setPath();
     this.player = player;
 
-    this.queryCacheInfo().catch((e) => console.warn(e));
-
     this.pwaAlreadyInstalled = window.matchMedia("(display-mode: standalone)").matches;
     window.addEventListener("beforeinstallprompt", (e) => {
       e.preventDefault();
@@ -76,7 +74,22 @@ export class Store {
     });
     window.addEventListener("appinstalled", (evt) => {
       this.pwaAlreadyInstalled = true;
+      this.installImagesCache().catch((e) => console.warn(e));
+      this.installMusicCache().catch((e) => console.warn(e));
     });
+
+    this.queryCacheInfo()
+      .then(() => {
+        if (this.pwaAlreadyInstalled) {
+          if (this.imagesCache === "no") {
+            this.installImagesCache().catch((e) => console.warn(e));
+          }
+          if (this.musicCache === "no") {
+            this.installMusicCache().catch((e) => console.warn(e));
+          }
+        }
+      })
+      .catch((e) => console.warn(e));
   }
 
   @observable player: Player;
