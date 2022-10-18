@@ -1,4 +1,4 @@
-image: node:10
+image: node:16
 pages:
   stage: deploy
   script:
@@ -11,10 +11,10 @@ pages:
     - mv coverage built-web # This is broken now for some unknown reasons
 
     - npm run pack-game-data
-    
+
     - npm run build
 
-    - >  # Pre-compress files for gitlab pages
+    - > # Pre-compress files for gitlab pages
       find built-web -type f \
         \( \
           -name '*.js' -o -name '*.css' -o -name '*.html' -o -name '*.map' \
