@@ -155,10 +155,12 @@ export function duplicateJump(
 }
 
 export function addParameter(quest: Quest): Quest {
+  const default_param_min = 0;
+  const default_param_max = 100;
   const newParam: DeepImmutable<QMParam> = {
     active: true,
-    min: 0,
-    max: 100,
+    min: default_param_min,
+    max: default_param_max,
     type: ParamType.Обычный,
     showWhenZero: true,
     critType: ParamCritType.Минимум,
@@ -170,8 +172,8 @@ export function addParameter(quest: Quest): Quest {
     }`,
     showingInfo: [
       {
-        from: 0,
-        to: 100,
+        from: default_param_min,
+        to: default_param_max,
         str: `Параметр ${quest.paramsCount + 1}: <>`,
       },
     ],
@@ -198,8 +200,8 @@ export function addParameter(quest: Quest): Quest {
 
   const createParameterCondition = () => {
     const condition: JumpParameterCondition = {
-      mustFrom: 0,
-      mustTo: 0,
+      mustFrom: default_param_min,
+      mustTo: default_param_max,
       mustEqualValues: [],
       mustEqualValuesEqual: true,
       mustModValues: [],
@@ -262,16 +264,33 @@ export function removeLocation(quest: Quest, locationId: LocationId): Quest {
   };
 }
 
-export function fixJumpParamMinMax(quest: Quest): Quest {
+export function updateParamWithFixMaxMin(
+  quest: Quest,
+  paramIdx: number,
+  newParam: DeepImmutable<QMParam>,
+): Quest {
   return {
     ...quest,
+    params: quest.params.map((param, idx) => (idx === paramIdx ? newParam : param)),
     jumps: quest.jumps.map((j) => ({
       ...j,
-      paramsConditions: j.paramsConditions.map((p, idx) => ({
-        ...p,
-        mustFrom: Math.max(p.mustFrom, quest.params[idx].min),
-        mustTo: Math.min(p.mustTo, quest.params[idx].max),
-      })),
+      paramsConditions: j.paramsConditions.map((paramCondition, idx) =>
+        idx === paramIdx
+          ? {
+              ...paramCondition,
+              // If condition was equal to max/min then update it to be new max/min
+              // If not then check that it is in the allowed range
+              mustFrom:
+                quest.params[paramIdx].min === paramCondition.mustFrom
+                  ? newParam.min
+                  : Math.max(paramCondition.mustFrom, newParam.min),
+              mustTo:
+                quest.params[paramIdx].max === paramCondition.mustTo
+                  ? newParam.max
+                  : Math.min(paramCondition.mustTo, newParam.max),
+            }
+          : paramCondition,
+      ),
     })),
   };
 }

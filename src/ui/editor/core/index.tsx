@@ -10,7 +10,6 @@ import {
   createLocation,
   duplicateLocation,
   duplicateJump,
-  fixJumpParamMinMax,
   removeJump,
   removeLocation,
   updateJump,
@@ -835,8 +834,7 @@ export function EditorCore({
               onClose={(newQuest) => {
                 setOverlayMode(undefined);
                 if (newQuest) {
-                  const fixedParamsMinMax = fixJumpParamMinMax(newQuest);
-                  onChange(fixedParamsMinMax);
+                  onChange(newQuest);
                 }
               }}
               enableSaveOnNoChanges={overlayMode.enableSaveOnNoChanges}
