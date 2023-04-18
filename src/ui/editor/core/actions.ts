@@ -264,20 +264,6 @@ export function removeLocation(quest: Quest, locationId: LocationId): Quest {
   };
 }
 
-export function fixJumpParamMinMax(quest: Quest): Quest {
-  return {
-    ...quest,
-    jumps: quest.jumps.map((j) => ({
-      ...j,
-      paramsConditions: j.paramsConditions.map((p, idx) => ({
-        ...p,
-        mustFrom: Math.max(p.mustFrom, quest.params[idx].min),
-        mustTo: Math.min(p.mustTo, quest.params[idx].max),
-      })),
-    })),
-  };
-}
-
 export function updateParamWithFixMaxMin(
   quest: Quest,
   paramIdx: number,
@@ -293,14 +279,15 @@ export function updateParamWithFixMaxMin(
           ? {
               ...paramCondition,
               // If condition was equal to max/min then update it to be new max/min
+              // If not then check that it is in the allowed range
               mustFrom:
                 quest.params[paramIdx].min === paramCondition.mustFrom
                   ? newParam.min
-                  : paramCondition.mustFrom,
+                  : Math.max(paramCondition.mustFrom, newParam.min),
               mustTo:
                 quest.params[paramIdx].max === paramCondition.mustTo
                   ? newParam.max
-                  : paramCondition.mustTo,
+                  : Math.min(paramCondition.mustTo, newParam.max),
             }
           : paramCondition,
       ),
