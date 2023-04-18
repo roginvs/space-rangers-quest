@@ -155,10 +155,12 @@ export function duplicateJump(
 }
 
 export function addParameter(quest: Quest): Quest {
+  const default_param_min = 0;
+  const default_param_max = 100;
   const newParam: DeepImmutable<QMParam> = {
     active: true,
-    min: 0,
-    max: 100,
+    min: default_param_min,
+    max: default_param_max,
     type: ParamType.Обычный,
     showWhenZero: true,
     critType: ParamCritType.Минимум,
@@ -170,8 +172,8 @@ export function addParameter(quest: Quest): Quest {
     }`,
     showingInfo: [
       {
-        from: 0,
-        to: 100,
+        from: default_param_min,
+        to: default_param_max,
         str: `Параметр ${quest.paramsCount + 1}: <>`,
       },
     ],
@@ -198,8 +200,8 @@ export function addParameter(quest: Quest): Quest {
 
   const createParameterCondition = () => {
     const condition: JumpParameterCondition = {
-      mustFrom: 0,
-      mustTo: 0,
+      mustFrom: default_param_min,
+      mustTo: default_param_max,
       mustEqualValues: [],
       mustEqualValuesEqual: true,
       mustModValues: [],

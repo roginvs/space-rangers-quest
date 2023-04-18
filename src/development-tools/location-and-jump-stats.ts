@@ -36,8 +36,8 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
 console.info("===========================");
 
 stats
-  //.sort((a, b) => a.quest.locations.length - b.quest.locations.length)
-  .sort((a, b) => a.quest.jumps.length - b.quest.jumps.length)
+  .sort((a, b) => a.quest.locations.length - b.quest.locations.length)
+  //.sort((a, b) => a.quest.jumps.length - b.quest.jumps.length)
   .forEach((stat) => {
     console.info(
       `${stat.name} loc=${stat.quest.locations.length} jumps=${stat.quest.jumps.length}`,
