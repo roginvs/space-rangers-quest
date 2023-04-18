@@ -292,6 +292,7 @@ export function updateParamWithFixMaxMin(
         idx === paramIdx
           ? {
               ...paramCondition,
+              // If condition was equal to max/min then update it to be new max/min
               mustFrom:
                 quest.params[paramIdx].min === paramCondition.mustFrom
                   ? newParam.min
