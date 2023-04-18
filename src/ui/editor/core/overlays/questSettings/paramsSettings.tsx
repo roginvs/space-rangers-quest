@@ -11,7 +11,7 @@ import {
   QMParamShowInfo,
   QMParamShowInfoPart,
 } from "../../../../../lib/qmreader";
-import { addParameter, removeLastParameter } from "../../actions";
+import { addParameter, removeLastParameter, updateParamWithFixMaxMin } from "../../actions";
 import { checkFormula, FormulaInput } from "../../common/formulaInput";
 import { getParamStringInfo } from "../../hovers/paramsAndChangeConditionsSummary";
 import { MediaEdit } from "../MediaEdit";
@@ -483,12 +483,7 @@ export function QuestParamsSettings({ quest, setQuest }: QuestSettingsTabProps) 
                   <QuestParamSettings
                     param={quest.params[paramId]}
                     setParam={(newParam) => {
-                      setQuest({
-                        ...quest,
-                        params: quest.params.map((param, idx) =>
-                          idx === paramId ? newParam : param,
-                        ),
-                      });
+                      setQuest(updateParamWithFixMaxMin(quest, paramId, newParam));
                     }}
                     quest={quest}
                   />

@@ -277,3 +277,32 @@ export function fixJumpParamMinMax(quest: Quest): Quest {
     })),
   };
 }
+
+export function updateParamWithFixMaxMin(
+  quest: Quest,
+  paramIdx: number,
+  newParam: DeepImmutable<QMParam>,
+): Quest {
+  return {
+    ...quest,
+    params: quest.params.map((param, idx) => (idx === paramIdx ? newParam : param)),
+    jumps: quest.jumps.map((j) => ({
+      ...j,
+      paramsConditions: j.paramsConditions.map((paramCondition, idx) =>
+        idx === paramIdx
+          ? {
+              ...paramCondition,
+              mustFrom:
+                quest.params[paramIdx].min === paramCondition.mustFrom
+                  ? newParam.min
+                  : paramCondition.mustFrom,
+              mustTo:
+                quest.params[paramIdx].max === paramCondition.mustTo
+                  ? newParam.max
+                  : paramCondition.mustTo,
+            }
+          : paramCondition,
+      ),
+    })),
+  };
+}
