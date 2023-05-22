@@ -57,3 +57,7 @@ npm run build
 ## Webpack devserver
 
 `npm start`
+
+## Testing
+
+This project is tested with BrowserStack
