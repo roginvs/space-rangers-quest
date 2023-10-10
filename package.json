@@ -67,7 +67,7 @@
     "test": "nyc --reporter=html --reporter=text mocha --require ts-node/register --bail src/test/**/*.ts",
     "prettier-check": "prettier --list-different \"src/**/*.ts*(x)\"",
     "build": "webpack --mode production --devtool source-map --progress",
-    "start": "webpack-dev-server --mode development --open --devtool cheap-module-source-map",
+    "start": "NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server --mode development --open --devtool cheap-module-source-map",
     "pack-game-data": "ts-node src/packGameData/packGameData.ts"
   },
   "repository": {
