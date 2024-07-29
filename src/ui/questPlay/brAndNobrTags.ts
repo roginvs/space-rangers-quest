@@ -8,8 +8,9 @@ export function brAndNobrTags(texts: string[]) {
   let isNeedLastLineFlush = false;
   for (const text of texts) {
     for (const line of text.split("<br>")) {
-      if (line.endsWith("<nobr>")) {
-        currentLine += line.slice(0, line.length - "<nobr>".length);
+      const rtimmedLine = line.trimRight();
+      if (rtimmedLine.endsWith("<nobr>")) {
+        currentLine += rtimmedLine.slice(0, rtimmedLine.length - "<nobr>".length);
         isNeedLastLineFlush = true;
       } else {
         out.push(currentLine + line);

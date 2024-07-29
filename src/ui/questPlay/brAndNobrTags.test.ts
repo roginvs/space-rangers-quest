@@ -9,9 +9,9 @@ describe("brAndNobrTags", () => {
   });
 
   it("should join line with next if it ends with <nobr>", () => {
-    const texts = ["a", "b<nobr>", "c", "d", "<nobr>"];
+    const texts = ["a", "b<nobr>", "c", "d", "e <nobr>  ", "f", "<nobr>"];
     const result = brAndNobrTags(texts);
-    assert.deepEqual(result, ["a", "bc", "d", ""]);
+    assert.deepEqual(result, ["a", "bc", "d", "e f", ""]);
   });
 
   it("should not cut last empty line", () => {
