@@ -64,7 +64,7 @@
   "scripts": {
     "tsc": "tsc",
     "lint": "tslint -c ./tslint.json --project ./tsconfig.json --format stylish",
-    "test": "nyc --reporter=html --reporter=text mocha --require ts-node/register --bail src/test/**/*.ts",
+    "test": "nyc --reporter=html --reporter=text mocha --require ts-node/register --bail src/test/**/*.ts src/**/*.test.ts",
     "prettier-check": "prettier --list-different \"src/**/*.ts*(x)\"",
     "build": "webpack --mode production --devtool source-map --progress",
     "start": "NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server --mode development --open --devtool cheap-module-source-map",

@@ -28,6 +28,7 @@ import {
 import { GamePlayButton } from "./questPlay.button";
 import { useDarkTheme } from "./questPlay.metatheme";
 import { toggleFullscreen } from "./fullscreen";
+import { brAndNobrTags } from "./brAndNobrTags";
 
 function initRandomGame(quest: Quest, doFirstStep: boolean) {
   const gameState = initGame(
@@ -282,7 +283,7 @@ export function QuestPlay({
     </DivFadeinCss>
   );
 
-  const paramsStrings = ([] as string[]).concat(...uistate.paramsState.map((x) => x.split("<br>")));
+  const paramsStrings = brAndNobrTags(uistate.paramsState);
 
   const params = (
     <>
