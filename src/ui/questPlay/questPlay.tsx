@@ -482,17 +482,19 @@ export function QuestPlay({
           />
           <GamePlayButton
             ariaLabel={l.debugCopyState}
+            title={l.debugCopyState}
             onClick={onDebugCopyClick}
             disabled={gameState === null}
           >
-            {l.debugCopyState}
+            <i className="fa fa-fw fa-copy" />
           </GamePlayButton>
           <GamePlayButton
             ariaLabel={l.debugSetState}
+            title={l.debugSetState}
             onClick={onDebugSetStateClick}
             disabled={!decodeDebugState(debugStateInput)}
           >
-            {l.debugSetState}
+            <i className="fa fa-fw fa-paste" />
           </GamePlayButton>
         </div>
 
@@ -506,20 +508,24 @@ export function QuestPlay({
         >
           <GamePlayButton
             ariaLabel={l.debugStepBack}
+            title={l.debugStepBack}
             onClick={onBackButtonClick}
             disabled={previousGameState === null}
           >
-            {l.debugStepBack}
+            {backButtonContent}
           </GamePlayButton>
-          <GamePlayButton ariaLabel={l.debugClose} onClick={() => setDebugOpen(false)}>
-            {l.debugClose}
+          <GamePlayButton
+            ariaLabel={l.debugClose}
+            title={l.debugClose}
+            onClick={() => setDebugOpen(false)}
+          >
+            <i className="fa fa-fw fa-times" />
           </GamePlayButton>
         </div>
       </div>
     </QuestPlayFrameText>
   ) : null;
 
-  console.info("player.allowBackButton", player.allowBackButton);
   const backDebugButton =
     player.allowBackButton === "debug" ? (
       <GamePlayButton onClick={onDebugButtonClick} ariaLabel={l.debug}>
