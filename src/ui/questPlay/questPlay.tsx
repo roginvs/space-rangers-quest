@@ -256,6 +256,11 @@ export function QuestPlay({
     }
     setGameState(newGameState);
   }, [debugStateInput, quest]);
+  React.useEffect(() => {
+    if (debugOpen && gameState) {
+      setDebugStateInput(encodeDebugGameState(gameState));
+    }
+  }, [gameState, debugOpen]);
 
   const exitButtonContent = busySaving ? (
     <i className="fa fa-refresh fa-spin fa-fw" />
@@ -443,11 +448,7 @@ export function QuestPlay({
   ) : null;
 
   const currentDebugViewText = debugOpen ? getDebugText(quest, gameState) : "";
-  React.useEffect(() => {
-    if (debugOpen) {
-      setDebugStateInput(encodeDebugGameState(gameState));
-    }
-  }, [gameState, debugOpen]);
+
   const debugViewContent = debugOpen ? (
     <QuestPlayFrameText fitHeight={true} frameBorderX={frameBorderX} frameBorderY={frameBorderY}>
       <div
@@ -459,7 +460,11 @@ export function QuestPlay({
           height: "100%",
         }}
       >
-        <textarea className="game-debug-textarea mb-1" value={currentDebugViewText}></textarea>
+        <textarea
+          className="game-debug-textarea mb-1"
+          value={currentDebugViewText}
+          readOnly={true}
+        ></textarea>
 
         <div
           style={{
@@ -514,12 +519,13 @@ export function QuestPlay({
     </QuestPlayFrameText>
   ) : null;
 
+  console.info("player.allowBackButton", player.allowBackButton);
   const backDebugButton =
-    player.allowBackButton && player.allowBackButton === "debug" ? (
+    player.allowBackButton === "debug" ? (
       <GamePlayButton onClick={onDebugButtonClick} ariaLabel={l.debug}>
         {debugButtonContent}
       </GamePlayButton>
-    ) : (
+    ) : player.allowBackButton ? (
       <GamePlayButton
         disabled={previousGameState === null}
         onClick={onBackButtonClick}
@@ -527,7 +533,7 @@ export function QuestPlay({
       >
         {backButtonContent}
       </GamePlayButton>
-    );
+    ) : null;
 
   if (!isMobile) {
     const IMAGE_SIZE_X = NATIVE_IMAGE_SIZE_X + 2 * frameBorderX;
