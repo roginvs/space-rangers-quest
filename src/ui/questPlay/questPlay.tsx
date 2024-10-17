@@ -484,7 +484,6 @@ export function QuestPlay({
             ariaLabel={l.debugCopyState}
             title={l.debugCopyState}
             onClick={onDebugCopyClick}
-            disabled={gameState === null}
           >
             <i className="fa fa-fw fa-copy" />
           </GamePlayButton>
