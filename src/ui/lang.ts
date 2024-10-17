@@ -131,6 +131,8 @@ const RUS = {
   pwaInstallNotOk: "Не получилось установить",
 
   editor: "Редактор",
+
+  debug: "Отладка",
 };
 
 export type LangTexts = typeof RUS;
@@ -264,6 +266,8 @@ const ENG: LangTexts = {
   pwaInstallNotOk: "Failed to install application",
 
   editor: "Editor",
+
+  debug: "Debug",
 };
 
 export function getLang(lang: Lang) {

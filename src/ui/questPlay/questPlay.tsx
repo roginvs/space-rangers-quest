@@ -174,11 +174,16 @@ export function QuestPlay({
   const previousGameState = usePrevGameState(quest, gameState);
 
   const backButtonContent = <i className="fa fa-fw fa-step-backward" />;
+  const debugButtonContent = <i className="fa fa-fw fa-cogs" />;
+
   const onBackButtonClick = React.useCallback(() => {
     if (previousGameState) {
       setGameState(previousGameState);
     }
   }, [previousGameState, setGameState]);
+  const onDebugButtonClick = React.useCallback(() => {
+    // TODO
+  }, [previousGameState, gameState, setGameState]);
 
   const exitButtonContent = busySaving ? (
     <i className="fa fa-refresh fa-spin fa-fw" />
@@ -365,6 +370,21 @@ export function QuestPlay({
     </QuestPlayFrameText>
   ) : null;
 
+  const backDebugButton =
+    player.allowBackButton && player.allowBackButton === "debug" ? (
+      <GamePlayButton onClick={onDebugButtonClick} ariaLabel={l.debug}>
+        {debugButtonContent}
+      </GamePlayButton>
+    ) : (
+      <GamePlayButton
+        disabled={previousGameState === null}
+        onClick={onBackButtonClick}
+        ariaLabel={l.stepBack}
+      >
+        {backButtonContent}
+      </GamePlayButton>
+    );
+
   if (!isMobile) {
     const IMAGE_SIZE_X = NATIVE_IMAGE_SIZE_X + 2 * frameBorderX;
     const IMAGE_SIZE_Y = NATIVE_IMAGE_SIZE_Y + 2 * frameBorderY;
@@ -505,15 +525,7 @@ export function QuestPlay({
           <GamePlayButton ariaLabel={l.restart} onClick={onRestartButtonClick}>
             {restartButtonContent}
           </GamePlayButton>
-          {player.allowBackButton && (
-            <GamePlayButton
-              disabled={previousGameState === null}
-              onClick={onBackButtonClick}
-              ariaLabel={l.stepBack}
-            >
-              {backButtonContent}
-            </GamePlayButton>
-          )}
+          {backDebugButton}
           <GamePlayButton onClick={onMusicButtonClick} ariaLabel={l.toggleMusic}>
             {musicButtonContent}
           </GamePlayButton>
@@ -563,15 +575,7 @@ export function QuestPlay({
         <GamePlayButton onClick={onRestartButtonClick} ariaLabel={l.restart}>
           {restartButtonContent}
         </GamePlayButton>
-        {player.allowBackButton && (
-          <GamePlayButton
-            disabled={previousGameState === null}
-            onClick={onBackButtonClick}
-            ariaLabel={l.stepBack}
-          >
-            {backButtonContent}
-          </GamePlayButton>
-        )}
+        {backDebugButton}
         <GamePlayButton onClick={onMusicButtonClick} ariaLabel={l.toggleMusic}>
           {musicButtonContent}
         </GamePlayButton>
