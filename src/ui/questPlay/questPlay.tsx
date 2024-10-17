@@ -103,6 +103,16 @@ function initGameFromDebugState(encodedState: string, quest: Quest) {
   return gameState;
 }
 
+function getDebugText(quest: Quest, gameState: GameState) {
+  const lines = [`${gameState.state} L=${gameState.locationId}`];
+
+  for (let i = 0; i < quest.paramsCount; i += 1) {
+    const line = `P${i + 1} ${gameState.paramValues[i]} (${quest.params[i].name})`;
+    lines.push(line);
+  }
+
+  return lines.join("\n");
+}
 /**
  * Remembers states, clears history on quest state
  */
@@ -433,7 +443,7 @@ export function QuestPlay({
     </QuestPlayFrameText>
   ) : null;
 
-  const currentDebugViewText = "todo";
+  const currentDebugViewText = debugOpen ? getDebugText(quest, gameState) : "";
   React.useEffect(() => {
     if (debugOpen) {
       setDebugStateInput(encodeDebugGameState(gameState));
