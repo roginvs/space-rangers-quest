@@ -28,6 +28,7 @@ import {
 import { GamePlayButton } from "./questPlay.button";
 import { useDarkTheme } from "./questPlay.metatheme";
 import { toggleFullscreen } from "./fullscreen";
+import { copyToClipboard } from "../copyToClipboard";
 
 function initRandomGame(quest: Quest, doFirstStep: boolean) {
   const gameState = initGame(
@@ -61,6 +62,57 @@ function removeSerialEmptyStrings(input: string[]) {
   return output;
 }
 
+function encodeDebugGameState(gameState: GameState) {
+  return JSON.stringify([gameState.aleaSeed, gameState.performedJumps.map((j) => j.jumpId)]);
+}
+function decodeDebugState(encodedState: string) {
+  if (!encodedState) {
+    return null;
+  }
+  try {
+    const decoded = JSON.parse(encodedState);
+
+    if (
+      Array.isArray(decoded) &&
+      decoded.length === 2 &&
+      typeof decoded[0] === "string" &&
+      Array.isArray(decoded[1]) &&
+      decoded[1].every((x) => typeof x === "number")
+    ) {
+      return {
+        aleaSeed: decoded[0],
+        performedJumpsIds: decoded[1],
+      };
+    } else {
+      return null;
+    }
+  } catch (e) {
+    return null;
+  }
+}
+function initGameFromDebugState(encodedState: string, quest: Quest) {
+  const decoded = decodeDebugState(encodedState);
+  if (!decoded) {
+    return;
+  }
+  let gameState = initGame(quest, decoded.aleaSeed);
+
+  for (const jumpId of decoded.performedJumpsIds) {
+    gameState = performJump(jumpId, quest, gameState, new Date().getTime());
+  }
+  return gameState;
+}
+
+function getDebugText(quest: Quest, gameState: GameState) {
+  const lines = [`${gameState.state} L=${gameState.locationId}`];
+
+  for (let i = 0; i < quest.paramsCount; i += 1) {
+    const line = `P${i + 1} ${gameState.paramValues[i]} (${quest.params[i].name})`;
+    lines.push(line);
+  }
+
+  return lines.join("\n");
+}
 /**
  * Remembers states, clears history on quest state
  */
@@ -160,6 +212,7 @@ export function QuestPlay({
   useDarkTheme();
 
   const [reallyRestart, setReallyRestart] = React.useState(false);
+
   React.useEffect(() => setReallyRestart(false), [quest, gameState, player]);
 
   const isMobile = windowInnerWidth < MOBILE_THRESHOLD;
@@ -174,11 +227,40 @@ export function QuestPlay({
   const previousGameState = usePrevGameState(quest, gameState);
 
   const backButtonContent = <i className="fa fa-fw fa-step-backward" />;
+  const debugButtonContent = <i className="fa fa-fw fa-cogs" />;
+
   const onBackButtonClick = React.useCallback(() => {
     if (previousGameState) {
       setGameState(previousGameState);
     }
   }, [previousGameState, setGameState]);
+
+  const [debugOpen, setDebugOpen] = React.useState(false);
+  const [debugStateInput, setDebugStateInput] = React.useState("");
+
+  const onDebugButtonClick = React.useCallback(() => {
+    setDebugOpen(true);
+  }, []);
+
+  const onDebugCopyClick = React.useCallback(() => {
+    if (!gameState) {
+      return;
+    }
+    const encodedState = encodeDebugGameState(gameState);
+    copyToClipboard(encodedState);
+  }, [gameState]);
+  const onDebugSetStateClick = React.useCallback(() => {
+    const newGameState = initGameFromDebugState(debugStateInput, quest);
+    if (!newGameState) {
+      return;
+    }
+    setGameState(newGameState);
+  }, [debugStateInput, quest]);
+  React.useEffect(() => {
+    if (debugOpen && gameState) {
+      setDebugStateInput(encodeDebugGameState(gameState));
+    }
+  }, [gameState, debugOpen]);
 
   const exitButtonContent = busySaving ? (
     <i className="fa fa-refresh fa-spin fa-fw" />
@@ -365,6 +447,100 @@ export function QuestPlay({
     </QuestPlayFrameText>
   ) : null;
 
+  const currentDebugViewText = debugOpen ? getDebugText(quest, gameState) : "";
+
+  const debugViewContent = debugOpen ? (
+    <QuestPlayFrameText fitHeight={true} frameBorderX={frameBorderX} frameBorderY={frameBorderY}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "stretch",
+          height: "100%",
+        }}
+      >
+        <textarea
+          className="game-debug-textarea mb-1"
+          value={currentDebugViewText}
+          readOnly={true}
+        ></textarea>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+          }}
+          className="mb-1"
+        >
+          <input
+            type="text"
+            className="game-debug-input"
+            placeholder="Encoded state"
+            value={debugStateInput}
+            onChange={(e) => setDebugStateInput(e.target.value)}
+          />
+          <GamePlayButton
+            ariaLabel={l.debugCopyState}
+            title={l.debugCopyState}
+            onClick={onDebugCopyClick}
+            disabled={gameState === null}
+          >
+            <i className="fa fa-fw fa-copy" />
+          </GamePlayButton>
+          <GamePlayButton
+            ariaLabel={l.debugSetState}
+            title={l.debugSetState}
+            onClick={onDebugSetStateClick}
+            disabled={!decodeDebugState(debugStateInput)}
+          >
+            <i className="fa fa-fw fa-paste" />
+          </GamePlayButton>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+          }}
+          className="mb-1"
+        >
+          <GamePlayButton
+            ariaLabel={l.debugStepBack}
+            title={l.debugStepBack}
+            onClick={onBackButtonClick}
+            disabled={previousGameState === null}
+          >
+            {backButtonContent}
+          </GamePlayButton>
+          <GamePlayButton
+            ariaLabel={l.debugClose}
+            title={l.debugClose}
+            onClick={() => setDebugOpen(false)}
+          >
+            <i className="fa fa-fw fa-times" />
+          </GamePlayButton>
+        </div>
+      </div>
+    </QuestPlayFrameText>
+  ) : null;
+
+  const backDebugButton =
+    player.allowBackButton === "debug" ? (
+      <GamePlayButton onClick={onDebugButtonClick} ariaLabel={l.debug}>
+        {debugButtonContent}
+      </GamePlayButton>
+    ) : player.allowBackButton ? (
+      <GamePlayButton
+        disabled={previousGameState === null}
+        onClick={onBackButtonClick}
+        ariaLabel={l.stepBack}
+      >
+        {backButtonContent}
+      </GamePlayButton>
+    ) : null;
+
   if (!isMobile) {
     const IMAGE_SIZE_X = NATIVE_IMAGE_SIZE_X + 2 * frameBorderX;
     const IMAGE_SIZE_Y = NATIVE_IMAGE_SIZE_Y + 2 * frameBorderY;
@@ -505,15 +681,7 @@ export function QuestPlay({
           <GamePlayButton ariaLabel={l.restart} onClick={onRestartButtonClick}>
             {restartButtonContent}
           </GamePlayButton>
-          {player.allowBackButton && (
-            <GamePlayButton
-              disabled={previousGameState === null}
-              onClick={onBackButtonClick}
-              ariaLabel={l.stepBack}
-            >
-              {backButtonContent}
-            </GamePlayButton>
-          )}
+          {backDebugButton}
           <GamePlayButton onClick={onMusicButtonClick} ariaLabel={l.toggleMusic}>
             {musicButtonContent}
           </GamePlayButton>
@@ -533,9 +701,25 @@ export function QuestPlay({
               left: "30%",
               bottom: "30%",
               top: "30%",
+              zIndex: 100,
             }}
           >
             {reallyRestartContent}
+          </div>
+        )}
+
+        {debugViewContent && (
+          <div
+            style={{
+              position: "absolute",
+              right: "10%",
+              left: "10%",
+              bottom: "10%",
+              top: "10%",
+              zIndex: 100,
+            }}
+          >
+            {debugViewContent}
           </div>
         )}
       </div>
@@ -563,15 +747,7 @@ export function QuestPlay({
         <GamePlayButton onClick={onRestartButtonClick} ariaLabel={l.restart}>
           {restartButtonContent}
         </GamePlayButton>
-        {player.allowBackButton && (
-          <GamePlayButton
-            disabled={previousGameState === null}
-            onClick={onBackButtonClick}
-            ariaLabel={l.stepBack}
-          >
-            {backButtonContent}
-          </GamePlayButton>
-        )}
+        {backDebugButton}
         <GamePlayButton onClick={onMusicButtonClick} ariaLabel={l.toggleMusic}>
           {musicButtonContent}
         </GamePlayButton>
@@ -642,9 +818,25 @@ export function QuestPlay({
             left: "5%",
             bottom: "30%",
             top: "30%",
+            zIndex: 100,
           }}
         >
           {reallyRestartContent}
+        </div>
+      )}
+
+      {debugViewContent && (
+        <div
+          style={{
+            position: "fixed",
+            right: "5%",
+            left: "5%",
+            bottom: "10%",
+            top: "10%",
+            zIndex: 100,
+          }}
+        >
+          {debugViewContent}
         </div>
       )}
     </div>

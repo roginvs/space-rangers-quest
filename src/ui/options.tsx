@@ -125,11 +125,23 @@ export class OptionsTabContainer extends React.Component<
               <label>{l.enableBackButton}</label>
               <select
                 className="form-control"
-                value={player.allowBackButton ? "1" : "0"}
-                onChange={(e) => updatePlayer("allowBackButton", e.target.value === "1")}
+                value={
+                  player.allowBackButton === "debug"
+                    ? "debug"
+                    : player.allowBackButton
+                    ? "back"
+                    : "no"
+                }
+                onChange={(e) =>
+                  updatePlayer(
+                    "allowBackButton",
+                    e.target.value === "debug" ? "debug" : e.target.value === "back" ? true : false,
+                  )
+                }
               >
-                <option value="1">{l.backButtonEnabled}</option>
-                <option value="0">{l.backButtonDisabled}</option>
+                <option value="no">{l.backButtonDisabled}</option>
+                <option value="back">{l.backButtonEnabled}</option>
+                <option value="debug">{l.debugButtonEnabled}</option>
               </select>
             </div>
           </div>

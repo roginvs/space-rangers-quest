@@ -6,13 +6,15 @@ export const GamePlayButton: React.FC<{
   onClick: () => void;
   disabled?: boolean;
   ariaLabel: string;
-}> = ({ children, onClick, disabled, ariaLabel }) => {
+  title?: string;
+}> = ({ children, onClick, disabled, ariaLabel, title }) => {
   return (
     <button
       className="gameplay-button"
       onClick={onClick}
       disabled={disabled}
       aria-label={ariaLabel}
+      title={title}
     >
       <div className="gameplay-button-background" />
       <div

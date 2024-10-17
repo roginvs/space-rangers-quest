@@ -9,7 +9,11 @@ export interface Player {
   ToPlanet: string;
   ToStar: string;
   lang: Lang;
-  allowBackButton?: boolean;
+
+  /**
+   * Allow back or debug button in the game
+   */
+  allowBackButton?: boolean | "debug";
 }
 export const DEFAULT_RUS_PLAYER: Player = {
   // TODO: move from this file

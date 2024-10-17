@@ -37,6 +37,7 @@ const RUS = {
   enableBackButton: "Кнопка назад",
   backButtonDisabled: "Выключена (нормальный режим)",
   backButtonEnabled: "Включена (читерский режим)",
+  debugButtonEnabled: "Включен режим отладки",
 
   lang: "Язык/Language",
   rus: "Русский",
@@ -131,6 +132,13 @@ const RUS = {
   pwaInstallNotOk: "Не получилось установить",
 
   editor: "Редактор",
+
+  debug: "Отладка",
+
+  debugCopyState: "Скопировать состояние",
+  debugSetState: "Установить состояние",
+  debugStepBack: "Шаг назад",
+  debugClose: "Закрыть",
 };
 
 export type LangTexts = typeof RUS;
@@ -171,6 +179,7 @@ const ENG: LangTexts = {
   enableBackButton: "Back button",
   backButtonDisabled: "Disabled (normal mode)",
   backButtonEnabled: "Enabled (cheater mode)",
+  debugButtonEnabled: "Debug mode enabled",
 
   lang: "Язык/Language",
   rus: "Русский",
@@ -264,6 +273,13 @@ const ENG: LangTexts = {
   pwaInstallNotOk: "Failed to install application",
 
   editor: "Editor",
+
+  debug: "Debug",
+
+  debugCopyState: "Copy state",
+  debugSetState: "Set state",
+  debugStepBack: "Step back",
+  debugClose: "Close",
 };
 
 export function getLang(lang: Lang) {
