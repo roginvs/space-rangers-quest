@@ -235,8 +235,7 @@ export function QuestPlay({
     }
   }, [previousGameState, setGameState]);
 
-  // TODO: Change to default false
-  const [debugOpen, setDebugOpen] = React.useState(true);
+  const [debugOpen, setDebugOpen] = React.useState(false);
   const [debugStateInput, setDebugStateInput] = React.useState("");
 
   const onDebugButtonClick = React.useCallback(() => {
