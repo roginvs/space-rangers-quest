@@ -62,8 +62,45 @@ function removeSerialEmptyStrings(input: string[]) {
   return output;
 }
 
-function encodeGameState(gameState: GameState) {
+function encodeDebugGameState(gameState: GameState) {
   return JSON.stringify([gameState.aleaSeed, gameState.performedJumps.map((j) => j.jumpId)]);
+}
+function decodeDebugState(encodedState: string) {
+  if (!encodedState) {
+    return null;
+  }
+  try {
+    const decoded = JSON.parse(encodedState);
+
+    if (
+      Array.isArray(decoded) &&
+      decoded.length === 2 &&
+      typeof decoded[0] === "string" &&
+      Array.isArray(decoded[1]) &&
+      decoded[1].every((x) => typeof x === "number")
+    ) {
+      return {
+        aleaSeed: decoded[0],
+        performedJumpsIds: decoded[1],
+      };
+    } else {
+      return null;
+    }
+  } catch (e) {
+    return null;
+  }
+}
+function initGameFromDebugState(encodedState: string, quest: Quest) {
+  const decoded = decodeDebugState(encodedState);
+  if (!decoded) {
+    return;
+  }
+  let gameState = initGame(quest, decoded.aleaSeed);
+
+  for (const jumpId of decoded.performedJumpsIds) {
+    gameState = performJump(jumpId, quest, gameState, new Date().getTime());
+  }
+  return gameState;
 }
 
 /**
@@ -190,6 +227,7 @@ export function QuestPlay({
 
   // TODO: Change to default false
   const [debugOpen, setDebugOpen] = React.useState(true);
+  const [debugStateInput, setDebugStateInput] = React.useState("");
 
   const onDebugButtonClick = React.useCallback(() => {
     setDebugOpen(true);
@@ -199,14 +237,16 @@ export function QuestPlay({
     if (!gameState) {
       return;
     }
-    const encodedState = encodeGameState(gameState);
+    const encodedState = encodeDebugGameState(gameState);
     copyToClipboard(encodedState);
   }, [gameState]);
   const onDebugSetStateClick = React.useCallback(() => {
-    // todo
-  }, []);
-  const [debugStateInput, setDebugStateInput] = React.useState("");
-  const isDebugStateInputValid = true;
+    const newGameState = initGameFromDebugState(debugStateInput, quest);
+    if (!newGameState) {
+      return;
+    }
+    setGameState(newGameState);
+  }, [debugStateInput, quest]);
 
   const exitButtonContent = busySaving ? (
     <i className="fa fa-refresh fa-spin fa-fw" />
@@ -396,8 +436,7 @@ export function QuestPlay({
   const currentDebugViewText = "todo";
   React.useEffect(() => {
     if (debugOpen) {
-      //todo
-      setDebugStateInput(encodeGameState(gameState));
+      setDebugStateInput(encodeDebugGameState(gameState));
     }
   }, [gameState, debugOpen]);
   const debugViewContent = debugOpen ? (
@@ -437,7 +476,7 @@ export function QuestPlay({
           <GamePlayButton
             ariaLabel={l.debugSetState}
             onClick={onDebugSetStateClick}
-            disabled={isDebugStateInputValid}
+            disabled={!decodeDebugState(debugStateInput)}
           >
             {l.debugSetState}
           </GamePlayButton>
