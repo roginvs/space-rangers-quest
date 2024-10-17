@@ -4,7 +4,6 @@ const CopyWebpackPlugin = require("copy-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const ServiceWorkerWebpackPlugin = require("serviceworker-webpack-plugin");
-// const WebpackVersionHashPlugin = require("webpack-version-hash-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
 
 const devServer /*: webpackDevServer.Configuration */ = {
@@ -60,10 +59,6 @@ const config = (env, argv) => {
         filename: "[name].css",
         chunkFilename: "[id].css",
       }),
-      //new WebpackVersionHashPlugin({
-      //    filename: 'version.json',
-      //    include_date: true
-      //}),
       new webpack.DefinePlugin({
         __VERSION__: JSON.stringify(new Date().toISOString()),
       }),
