@@ -144,7 +144,11 @@ export class QuestPlayController extends React.Component<
       <QuestPlay
         quest={quest}
         gameState={gameState}
-        player={toJS(player)}
+        player={{
+          ...toJS(player),
+          //TODO: This is temp
+          allowBackButton: "debug",
+        }}
         setGameState={(newState) => {
           this.saveGame(newState);
 

@@ -134,6 +134,7 @@ const RUS = {
 
   debug: "Отладка",
 
+  debugCopyState: "Скопировать",
   debugSetState: "Установить",
   debugStepBack: "Шаг назад",
   debugClose: "Закрыть",
@@ -273,7 +274,8 @@ const ENG: LangTexts = {
 
   debug: "Debug",
 
-  debugSetState: "Set state",
+  debugCopyState: "Copy",
+  debugSetState: "Set",
   debugStepBack: "Step back",
   debugClose: "Close",
 };

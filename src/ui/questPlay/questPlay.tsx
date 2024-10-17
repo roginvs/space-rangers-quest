@@ -28,6 +28,7 @@ import {
 import { GamePlayButton } from "./questPlay.button";
 import { useDarkTheme } from "./questPlay.metatheme";
 import { toggleFullscreen } from "./fullscreen";
+import { copyToClipboard } from "../copyToClipboard";
 
 function initRandomGame(quest: Quest, doFirstStep: boolean) {
   const gameState = initGame(
@@ -59,6 +60,10 @@ function removeSerialEmptyStrings(input: string[]) {
     }
   }
   return output;
+}
+
+function encodeGameState(gameState: GameState) {
+  return JSON.stringify([gameState.aleaSeed, gameState.performedJumps.map((j) => j.jumpId)]);
 }
 
 /**
@@ -190,6 +195,13 @@ export function QuestPlay({
     setDebugOpen(true);
   }, []);
 
+  const onDebugCopyClick = React.useCallback(() => {
+    if (!gameState) {
+      return;
+    }
+    const encodedState = encodeGameState(gameState);
+    copyToClipboard(encodedState);
+  }, [gameState]);
   const onDebugSetStateClick = React.useCallback(() => {
     // todo
   }, []);
@@ -382,6 +394,12 @@ export function QuestPlay({
   ) : null;
 
   const currentDebugViewText = "todo";
+  React.useEffect(() => {
+    if (debugOpen) {
+      //todo
+      setDebugStateInput(encodeGameState(gameState));
+    }
+  }, [gameState, debugOpen]);
   const debugViewContent = debugOpen ? (
     <QuestPlayFrameText fitHeight={true} frameBorderX={frameBorderX} frameBorderY={frameBorderY}>
       <div
@@ -409,6 +427,13 @@ export function QuestPlay({
             value={debugStateInput}
             onChange={(e) => setDebugStateInput(e.target.value)}
           />
+          <GamePlayButton
+            ariaLabel={l.debugCopyState}
+            onClick={onDebugCopyClick}
+            disabled={gameState === null}
+          >
+            {l.debugCopyState}
+          </GamePlayButton>
           <GamePlayButton
             ariaLabel={l.debugSetState}
             onClick={onDebugSetStateClick}
