@@ -160,6 +160,7 @@ export function QuestPlay({
   useDarkTheme();
 
   const [reallyRestart, setReallyRestart] = React.useState(false);
+
   React.useEffect(() => setReallyRestart(false), [quest, gameState, player]);
 
   const isMobile = windowInnerWidth < MOBILE_THRESHOLD;
@@ -181,9 +182,19 @@ export function QuestPlay({
       setGameState(previousGameState);
     }
   }, [previousGameState, setGameState]);
+
+  // TODO: Change to default false
+  const [debugOpen, setDebugOpen] = React.useState(true);
+
   const onDebugButtonClick = React.useCallback(() => {
-    // TODO
-  }, [previousGameState, gameState, setGameState]);
+    setDebugOpen(true);
+  }, []);
+
+  const onDebugSetStateClick = React.useCallback(() => {
+    // todo
+  }, []);
+  const [debugStateInput, setDebugStateInput] = React.useState("");
+  const isDebugStateInputValid = true;
 
   const exitButtonContent = busySaving ? (
     <i className="fa fa-refresh fa-spin fa-fw" />
@@ -370,6 +381,66 @@ export function QuestPlay({
     </QuestPlayFrameText>
   ) : null;
 
+  const currentDebugViewText = "todo";
+  const debugViewContent = debugOpen ? (
+    <QuestPlayFrameText fitHeight={true} frameBorderX={frameBorderX} frameBorderY={frameBorderY}>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "stretch",
+          height: "100%",
+        }}
+      >
+        <textarea className="game-debug-textarea mb-1" value={currentDebugViewText}></textarea>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+          }}
+          className="mb-1"
+        >
+          <input
+            type="text"
+            className="game-debug-input"
+            placeholder="Encoded state"
+            value={debugStateInput}
+            onChange={(e) => setDebugStateInput(e.target.value)}
+          />
+          <GamePlayButton
+            ariaLabel={l.debugSetState}
+            onClick={onDebugSetStateClick}
+            disabled={isDebugStateInputValid}
+          >
+            {l.debugSetState}
+          </GamePlayButton>
+        </div>
+
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-evenly",
+          }}
+          className="mb-1"
+        >
+          <GamePlayButton
+            ariaLabel={l.debugStepBack}
+            onClick={onBackButtonClick}
+            disabled={previousGameState === null}
+          >
+            {l.debugStepBack}
+          </GamePlayButton>
+          <GamePlayButton ariaLabel={l.debugClose} onClick={() => setDebugOpen(false)}>
+            {l.debugClose}
+          </GamePlayButton>
+        </div>
+      </div>
+    </QuestPlayFrameText>
+  ) : null;
+
   const backDebugButton =
     player.allowBackButton && player.allowBackButton === "debug" ? (
       <GamePlayButton onClick={onDebugButtonClick} ariaLabel={l.debug}>
@@ -545,9 +616,25 @@ export function QuestPlay({
               left: "30%",
               bottom: "30%",
               top: "30%",
+              zIndex: 100,
             }}
           >
             {reallyRestartContent}
+          </div>
+        )}
+
+        {debugViewContent && (
+          <div
+            style={{
+              position: "absolute",
+              right: "10%",
+              left: "10%",
+              bottom: "10%",
+              top: "10%",
+              zIndex: 100,
+            }}
+          >
+            {debugViewContent}
           </div>
         )}
       </div>
@@ -646,9 +733,25 @@ export function QuestPlay({
             left: "5%",
             bottom: "30%",
             top: "30%",
+            zIndex: 100,
           }}
         >
           {reallyRestartContent}
+        </div>
+      )}
+
+      {debugViewContent && (
+        <div
+          style={{
+            position: "fixed",
+            right: "5%",
+            left: "5%",
+            bottom: "10%",
+            top: "10%",
+            zIndex: 100,
+          }}
+        >
+          {debugViewContent}
         </div>
       )}
     </div>

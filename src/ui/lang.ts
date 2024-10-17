@@ -133,6 +133,10 @@ const RUS = {
   editor: "Редактор",
 
   debug: "Отладка",
+
+  debugSetState: "Установить",
+  debugStepBack: "Шаг назад",
+  debugClose: "Закрыть",
 };
 
 export type LangTexts = typeof RUS;
@@ -268,6 +272,10 @@ const ENG: LangTexts = {
   editor: "Editor",
 
   debug: "Debug",
+
+  debugSetState: "Set state",
+  debugStepBack: "Step back",
+  debugClose: "Close",
 };
 
 export function getLang(lang: Lang) {

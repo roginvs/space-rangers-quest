@@ -22,3 +22,19 @@
 .game-root .game-clr {
   color: #ffd863;
 }
+
+.game-debug-textarea {
+  background-color: #353535;
+  color: #9eacac;
+  font-family: monospace;
+  resize: none;
+
+  height: 100%;
+}
+
+.game-debug-input {
+  background-color: #353535;
+  color: #9eacac;
+  font-family: monospace;
+  width: 100%;
+}
