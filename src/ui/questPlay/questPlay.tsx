@@ -2,7 +2,7 @@ import * as React from "react";
 import { Quest, GameState, getUIState } from "../../lib/qmplayer/funcs";
 import { getAllMediaFromQmm } from "../../lib/getAllMediaFromQmm";
 import { initGame, performJump, JUMP_I_AGREE } from "../../lib/qmplayer";
-import { Player } from "../../lib/qmplayer/player";
+import { DEFAULT_RUS_PLAYER, Player } from "../../lib/qmplayer/player";
 import { Loader, DivFadeinCss, ErrorInfo } from "../common";
 import { QuestReplaceTags } from "../questReplaceTags";
 import classnames from "classnames";
@@ -98,6 +98,10 @@ function initGameFromDebugState(encodedState: string, quest: Quest) {
   let gameState = initGame(quest, decoded.aleaSeed);
 
   for (const jumpId of decoded.performedJumpsIds) {
+    const uiState = getUIState(quest, gameState, DEFAULT_RUS_PLAYER);
+    if (!uiState.choices.find((x) => x.jumpId === jumpId)) {
+      break;
+    }
     gameState = performJump(jumpId, quest, gameState, new Date().getTime());
   }
   return gameState;
