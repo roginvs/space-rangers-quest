@@ -90,8 +90,7 @@ function decodeDebugState(encodedState: string) {
     return null;
   }
 }
-function initGameFromDebugState(encodedState: string, quest: Quest) {
-  const decoded = decodeDebugState(encodedState);
+function initGameFromDebugState(decoded: ReturnType<typeof decodeDebugState>, quest: Quest) {
   if (!decoded) {
     return;
   }
@@ -258,7 +257,8 @@ export function QuestPlay({
     copyToClipboard(encodedState);
   }, [gameState]);
   const onDebugSetStateClick = React.useCallback(() => {
-    const newGameState = initGameFromDebugState(debugStateInput, quest);
+    const decoded = decodeDebugState(debugStateInput);
+    const newGameState = initGameFromDebugState(decoded, quest);
     if (!newGameState) {
       return;
     }
@@ -269,6 +269,25 @@ export function QuestPlay({
       setDebugStateInput(encodeDebugGameState(gameState));
     }
   }, [gameState, debugOpen]);
+  const onDebugBackButtonClick = React.useCallback(() => {
+    if (!gameState) {
+      return;
+    }
+    if (gameState.performedJumps.length === 0) {
+      return;
+    }
+    const newGameState = initGameFromDebugState(
+      {
+        aleaSeed: gameState.aleaSeed,
+        performedJumpsIds: gameState.performedJumps.map((j) => j.jumpId).slice(0, -1),
+      },
+      quest,
+    );
+    if (!newGameState) {
+      return;
+    }
+    setGameState(newGameState);
+  }, [gameState, quest]);
 
   const exitButtonContent = busySaving ? (
     <i className="fa fa-refresh fa-spin fa-fw" />
@@ -516,8 +535,8 @@ export function QuestPlay({
           <GamePlayButton
             ariaLabel={l.debugStepBack}
             title={l.debugStepBack}
-            onClick={onBackButtonClick}
-            disabled={previousGameState === null}
+            onClick={onDebugBackButtonClick}
+            disabled={gameState.performedJumps.length === 0}
           >
             {backButtonContent}
           </GamePlayButton>
