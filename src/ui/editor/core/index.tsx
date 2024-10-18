@@ -520,7 +520,7 @@ export function EditorCore({
         player={{
           ...quest.strings,
           lang: "rus",
-          allowBackButton: true,
+          allowBackButton: "debug",
           Player: quest.strings.Ranger,
         }}
         setGameState={(newState) => setIsPlaying({ gameState: newState })}
