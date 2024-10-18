@@ -108,8 +108,12 @@ function initGameFromDebugState(encodedState: string, quest: Quest) {
 }
 
 function getDebugText(quest: Quest, gameState: GameState) {
-  const lines = [`${gameState.state} L=${gameState.locationId}`];
-
+  const lines = [
+    `state=${gameState.state} loc=${gameState.locationId} lastJump=${gameState.lastJumpId}`,
+  ];
+  if (gameState.possibleJumps.length > 0) {
+    lines.push(`Possible jumps: ${gameState.possibleJumps.map((x) => x.id).join(", ")}`);
+  }
   for (let i = 0; i < quest.paramsCount; i += 1) {
     const line = `P${i + 1} ${gameState.paramValues[i]} (${quest.params[i].name})`;
     lines.push(line);
