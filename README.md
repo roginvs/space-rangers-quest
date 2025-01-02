@@ -53,7 +53,8 @@ npm run build
 - Gladiator: был пересохранен потому как там совсем какой-то древний формат
 - Prison из TGE переименован в Prison1 чтобы не было коллизии
 - Kidnapped сложность поставлена в 100
-
+- Stealth исправление багов
+  
 ## Webpack devserver
 
 `npm start`
