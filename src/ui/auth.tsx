@@ -144,7 +144,9 @@ export class AuthTabContainer extends React.Component<
                 this.props.store.app
                   .auth()
                   .signInWithPopup(authProvider)
-                  .catch((e) => undefined);
+                  .catch((e) => {
+                    console.error("Firebase Google auth error:", e);
+                  });
               }}
             >
               <i className="fa fa-google fa-fw" />
@@ -159,8 +161,10 @@ export class AuthTabContainer extends React.Component<
                 const authProvider = new firebase.auth.GithubAuthProvider();
                 this.props.store.app
                   .auth()
-                  .signInWithRedirect(authProvider)
-                  .catch((e) => undefined);
+                  .signInWithPopup(authProvider)
+                  .catch((e) => {
+                    console.error("Firebase Github auth error:", e);
+                  });
               }}
             >
               <i className="fa fa-github fa-fw" />
