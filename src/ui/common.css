@@ -1,3 +1,9 @@
+/* Dark theme for the application */
+body {
+  background-color: #212529;
+  color: #f8f9fa;
+}
+
 /* DivFadeinCss */
 .fade-enter {
   opacity: 0.01;
