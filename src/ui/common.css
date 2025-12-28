@@ -29,16 +29,6 @@ body {
   color: #f8f9fa;
 }
 
-.btn-info {
-  background-color: #17a2b8;
-  border-color: #17a2b8;
-}
-
-.btn-info:hover {
-  background-color: #138496;
-  border-color: #117a8b;
-}
-
 .dropdown-menu {
   background-color: #343a40;
   border-color: #495057;
@@ -59,8 +49,8 @@ body {
 }
 
 .alert-primary {
-  background-color: #004085;
-  border-color: #004085;
+  background-color: rgba(13, 110, 253, 0.25);
+  border-color: #0d6efd;
   color: #b8daff;
 }
 
