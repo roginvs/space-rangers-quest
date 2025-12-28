@@ -34,7 +34,7 @@ export class AppNavbar extends React.Component<{
     const tab0 = this.props.store.path.tab0;
     return (
       <>
-        <Navbar color="light" light expand="md">
+        <Navbar color="dark" dark expand="md">
           <NavbarBrand href="#/">
             {l.hi} {player.Player}
           </NavbarBrand>
