@@ -14,30 +14,48 @@ describe("QuestReplaceTags link rendering", () => {
     ]) {
       const render = (str: string) =>
         renderToStaticMarkup(React.createElement(QuestReplaceTags, { str, onLinkClick: () => {} }));
-      assert.strictEqual(render(linked).replace(/ game-text-link/g, ""), render(plain));
+      assert.strictEqual(
+        render(linked)
+          .replace(" game-text-link", "")
+          .replace(' role="link"', "")
+          .replace(' tabindex="0"', ""),
+        render(plain),
+      );
     }
-    const css = fs.readFileSync(__dirname + "/../ui/questPlay/questPlay.css", "utf8");
+    const css = fs.readFileSync(__dirname + "/../../src/ui/questPlay/questPlay.css", "utf8");
     const rule = css.match(/\.game-root \.game-text-link\s*\{([^}]*)\}/);
     assert.ok(rule);
     assert.strictEqual(rule![1].trim(), "cursor: pointer;");
   });
 
-  it("Stops bubbling to a choice and sends the whole chain once", () => {
+  it("Activates with a click or Enter without triggering the surrounding choice", () => {
     const calls: string[][] = [];
     const rendered = QuestReplaceTags({
       str: "<link=Open;Enter>door</link>",
       onLinkClick: (jumps) => calls.push(jumps),
     });
     const spans = rendered.props.children[1] as React.ReactElement[];
+    assert.strictEqual(spans[0].props.role, "link");
+    assert.strictEqual(spans[0].props.tabIndex, 0);
     let prevented = 0;
     let stopped = 0;
-    spans[0].props.onClick({
+    const event = {
       preventDefault: () => prevented++,
       stopPropagation: () => stopped++,
-    });
+    };
+    spans[0].props.onClick(event);
     assert.strictEqual(prevented, 1);
     assert.strictEqual(stopped, 1);
     assert.deepStrictEqual(calls, [["Open", "Enter"]]);
+    spans[0].props.onKeyDown({ ...event, key: "Enter" });
+    assert.strictEqual(prevented, 2);
+    assert.strictEqual(stopped, 2);
+    assert.deepStrictEqual(calls, [
+      ["Open", "Enter"],
+      ["Open", "Enter"],
+    ]);
+    spans[0].props.onKeyDown({ ...event, key: "Escape" });
+    assert.strictEqual(calls.length, 2);
   });
 
   it("Shows plain text when no click handler is supplied", () => {
@@ -48,6 +66,8 @@ describe("QuestReplaceTags link rendering", () => {
     );
     assert.ok(rendered.includes("door"));
     assert.ok(!rendered.includes("game-text-link"));
+    assert.ok(!rendered.includes('role="link"'));
+    assert.ok(!rendered.includes("tabindex"));
     assert.ok(!rendered.includes("&lt;link"));
   });
 });

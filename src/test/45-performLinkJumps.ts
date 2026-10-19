@@ -156,7 +156,7 @@ describe("performLinkJumps", function () {
   });
 
   it(`Existing quests without the tag keep working`, () => {
-    const data = fs.readFileSync(__dirname + "/test6-empty.qm");
+    const data = fs.readFileSync(__dirname + "/../../src/test/test6-empty.qm");
     const qm = parse(data);
     let state: GameState = initGame(qm, "seed");
     state = performJump(JUMP_I_AGREE, qm, state, 0);

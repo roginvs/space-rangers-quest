@@ -17,6 +17,7 @@ import { splitStringToTokens } from "./questReplaceTags.split";
  */
 export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: string[]) => void }) {
   const tags = formatTokens(splitStringToTokens(props.str));
+  const onLinkClick = props.onLinkClick;
 
   const nbsp = "\u00A0";
 
@@ -24,15 +25,22 @@ export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: str
     <>
       <span className="game-text">{nbsp}</span>
       {tags.map((tag, index) => {
-        const linkJumps = tag.type === "text" && props.onLinkClick ? tag.links : undefined;
-        const isLink = linkJumps !== undefined;
+        const linkJumps = tag.type === "text" ? tag.links : undefined;
+        const onActivate =
+          linkJumps && onLinkClick
+            ? (e: React.SyntheticEvent) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onLinkClick(linkJumps);
+              }
+            : undefined;
         return (
           <span
             key={index}
             className={classNames("game-text", {
               "game-fix": tag.isFix,
               "game-clr": tag.type === "text" ? tag.isClr : undefined,
-              "game-text-link": isLink,
+              "game-text-link": !!onActivate,
             })}
             style={{
               color:
@@ -40,15 +48,14 @@ export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: str
                   ? `rgb(${tag.color.r}, ${tag.color.g}, ${tag.color.b})`
                   : undefined,
             }}
-            // The link visually looks exactly like a normal text,
-            // only the mouse cursor changes. Clicking starts the jump chain.
-            onClick={
-              isLink
+            role={onActivate ? "link" : undefined}
+            tabIndex={onActivate ? 0 : undefined}
+            onClick={onActivate}
+            onKeyDown={
+              onActivate
                 ? (e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (props.onLinkClick && linkJumps) {
-                      props.onLinkClick(linkJumps);
+                    if (e.key === "Enter") {
+                      onActivate(e);
                     }
                   }
                 : undefined

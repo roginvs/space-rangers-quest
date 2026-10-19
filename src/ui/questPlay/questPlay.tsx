@@ -234,11 +234,6 @@ export function QuestPlay({
 
   const previousGameState = usePrevGameState(quest, gameState);
 
-  /**
-   * Performs the chain of jumps from a `<link>` tag in one click.
-   * Every next jump is calculated from the state of the previous one,
-   * and only one final state is shown at the end.
-   */
   const onLinkJumpsClick = React.useCallback(
     (jumps: string[]) => {
       if (!gameState) {

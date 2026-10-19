@@ -8,41 +8,14 @@ export type StringTokenStyle =
       isClr?: boolean;
       isFix?: boolean;
       color?: StringTokenColor;
-      /**
-       * When this text is inside a `<link=...>...</link>`, the list of jump
-       * names to perform on click. Presence does not change the visual.
-       */
+      /** Jump names to perform sequentially on click. */
       links?: string[];
     }
   | { type: "newline"; isFix?: boolean };
 
 export type StringTokens = StringTokenStyle[];
 
-export function formatTokens(rawParsed: StringTokenTags[]): StringTokens {
-  // Drop dangling linkStart tokens (never closed with </link>):
-  // they are ignored, and the text after them renders as a normal text
-  const parsed = (() => {
-    const openStack: number[] = [];
-    const closedIndexes = new Set<number>();
-    for (let i = 0; i < rawParsed.length; i++) {
-      const token = rawParsed[i];
-      if (token.type === "linkStart") {
-        openStack.push(i);
-      } else if (token.type === "linkEnd") {
-        const started = openStack.pop();
-        if (started !== undefined) {
-          closedIndexes.add(started);
-        }
-      }
-    }
-    if (openStack.length === 0) {
-      return rawParsed;
-    }
-    return rawParsed.filter(
-      (token, index) => token.type !== "linkStart" || closedIndexes.has(index),
-    );
-  })();
-
+export function formatTokens(parsed: StringTokenTags[]): StringTokens {
   const out: StringTokens = [];
 
   let clrCount = 0;
@@ -58,7 +31,6 @@ export function formatTokens(rawParsed: StringTokenTags[]): StringTokens {
   let color: StringTokenColor | undefined = undefined;
 
   let linkJumps: string[] | undefined = undefined;
-  let linkDepth = 0;
 
   for (const token of parsed) {
     if (token.type === "text") {
@@ -71,7 +43,7 @@ export function formatTokens(rawParsed: StringTokenTags[]): StringTokens {
           isClr: clrCount > 0 || undefined,
           isFix: fixCount > 0 || undefined,
           color,
-          links: linkDepth > 0 && linkJumps ? linkJumps : undefined,
+          links: linkJumps,
         });
 
         if (haveNext) {
@@ -127,7 +99,7 @@ export function formatTokens(rawParsed: StringTokenTags[]): StringTokens {
               isClr: clrCount > 0 || undefined,
               isFix: fixCount > 0 || undefined,
               text: leftPad,
-              ...(linkJumps ? { links: linkJumps } : {}),
+              links: linkJumps,
             });
           }
           if (rightPad) {
@@ -136,7 +108,7 @@ export function formatTokens(rawParsed: StringTokenTags[]): StringTokens {
               isClr: clrCount > 0 || undefined,
               isFix: fixCount > 0 || undefined,
               text: rightPad,
-              ...(linkJumps ? { links: linkJumps } : {}),
+              links: linkJumps,
             });
           }
         }
@@ -151,17 +123,11 @@ export function formatTokens(rawParsed: StringTokenTags[]): StringTokens {
         assertNever(tag);
       }
     } else if (token.type === "linkStart") {
-      linkDepth++;
-      if (linkDepth === 1 && token.jumps.length > 0) {
-        linkJumps = token.jumps.slice();
+      if (!linkJumps) {
+        linkJumps = token.jumps;
       }
-      // Nested links are not supported: the outer area stays active until its end.
     } else if (token.type === "linkEnd") {
-      linkDepth--;
-      if (linkDepth <= 0) {
-        linkDepth = 0;
-        linkJumps = undefined;
-      }
+      linkJumps = undefined;
     } else {
       assertNever(token);
     }
