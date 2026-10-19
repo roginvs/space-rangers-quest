@@ -47,6 +47,7 @@ import { firebaseConfig } from "./firebaseConfig";
 import { ChampionsTabContainerNew } from "./champions.new";
 import { EditorContainer } from "./editor";
 import { QuestPlayUserQuestController } from "./questPlayUserQuestController";
+import { GameStyleFrame } from "./menu/gameStyle";
 console.info(`Starting the app (buildAt=${new Date(__VERSION__).toISOString()})`);
 
 const app = firebase.initializeApp(firebaseConfig);
@@ -234,37 +235,49 @@ class MainLoader extends React.Component<{}> {
     if (tab0 === "auth") {
       return (
         <AppNavbar store={store}>
-          <AuthTabContainer store={store} />
+          <GameStyleFrame>
+            <AuthTabContainer store={store} />
+          </GameStyleFrame>
         </AppNavbar>
       );
     } else if (tab0 === "options") {
       return (
         <AppNavbar store={store}>
-          <OptionsTabContainer store={store} />
+          <GameStyleFrame>
+            <OptionsTabContainer store={store} />
+          </GameStyleFrame>
         </AppNavbar>
       );
     } else if (tab0 === "offlinemode") {
       return (
         <AppNavbar store={store}>
-          <OfflineModeTabContainer store={store} />
+          <GameStyleFrame>
+            <OfflineModeTabContainer store={store} />
+          </GameStyleFrame>
         </AppNavbar>
       );
     } else if (tab0 === "about") {
       return (
         <AppNavbar store={store}>
-          <AboutTabContainer store={store} />
+          <GameStyleFrame>
+            <AboutTabContainer store={store} />
+          </GameStyleFrame>
         </AppNavbar>
       );
     } else if (tab0 === "champions") {
       return (
         <AppNavbar store={store}>
-          <ChampionsTabContainer store={store} />
+          <GameStyleFrame>
+            <ChampionsTabContainer store={store} />
+          </GameStyleFrame>
         </AppNavbar>
       );
     } else if (tab0 === "logs") {
       return (
         <AppNavbar store={store}>
-          <ChampionsTabContainerNew store={store} />
+          <GameStyleFrame>
+            <ChampionsTabContainerNew store={store} />
+          </GameStyleFrame>
         </AppNavbar>
       );
     } else if (tab0 === "editor") {
@@ -289,7 +302,9 @@ class MainLoader extends React.Component<{}> {
         if (!tab2) {
           return (
             <AppNavbar store={store}>
-              <QuestInfo key={tab1} store={store} gameName={tab1} />
+              <GameStyleFrame key={tab1}>
+                <QuestInfo key={tab1} store={store} gameName={tab1} />
+              </GameStyleFrame>
             </AppNavbar>
           );
         } else {

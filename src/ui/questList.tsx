@@ -15,6 +15,7 @@ import { SRDateToString } from "../lib/qmplayer/funcs";
 import { QuestReplaceTags } from "./questReplaceTags";
 import { getMagicSlots } from "./questList.magicSlots";
 import { computed } from "mobx";
+import { GameStyleFrame, GameStyleFrameSmall } from "./menu/gameStyle";
 
 interface QuestListState {
   dropdownOpen: boolean;
@@ -166,136 +167,121 @@ export class QuestList extends React.Component<
     return (
       <AppNavbar store={this.props.store}>
         <DivFadeinCss key="quest list" className="container mb-5">
-          <div className="text-center mb-3">
-            <h5>{l.welcomeHeader}</h5>
+          <div className="game-menu-title text-center">
+            <h4>{l.welcomeHeader}</h4>
           </div>
-          <div className="row">
-            <div className="col-md-6 mb-3">
-              <ButtonDropdown
-                style={{
-                  display: "block",
-                }}
-                isOpen={this.state.dropdownOpen}
-                toggle={() =>
-                  this.setState({
-                    dropdownOpen: !this.state.dropdownOpen,
-                  })
-                }
-              >
-                <DropdownToggle color="info" caret block>
-                  {store.questsListTab === QUEST_SEARCH_ALL
-                    ? l.all
-                    : store.questsListTab === QUEST_SEARCH_OWN
-                    ? l.own
-                    : store.questsListTab}
-                </DropdownToggle>
-                <DropdownMenu>
-                  <DropdownItem onClick={() => (store.questsListTab = QUEST_SEARCH_ALL)}>
-                    {l.all}
-                  </DropdownItem>
-                  <DropdownItem divider />
-                  {this.origins.map((originName) => (
-                    <DropdownItem
-                      key={originName}
-                      onClick={() => (store.questsListTab = originName)}
-                    >
-                      {originName}
+          <GameStyleFrame className="mb-2">
+            <div className="row">
+              <div className="col-md-6 form-group">
+                <ButtonDropdown
+                  style={{
+                    display: "block",
+                  }}
+                  isOpen={this.state.dropdownOpen}
+                  toggle={() =>
+                    this.setState({
+                      dropdownOpen: !this.state.dropdownOpen,
+                    })
+                  }
+                >
+                  <DropdownToggle color="secondary" caret block className="game-menu-dd-toggle">
+                    {store.questsListTab === QUEST_SEARCH_ALL
+                      ? l.all
+                      : store.questsListTab === QUEST_SEARCH_OWN
+                      ? l.own
+                      : store.questsListTab}
+                  </DropdownToggle>
+                  <DropdownMenu className="game-menu-dd-menu">
+                    <DropdownItem onClick={() => (store.questsListTab = QUEST_SEARCH_ALL)}>
+                      {l.all}
                     </DropdownItem>
-                  ))}
-                  {/*
-                                    <DropdownItem divider />
-                                    
-                                    <DropdownItem
-                                        onClick={() =>
-                                            this.setState({
-                                                tab: OWN
-                                            })
-                                        }
-                                    >
-                                        {l.own}
-                                    </DropdownItem>
-                                    */}
-                </DropdownMenu>
-              </ButtonDropdown>
-            </div>
-            <div className="col-md-6 mb-3">
-              <input
-                className="form-control"
-                value={store.questsListSearch}
-                onChange={(e) => (store.questsListSearch = e.target.value)}
-                onKeyUp={(e) =>
-                  e.which === 27 /* ESC */ ? (store.questsListSearch = "") : undefined
-                }
-                placeholder={l.search}
-              />
-            </div>
-          </div>
-
-          {this.questsToShow.length > 0 ? (
-            <>
-              <div className="row mb-2 mt-0">
-                {this.proposedSlots.filter((x) => x).length > 0 && true ? (
-                  this.proposedSlots.map((slotGameName) =>
-                    slotGameName ? (
-                      <div className="col-md-4 col-12" key={slotGameName}>
-                        <button
-                          className="btn btn-block btn-primary py-2 mb-1"
-                          style={{
-                            whiteSpace: "normal",
-                          }}
-                          onClick={() => {
-                            location.href = `#/quests/${slotGameName}`;
-                          }}
-                        >
-                          <i className="fa fa-fw fa-star mr-1" />
-                          {slotGameName}
-                        </button>
-                      </div>
-                    ) : null,
-                  )
-                ) : (
-                  <div className="col-12 text-center text-success">{l.allQuestPassed}</div>
-                )}
+                    <DropdownItem divider />
+                    {this.origins.map((originName) => (
+                      <DropdownItem
+                        key={originName}
+                        onClick={() => (store.questsListTab = originName)}
+                      >
+                        {originName}
+                      </DropdownItem>
+                    ))}
+                  </DropdownMenu>
+                </ButtonDropdown>
               </div>
-
-              <div className="mb-4">
-                <div className="text-center">
-                  {allQuestsForThisUserPassed.length}/{allQuestsForThisUser.length}
-                </div>
-                <Progress
-                  value={(allQuestsForThisUserPassed.length / allQuestsForThisUser.length) * 100}
+              <div className="col-md-6 form-group">
+                <input
+                  className="form-control"
+                  value={store.questsListSearch}
+                  onChange={(e) => (store.questsListSearch = e.target.value)}
+                  onKeyUp={(e) =>
+                    e.which === 27 /* ESC */ ? (store.questsListSearch = "") : undefined
+                  }
+                  placeholder={l.search}
                 />
               </div>
+            </div>
 
-              <div className="list-group">
-                {this.questsToShow.map((quest) => (
-                  <a
-                    href={`#/quests/${quest.gameName}`}
-                    key={quest.gameName}
-                    className="list-group-item list-group-item-action flex-column align-items-start"
+            <div className="mb-2">
+              <Progress
+                value={(allQuestsForThisUserPassed.length / allQuestsForThisUser.length) * 100}
+              />
+              <div className="text-center mt-1" style={{ fontSize: "0.95rem" }}>
+                {l.passed}: {allQuestsForThisUserPassed.length}/{allQuestsForThisUser.length}
+              </div>
+            </div>
+          </GameStyleFrame>
+
+          {this.proposedSlots.filter((x) => x).length > 0 && true ? (
+            <div className="game-menu-suggested mb-1 mt-2">
+              {this.proposedSlots.map((slotGameName) =>
+                slotGameName ? (
+                  <button
+                    className="btn game-menu-bigbutton"
+                    key={slotGameName}
+                    onClick={() => {
+                      location.href = `#/quests/${slotGameName}`;
+                    }}
                   >
+                    <i className="fa fa-fw fa-angle-double-right mr-1" />
+                    {slotGameName}
+                  </button>
+                ) : null,
+              )}
+            </div>
+          ) : (
+            <div className="text-center mt-2 text-success">{l.allQuestPassed}</div>
+          )}
+
+          {this.questsToShow.length > 0 ? (
+            <div className="game-menu-rows">
+              {this.questsToShow.map((quest) => (
+                <GameStyleFrameSmall className="game-menu-row" key={quest.gameName}>
+                  <a href={`#/quests/${quest.gameName}`}>
                     <div className="d-flex w-100 justify-content-between">
-                      <h5 className="mb-1">{quest.gameName}</h5>
+                      <h5>{quest.gameName}</h5>
                       <small>
                         {quest.passedAt === undefined ? (
                           <i className="text-muted fa fa-spin circle-o-notch" />
                         ) : quest.passedAt !== false ? (
-                          <span>{l.passed}</span>
+                          <span className="game-menu-row-passed">
+                            <i className="fa fa-fw fa-check" /> {l.passed}
+                          </span>
                         ) : null}
                       </small>
                     </div>
                     <p className="mb-1 bootstrap-style">
                       <QuestReplaceTags str={quest.taskText} />
                     </p>
-                    <small>{quest.smallDescription}</small>
+                    <small className="text-muted">{quest.smallDescription}</small>
                   </a>
-                ))}
-              </div>
-            </>
-          ) : (
-            <div className="text-center">
-              <i className="fa fa-circle-o" /> {l.nothingFound}
+                </GameStyleFrameSmall>
+              ))}
             </div>
+          ) : (
+            <GameStyleFrame>
+              <div className="text-center">
+                <i className="fa fa-circle-o" /> {l.nothingFound}
+              </div>
+            </GameStyleFrame>
           )}
         </DivFadeinCss>
       </AppNavbar>
