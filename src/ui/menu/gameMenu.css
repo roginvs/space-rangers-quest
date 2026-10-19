@@ -285,6 +285,12 @@
   text-align: center;
 }
 
+/* Bootstrap reserves a huge right padding for the (hidden) close button —
+   which makes text off-center */
+.game-style-root .alert-dismissible {
+  padding-right: 1.25rem;
+}
+
 /* The close button must sit in the top right corner and not overlap
    the centered heading (mobile) */
 .game-style-root .alert .close {
