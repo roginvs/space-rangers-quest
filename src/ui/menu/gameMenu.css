@@ -242,8 +242,86 @@
   padding: 6px 10px 16px;
 }
 
-/* Alert inside dark background */
+/* Alert inside dark background (bootstrap alerts are default blue/white) */
 .game-style-root .alert {
   background-color: rgba(0, 0, 0, 0.5);
-  border-color: #555555;
+  border: 1px solid #1e5a64;
+  color: #9eacac;
 }
+
+.game-style-root .alert .alert-heading {
+  color: #dadada;
+}
+
+.game-style-root .alert .close,
+.game-style-root .alert .alert-link {
+  color: #9eacac;
+  text-shadow: none;
+}
+
+.game-style-root .alert .close:hover,
+.game-style-root .alert .alert-link:hover {
+  color: #dadada;
+}
+
+/* Cards (offline mode) */
+.game-style-root .card,
+.game-style-root .card-group .card {
+  background-color: rgba(0, 0, 0, 0.55);
+  border: 1px solid #555555;
+  color: #9eacac;
+}
+
+.game-style-root .card-header {
+  background-color: transparent;
+  border-bottom: 1px solid #555555;
+  color: #dadada;
+}
+
+.game-style-root .card-body {
+  color: #9eacac;
+}
+
+@media (max-width: 767px) {
+  .game-style-root .card-group .card {
+    min-width: 100%;
+  }
+}
+
+/* Tables (champions) */
+.game-style-root .table {
+  color: #9eacac;
+}
+
+.game-style-root .table th,
+.game-style-root .table td {
+  border-color: #555555;
+  color: #9eacac;
+}
+
+.game-style-root .table thead th {
+  color: #dadada;
+  border-bottom: 2px solid #1e5a64;
+}
+
+/* ============ Mobile ============ */
+
+/* Avoid horizontal scroll on narrow screens */
+.game-style-root {
+  overflow-x: hidden;
+}
+
+@media (max-width: 767px) {
+  /* background-attachment: fixed has poor mobile support and visual jumps */
+  .game-style-root {
+    background-attachment: scroll;
+    background-position: 70% top;
+  }
+}
+
+/* Long unbreakable quest names should not widen the page */
+.game-style-root .game-menu-row,
+.game-style-root .game-menu-row a {
+  overflow-wrap: anywhere;
+}
+
