@@ -28,6 +28,7 @@ import {
   snapToGrid,
 } from "./utils";
 import { HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR, Jump, Location, parse } from "../../../lib/qmreader";
+import { greetingsQmm } from "./greetingsQmm";
 import { LocationHover } from "./hovers/location";
 import { Overlay } from "./overlay";
 import { LocationOverlay } from "./overlays/jumpsAndLocations/location";
@@ -559,6 +560,19 @@ export function EditorCore({
           aria-label="Создать новый"
         >
           <i className="fa fa-file-o fa-fw" title="Новый" />
+        </button>
+        <button
+          className={classNames("mr-1", "btn", "btn-light")}
+          onClick={() => {
+            const demoQuest = parse(greetingsQmm);
+            onChange({
+              ...demoQuest,
+              filename: "demo",
+            });
+          }}
+          aria-label="Открыть демо квест"
+        >
+          <i className="fa fa-magic fa-fw" title="Демо квест" />
         </button>
         <button
           className={classNames("mr-1", "btn", "btn-light")}
