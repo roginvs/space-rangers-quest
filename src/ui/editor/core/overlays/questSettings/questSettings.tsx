@@ -20,10 +20,12 @@ export function QuestSettings({
   initialQuest,
   onClose,
   enableSaveOnNoChanges,
+  onCreateDemo,
 }: {
   initialQuest: Quest;
   onClose: (newQuest: Quest | undefined) => void;
   enableSaveOnNoChanges: boolean;
+  onCreateDemo?: () => void;
 }) {
   const [quest, setQuest] = React.useState(initialQuest);
 
@@ -124,7 +126,11 @@ export function QuestSettings({
         </div>
 
         <div className="d-flex">
-          <div />
+          {onCreateDemo && (
+            <button className="btn btn-secondary mr-2" onClick={onCreateDemo}>
+              Создать демо квест
+            </button>
+          )}
           <button
             className="btn btn-primary ml-auto mr-2"
             disabled={!isChanged && !enableSaveOnNoChanges}

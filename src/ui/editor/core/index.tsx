@@ -67,6 +67,7 @@ type EditorOverlay =
   | {
       readonly kind: "questsettings";
       readonly enableSaveOnNoChanges: boolean;
+      readonly isNewQuest?: boolean;
     }
   | {
       readonly kind: "load";
@@ -555,24 +556,12 @@ export function EditorCore({
             setOverlayMode({
               kind: "questsettings",
               enableSaveOnNoChanges: true,
+              isNewQuest: true,
             });
           }}
           aria-label="Создать новый"
         >
           <i className="fa fa-file-o fa-fw" title="Новый" />
-        </button>
-        <button
-          className={classNames("mr-1", "btn", "btn-light")}
-          onClick={() => {
-            const demoQuest = parse(greetingsQmm);
-            onChange({
-              ...demoQuest,
-              filename: "demo",
-            });
-          }}
-          aria-label="Открыть демо квест"
-        >
-          <i className="fa fa-magic fa-fw" title="Демо квест" />
         </button>
         <button
           className={classNames("mr-1", "btn", "btn-light")}
@@ -845,6 +834,14 @@ export function EditorCore({
           ) : overlayMode.kind === "questsettings" ? (
             <QuestSettings
               initialQuest={quest}
+              onCreateDemo={
+                overlayMode.isNewQuest
+                  ? () => {
+                      setOverlayMode(undefined);
+                      onChange({ ...parse(greetingsQmm), filename: "demo" });
+                    }
+                  : undefined
+              }
               onClose={(newQuest) => {
                 setOverlayMode(undefined);
                 if (newQuest) {
