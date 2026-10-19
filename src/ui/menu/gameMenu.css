@@ -282,6 +282,7 @@
   background-color: rgba(0, 0, 0, 0.5);
   border: 1px solid #1e5a64;
   color: #9eacac;
+  text-align: center;
 }
 
 /* The close button must sit in the top right corner and not overlap
