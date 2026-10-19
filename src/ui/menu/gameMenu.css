@@ -288,15 +288,8 @@
 /* The close button must sit in the top right corner and not overlap
    the centered heading (mobile) */
 .game-style-root .alert .close {
-  position: absolute;
-  right: 10px;
-  top: 6px;
-  color: #9eacac;
-  opacity: 1;
-  text-shadow: none;
-  font-size: 1.6rem;
-  line-height: 1;
-  padding: 2px 4px;
+  /* The close button looks misplaced (above the heading) on mobile — removed */
+  display: none;
 }
 
 .game-style-root .alert .alert-heading {
