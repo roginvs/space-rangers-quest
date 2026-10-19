@@ -1,0 +1,249 @@
+/* Styles for the main menu, reusing the quest play (game) visuals.
+   Palette is taken from the game screen (questPlay):
+   text #9eacac, dim #60696b, accent/game-clr #ffd863,
+   buttons #1e5a64 (opacity .5 -> .8 hover), inputs #353535 */
+
+.game-style-root {
+  min-height: 100vh;
+  background-color: #0a0f10;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+    url("/questplay/background.jpg");
+  background-repeat: no-repeat;
+  /* Top of the image is at the top of the page (behind the navbar),
+     like the game screenshot top area */
+  background-position: center top;
+  background-size: cover;
+  background-attachment: fixed;
+}
+
+/* Padding inside dark background */
+.game-style-root > .container.mt-3 {
+  padding-bottom: 50px;
+}
+
+/* Frame panels content */
+.game-menu-frame-inner {
+  padding: 15px;
+}
+
+/* Welcome title: not inside a frame, like a game screen title */
+.game-style-root .game-menu-title h4 {
+  color: #ffd863;
+  text-shadow: 0 0 8px rgba(0, 0, 0, 1);
+  margin-bottom: 20px;
+  font-weight: normal;
+}
+
+/* ============ Navbar ============ */
+.game-menu-navbar.navbar {
+  /* Semi transparent so the top of the background image is visible */
+  background-image: linear-gradient(180deg, rgba(0, 0, 0, 0.85), rgba(0, 0, 0, 0.45));
+  border-bottom: 1px solid rgba(30, 90, 100, 0.8);
+}
+
+.game-menu-navbar .navbar-brand,
+.game-menu-navbar .nav-link {
+  color: #9eacac;
+}
+
+.game-menu-navbar .navbar-brand:hover {
+  color: #dadada;
+}
+
+.game-menu-navbar .nav-link {
+  border-radius: 10px 0 10px 0;
+}
+
+.game-menu-navbar .nav-link:hover {
+  color: #dadada;
+  background-color: rgba(30, 90, 100, 0.5);
+}
+
+.game-menu-navbar .nav-link.active {
+  color: #ffd863;
+}
+
+/* ============ Buttons: same look as GamePlayButton ============ */
+
+.game-style-root .btn {
+  border-radius: 10px 0 10px 0;
+  border: 1px solid #ababab;
+  background-color: rgba(30, 90, 100, 0.5);
+  color: #aaaaaa;
+  padding: 0.55rem 1rem;
+  box-shadow: none;
+}
+
+.game-style-root .btn:hover,
+.game-style-root .btn:focus {
+  background-color: rgba(30, 90, 100, 0.8);
+  border-color: #ababab;
+  color: #dadada;
+  box-shadow: none;
+}
+
+.game-style-root .btn:focus {
+  outline: none;
+}
+
+.game-style-root .btn-danger {
+  background-color: rgba(140, 30, 30, 0.55);
+}
+
+.game-style-root .btn-danger:hover,
+.game-style-root .btn-danger:focus {
+  background-color: rgba(160, 30, 30, 0.8);
+}
+
+/* Suggested quests: game-choice-like wide buttons */
+.game-style-root .btn.game-menu-bigbutton {
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  white-space: normal;
+  text-align: center;
+}
+
+/* ============ Inputs: same as game-debug-input ============ */
+
+.game-style-root .form-control {
+  background-color: #353535;
+  color: #9eacac;
+  border: 1px solid #555555;
+  border-radius: 10px 0 10px 0;
+  padding: 0.55rem 1rem;
+  height: auto;
+  box-shadow: none;
+}
+
+.game-style-root .form-control::placeholder {
+  color: #60696b;
+}
+
+.game-style-root .form-control:focus {
+  background-color: #353535;
+  color: #dadada;
+  border-color: #ababab;
+  box-shadow: none;
+  outline: none;
+}
+
+.game-style-root .dropdown-menu {
+  background-color: #353535;
+  border: 1px solid #ababab;
+  border-radius: 10px 0 10px 0;
+  margin-top: 4px;
+  padding: 4px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.7);
+}
+
+/* The opened quest group list: as wide as the toggle button */
+.game-style-root .game-menu-dd-menu {
+  width: 100%;
+}
+
+.game-style-root .dropdown-item {
+  color: #9eacac;
+  padding: 0.55rem 1rem;
+  border-radius: 6px 0 6px 0;
+}
+
+.game-style-root .dropdown-item:hover,
+.game-style-root .dropdown-item:focus {
+  background-color: rgba(30, 90, 100, 0.9);
+  color: #dadada;
+}
+
+.game-style-root .dropdown-divider {
+  border-top: 1px solid #555555;
+  margin: 4px 0;
+}
+
+/* ============ Suggested quests grid ============ */
+
+.game-menu-suggested {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.game-menu-suggested .btn {
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .game-menu-suggested {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ============ Progress: game button color ============ */
+
+.game-style-root .progress {
+  background-color: #353535;
+  border: 1px solid #555555;
+  border-radius: 10px 0 10px 0;
+  height: 12px;
+}
+
+.game-style-root .progress-bar {
+  background-color: #1e5a64;
+}
+
+/* ============ Text colors like in game ============ */
+
+.game-style-root,
+.game-style-root a {
+  color: #9eacac;
+}
+
+.game-style-root .text-muted {
+  color: #60696b !important;
+}
+
+/* Frame titles: game text color */
+.game-style-root h5,
+.game-style-root h4,
+.game-style-root h3 {
+  color: #9eacac;
+}
+
+/* Quest rows game-choice hover */
+.game-menu-row a:hover h5 {
+  color: #dadada;
+}
+
+.game-menu-row-passed {
+  color: #ffd863;
+  white-space: nowrap;
+}
+
+/* Quest rows (one per line, like the original list) */
+.game-menu-rows {
+  margin-top: 15px;
+}
+
+.game-menu-row {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.game-menu-row a {
+  display: block;
+  color: #9eacac;
+}
+
+.game-menu-row a:hover {
+  color: #dadada;
+  text-decoration: none;
+}
+
+.game-menu-row-inner {
+  padding: 6px 10px 16px;
+}
+
+/* Alert inside dark background */
+.game-style-root .alert {
+  background-color: rgba(0, 0, 0, 0.5);
+  border-color: #555555;
+}
