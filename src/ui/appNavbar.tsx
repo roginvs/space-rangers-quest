@@ -36,7 +36,9 @@ export class AppNavbar extends React.Component<{
     return (
       <GameStyleRoot>
         <Navbar color="dark" dark expand="md" className="game-menu-navbar">
-          <NavbarBrand href="#/">{l.hi} {player.Player}</NavbarBrand>
+          <NavbarBrand href="#/">
+            {l.hi} {player.Player}
+          </NavbarBrand>
           <NavbarToggler
             aria-label={l.menu}
             onClick={() => {
