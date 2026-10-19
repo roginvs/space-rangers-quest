@@ -6,7 +6,7 @@
 .game-style-root {
   min-height: 100vh;
   background-color: #0a0f10;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)),
+  background-image: linear-gradient(rgba(0, 0, 0, 0.68), rgba(0, 0, 0, 0.68)),
     url("/questplay/background.jpg");
   background-repeat: no-repeat;
   /* Top of the image is at the top of the page (behind the navbar),
@@ -106,9 +106,9 @@
 /* ============ Inputs: same as game-debug-input ============ */
 
 .game-style-root .form-control {
-  background-color: #353535;
-  color: #9eacac;
-  border: 1px solid #555555;
+  background-color: #3d4446;
+  color: #dadada;
+  border: 1px solid #ababab;
   border-radius: 10px 0 10px 0;
   padding: 0.55rem 1rem;
   height: auto;
@@ -116,13 +116,13 @@
 }
 
 .game-style-root .form-control::placeholder {
-  color: #60696b;
+  color: #7d8c8c;
 }
 
 .game-style-root .form-control:focus {
-  background-color: #353535;
-  color: #dadada;
-  border-color: #ababab;
+  background-color: #454d4f;
+  color: #ffffff;
+  border-color: #dadada;
   box-shadow: none;
   outline: none;
 }
