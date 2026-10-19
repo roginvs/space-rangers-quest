@@ -303,6 +303,15 @@
   margin-right: 1.5rem;
 }
 
+.game-style-root .alert .alert-link {
+  color: #dadada;
+}
+
+.game-style-root .alert .alert-link:hover,
+.game-style-root .alert .alert-link:focus {
+  color: #ffd863;
+}
+
 .game-style-root .alert .close:hover,
 .game-style-root .alert .alert-link:hover {
   color: #dadada;
