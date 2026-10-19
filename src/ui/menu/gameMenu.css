@@ -113,8 +113,8 @@
 /* ============ Inputs: same as game-debug-input ============ */
 
 .game-style-root .form-control {
-  background-image: linear-gradient(90deg, rgba(70, 148, 158, 0.5) 0%, rgba(30, 90, 100, 0.4) 40%, rgba(10, 34, 40, 0.6) 100%);
-  background-color: #16424a;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0) 40%, rgba(0, 0, 0, 0.12) 100%);
+  background-color: #3d4446;
   color: #dadada;
   border: 1px solid #ababab;
   border-radius: 10px 0 10px 0;
@@ -128,26 +128,18 @@
 }
 
 .game-style-root .form-control:focus {
-  background-image: linear-gradient(90deg, rgba(88, 170, 180, 0.55) 0%, rgba(30, 90, 100, 0.5) 40%, rgba(12, 40, 46, 0.55) 100%);
-  background-color: #1b535e;
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0) 40%, rgba(0, 0, 0, 0.09) 100%);
+  background-color: #454d4f;
   color: #ffffff;
   border-color: #dadada;
   box-shadow: none;
   outline: none;
 }
 
-/* Dropdown toggle: same horizontal gradient as the input */
-.game-style-root .btn.game-menu-dd-toggle {
-  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(0, 0, 0, 0.14) 100%);
-}
-
-.game-style-root .btn.game-menu-dd-toggle:hover,
-.game-style-root .btn.game-menu-dd-toggle:focus {
-  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.03) 40%, rgba(0, 0, 0, 0.1) 100%);
-}
+/* Dropdown toggle stays a plain game button (no extra gradient) */
 
 .game-style-root .dropdown-menu {
-  background-color: #173940;
+  background-color: #2b3d42;
   border: 1px solid #ababab;
   border-radius: 10px 0 10px 0;
   margin-top: 4px;
