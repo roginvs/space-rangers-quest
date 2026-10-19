@@ -52,6 +52,21 @@ export type StringTokenTags =
       type: "linkEnd";
     };
 
+function findLinkTargetEnd(str: string, start: number) {
+  for (let i = start; i < str.length; i++) {
+    if (str[i] === "<") {
+      // Skip formatting tags inserted by substitutions in the target name.
+      i = str.indexOf(">", i + 1);
+      if (i === -1) {
+        return -1;
+      }
+    } else if (str[i] === ">") {
+      return i;
+    }
+  }
+  return -1;
+}
+
 export function splitStringToTokens(str: string) {
   const out: StringTokenTags[] = [];
 
@@ -74,16 +89,20 @@ export function splitStringToTokens(str: string) {
       continue;
     }
 
-    // Substitutions in a target name can insert <clr>...</clr> (and other
-    // formatting). Their closing brackets must not terminate the attribute.
-    const linkStartMatch = str.slice(pos).match(/^<link=((?:<[^<>]*>|[^<>])*)>/);
-    if (linkStartMatch) {
-      flushText();
-      pos += linkStartMatch[0].length;
-      // Several jumps names are separated by ';', spaces around names are trimmed
-      const jumps = linkStartMatch[1].split(";").map((jumpName) => jumpName.trim());
-      out.push({ type: "linkStart", jumps });
-      continue;
+    const linkStart = "<link=";
+    if (str.startsWith(linkStart, pos)) {
+      const targetStart = pos + linkStart.length;
+      const targetEnd = findLinkTargetEnd(str, targetStart);
+      if (targetEnd !== -1) {
+        flushText();
+        const jumps = str
+          .slice(targetStart, targetEnd)
+          .split(";")
+          .map((name) => name.trim());
+        out.push({ type: "linkStart", jumps });
+        pos = targetEnd + 1;
+        continue;
+      }
     }
 
     let simpleTagFound = false;
