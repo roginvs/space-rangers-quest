@@ -127,6 +127,7 @@ export function formatTokens(rawParsed: StringTokenTags[]): StringTokens {
               isClr: clrCount > 0 || undefined,
               isFix: fixCount > 0 || undefined,
               text: leftPad,
+              ...(linkJumps ? { links: linkJumps } : {}),
             });
           }
           if (rightPad) {
@@ -135,6 +136,7 @@ export function formatTokens(rawParsed: StringTokenTags[]): StringTokens {
               isClr: clrCount > 0 || undefined,
               isFix: fixCount > 0 || undefined,
               text: rightPad,
+              ...(linkJumps ? { links: linkJumps } : {}),
             });
           }
         }
@@ -153,8 +155,7 @@ export function formatTokens(rawParsed: StringTokenTags[]): StringTokens {
       if (linkDepth === 1 && token.jumps.length > 0) {
         linkJumps = token.jumps.slice();
       }
-      // Nested links are not supported: the innermost (started earlier,
-      // i.e. the outer) area wins and stays active until its linkEnd
+      // Nested links are not supported: the outer area stays active until its end.
     } else if (token.type === "linkEnd") {
       linkDepth--;
       if (linkDepth <= 0) {

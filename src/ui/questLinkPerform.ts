@@ -3,6 +3,7 @@ import { Quest, GameState, getUIState } from "../lib/qmplayer/funcs";
 import { Player } from "../lib/qmplayer/player";
 import { DeepImmutable } from "../lib/qmplayer/deepImmutable";
 import { splitStringToTokens } from "./questReplaceTags.split";
+import { formatTokens } from "./questReplaceTags.format";
 
 /**
  * The `<link>` tag feature.
@@ -18,8 +19,8 @@ export function stripFormattingTags(str: string) {
   // The tokenizer is the source of truth about which tags are formatting:
   // everything else (unknown or broken tags) stays in the text,
   // so the matching simply will not find anything
-  return splitStringToTokens(str)
-    .map((token) => (token.type === "text" ? token.text : ""))
+  return formatTokens(splitStringToTokens(str))
+    .map((token) => (token.type === "text" ? token.text : "\n"))
     .join("");
 }
 
@@ -45,10 +46,12 @@ export function performLinkJumps(
   quest: Quest,
   startState: GameState,
   player: DeepImmutable<Player>,
+  dateUnix = Date.now(),
 ): GameState {
   let state = startState;
 
-  for (const jumpName of jumps) {
+  for (let step = 0; step < jumps.length; step++) {
+    const jumpName = jumps[step];
     const uiState = getUIState(quest, state, player);
 
     if (uiState.gameState !== "running") {
@@ -62,18 +65,19 @@ export function performLinkJumps(
       (choice) => choice.active && normalizeForLinkMatch(choice.text) === wanted,
     );
 
-    // Ambiguous or missing jumps stops the chain
+    // Keep earlier jumps and explain why the chain stopped.
     if (matches.length !== 1) {
+      console.warn(
+        `<link>: ${
+          matches.length === 0 ? "Transition not found or inactive" : "Ambiguous transition"
+        }: ` +
+          `${JSON.stringify(jumpName)} (step ${step + 1}/${jumps.length}, ` +
+          `location ${state.locationId}, state ${state.state}, active matches ${matches.length})`,
+      );
       break;
     }
 
-    state = performJump(
-      matches[0].jumpId,
-      quest,
-      state,
-      // The date is not important for links, intermediate states are not shown
-      0,
-    );
+    state = performJump(matches[0].jumpId, quest, state, dateUnix);
   }
 
   return state;

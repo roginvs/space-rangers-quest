@@ -234,6 +234,11 @@ export function QuestPlay({
 
   const previousGameState = usePrevGameState(quest, gameState);
 
+  // Update synchronously when accepting a click so duplicate events cannot
+  // reuse the old state before the parent has rendered the result.
+  const displayedGame = React.useRef({ quest, gameState, player });
+  displayedGame.current = { quest, gameState, player };
+
   /**
    * Performs the chain of jumps from a `<link>` tag in one click.
    * Every next jump is calculated from the state of the previous one,
@@ -241,11 +246,18 @@ export function QuestPlay({
    */
   const onLinkJumpsClick = React.useCallback(
     (jumps: string[]) => {
-      if (!gameState) {
+      const current = displayedGame.current;
+      if (
+        !gameState ||
+        current.gameState !== gameState ||
+        current.quest !== quest ||
+        current.player !== player
+      ) {
         return;
       }
       const newState = performLinkJumps(jumps, quest, gameState, player);
       if (newState !== gameState) {
+        displayedGame.current = { quest, gameState: newState, player };
         setGameState(newState);
       }
     },
@@ -378,10 +390,11 @@ export function QuestPlay({
               href={location.href}
               onClick={(e) => {
                 e.preventDefault();
-                if (!choice.active) {
+                if (!choice.active || displayedGame.current.gameState !== gameState) {
                   return;
                 }
                 const newState = performJump(choice.jumpId, quest, gameState);
+                displayedGame.current = { quest, gameState: newState, player };
                 setGameState(newState);
 
                 if (isMobile) {

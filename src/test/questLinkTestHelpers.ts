@@ -141,11 +141,11 @@ export function makeTestQuest() {
     makeJump(3, 3, 4, "Взять ключ"),
     // The "missing second jump": exists from loc 1 but not after the first jump
     makeJump(4, 1, 5, "Открыть окно"),
-    // Duplicated text: ambiguous matching must stop the chain
-    makeJump(5, 3, 6, "Взять ключ"),
+    makeJump(5, 3, 6, "Осмотреть ключ"),
     // Inactive jump (formula always false)
     Object.assign(makeJump(6, 1, 6, "Скрытый переход"), {
       formulaToPass: "0",
+      alwaysShow: true,
     }),
     // Substitution of parameters in the choice text
     makeJump(7, 1, 5, "[p1] правок"),

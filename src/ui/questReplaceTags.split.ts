@@ -74,7 +74,9 @@ export function splitStringToTokens(str: string) {
       continue;
     }
 
-    const linkStartMatch = str.slice(pos).match(/^\<link=([^>]*)\>/);
+    // Substitutions in a target name can insert <clr>...</clr> (and other
+    // formatting). Their closing brackets must not terminate the attribute.
+    const linkStartMatch = str.slice(pos).match(/^<link=((?:<[^<>]*>|[^<>])*)>/);
     if (linkStartMatch) {
       flushText();
       pos += linkStartMatch[0].length;

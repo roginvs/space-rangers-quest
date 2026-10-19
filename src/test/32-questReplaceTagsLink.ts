@@ -77,6 +77,42 @@ describe("splitStringToTokens <link>", function () {
 });
 
 describe("formatTokens <link>", function () {
+  it("Keeps format padding clickable inside links", () => {
+    for (const kind of ["left", "right", "center"]) {
+      const formatted = formatTokens(
+        splitStringToTokens(`<link=J><format=${kind},6><clr>hi</clr></format></link>`),
+      );
+      assert.strictEqual(
+        formatted.map((t) => (t.type === "text" ? t.text : "")).join("").length,
+        6,
+      );
+      for (const token of formatted) {
+        assert.ok(token.type === "text" && token.links);
+        if (token.type === "text") {
+          assert.deepStrictEqual(token.links, ["J"]);
+          if (token.text === "hi") {
+            assert.strictEqual(token.isClr, true);
+          }
+        }
+      }
+    }
+  });
+
+  it("Preserves formatting surrounding and inside a link", () => {
+    const formatted = formatTokens(
+      splitStringToTokens("<fix><color=1,2,3><link=J>A<clr>B</clr>C</link></color></fix>"),
+    );
+    formatted.forEach((token, index) => {
+      assert.ok(token.type === "text");
+      if (token.type === "text") {
+        assert.deepStrictEqual(token.links, ["J"]);
+        assert.deepStrictEqual(token.color, { r: 1, g: 2, b: 3 });
+        assert.strictEqual(token.isFix, true);
+        assert.strictEqual(token.isClr, index === 1 ? true : undefined);
+      }
+    });
+  });
+
   it(`Text inside the link gets the jumps, no visual marks`, () => {
     const formatted = formatTokens(splitStringToTokens("<link=Открыть дверь>дверь</link>"));
     assert.deepStrictEqual(formatted, [
