@@ -284,14 +284,23 @@
   color: #9eacac;
 }
 
-.game-style-root .alert .alert-heading {
-  color: #dadada;
+/* The close button must sit in the top right corner and not overlap
+   the centered heading (mobile) */
+.game-style-root .alert .close {
+  position: absolute;
+  right: 10px;
+  top: 6px;
+  color: #9eacac;
+  opacity: 1;
+  text-shadow: none;
+  font-size: 1.6rem;
+  line-height: 1;
+  padding: 2px 4px;
 }
 
-.game-style-root .alert .close,
-.game-style-root .alert .alert-link {
-  color: #9eacac;
-  text-shadow: none;
+.game-style-root .alert .alert-heading {
+  color: #dadada;
+  margin-right: 1.5rem;
 }
 
 .game-style-root .alert .close:hover,
