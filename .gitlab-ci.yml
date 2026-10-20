@@ -4,6 +4,9 @@ pages:
   script:
     - rm -R built-web || true
     - npm install --legacy-peer-deps
+    # ffmpeg is needed to transcode ogg audible media into mp3
+    # (while packing game data and while running tests)
+    - apt-get update && apt-get install -y --no-install-recommends ffmpeg
     - mkdir built-web
     - npm run prettier-check
     - npm run test

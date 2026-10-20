@@ -1,4 +1,5 @@
 import { DATA_DIR } from "../consts";
+import { audioMediaNameToMp3FileName } from "../../lib/mediaNames";
 
 export function transformMedianameToUrl(
   mediaName: string | null,
@@ -13,17 +14,12 @@ export function transformMedianameToUrl(
     // No transformation for absolute urls
     return mediaName;
   }
-  const extensionKind = {
-    img: ".jpg",
-    track: ".mp3",
-    sound: ".mp3",
-  }[kind];
 
-  const folderKind = {
-    img: "img",
-    track: "track",
-    sound: "sound",
-  }[kind];
-  const extension = !filename.endsWith(extensionKind) ? extensionKind : "";
-  return DATA_DIR + folderKind + "/" + filename + extension;
+  if (kind === "img") {
+    const extension = !filename.endsWith(".jpg") ? ".jpg" : "";
+    return DATA_DIR + "img/" + filename + extension;
+  }
+
+  // Audible media is always served as mp3, even when quest references it as ogg
+  return DATA_DIR + kind + "/" + audioMediaNameToMp3FileName(mediaName);
 }

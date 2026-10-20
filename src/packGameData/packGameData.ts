@@ -12,6 +12,7 @@ import { scanAndCopySoundAndTrack } from "./music";
 import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
 import { Quest, TRACK_NAME_RESET_DEFAULT_MUSIC } from "../lib/qmplayer/funcs";
 import { getAllMediaFromQmm } from "../lib/getAllMediaFromQmm";
+import { audioMediaNameToMp3FileName } from "../lib/mediaNames";
 import { writeQmm } from "../lib/qmwriter";
 import { checkQuest } from "./checkQuest";
 
@@ -314,7 +315,7 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
       ) {
         // No check for absolute urls
       } else {
-        const localSoundFilename = qmmSound.toLowerCase() + ".mp3";
+        const localSoundFilename = audioMediaNameToMp3FileName(qmmSound);
         // console.info(localSoundFilename, audibleMedia.sound);
         if (
           !index.dir.sound.files.find(
@@ -338,7 +339,7 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
       } else if (qmmTrack === TRACK_NAME_RESET_DEFAULT_MUSIC) {
         // Special name to reset music to default random
       } else {
-        const localTrackFilename = qmmTrack.toLowerCase() + ".mp3";
+        const localTrackFilename = audioMediaNameToMp3FileName(qmmTrack);
         // console.info(localTrackFilename, audibleMedia.track);
         if (
           !index.dir.track.files.find(
