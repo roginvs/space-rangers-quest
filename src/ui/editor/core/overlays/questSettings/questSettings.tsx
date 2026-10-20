@@ -20,10 +20,12 @@ export function QuestSettings({
   initialQuest,
   onClose,
   enableSaveOnNoChanges,
+  onCreateDemo,
 }: {
   initialQuest: Quest;
   onClose: (newQuest: Quest | undefined) => void;
   enableSaveOnNoChanges: boolean;
+  onCreateDemo?: () => void;
 }) {
   const [quest, setQuest] = React.useState(initialQuest);
 
@@ -123,18 +125,24 @@ export function QuestSettings({
           </TabContent>
         </div>
 
-        <div className="d-flex">
-          <div />
-          <button
-            className="btn btn-primary ml-auto mr-2"
-            disabled={!isChanged && !enableSaveOnNoChanges}
-            onClick={() => onClose(quest)}
-          >
-            Сохранить
-          </button>
-          <button className="btn btn-danger" onClick={onCloseWithPrompt}>
-            {!isPrompting ? "Закрыть" : "Точно закрыть?"}
-          </button>
+        <div className="d-flex justify-content-between w-100">
+          {onCreateDemo && (
+            <button className="btn btn-secondary mr-auto" onClick={onCreateDemo}>
+              Создать демо квест
+            </button>
+          )}
+          <div className="d-flex ml-auto">
+            <button
+              className="btn btn-primary mr-2"
+              disabled={!isChanged && !enableSaveOnNoChanges}
+              onClick={() => onClose(quest)}
+            >
+              Сохранить
+            </button>
+            <button className="btn btn-danger" onClick={onCloseWithPrompt}>
+              {!isPrompting ? "Закрыть" : "Точно закрыть?"}
+            </button>
+          </div>
         </div>
       </div>
     </Overlay>

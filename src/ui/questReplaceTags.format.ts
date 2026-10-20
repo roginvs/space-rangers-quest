@@ -8,6 +8,8 @@ export type StringTokenStyle =
       isClr?: boolean;
       isFix?: boolean;
       color?: StringTokenColor;
+      /** Jump names to perform sequentially on click. */
+      links?: string[];
     }
   | { type: "newline"; isFix?: boolean };
 
@@ -28,6 +30,8 @@ export function formatTokens(parsed: StringTokenTags[]): StringTokens {
 
   let color: StringTokenColor | undefined = undefined;
 
+  let linkJumps: string[] | undefined = undefined;
+
   for (const token of parsed) {
     if (token.type === "text") {
       token.text.split(/\r\n|\n/).forEach((line, index, arr) => {
@@ -39,6 +43,7 @@ export function formatTokens(parsed: StringTokenTags[]): StringTokens {
           isClr: clrCount > 0 || undefined,
           isFix: fixCount > 0 || undefined,
           color,
+          links: linkJumps,
         });
 
         if (haveNext) {
@@ -94,6 +99,7 @@ export function formatTokens(parsed: StringTokenTags[]): StringTokens {
               isClr: clrCount > 0 || undefined,
               isFix: fixCount > 0 || undefined,
               text: leftPad,
+              links: linkJumps,
             });
           }
           if (rightPad) {
@@ -102,6 +108,7 @@ export function formatTokens(parsed: StringTokenTags[]): StringTokens {
               isClr: clrCount > 0 || undefined,
               isFix: fixCount > 0 || undefined,
               text: rightPad,
+              links: linkJumps,
             });
           }
         }
@@ -115,6 +122,12 @@ export function formatTokens(parsed: StringTokenTags[]): StringTokens {
       } else {
         assertNever(tag);
       }
+    } else if (token.type === "linkStart") {
+      if (!linkJumps) {
+        linkJumps = token.jumps;
+      }
+    } else if (token.type === "linkEnd") {
+      linkJumps = undefined;
     } else {
       assertNever(token);
     }

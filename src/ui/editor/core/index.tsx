@@ -28,6 +28,7 @@ import {
   snapToGrid,
 } from "./utils";
 import { HEADER_QMM_7_WITH_OLD_TGE_BEHAVIOUR, Jump, Location, parse } from "../../../lib/qmreader";
+import { greetingsQmm } from "./greetingsQmm";
 import { LocationHover } from "./hovers/location";
 import { Overlay } from "./overlay";
 import { LocationOverlay } from "./overlays/jumpsAndLocations/location";
@@ -66,6 +67,7 @@ type EditorOverlay =
   | {
       readonly kind: "questsettings";
       readonly enableSaveOnNoChanges: boolean;
+      readonly isNewQuest?: boolean;
     }
   | {
       readonly kind: "load";
@@ -554,6 +556,7 @@ export function EditorCore({
             setOverlayMode({
               kind: "questsettings",
               enableSaveOnNoChanges: true,
+              isNewQuest: true,
             });
           }}
           aria-label="Создать новый"
@@ -831,6 +834,14 @@ export function EditorCore({
           ) : overlayMode.kind === "questsettings" ? (
             <QuestSettings
               initialQuest={quest}
+              onCreateDemo={
+                overlayMode.isNewQuest
+                  ? () => {
+                      setOverlayMode(undefined);
+                      onChange({ ...parse(greetingsQmm), filename: "demo" });
+                    }
+                  : undefined
+              }
               onClose={(newQuest) => {
                 setOverlayMode(undefined);
                 if (newQuest) {

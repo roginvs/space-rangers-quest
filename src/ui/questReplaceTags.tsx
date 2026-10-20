@@ -10,39 +10,68 @@ import { splitStringToTokens } from "./questReplaceTags.split";
  *   - <fix> use monospace font </fix>
  *   - <format=left,30>  add spaced in the left (or right or center) </format>
  *   - <color=R,G,B> Use color </color>
+ *   - <link=Jump name;Another jump name> Click me </link>
+ *     The whole chain of jumps is performed on a single click.
+ *     The link does not add any visual formatting by itself,
+ *     only the mouse cursor becomes a pointer.
  */
-export function QuestReplaceTags(props: { str: string }) {
+export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: string[]) => void }) {
   const tags = formatTokens(splitStringToTokens(props.str));
+  const onLinkClick = props.onLinkClick;
 
   const nbsp = "\u00A0";
 
   return (
     <>
       <span className="game-text">{nbsp}</span>
-      {tags.map((tag, index) => (
-        <span
-          key={index}
-          className={classNames("game-text", {
-            "game-fix": tag.isFix,
-            "game-clr": tag.type === "text" ? tag.isClr : undefined,
-          })}
-          style={{
-            color:
-              tag.type === "text" && tag.color
-                ? `rgb(${tag.color.r}, ${tag.color.g}, ${tag.color.b})`
-                : undefined,
-          }}
-        >
-          {tag.type === "text" ? (
-            tag.text
-          ) : (
-            <>
-              <br />
-              {nbsp}
-            </>
-          )}
-        </span>
-      ))}
+      {tags.map((tag, index) => {
+        const linkJumps = tag.type === "text" ? tag.links : undefined;
+        const onActivate =
+          linkJumps && onLinkClick
+            ? (e: React.SyntheticEvent) => {
+                e.preventDefault();
+                e.stopPropagation();
+                onLinkClick(linkJumps);
+              }
+            : undefined;
+        return (
+          <span
+            key={index}
+            className={classNames("game-text", {
+              "game-fix": tag.isFix,
+              "game-clr": tag.type === "text" ? tag.isClr : undefined,
+              "game-text-link": !!onActivate,
+            })}
+            style={{
+              color:
+                tag.type === "text" && tag.color
+                  ? `rgb(${tag.color.r}, ${tag.color.g}, ${tag.color.b})`
+                  : undefined,
+            }}
+            role={onActivate ? "link" : undefined}
+            tabIndex={onActivate ? 0 : undefined}
+            onClick={onActivate}
+            onKeyDown={
+              onActivate
+                ? (e) => {
+                    if (e.key === "Enter") {
+                      onActivate(e);
+                    }
+                  }
+                : undefined
+            }
+          >
+            {tag.type === "text" ? (
+              tag.text
+            ) : (
+              <>
+                <br />
+                {nbsp}
+              </>
+            )}
+          </span>
+        );
+      })}
     </>
   );
 }

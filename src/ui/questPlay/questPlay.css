@@ -38,3 +38,7 @@
   font-family: monospace;
   width: 100%;
 }
+/* The <link> tag: no visual style, only the pointer cursor on hover */
+.game-root .game-text-link {
+  cursor: pointer;
+}

@@ -1,0 +1,239 @@
+import * as assert from "assert";
+import * as fs from "fs";
+import "mocha";
+
+import { parse } from "../lib/qmreader";
+import { initGame, performJump, getUIState, Quest, GameState } from "../lib/qmplayer/funcs";
+import { JUMP_I_AGREE } from "../lib/qmplayer";
+import { DEFAULT_RUS_PLAYER } from "../lib/qmplayer/player";
+import { performLinkJumps, normalizeForLinkMatch } from "../ui/questLinkPerform";
+import { formatTokens } from "../ui/questReplaceTags.format";
+import { splitStringToTokens } from "../ui/questReplaceTags.split";
+import { greetingsQmm } from "../ui/editor/core/greetingsQmm";
+
+const player = DEFAULT_RUS_PLAYER;
+
+// tslint:disable:no-invalid-this
+
+describe("performLinkJumps", function () {
+  let quest: Quest;
+  let state: GameState;
+  let warnings: string[];
+  const originalWarn = console.warn;
+  beforeEach(() => {
+    quest = parse(fs.readFileSync(__dirname + "/../../src/test/test-inline-links.qmm"));
+    state = performJump(JUMP_I_AGREE, quest, initGame(quest, "test-seed"), 0);
+    warnings = [];
+    console.warn = (message: string) => warnings.push(message);
+  });
+  afterEach(() => {
+    console.warn = originalWarn;
+  });
+
+  it(`Single jump by its name (jump text contains formatting tags, name does not)`, () => {
+    const newState = performLinkJumps(["Открыть дверь"], quest, state, player);
+    assert.strictEqual(newState.locationId, 2);
+    assert.strictEqual(newState.state, "location");
+  });
+
+  it(`Three sequential jumps are performed by one call`, () => {
+    const newState = performLinkJumps(
+      ["Открыть дверь", "Войти в комнату", "Взять ключ"],
+      quest,
+      state,
+      player,
+    );
+    assert.strictEqual(newState.locationId, 4);
+    assert.deepStrictEqual(
+      newState.performedJumps.map((j) => j.jumpId),
+      [JUMP_I_AGREE, 1, 2, 3],
+    );
+  });
+
+  it(`Two sequential jumps`, () => {
+    const newState = performLinkJumps(["Открыть дверь", "Войти в комнату"], quest, state, player);
+    assert.strictEqual(newState.locationId, 3);
+    assert.strictEqual(newState.performedJumps.length, 3);
+  });
+
+  it(`Missing second jump stops the chain, first jump is kept`, () => {
+    const newState = performLinkJumps(["Открыть дверь", "Открыть окно"], quest, state, player);
+    // The first jump happened (loc 2), the second was not found there
+    assert.strictEqual(newState.locationId, 2);
+    assert.deepStrictEqual(
+      newState.performedJumps.map((j) => j.jumpId),
+      [JUMP_I_AGREE, 1],
+    );
+    assert.strictEqual(warnings.length, 1);
+    assert.ok(warnings[0].includes('Transition not found or inactive: "Открыть окно"'));
+    assert.ok(warnings[0].includes("step 2/2, location 2"));
+  });
+
+  it(`Third jump is not performed after the missing second one`, () => {
+    const newState = performLinkJumps(
+      ["Открыть дверь", "Открыть окно", "Войти в комнату"],
+      quest,
+      state,
+      player,
+    );
+    // Stopped right at "Открыть окно" being unavailable from loc 2
+    assert.strictEqual(newState.locationId, 2);
+    assert.deepStrictEqual(
+      newState.performedJumps.map((j) => j.jumpId),
+      [JUMP_I_AGREE, 1],
+    );
+  });
+
+  it(`Ambiguous names stop the chain and perform nothing`, () => {
+    state = performJump(8, quest, state, 0); // Неоднозначность
+    assert.strictEqual(
+      getUIState(quest, state, player).choices.filter(
+        (c) => c.active && normalizeForLinkMatch(c.text) === "Открыть дверь",
+      ).length,
+      2,
+    );
+    const newState = performLinkJumps(["Открыть дверь"], quest, state, player);
+    assert.strictEqual(newState, state);
+    assert.strictEqual(warnings.length, 1);
+    assert.ok(warnings[0].includes("Ambiguous transition"));
+  });
+
+  it(`Inactive choices are not used`, () => {
+    assert.ok(getUIState(quest, state, player).choices.some((c) => !c.active));
+    const newState = performLinkJumps(["Скрытый переход"], quest, state, player);
+    assert.strictEqual(newState, state);
+    assert.strictEqual(warnings.length, 1);
+  });
+
+  it(`Name is matched by the display text after parameter substitution`, () => {
+    const uiState = getUIState(quest, state, player);
+    assert.ok(
+      uiState.choices.some((c) => c.active && normalizeForLinkMatch(c.text) === "7 правок"),
+      "The substitution must be matched after the formatting tags removal",
+    );
+    const newState = performLinkJumps(["7 правок"], quest, state, player);
+    assert.strictEqual(newState.locationId, 5);
+  });
+
+  it(`No additional "Next" jumps are performed automatically`, () => {
+    const newState = performLinkJumps(["Открыть окно"], quest, state, player);
+    assert.strictEqual(newState.state, "jump");
+    // Stopped after the jump: no "Next" performed, the description must be shown
+    assert.strictEqual(newState.lastJumpId, 4);
+    assert.strictEqual(newState.performedJumps.length, 2);
+  });
+
+  it(`Quest end stops the chain`, () => {
+    const newState = performLinkJumps(
+      ["Открыть дверь", "Войти в комнату", "Взять ключ", "Вернуться на корабль", "Взять ключ"],
+      quest,
+      state,
+      player,
+    );
+    // The chain stopped after the win ending, no jumps after that
+    assert.strictEqual(newState.state, "returnedending");
+    assert.deepStrictEqual(warnings, []);
+    assert.strictEqual(
+      newState.performedJumps.length,
+      5, // I agree + 3 link jumps + go back to ship
+    );
+  });
+
+  it(`Chain runs again from the same old state gives the same result (no state storing)`, () => {
+    const afterChain = performLinkJumps(["Открыть дверь"], quest, state, player, 123);
+    const afterChainAgain = performLinkJumps(["Открыть дверь"], quest, state, player, 123);
+    assert.deepStrictEqual(afterChain, afterChainAgain);
+  });
+
+  it(`Empty name matches nothing`, () => {
+    const uiBefore = getUIState(quest, state, player);
+    assert.ok(
+      uiBefore.choices.every((c) => !!c.text.trim()),
+      "The test quest must not have empty jump texts at the start",
+    );
+    const newState = performLinkJumps([""], quest, state, player);
+    assert.strictEqual(newState, state);
+  });
+
+  it(`Existing quests without the tag keep working`, () => {
+    const data = fs.readFileSync(__dirname + "/../../src/test/test6-empty.qm");
+    const qm = parse(data);
+    let state: GameState = initGame(qm, "seed");
+    state = performJump(JUMP_I_AGREE, qm, state, 0);
+    const uiState = getUIState(qm, state, player);
+    assert.ok(uiState.text);
+    assert.ok(uiState.choices.length > 0);
+  });
+
+  it("Preserves parameter changes, random state and history exactly as manual jumps", () => {
+    state = performJump(11, quest, state, 10); // Случайные изменения
+    const snapshot = JSON.stringify(state);
+    const timestamp = Date.now();
+    let manual = state;
+    for (const id of [12, 13, 14]) {
+      manual = performJump(id, quest, manual, timestamp);
+    }
+    const linked = performLinkJumps(
+      ["Открыть дверь", "Войти в комнату", "Взять ключ"],
+      quest,
+      state,
+      player,
+      timestamp,
+    );
+    assert.deepStrictEqual(linked, manual);
+    assert.notDeepStrictEqual(linked.aleaState, state.aleaState);
+    assert.notDeepStrictEqual(linked.paramValues, state.paramValues);
+    assert.strictEqual(JSON.stringify(state), snapshot);
+    assert.ok(
+      linked.performedJumps
+        .slice(state.performedJumps.length)
+        .every((j) => j.dateUnix === timestamp),
+    );
+  });
+
+  it("Recomputes conditions and substituted names after a parameter change", () => {
+    state = performJump(15, quest, state, 0); // Условия и подстановки
+    const linked = performLinkJumps(["Открыть дверь", "Войти 8"], quest, state, player);
+    assert.strictEqual(linked.locationId, 13);
+    assert.strictEqual(linked.paramValues[0], 8);
+  });
+
+  it("Matches exact displayed text, including internal format padding", () => {
+    state = performJump(18, quest, state, 0); // Форматирование
+    assert.strictEqual(performLinkJumps(["A  BC"], quest, state, player).locationId, 2);
+    assert.strictEqual(performLinkJumps(["ABC"], quest, state, player), state);
+    assert.strictEqual(performLinkJumps(["Открыть"], quest, state, player), state);
+  });
+
+  it("Parses target names after numeric and formula substitutions inserted formatting", () => {
+    state = performJump(20, quest, state, 0); // Подстановки в ссылках
+    const tokens = formatTokens(splitStringToTokens(getUIState(quest, state, player).text));
+    const links = tokens.filter((t) => t.type === "text" && t.links);
+    assert.strictEqual(links.length, 2);
+    for (const link of links) {
+      assert.ok(link.type === "text" && link.links);
+      if (link.type === "text" && link.links) {
+        assert.strictEqual(performLinkJumps(link.links, quest, state, player).locationId, 5);
+      }
+    }
+  });
+
+  it("Runs every link from the actual editor demo", () => {
+    const quest = parse(greetingsQmm);
+    const state = performJump(JUMP_I_AGREE, quest, initGame(quest, "demo-seed"), 0);
+    const links = formatTokens(splitStringToTokens(getUIState(quest, state, player).text)).filter(
+      (t) => t.type === "text" && t.links,
+    );
+    assert.strictEqual(links.length, 6);
+    const expectedLocations = [4, 5, 6, 7, 4, 1];
+    links.forEach((link, index) => {
+      if (link.type === "text" && link.links) {
+        assert.strictEqual(
+          performLinkJumps(link.links, quest, state, player).locationId,
+          expectedLocations[index],
+        );
+      }
+    });
+    assert.strictEqual(warnings.length, 2);
+  });
+});

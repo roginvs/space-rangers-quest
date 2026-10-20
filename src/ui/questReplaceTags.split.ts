@@ -39,7 +39,33 @@ export type StringTokenTags =
   | {
       type: "color";
       color?: StringTokenColor;
+    }
+  | {
+      /**
+       * Starts a clickable link area. `jumps` is a list of jump names to
+       * perform sequentially. Nested links are not supported.
+       */
+      type: "linkStart";
+      jumps: string[];
+    }
+  | {
+      type: "linkEnd";
     };
+
+function findLinkTargetEnd(str: string, start: number) {
+  let depth = 1;
+  for (let i = start; i < str.length; i++) {
+    if (str[i] === "<") {
+      depth++;
+    } else if (str[i] === ">") {
+      depth--;
+      if (depth === 0) {
+        return i;
+      }
+    }
+  }
+  return -1;
+}
 
 export function splitStringToTokens(str: string) {
   const out: StringTokenTags[] = [];
@@ -55,6 +81,30 @@ export function splitStringToTokens(str: string) {
   };
 
   while (pos < str.length) {
+    const linkEnd = "</link>";
+    if (str.slice(pos, pos + linkEnd.length) === linkEnd) {
+      flushText();
+      out.push({ type: "linkEnd" });
+      pos += linkEnd.length;
+      continue;
+    }
+
+    const linkStart = "<link=";
+    if (str.startsWith(linkStart, pos)) {
+      const targetStart = pos + linkStart.length;
+      const targetEnd = findLinkTargetEnd(str, targetStart);
+      if (targetEnd !== -1) {
+        flushText();
+        const jumps = str
+          .slice(targetStart, targetEnd)
+          .split(";")
+          .map((name) => name.trim());
+        out.push({ type: "linkStart", jumps });
+        pos = targetEnd + 1;
+        continue;
+      }
+    }
+
     let simpleTagFound = false;
     for (const candidate of TAGS) {
       const candidateWithBrackes = `<${candidate}>`;

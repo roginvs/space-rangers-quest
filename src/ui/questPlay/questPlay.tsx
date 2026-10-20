@@ -29,6 +29,7 @@ import { GamePlayButton } from "./questPlay.button";
 import { useDarkTheme } from "./questPlay.metatheme";
 import { toggleFullscreen } from "./fullscreen";
 import { copyToClipboard } from "../copyToClipboard";
+import { performLinkJumps } from "../questLinkPerform";
 
 function initRandomGame(quest: Quest, doFirstStep: boolean) {
   const gameState = initGame(
@@ -233,6 +234,19 @@ export function QuestPlay({
 
   const previousGameState = usePrevGameState(quest, gameState);
 
+  const onLinkJumpsClick = React.useCallback(
+    (jumps: string[]) => {
+      if (!gameState) {
+        return;
+      }
+      const newState = performLinkJumps(jumps, quest, gameState, player);
+      if (newState !== gameState) {
+        setGameState(newState);
+      }
+    },
+    [gameState, quest, player, setGameState],
+  );
+
   const backButtonContent = <i className="fa fa-fw fa-step-backward" />;
   const debugButtonContent = <i className="fa fa-fw fa-cogs" />;
 
@@ -346,7 +360,7 @@ export function QuestPlay({
         overflowX: "auto",
       }}
     >
-      <QuestReplaceTags str={uistate.text} />
+      <QuestReplaceTags str={uistate.text} onLinkClick={onLinkJumpsClick} />
     </DivFadeinCss>
   );
 
@@ -383,7 +397,8 @@ export function QuestPlay({
               }}
               className={choice.active ? "" : "game-inactive"}
             >
-              <i className="fa fa-angle-double-right" /> <QuestReplaceTags str={choice.text} />
+              <i className="fa fa-angle-double-right" />{" "}
+              <QuestReplaceTags str={choice.text} onLinkClick={onLinkJumpsClick} />
             </a>
           </div>
         );
@@ -405,7 +420,7 @@ export function QuestPlay({
                 minHeight: "1em",
               }}
             >
-              <QuestReplaceTags str={paramText} />
+              <QuestReplaceTags str={paramText} onLinkClick={onLinkJumpsClick} />
             </div>
           </DivFadeinCss>
         );
