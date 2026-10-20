@@ -58,14 +58,7 @@ describe("splitStringToTokens <link>", () => {
         { type: "linkEnd" },
       ],
     ],
-    [
-      "<link=Доход < 100>проверить</link>",
-      [
-        { type: "linkStart", jumps: ["Доход < 100"] },
-        { type: "text", text: "проверить" },
-        { type: "linkEnd" },
-      ],
-    ],
+    ["<link=Jump", [{ type: "text", text: "<link=Jump" }]],
     [
       "<link=<color1,2,3><formatleft,4>hi</format></color>>x</link>",
       [

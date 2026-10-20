@@ -14,8 +14,6 @@ export type StringTokenCalculated = {
 
 // tslint:disable-next-line:no-useless-cast
 const TAGS = ["clr", "clrEnd", "/clr", "fix", "/fix", "/format", "/color"] as const;
-const FORMAT_TAG = /^\<format=?(left|right|center)?,?(\d+)?\>/;
-const COLOR_TAG = /^\<color=?(\d+)?,?(\d+)?,?(\d+)?\>/;
 
 export type PadKind = "left" | "right" | "center";
 export interface StringTokenFormat {
@@ -55,20 +53,15 @@ export type StringTokenTags =
     };
 
 function findLinkTargetEnd(str: string, start: number) {
+  let depth = 1;
   for (let i = start; i < str.length; i++) {
-    if (
-      str[i] === "<" &&
-      (TAGS.some((tag) => str.startsWith(`<${tag}>`, i)) ||
-        FORMAT_TAG.test(str.slice(i)) ||
-        COLOR_TAG.test(str.slice(i)))
-    ) {
-      // Skip formatting tags inserted by substitutions in the target name.
-      i = str.indexOf(">", i + 1);
-      if (i === -1) {
-        return -1;
-      }
+    if (str[i] === "<") {
+      depth++;
     } else if (str[i] === ">") {
-      return i;
+      depth--;
+      if (depth === 0) {
+        return i;
+      }
     }
   }
   return -1;
@@ -128,7 +121,7 @@ export function splitStringToTokens(str: string) {
       continue;
     }
 
-    const formatMatch = str.slice(pos).match(FORMAT_TAG);
+    const formatMatch = str.slice(pos).match(/^\<format=?(left|right|center)?,?(\d+)?\>/);
     if (formatMatch) {
       flushText();
 
@@ -151,7 +144,7 @@ export function splitStringToTokens(str: string) {
       continue;
     }
 
-    const colorMatch = str.slice(pos).match(COLOR_TAG);
+    const colorMatch = str.slice(pos).match(/^\<color=?(\d+)?,?(\d+)?,?(\d+)?\>/);
     if (colorMatch) {
       flushText();
 
