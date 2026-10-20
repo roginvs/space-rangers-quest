@@ -12,6 +12,8 @@
 
 ## Сборка
 
+- Установить FFmpeg (нужен для перекодирования ogg-звуков в mp3 при упаковке данных игры)
+
 - Файлы квестов (_.qm, _.qmm) нужно извлечь из игры и положить в `borrowed/qm/SR 2.1.2170/`
   - и/или в `borrowed/qm/SR 2.1.2121 eng/`
   - и/или в `borrowed/qm/Tge 4.2.5/`
@@ -58,6 +60,44 @@ npm run build
 ## Webpack devserver
 
 `npm start`
+
+## CI и проверки в merge request
+
+- Пайплайн описан в `.gitlab-ci.yml` и состоит из одной job-ы `pages`, которая делает всё:
+  prettier-check, тесты, lint, упаковку данных и сборку
+- Ветка `master` в GitLab защищена, поэтому пайплайн для push-а в `master` Protected Variables не использует
+  и проходит нормально (например успешный пайплайн деплоя в gitlab pages)
+- А вот пайплайны для merge request и для push-а в незащищённую ветку GitLab запускает
+  **от имени автора MR/push-а**, и к ним применяются настройки аккаунта этого автора. Из-за этого
+  у обычных контрибьюторов проверки в MR были все красные:
+
+  ```
+  failureReason: "The pipeline failed due to the user not being verified."
+  totalJobs: 0
+  ```
+
+  Пайплайн «падает» до создания job-ов, потому что для аккаунтов collaborator-уровня на GitLab.com
+  пайплайны в незащищённых ветках и в MR требуют
+  [верификации личности](https://docs.gitlab.com/ee/user/verification/) (привязка карты/телефона).
+  Это не ошибка репозитория — это настройки аккаунтов, поэтому красными были **все** MR начиная с 2024-10-30:
+  у каждого `head_pipeline` в MR один и тот же `failureReason`.
+
+  Как исправить (нужны права Maintainer/Owner):
+
+  1. Верифицировать аккаунт (или верифицировать и добавить в проект сервисный аккаунт) — тогда
+     пайплайны в MR будут запускаться, и проверки станут настоящими.
+  2. Переименовать `pages` в что-то нейтральное (например `build`) — это уже разрешения на уровне проекта,
+     которые применимы к любому пайплайну в проекте (как для MR, так и для protected-ветки): job
+     с именем `pages` может запускать только пользователь с правами Maintainer/Developer и выше.
+
+  Проверить, почему упал пайплайн (в том числе у конкретного MR) можно через API:
+
+  ```bash
+  # pipeline из GitLab UI имеет свой id (в URL), а failureReason виден через GraphQL
+  curl -s https://gitlab.com/api/graphql \
+    -H 'Content-Type: application/json' \
+    -d '{"query":"query{project(fullPath:\"spacerangers/spacerangers.gitlab.io\"){mergeRequests(last:1){nodes{iid title headPipeline{ref status:detailedStatus{label} failureReason}}}}}"}'
+  ```
 
 ## Testing
 
