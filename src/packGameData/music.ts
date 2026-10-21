@@ -1,8 +1,21 @@
+import { spawnSync } from "child_process";
 import * as fs from "fs";
 import { Index } from "./defs";
 import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
 
 type SoundAndTrackIndexDir = Pick<Index["dir"], "sound" | "track">;
+
+function transcodeToMp3(srcPath: string, mp3Path: string): void {
+  const res = spawnSync(
+    "ffmpeg",
+    ["-y", "-i", srcPath, "-codec:a", "libmp3lame", "-q:a", "2", mp3Path],
+    { stdio: "ignore" },
+  );
+  if (res.error || res.status !== 0) {
+    throw new Error(`Failed to transcode ${srcPath} to ${mp3Path}`);
+  }
+}
+
 export function scanAndCopySoundAndTrack(
   dataSrcPath: string,
   dataDstPath: string,
@@ -44,19 +57,36 @@ export function scanAndCopySoundAndTrack(
     fs.readdirSync(dataSrcPath + "/" + folderName)
       .filter((x) => {
         const fullName = dataSrcPath + "/" + folderName + "/" + x;
-        return fs.statSync(fullName).isFile() && fullName.toLowerCase().endsWith(".mp3");
+        const lower = fullName.toLowerCase();
+        return (
+          fs.statSync(fullName).isFile() &&
+          (lower.endsWith(".mp3") || lower.endsWith(".ogg") || lower.endsWith(".wav"))
+        );
       })
       .forEach((fileShortInitialName) => {
+        const fullSrcName = dataSrcPath + "/" + folderName + "/" + fileShortInitialName;
+        const lowerInit = fileShortInitialName.toLowerCase();
+
+        if (lowerInit.endsWith(".ogg") || lowerInit.endsWith(".wav")) {
+          const base = lowerInit.replace(/\.(ogg|wav)$/, "");
+          if (fs.existsSync(dataSrcPath + "/" + folderName + "/" + base + ".mp3")) {
+            throw new Error(
+              `Both .${lowerInit.split(".").pop()} and .mp3 exist for '${folderName}/${base}'`,
+            );
+          }
+        }
+
         // No lowercase for random music because it was already chched
         // And it is never linked from other source, player just player whatever in the folder
         // (Sounds and Tracks are linked from qmm file)
-        const fileShortName = fileShortInitialName.toLowerCase();
+        const fileShortName = lowerInit.replace(/\.(ogg|wav)$/, ".mp3");
         const name = `${folderName}/${fileShortName}`;
         if (!DEBUG_SPEEDUP_SKIP_COPING) {
-          fs.writeFileSync(
-            dataDstPath + "/" + name,
-            fs.readFileSync(dataSrcPath + "/" + folderName + "/" + fileShortInitialName),
-          );
+          if (lowerInit.endsWith(".mp3")) {
+            fs.writeFileSync(dataDstPath + "/" + name, fs.readFileSync(fullSrcName));
+          } else {
+            transcodeToMp3(fullSrcName, dataDstPath + "/" + name);
+          }
         }
         const fileSize = fs.statSync(dataDstPath + "/" + name).size;
         if (folderName === "sound") {

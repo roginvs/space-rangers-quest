@@ -3,6 +3,7 @@ pages:
   stage: deploy
   script:
     - rm -R built-web || true
+    - apt-get update && apt-get install -y --no-install-recommends ffmpeg
     - npm install --legacy-peer-deps
     - mkdir built-web
     - npm run prettier-check
