@@ -22,7 +22,7 @@ default:
   before_script:
     # ffmpeg is needed to transcode ogg audible media into mp3
     # (while packing game data and for tests)
-    - true
+    - "true"
     # - apt-get update && apt-get install -y --no-install-recommends ffmpeg
 
 # Buckets are sorted by completion time, actual order is defined by needs
