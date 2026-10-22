@@ -1,4 +1,4 @@
-image: node:16
+image: node:24
 
 # Merge requests are checked by their own pipelines, which is why jobs below
 # have rules for CI_PIPELINE_SOURCE == "merge_request_event".
@@ -17,13 +17,6 @@ stages:
   - build
   - test
   - deploy
-
-default:
-  before_script:
-    # ffmpeg is needed to transcode ogg audible media into mp3
-    # (while packing game data and for tests)
-    - "true"
-    # - apt-get update && apt-get install -y --no-install-recommends ffmpeg
 
 # Buckets are sorted by completion time, actual order is defined by needs
 # (MR pipelines stop after the last test job and nothing is deployed)
