@@ -12,6 +12,11 @@ export interface Game {
   // oldTgeBehaviour: boolean,
   hardness: number;
   lang: Lang;
+  givingRace?: number;
+  planetRace?: number;
+  playerCareer?: number;
+  playerRace?: number;
+  reputationChange?: number;
 }
 
 interface CacheFile {

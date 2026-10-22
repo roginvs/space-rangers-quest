@@ -376,6 +376,11 @@ for (const origin of fs.readdirSync(dataSrcPath + "/qm")) {
       hardness: quest.hardness,
       questOrigin: origin,
       lang,
+      givingRace: quest.givingRace,
+      planetRace: quest.planetRace,
+      playerCareer: quest.playerCareer,
+      playerRace: quest.playerRace,
+      reputationChange: quest.reputationChange,
     };
 
     index.quests.push(game);

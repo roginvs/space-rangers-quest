@@ -25,7 +25,45 @@ import classnames from "classnames";
 import { observer } from "mobx-react";
 import { Store } from "./store";
 import { getGameTaskText } from "../lib/getGameTaskText";
+import {
+  getQuestStartLine,
+  questStartLineIsEmpty,
+  QuestStartLineParts,
+} from "../lib/questStartLine";
 import { toggleFullscreen } from "./questPlay/fullscreen";
+
+function QuestStartLineView({ parts }: { parts: QuestStartLineParts }) {
+  const chunks: React.ReactNode[] = [];
+  if (parts.from && parts.to) {
+    chunks.push(
+      <span className="quest-start-route" key="route">
+        {parts.from}
+        <svg className="quest-start-mark" viewBox="0 0 16 6" aria-hidden="true">
+          <path d="M0 2.15H9V.35L16 3 9 5.65V3.85H0z" />
+        </svg>
+        {parts.to}
+      </span>,
+    );
+  } else if (parts.from || parts.to) {
+    chunks.push(<span key="route">{parts.from || parts.to}</span>);
+  }
+  if (parts.who) {
+    chunks.push(<span key="who">{parts.who}</span>);
+  }
+  if (parts.reputation) {
+    chunks.push(<span key="reputation">{parts.reputation}</span>);
+  }
+  return (
+    <>
+      {chunks.map((chunk, index) => (
+        <React.Fragment key={index}>
+          {index > 0 ? " · " : null}
+          {chunk}
+        </React.Fragment>
+      ))}
+    </>
+  );
+}
 
 interface QuestInfoState {
   lastSavedGameState?: GameState | null;
@@ -71,8 +109,41 @@ export class QuestInfo extends React.Component<
         <div className="text-center mb-3">
           <h4>{game.gameName}</h4>
           <div>
-            <small>{game.smallDescription}</small>
+            <small>
+              {game.lang === "eng"
+                ? `Hardness: ${game.hardness} · ${game.questOrigin}`
+                : `Сложность: ${game.hardness} · ${game.questOrigin}`}
+            </small>
           </div>
+          {(() => {
+            if (
+              typeof game.givingRace !== "number" ||
+              typeof game.planetRace !== "number" ||
+              typeof game.playerCareer !== "number" ||
+              typeof game.playerRace !== "number" ||
+              typeof game.reputationChange !== "number"
+            ) {
+              return null;
+            }
+            const parts = getQuestStartLine({
+              givingRace: game.givingRace,
+              planetRace: game.planetRace,
+              playerCareer: game.playerCareer,
+              playerRace: game.playerRace,
+              reputationChange: game.reputationChange,
+              lang: game.lang,
+            });
+            if (questStartLineIsEmpty(parts)) {
+              return null;
+            }
+            return (
+              <div>
+                <small className="quest-start-line">
+                  <QuestStartLineView parts={parts} />
+                </small>
+              </div>
+            );
+          })()}
           <div>
             <small>
               {(() => {

@@ -115,7 +115,12 @@
 .game-style-root .form-control {
   /* Subtle vertical gradient: looks uniform for any width (narrow option
      fields and wide list filters render the same) */
-  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, 0.12) 100%);
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0) 55%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
   background-color: #2a4349;
   color: #dadada;
   border: 1px solid #ababab;
@@ -130,7 +135,12 @@
 }
 
 .game-style-root .form-control:focus {
-  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, 0.09) 100%);
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.09) 0%,
+    rgba(255, 255, 255, 0) 55%,
+    rgba(0, 0, 0, 0.09) 100%
+  );
   background-color: #34484e;
   color: #ffffff;
   border-color: #dadada;
@@ -142,12 +152,22 @@
 /* But in the quest list it must look like the search field next to it:
    same subtle vertical gradient */
 .game-style-root .game-menu-dd-toggle {
-  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, 0.12) 100%);
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.07) 0%,
+    rgba(255, 255, 255, 0) 55%,
+    rgba(0, 0, 0, 0.12) 100%
+  );
 }
 
 .game-style-root .game-menu-dd-toggle:hover,
 .game-style-root .game-menu-dd-toggle:focus {
-  background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0) 55%, rgba(0, 0, 0, 0.09) 100%);
+  background-image: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.09) 0%,
+    rgba(255, 255, 255, 0) 55%,
+    rgba(0, 0, 0, 0.09) 100%
+  );
 }
 
 .game-style-root .dropdown-menu {
@@ -389,3 +409,23 @@
   overflow-wrap: anywhere;
 }
 
+.quest-start-line {
+  display: inline-block;
+  margin-top: 2px;
+}
+
+.quest-start-route {
+  white-space: nowrap;
+}
+
+.quest-start-mark {
+  display: inline-block;
+  width: 0.55em;
+  height: 0.26em;
+  margin: 0 0.32em;
+  vertical-align: 0.36em;
+}
+
+.quest-start-mark path {
+  fill: currentColor;
+}
