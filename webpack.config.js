@@ -5,6 +5,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const ServiceWorkerWebpackPlugin = require("serviceworker-webpack-plugin");
 const ForkTsCheckerWebpackPlugin = require("fork-ts-checker-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
 const devServer /*: webpackDevServer.Configuration */ = {
   contentBase: "./built-web",
@@ -44,6 +45,10 @@ const config = (env, argv) => {
         /* This is small workaround for workers scope and HotModuleReplacementPlugin */ MODE_DEVELOPMENT
           ? "this"
           : undefined,
+    },
+
+    optimization: {
+      minimizer: [new TerserPlugin({ sourceMap: true })],
     },
 
     plugins: [

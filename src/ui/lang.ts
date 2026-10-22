@@ -326,7 +326,7 @@ function isBot() {
 
 function guessBrowserLang(): Lang {
   // tslint:disable-next-line:strict-type-predicates
-  if (typeof navigator === "undefined") {
+  if (typeof window === "undefined" || typeof navigator === "undefined") {
     // To run inside tests
     return "rus";
   }

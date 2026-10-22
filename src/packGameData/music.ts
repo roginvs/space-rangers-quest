@@ -1,4 +1,5 @@
 import { spawnSync } from "child_process";
+import ffmpegPath from "ffmpeg-static";
 import * as fs from "fs";
 import { Index } from "./defs";
 import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
@@ -6,13 +7,31 @@ import { DEBUG_SPEEDUP_SKIP_COPING } from "./flags";
 type SoundAndTrackIndexDir = Pick<Index["dir"], "sound" | "track">;
 
 function transcodeToMp3(srcPath: string, mp3Path: string): void {
+  if (!ffmpegPath) {
+    throw new Error("FFmpeg is not available for this platform");
+  }
   const res = spawnSync(
-    "ffmpeg",
-    ["-y", "-i", srcPath, "-codec:a", "libmp3lame", "-q:a", "2", mp3Path],
-    { stdio: "ignore" },
+    ffmpegPath,
+    [
+      "-hide_banner",
+      "-loglevel",
+      "error",
+      "-nostdin",
+      "-y",
+      "-i",
+      srcPath,
+      "-vn",
+      "-codec:a",
+      "libmp3lame",
+      "-q:a",
+      "2",
+      mp3Path,
+    ],
+    { encoding: "utf8" },
   );
   if (res.error || res.status !== 0) {
-    throw new Error(`Failed to transcode ${srcPath} to ${mp3Path}`);
+    const details = res.error ? res.error.message : res.stderr.trim() || `exit code ${res.status}`;
+    throw new Error(`Failed to transcode ${srcPath} to ${mp3Path}: ${details}`);
   }
 }
 
@@ -54,64 +73,67 @@ export function scanAndCopySoundAndTrack(
   // tslint:disable-next-line:no-useless-cast
   for (const folderName of ["sound", "track"] as const) {
     console.info(`Copying ${folderName}`);
-    fs.readdirSync(dataSrcPath + "/" + folderName)
-      .filter((x) => {
-        const fullName = dataSrcPath + "/" + folderName + "/" + x;
-        const lower = fullName.toLowerCase();
-        return (
-          fs.statSync(fullName).isFile() &&
-          (lower.endsWith(".mp3") || lower.endsWith(".ogg") || lower.endsWith(".wav"))
+    const inputFileNames = fs.readdirSync(dataSrcPath + "/" + folderName).filter((x) => {
+      const fullName = dataSrcPath + "/" + folderName + "/" + x;
+      const lower = fullName.toLowerCase();
+      return (
+        fs.statSync(fullName).isFile() &&
+        (lower.endsWith(".mp3") || lower.endsWith(".ogg") || lower.endsWith(".wav"))
+      );
+    });
+
+    // Check the final names before writing, including case and OGG/WAV collisions.
+    const sourceByOutputName = new Map<string, string>();
+    for (const inputFileName of inputFileNames) {
+      const outputName = inputFileName.toLowerCase().replace(/\.(ogg|wav)$/, ".mp3");
+      const previousSource = sourceByOutputName.get(outputName);
+      if (previousSource !== undefined) {
+        throw new Error(
+          `Audio files '${folderName}/${previousSource}' and '${folderName}/${inputFileName}' ` +
+            `both produce '${folderName}/${outputName}'`,
         );
-      })
-      .forEach((fileShortInitialName) => {
-        const fullSrcName = dataSrcPath + "/" + folderName + "/" + fileShortInitialName;
-        const lowerInit = fileShortInitialName.toLowerCase();
+      }
+      sourceByOutputName.set(outputName, inputFileName);
+    }
 
-        if (lowerInit.endsWith(".ogg") || lowerInit.endsWith(".wav")) {
-          const base = lowerInit.replace(/\.(ogg|wav)$/, "");
-          if (fs.existsSync(dataSrcPath + "/" + folderName + "/" + base + ".mp3")) {
-            throw new Error(
-              `Both .${lowerInit.split(".").pop()} and .mp3 exist for '${folderName}/${base}'`,
-            );
-          }
-        }
+    inputFileNames.forEach((fileShortInitialName) => {
+      const fullSrcName = dataSrcPath + "/" + folderName + "/" + fileShortInitialName;
+      const lowerInit = fileShortInitialName.toLowerCase();
 
-        // No lowercase for random music because it was already chched
-        // And it is never linked from other source, player just player whatever in the folder
-        // (Sounds and Tracks are linked from qmm file)
-        const fileShortName = lowerInit.replace(/\.(ogg|wav)$/, ".mp3");
-        const name = `${folderName}/${fileShortName}`;
-        if (!DEBUG_SPEEDUP_SKIP_COPING) {
-          if (lowerInit.endsWith(".mp3")) {
-            fs.writeFileSync(dataDstPath + "/" + name, fs.readFileSync(fullSrcName));
-          } else {
-            transcodeToMp3(fullSrcName, dataDstPath + "/" + name);
-          }
-        }
-        const fileSize = fs.statSync(dataDstPath + "/" + name).size;
-        if (folderName === "sound") {
-          indexDir[folderName].files.push({
-            fileName: fileShortName,
-            filePath: folderName + "/",
-            size: fileSize,
-          });
+      // Keep the same lowercase MP3 names used by the player and randomignore.txt.
+      const fileShortName = lowerInit.replace(/\.(ogg|wav)$/, ".mp3");
+      const name = `${folderName}/${fileShortName}`;
+      if (!DEBUG_SPEEDUP_SKIP_COPING) {
+        if (lowerInit.endsWith(".mp3")) {
+          fs.writeFileSync(dataDstPath + "/" + name, fs.readFileSync(fullSrcName));
         } else {
-          const foundInIngoreList = tracksRandomIngore
-            ? tracksRandomIngore.includes(fileShortName)
-            : false;
-          console.info(`  [${foundInIngoreList ? " " : "r"}] ${fileShortName}`);
-          indexDir[folderName].files.push({
-            fileName: fileShortName,
-            filePath: folderName + "/",
-            size: fileSize,
-            useForRandomMusic: !foundInIngoreList,
-          });
-          if (foundInIngoreList) {
-            tracksRandomIngore = tracksRandomIngore?.filter((fName) => fName !== fileShortName);
-          }
+          transcodeToMp3(fullSrcName, dataDstPath + "/" + name);
         }
-        indexDir[folderName].totalSize += fileSize;
-      });
+      }
+      const fileSize = fs.statSync(dataDstPath + "/" + name).size;
+      if (folderName === "sound") {
+        indexDir[folderName].files.push({
+          fileName: fileShortName,
+          filePath: folderName + "/",
+          size: fileSize,
+        });
+      } else {
+        const foundInIngoreList = tracksRandomIngore
+          ? tracksRandomIngore.includes(fileShortName)
+          : false;
+        console.info(`  [${foundInIngoreList ? " " : "r"}] ${fileShortName}`);
+        indexDir[folderName].files.push({
+          fileName: fileShortName,
+          filePath: folderName + "/",
+          size: fileSize,
+          useForRandomMusic: !foundInIngoreList,
+        });
+        if (foundInIngoreList) {
+          tracksRandomIngore = tracksRandomIngore?.filter((fName) => fName !== fileShortName);
+        }
+      }
+      indexDir[folderName].totalSize += fileSize;
+    });
 
     console.info(
       `  Copied ${indexDir[folderName].files.length} files, ${indexDir[folderName].totalSize} bytes total ` +

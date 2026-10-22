@@ -1,9 +1,32 @@
 image: node:24
-pages:
-  stage: deploy
+
+# Merge requests are checked by their own pipelines, which is why jobs below
+# have rules for CI_PIPELINE_SOURCE == "merge_request_event".
+# Workflows description: https://docs.gitlab.com/ci/yaml/workflow/
+#
+# Do not create a branch pipeline when a merge request is open for the branch,
+# otherwise a single push would start two pipelines.
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
+stages:
+  - build
+  - test
+  - deploy
+
+# Buckets are sorted by completion time, actual order is defined by needs
+# (MR pipelines stop after the last test job and nothing is deployed)
+
+# Builds everything: tests, lint, game data and webpack bundle.
+# On master the same job is reused by the pages job, so the site is built once.
+build:
+  stage: build
   script:
     - rm -R built-web || true
-    - apt-get update && apt-get install -y --no-install-recommends ffmpeg
     - npm install --legacy-peer-deps
     - mkdir built-web
     - npm run prettier-check
@@ -23,10 +46,26 @@ pages:
           -o -name '*.woff2' -o -name '*.eot' -o -name '*.ttf' -o -name '*.woff' \
         \) \
         -execdir gzip "{}" --keep --suffix .gz --verbose \;
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - built-web
 
+# Deploys the build above. Needs allows this job to download artifacts of any
+# previous job without being limited by stages, see
+# https://docs.gitlab.com/ci/yaml/needs/
+pages:
+  stage: deploy
+  needs:
+    # The build job defines the whole pipeline, and by default needs downloads
+    # only its artifacts, so it is enough to override its script
+    - job: build
+      artifacts: true
+  script:
+    - rm -rf public
     - mv built-web public
   artifacts:
     paths:
       - public
-  only:
-    - master
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
