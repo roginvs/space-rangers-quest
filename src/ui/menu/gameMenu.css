@@ -185,6 +185,19 @@
   width: 100%;
 }
 
+/* Long category names must not overflow the toggle button on narrow
+   screens (Bootstrap .btn forces white-space: nowrap), let them wrap */
+.game-style-root .game-menu-dd-toggle {
+  white-space: normal;
+}
+
+/* Same for the items of the opened list: they are single-line otherwise
+   and get clipped by the menu border (overflow: hidden above) */
+.game-style-root .game-menu-dd-menu .dropdown-item {
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
 .game-style-root .dropdown-item {
   color: #9eacac;
   padding: 0.55rem 1rem;
