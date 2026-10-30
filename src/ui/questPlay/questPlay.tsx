@@ -338,11 +338,13 @@ export function QuestPlay({
     return () => window.removeEventListener("keydown", onDigitChoiceKeydown);
   }, [onDigitChoiceKeydown]);
 
-  // Показ цифр вместо ">>" у вариантов ответа, пока удерживается Shift
+  // Показ цифр вместо ">>" у вариантов ответа, пока удерживается Shift.
+  // Слушаем все key-down/key-up и берём event.shiftKey (а не только имя клавиши),
+  // иначе состояние могло залипать, если keyup по каким-то причинам не доходит
   const [shiftPressed, setShiftPressed] = React.useState(false);
   React.useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      setShiftPressed(event.key === "Shift");
+      setShiftPressed(event.shiftKey);
     };
     const onBlur = () => setShiftPressed(false);
     window.addEventListener("keydown", onKey);
@@ -450,15 +452,12 @@ export function QuestPlay({
               className={choice.active ? "" : "game-inactive"}
             >
               <span
-                className="d-inline-block text-center"
-                style={{
-                  // Фиксированная ширина слота, чтобы строка не прыгала
-                  // при переключении Shift
-                  width: "0.75em",
-                  fontVariantNumeric: "tabular-nums",
-                }}
+                className={
+                  "questplay-choice-lead" + (shiftPressed ? " questplay-choice-lead-shift" : "")
+                }
               >
-                {shiftPressed ? index + 1 : <i className="fa fa-angle-double-right" />}
+                <i className="fa fa-angle-double-right" />
+                <span className="questplay-choice-lead-digit">{index + 1}</span>
               </span>{" "}
               <QuestReplaceTags str={choice.text} onLinkClick={onLinkJumpsClick} />
             </a>
