@@ -303,6 +303,41 @@ export function QuestPlay({
     setGameState(newGameState);
   }, [gameState, quest]);
 
+  // Выбор варианта ответа цифрами на клавиатуре (1..9, всегда доступны).
+  // Обрабатываются только "цифры" соответствующие порядку активных вариантов.
+  const onDigitChoiceKeydown = React.useCallback(
+    (event: KeyboardEvent) => {
+      // Не перехватывать, если печатают в поле ввода
+      const target = document.activeElement;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          (target instanceof HTMLElement && target.isContentEditable))
+      ) {
+        return;
+      }
+      if (!gameState || reallyRestart || debugOpen) {
+        return;
+      }
+      const index = "123456789".indexOf(event.key);
+      if (index === -1) {
+        return;
+      }
+      const choice = getUIState(quest, gameState, player).choices[index];
+      if (!choice || !choice.active) {
+        return;
+      }
+      event.preventDefault();
+      setGameState(performJump(choice.jumpId, quest, gameState));
+    },
+    [gameState, reallyRestart, debugOpen, quest, player, setGameState],
+  );
+  React.useEffect(() => {
+    window.addEventListener("keydown", onDigitChoiceKeydown);
+    return () => window.removeEventListener("keydown", onDigitChoiceKeydown);
+  }, [onDigitChoiceKeydown]);
+
   const exitButtonContent = busySaving ? (
     <i className="fa fa-refresh fa-spin fa-fw" />
   ) : (
