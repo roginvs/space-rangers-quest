@@ -42,3 +42,33 @@
 .game-root .game-text-link {
   cursor: pointer;
 }
+
+/* Слот перед текстом варианта ответа: ">>" либо номер при удержании Shift.
+   Обёртка inline и не меняет поток (размеры = только иконка, как в master),
+   номер абсолютом по центру иконки и вообще не влияет на layout. */
+.questplay-choice-lead {
+  position: relative;
+}
+.questplay-choice-lead-digit {
+  display: none;
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  box-sizing: border-box;
+  min-width: 1.35em;
+  padding: 0 0.18em;
+  border: 1px solid;
+  border-color: rgba(128, 128, 128, 0.75);
+  border-radius: 0.3em;
+  font-size: 0.6em;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.45;
+  text-align: center;
+}
+.questplay-choice-lead-shift .fa {
+  visibility: hidden;
+}
+.questplay-choice-lead-shift .questplay-choice-lead-digit {
+  display: inline-block;
+}

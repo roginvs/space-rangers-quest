@@ -303,6 +303,64 @@ export function QuestPlay({
     setGameState(newGameState);
   }, [gameState, quest]);
 
+  // Выбор варианта ответа цифрами на клавиатуре (1..9, всегда доступны).
+  // Обрабатываются только "цифры" соответствующие порядку активных вариантов.
+  const onDigitChoiceKeydown = React.useCallback(
+    (event: KeyboardEvent) => {
+      // Автоповторы удерживаемой клавиши игнорируем: одно нажатие = один переход
+      if (event.repeat) {
+        return;
+      }
+      // Не перехватывать, если печатают в поле ввода
+      const target = document.activeElement;
+      if (
+        target &&
+        (target.tagName === "INPUT" ||
+          target.tagName === "TEXTAREA" ||
+          (target instanceof HTMLElement && target.isContentEditable))
+      ) {
+        return;
+      }
+      if (!gameState || reallyRestart || debugOpen) {
+        return;
+      }
+      const index = "123456789".indexOf(event.key);
+      if (index === -1) {
+        return;
+      }
+      const choice = getUIState(quest, gameState, player).choices[index];
+      if (!choice || !choice.active) {
+        return;
+      }
+      event.preventDefault();
+      setGameState(performJump(choice.jumpId, quest, gameState));
+    },
+    [gameState, reallyRestart, debugOpen, quest, player, setGameState],
+  );
+  React.useEffect(() => {
+    window.addEventListener("keydown", onDigitChoiceKeydown);
+    return () => window.removeEventListener("keydown", onDigitChoiceKeydown);
+  }, [onDigitChoiceKeydown]);
+
+  // Показ цифр вместо ">>" у вариантов ответа, пока удерживается Shift.
+  // Слушаем все key-down/key-up и берём event.shiftKey (а не только имя клавиши),
+  // иначе состояние могло залипать, если keyup по каким-то причинам не доходит
+  const [shiftPressed, setShiftPressed] = React.useState(false);
+  React.useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      setShiftPressed(event.shiftKey);
+    };
+    const onBlur = () => setShiftPressed(false);
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("keyup", onKey);
+    window.addEventListener("blur", onBlur);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("keyup", onKey);
+      window.removeEventListener("blur", onBlur);
+    };
+  }, []);
+
   const exitButtonContent = busySaving ? (
     <i className="fa fa-refresh fa-spin fa-fw" />
   ) : (
@@ -366,7 +424,7 @@ export function QuestPlay({
 
   const choices = (
     <DivFadeinCss key={`#${gameState.performedJumps.length}`}>
-      {uistate.choices.map((choice) => {
+      {uistate.choices.map((choice, index) => {
         return (
           <div key={choice.jumpId} className={isMobile ? "mb-4" : "mb-3"}>
             <a
@@ -397,7 +455,14 @@ export function QuestPlay({
               }}
               className={choice.active ? "" : "game-inactive"}
             >
-              <i className="fa fa-angle-double-right" />{" "}
+              <span
+                className={
+                  "questplay-choice-lead" + (shiftPressed ? " questplay-choice-lead-shift" : "")
+                }
+              >
+                <i className="fa fa-angle-double-right" />
+                <span className="questplay-choice-lead-digit">{index + 1}</span>
+              </span>{" "}
               <QuestReplaceTags str={choice.text} onLinkClick={onLinkJumpsClick} />
             </a>
           </div>
