@@ -307,6 +307,10 @@ export function QuestPlay({
   // Обрабатываются только "цифры" соответствующие порядку активных вариантов.
   const onDigitChoiceKeydown = React.useCallback(
     (event: KeyboardEvent) => {
+      // Автоповторы удерживаемой клавиши игнорируем: одно нажатие = один переход
+      if (event.repeat) {
+        return;
+      }
       // Не перехватывать, если печатают в поле ввода
       const target = document.activeElement;
       if (
