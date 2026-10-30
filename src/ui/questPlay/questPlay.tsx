@@ -338,6 +338,23 @@ export function QuestPlay({
     return () => window.removeEventListener("keydown", onDigitChoiceKeydown);
   }, [onDigitChoiceKeydown]);
 
+  // Показ цифр вместо ">>" у вариантов ответа, пока удерживается Shift
+  const [shiftPressed, setShiftPressed] = React.useState(false);
+  React.useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      setShiftPressed(event.key === "Shift");
+    };
+    const onBlur = () => setShiftPressed(false);
+    window.addEventListener("keydown", onKey);
+    window.addEventListener("keyup", onKey);
+    window.addEventListener("blur", onBlur);
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      window.removeEventListener("keyup", onKey);
+      window.removeEventListener("blur", onBlur);
+    };
+  }, []);
+
   const exitButtonContent = busySaving ? (
     <i className="fa fa-refresh fa-spin fa-fw" />
   ) : (
@@ -401,7 +418,7 @@ export function QuestPlay({
 
   const choices = (
     <DivFadeinCss key={`#${gameState.performedJumps.length}`}>
-      {uistate.choices.map((choice) => {
+      {uistate.choices.map((choice, index) => {
         return (
           <div key={choice.jumpId} className={isMobile ? "mb-4" : "mb-3"}>
             <a
@@ -432,7 +449,17 @@ export function QuestPlay({
               }}
               className={choice.active ? "" : "game-inactive"}
             >
-              <i className="fa fa-angle-double-right" />{" "}
+              <span
+                className="d-inline-block text-center"
+                style={{
+                  // Фиксированная ширина слота, чтобы строка не прыгала
+                  // при переключении Shift
+                  width: "0.75em",
+                  fontVariantNumeric: "tabular-nums",
+                }}
+              >
+                {shiftPressed ? index + 1 : <i className="fa fa-angle-double-right" />}
+              </span>{" "}
               <QuestReplaceTags str={choice.text} onLinkClick={onLinkJumpsClick} />
             </a>
           </div>
