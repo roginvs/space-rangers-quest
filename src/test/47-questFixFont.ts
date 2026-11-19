@@ -13,7 +13,15 @@ describe("Quest <fix> font assets", () => {
     assert.ok(font.length > 10000);
     assert.strictEqual(font.slice(0, 4).toString("hex"), "00010000");
 
+    // Files copied from src/webstatic are already part of the webpack
+    // compilation assets and are pre-cached via serviceWorkerOption.assets.
+    // Manually listing the font a second time breaks Cache.addAll().
+    const webpackConfig = fs.readFileSync(__dirname + "/../../webpack.config.js", "utf8");
+    assert.ok(webpackConfig.includes('from: "src/webstatic"'));
+    assert.ok(webpackConfig.includes("ServiceWorkerWebpackPlugin"));
+
     const sw = fs.readFileSync(__dirname + "/../../src/ui/serviceWorker.ts", "utf8");
-    assert.ok(sw.includes('"/fonts/DejaVuSansMono.ttf"'));
+    assert.ok(sw.includes("...serviceWorkerOption.assets"));
+    assert.ok(!sw.includes('"/fonts/DejaVuSansMono.ttf"'));
   });
 });
