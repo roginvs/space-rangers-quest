@@ -29,6 +29,16 @@ export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: str
     <>
       <span className="game-text">{startsInFix ? zeroWidthSpace : nbsp}</span>
       {tags.map((tag, index) => {
+        // A newline immediately before <fix> belongs to the diagram's first row.
+        // Skip empty split tokens when checking which text comes after it.
+        const nextText =
+          tag.type === "newline"
+            ? tags
+                .slice(index + 1)
+                .find((next) => next.type === "text" && next.text.length > 0)
+            : undefined;
+        const newlineInFix = tag.isFix || (nextText && nextText.isFix);
+
         const linkJumps = tag.type === "text" ? tag.links : undefined;
         const onActivate =
           linkJumps && onLinkClick
@@ -70,7 +80,7 @@ export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: str
             ) : (
               <>
                 <br />
-                {tag.isFix ? zeroWidthSpace : nbsp}
+                {newlineInFix ? zeroWidthSpace : nbsp}
               </>
             )}
           </span>

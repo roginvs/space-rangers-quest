@@ -44,7 +44,7 @@ describe("QuestReplaceTags paragraph indents", () => {
   it("preserves ordinary paragraph indents on both sides of a fixed block", () => {
     assert.deepStrictEqual(collectIndents("Description\n<fix>X\nY</fix>\nAfter"), {
       first: paragraphIndent,
-      newlines: [paragraphIndent, zeroWidthSpace, paragraphIndent],
+      newlines: [zeroWidthSpace, zeroWidthSpace, paragraphIndent],
     });
   });
 
