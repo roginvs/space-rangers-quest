@@ -19,11 +19,12 @@ export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: str
   const tags = formatTokens(splitStringToTokens(props.str));
   const onLinkClick = props.onLinkClick;
 
-  const nbsp = "\u00A0";
+  // Keep the inline placeholder without shifting fixed-width text by one column.
+  const zeroWidthSpace = "\u200B";
 
   return (
     <>
-      <span className="game-text">{nbsp}</span>
+      <span className="game-text">{zeroWidthSpace}</span>
       {tags.map((tag, index) => {
         const linkJumps = tag.type === "text" ? tag.links : undefined;
         const onActivate =
@@ -66,7 +67,7 @@ export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: str
             ) : (
               <>
                 <br />
-                {nbsp}
+                {zeroWidthSpace}
               </>
             )}
           </span>
