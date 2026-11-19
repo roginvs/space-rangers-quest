@@ -21,9 +21,24 @@ export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: str
 
   const nbsp = "\u00A0";
 
+  // Preserve historical paragraph indents except when the first visible
+  // text on a line is inside <fix>. Ignore empty text tokens from style tags.
+  const lineStartsWithFix = (fromIndex: number) => {
+    for (let i = fromIndex; i < tags.length; i++) {
+      const token = tags[i];
+      if (token.type === "newline") {
+        return false;
+      }
+      if (token.type === "text" && token.text.length > 0) {
+        return !!token.isFix;
+      }
+    }
+    return false;
+  };
+
   return (
     <>
-      <span className="game-text">{nbsp}</span>
+      <span className="game-text">{lineStartsWithFix(0) ? null : nbsp}</span>
       {tags.map((tag, index) => {
         const linkJumps = tag.type === "text" ? tag.links : undefined;
         const onActivate =
@@ -66,7 +81,7 @@ export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: str
             ) : (
               <>
                 <br />
-                {nbsp}
+                {lineStartsWithFix(index + 1) ? null : nbsp}
               </>
             )}
           </span>
