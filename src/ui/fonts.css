@@ -3,12 +3,15 @@
  * DejaVu Sans Mono for <fix> diagrams, code and debugging views.
  *
  * Icon glyphs intentionally continue to use Font Awesome's own face.
- * Font files live in src/webstatic/fonts and are precached by the
- * ServiceWorkerWebpackPlugin via its asset manifest.
+ * Font binaries live in ./font-assets, relative to this stylesheet.
+ * css-loader resolves these source URLs, and file-loader emits
+ * built-web/fonts/<hash>.ttf. The extracted index.css then references
+ * those emitted files; the service-worker asset list caches them offline.
+ * There are no hard-coded site-root URLs or duplicate copied font files.
  */
 @font-face {
   font-family: "Rangers Roboto";
-  src: url("/fonts/RobotoVariable.ttf") format("truetype");
+  src: url("./font-assets/RobotoVariable.ttf") format("truetype");
   font-style: normal;
   font-weight: 100 900;
   font-display: swap;
@@ -16,7 +19,7 @@
 
 @font-face {
   font-family: "Rangers Roboto";
-  src: url("/fonts/RobotoVariable-Italic.ttf") format("truetype");
+  src: url("./font-assets/RobotoVariable-Italic.ttf") format("truetype");
   font-style: italic;
   font-weight: 100 900;
   font-display: swap;
@@ -24,7 +27,7 @@
 
 @font-face {
   font-family: "Rangers Mono";
-  src: url("/fonts/DejaVuSansMono.ttf") format("truetype");
+  src: url("./font-assets/DejaVuSansMono.ttf") format("truetype");
   font-style: normal;
   font-weight: 400;
   font-display: block;
