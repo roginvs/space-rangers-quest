@@ -34,28 +34,27 @@ describe("QuestReplaceTags link rendering", () => {
       str: "<link=Open;Enter>door</link>",
       onLinkClick: (jumps) => calls.push(jumps),
     });
-    const tokenFragments = rendered.props.children as React.ReactElement[];
-    const link = (tokenFragments[0].props.children as React.ReactElement[])[1];
-    assert.strictEqual(link.props.role, "link");
-    assert.strictEqual(link.props.tabIndex, 0);
+    const spans = rendered.props.children[1] as React.ReactElement[];
+    assert.strictEqual(spans[0].props.role, "link");
+    assert.strictEqual(spans[0].props.tabIndex, 0);
     let prevented = 0;
     let stopped = 0;
     const event = {
       preventDefault: () => prevented++,
       stopPropagation: () => stopped++,
     };
-    link.props.onClick(event);
+    spans[0].props.onClick(event);
     assert.strictEqual(prevented, 1);
     assert.strictEqual(stopped, 1);
     assert.deepStrictEqual(calls, [["Open", "Enter"]]);
-    link.props.onKeyDown({ ...event, key: "Enter" });
+    spans[0].props.onKeyDown({ ...event, key: "Enter" });
     assert.strictEqual(prevented, 2);
     assert.strictEqual(stopped, 2);
     assert.deepStrictEqual(calls, [
       ["Open", "Enter"],
       ["Open", "Enter"],
     ]);
-    link.props.onKeyDown({ ...event, key: "Escape" });
+    spans[0].props.onKeyDown({ ...event, key: "Escape" });
     assert.strictEqual(calls.length, 2);
   });
 
