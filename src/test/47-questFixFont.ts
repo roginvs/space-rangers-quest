@@ -29,7 +29,7 @@ describe("Bundled game fonts", () => {
     assert.strictEqual(relativeUrls.length, 3);
     for (const font of fonts) {
       const url = "./font-assets/" + font;
-      assert.ok(relativeUrls.includes('src: url("' + url + '")'), "Missing CSS URL for " + font);
+      assert.ok(relativeUrls.indexOf('src: url("' + url + '")') !== -1, "Missing CSS URL for " + font);
       const file = path.resolve(root, "src/ui", url);
       assert.ok(fs.existsSync(file), "Missing CSS-relative font file " + file);
       const data = fs.readFileSync(file);
