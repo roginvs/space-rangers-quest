@@ -19,27 +19,25 @@ export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: str
   const tags = formatTokens(splitStringToTokens(props.str));
   const onLinkClick = props.onLinkClick;
 
-  // Preserve the original paragraph indent for normal prose. For <fix>,
-  // do not insert a visible column (or a differently sized system-font space).
+  // Preserve the historical paragraph indent only for ordinary text.
+  // A <fix> line must contain exactly the spaces provided by the quest.
   const nbsp = "\u00A0";
-  const zeroWidthSpace = "\u200B";
-  const startsInFix = tags.length > 0 && !!tags[0].isFix;
+  let startsLine = true;
 
   return (
     <>
-      <span className="game-text">{startsInFix ? zeroWidthSpace : nbsp}</span>
       {tags.map((tag, index) => {
-        // A newline immediately before <fix> belongs to the diagram's first row.
-        // Skip empty split tokens when checking which text comes after it.
-        const nextText =
-          tag.type === "newline"
-            ? tags
-                .slice(index + 1)
-                .find((next) => next.type === "text" && next.text.length > 0)
-            : undefined;
-        const newlineInFix = tag.isFix || (nextText && nextText.isFix);
+        if (tag.type === "newline") {
+          startsLine = true;
+          return <br key={index} />;
+        }
 
-        const linkJumps = tag.type === "text" ? tag.links : undefined;
+        const indent = startsLine && tag.text.length > 0 && !tag.isFix;
+        if (tag.text.length > 0) {
+          startsLine = false;
+        }
+
+        const linkJumps = tag.links;
         const onActivate =
           linkJumps && onLinkClick
             ? (e: React.SyntheticEvent) => {
@@ -49,41 +47,35 @@ export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: str
               }
             : undefined;
         return (
-          <span
-            key={index}
-            className={classNames("game-text", {
-              "game-fix": tag.isFix,
-              "game-clr": tag.type === "text" ? tag.isClr : undefined,
-              "game-text-link": !!onActivate,
-            })}
-            style={{
-              color:
-                tag.type === "text" && tag.color
+          <React.Fragment key={index}>
+            {indent ? <span className="game-text">{nbsp}</span> : null}
+            <span
+              className={classNames("game-text", {
+                "game-fix": tag.isFix,
+                "game-clr": tag.isClr,
+                "game-text-link": !!onActivate,
+              })}
+              style={{
+                color: tag.color
                   ? `rgb(${tag.color.r}, ${tag.color.g}, ${tag.color.b})`
                   : undefined,
-            }}
-            role={onActivate ? "link" : undefined}
-            tabIndex={onActivate ? 0 : undefined}
-            onClick={onActivate}
-            onKeyDown={
-              onActivate
-                ? (e) => {
-                    if (e.key === "Enter") {
-                      onActivate(e);
+              }}
+              role={onActivate ? "link" : undefined}
+              tabIndex={onActivate ? 0 : undefined}
+              onClick={onActivate}
+              onKeyDown={
+                onActivate
+                  ? (e) => {
+                      if (e.key === "Enter") {
+                        onActivate(e);
+                      }
                     }
-                  }
-                : undefined
-            }
-          >
-            {tag.type === "text" ? (
-              tag.text
-            ) : (
-              <>
-                <br />
-                {newlineInFix ? zeroWidthSpace : nbsp}
-              </>
-            )}
-          </span>
+                  : undefined
+              }
+            >
+              {tag.text}
+            </span>
+          </React.Fragment>
         );
       })}
     </>
