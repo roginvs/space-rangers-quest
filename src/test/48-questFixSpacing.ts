@@ -41,9 +41,9 @@ describe("QuestReplaceTags paragraph indents", () => {
     assert.ok(!html.includes("\u200B"));
   });
 
-  it("handles transitions from prose to fix and back (including formatting tags)", () => {
+  it("handles transitions from prose to fix and back, including style tags", () => {
     assert.deepStrictEqual(
-      getIndentStructure("Description\n<clr><fix>X\nY</fix>\nAfter"),
+      getIndentStructure("Description\n<clr><fix>X\nY</fix></clr>\nAfter"),
       ["indented", "newline", "flush", "newline", "flush", "newline", "indented"],
     );
   });
