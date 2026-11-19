@@ -1,16 +1,6 @@
 .game-text {
   white-space: pre-wrap;
 }
-/* A bundled face keeps box-drawing characters and spaces on the same grid.
-   Android's generic monospace fallback may use proportional symbol glyphs. */
-@font-face {
-  font-family: "Rangers Mono";
-  src: url("/fonts/DejaVuSansMono.ttf") format("truetype");
-  font-style: normal;
-  font-weight: 400;
-  font-display: block;
-}
-
 .game-fix {
   font-family: "Rangers Mono", monospace;
   white-space: pre;
@@ -37,7 +27,7 @@
 .game-debug-textarea {
   background-color: #353535;
   color: #9eacac;
-  font-family: monospace;
+  font-family: "Rangers Mono", monospace;
   resize: none;
 
   height: 100%;
@@ -46,7 +36,7 @@
 .game-debug-input {
   background-color: #353535;
   color: #9eacac;
-  font-family: monospace;
+  font-family: "Rangers Mono", monospace;
   width: 100%;
 }
 /* The <link> tag: no visual style, only the pointer cursor on hover */

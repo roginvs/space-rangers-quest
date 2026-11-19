@@ -6,6 +6,7 @@ import * as ReactDOM from "react-dom";
 
 import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
+import "./fonts.css";
 
 import firebase from "firebase/app";
 import "firebase/database";
