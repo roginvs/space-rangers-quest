@@ -26,6 +26,7 @@ const CACHE_QUESTS_NAME = "spacerangers-quests";
 
 const engineUrls = [
   "/",
+  "/fonts/DejaVuSansMono.ttf",
   INDEX_JSON,
   ...serviceWorkerOption.assets,
   `/?version=${new Date(__VERSION__).getTime()}`, // to enforce a reinstall after rebuild

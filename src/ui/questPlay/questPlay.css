@@ -1,9 +1,20 @@
 .game-text {
   white-space: pre-wrap;
 }
+/* A bundled face keeps box-drawing characters and spaces on the same grid.
+   Android's generic monospace fallback may use proportional symbol glyphs. */
+@font-face {
+  font-family: "Rangers Mono";
+  src: url("/fonts/DejaVuSansMono.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+}
+
 .game-fix {
-  font-family: monospace;
+  font-family: "Rangers Mono", monospace;
   white-space: pre;
+  font-variant-ligatures: none;
 }
 
 .game-root {
