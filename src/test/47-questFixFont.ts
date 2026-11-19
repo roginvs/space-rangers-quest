@@ -3,7 +3,10 @@ import * as fs from "fs";
 import * as path from "path";
 import "mocha";
 
-const root = path.resolve(__dirname, "../..");
+// npm run test is executed from the repository root in local runs and CI.
+// Use cwd instead of __dirname: Mocha/Node 24 can load .ts files as ESM,
+// where CommonJS's __dirname is not defined.
+const root = process.cwd();
 const read = (file: string) => fs.readFileSync(path.resolve(root, file), "utf8");
 const fonts = ["RobotoVariable.ttf", "RobotoVariable-Italic.ttf", "DejaVuSansMono.ttf"];
 
