@@ -19,12 +19,15 @@ export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: str
   const tags = formatTokens(splitStringToTokens(props.str));
   const onLinkClick = props.onLinkClick;
 
-  // Keep the inline placeholder without shifting fixed-width text by one column.
+  // Preserve the original paragraph indent for normal prose. For <fix>,
+  // do not insert a visible column (or a differently sized system-font space).
+  const nbsp = "\u00A0";
   const zeroWidthSpace = "\u200B";
+  const startsInFix = tags.length > 0 && !!tags[0].isFix;
 
   return (
     <>
-      <span className="game-text">{zeroWidthSpace}</span>
+      <span className="game-text">{startsInFix ? zeroWidthSpace : nbsp}</span>
       {tags.map((tag, index) => {
         const linkJumps = tag.type === "text" ? tag.links : undefined;
         const onActivate =
@@ -67,7 +70,7 @@ export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: str
             ) : (
               <>
                 <br />
-                {zeroWidthSpace}
+                {tag.isFix ? zeroWidthSpace : nbsp}
               </>
             )}
           </span>
