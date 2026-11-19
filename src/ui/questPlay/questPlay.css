@@ -2,8 +2,9 @@
   white-space: pre-wrap;
 }
 .game-fix {
-  font-family: monospace;
+  font-family: "Rangers Mono", monospace;
   white-space: pre;
+  font-variant-ligatures: none;
 }
 
 .game-root {
@@ -26,7 +27,7 @@
 .game-debug-textarea {
   background-color: #353535;
   color: #9eacac;
-  font-family: monospace;
+  font-family: "Rangers Mono", monospace;
   resize: none;
 
   height: 100%;
@@ -35,7 +36,7 @@
 .game-debug-input {
   background-color: #353535;
   color: #9eacac;
-  font-family: monospace;
+  font-family: "Rangers Mono", monospace;
   width: 100%;
 }
 /* The <link> tag: no visual style, only the pointer cursor on hover */

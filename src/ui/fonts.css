@@ -1,0 +1,59 @@
+/*
+ * Bundle the same fonts on every platform: Roboto for prose and controls,
+ * DejaVu Sans Mono for <fix> diagrams, code and debugging views.
+ *
+ * Icon glyphs intentionally continue to use Font Awesome's own face.
+ * Font files live in src/webstatic/fonts and are precached by the
+ * ServiceWorkerWebpackPlugin via its asset manifest.
+ */
+@font-face {
+  font-family: "Rangers Roboto";
+  src: url("/fonts/RobotoVariable.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Rangers Roboto";
+  src: url("/fonts/RobotoVariable-Italic.ttf") format("truetype");
+  font-style: italic;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Rangers Mono";
+  src: url("/fonts/DejaVuSansMono.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+}
+
+/*
+ * CSS cascade:
+ * - index.tsx imports this stylesheet after bootstrap.css. Bootstrap's
+ *   element-level body/form font rules have the same specificity as ours,
+ *   so this later font-family wins without !important.
+ * - Most other elements inherit Roboto from body. Form controls are listed
+ *   explicitly to avoid differences in browsers' native font defaults.
+ * - More-specific component selectors still take precedence: .game-fix and
+ *   .game-debug-* use Rangers Mono, while .fa keeps Font Awesome's icon face.
+ * @font-face above only registers the files; this rule applies the font.
+ */
+body,
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: "Rangers Roboto", Arial, sans-serif;
+}
+
+/* Standard monospace HTML uses the same fixed-cell face as quest diagrams. */
+code,
+kbd,
+pre,
+samp {
+  font-family: "Rangers Mono", monospace;
+}

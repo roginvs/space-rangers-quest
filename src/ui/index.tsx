@@ -6,6 +6,9 @@ import * as ReactDOM from "react-dom";
 
 import "bootstrap/dist/css/bootstrap.css";
 import "font-awesome/css/font-awesome.css";
+// Keep our font overrides after Bootstrap: equal-specificity element rules
+// use the later declaration. More-specific classes (e.g. .fa) still win.
+import "./fonts.css";
 
 import firebase from "firebase/app";
 import "firebase/database";
