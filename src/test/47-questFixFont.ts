@@ -24,11 +24,12 @@ describe("Bundled game fonts", () => {
 
   it("uses real relative font files that webpack can resolve and emit", () => {
     const css = read("src/ui/fonts.css");
-    const relativeUrls = Array.from(css.matchAll(/src: url[(]"([^"]+)"[)]/g)).map(m => m[1]);
+    // Keep the test compatible with tsconfig's ES6 lib (no String.matchAll).
+    const relativeUrls = css.match(/src: url[(]"[^"]+"[)]/g) || [];
     assert.strictEqual(relativeUrls.length, 3);
     for (const font of fonts) {
       const url = "./font-assets/" + font;
-      assert.ok(relativeUrls.includes(url), "Missing CSS URL for " + font);
+      assert.ok(relativeUrls.includes('src: url("' + url + '")'), "Missing CSS URL for " + font);
       const file = path.resolve(root, "src/ui", url);
       assert.ok(fs.existsSync(file), "Missing CSS-relative font file " + file);
       const data = fs.readFileSync(file);
