@@ -6,10 +6,11 @@ import {
   chunksWordsChars,
   computeWordWaveSchedule,
   splitRunsIntoChunks,
-  wordWaveDuration,
+  wordWaveStep,
   wordWaveTotalDuration,
-  WORD_WAVE_MIN_WORD_MS,
-  WORD_WAVE_MS_PER_CHAR,
+  WORD_DURATION_TO_STEP,
+  WORD_WAVE_MIN_STEP_MS,
+  WORD_WAVE_STEP_MS_PER_CHAR,
 } from "../ui/wordWave/wordWave.schedule";
 
 describe("Word wave", () => {
@@ -59,21 +60,20 @@ describe("Word wave", () => {
       ],
       undefined,
     );
-    const d10 = 10 * WORD_WAVE_MS_PER_CHAR;
-    const d1 = WORD_WAVE_MIN_WORD_MS;
-    assert.strictEqual(wordWaveDuration(1), d1);
+    const s10 = 10 * WORD_WAVE_STEP_MS_PER_CHAR;
+    const s1 = WORD_WAVE_MIN_STEP_MS;
+    const s20 = 20 * WORD_WAVE_STEP_MS_PER_CHAR;
+    const k = WORD_DURATION_TO_STEP;
+    assert.strictEqual(wordWaveStep(1), s1);
     assert.deepStrictEqual(schedule, [
       [
-        { delay: 0, duration: d10 },
-        { delay: d10 / 2, duration: d1 },
+        { delay: 0, duration: s10 * k },
+        { delay: s10, duration: s1 * k },
       ],
       [],
-      [{ delay: d10 / 2 + d1 / 2, duration: 20 * WORD_WAVE_MS_PER_CHAR }],
+      [{ delay: s10 + s1, duration: s20 * k }],
     ]);
-    assert.strictEqual(
-      wordWaveTotalDuration(schedule),
-      d10 / 2 + d1 / 2 + 20 * WORD_WAVE_MS_PER_CHAR,
-    );
+    assert.strictEqual(wordWaveTotalDuration(schedule), s10 + s1 + s20 * k);
   });
 
   it("Skips unchanged lines (by index) and does not count them in delays", () => {
@@ -88,9 +88,14 @@ describe("Word wave", () => {
     );
     assert.deepStrictEqual(schedule, [
       null,
-      [{ delay: 0, duration: 10 * WORD_WAVE_MS_PER_CHAR }],
+      [{ delay: 0, duration: 10 * WORD_WAVE_STEP_MS_PER_CHAR * WORD_DURATION_TO_STEP }],
       null,
-      [{ delay: 5 * WORD_WAVE_MS_PER_CHAR, duration: 10 * WORD_WAVE_MS_PER_CHAR }],
+      [
+        {
+          delay: 10 * WORD_WAVE_STEP_MS_PER_CHAR,
+          duration: 10 * WORD_WAVE_STEP_MS_PER_CHAR * WORD_DURATION_TO_STEP,
+        },
+      ],
     ]);
     assert.strictEqual(wordWaveTotalDuration([null, null]), 0);
   });

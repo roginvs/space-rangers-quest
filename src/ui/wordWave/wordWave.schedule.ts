@@ -4,14 +4,15 @@
  */
 
 /**
- * Fade-in duration of a word per visible character, ms.
- * Tuned so a medium location text (~500 visible chars, ~75 words) takes ~500 ms.
+ * Delay from the start of a word to the start of the next word, per visible
+ * character, ms. Tuned so in a medium location text (~500 visible chars,
+ * ~75 words) the last word starts at ~450 ms.
  */
-export const WORD_WAVE_MS_PER_CHAR = 1.8;
-/** Short words still need some fade-in, ms */
-export const WORD_WAVE_MIN_WORD_MS = 8;
-/** Next word starts when the previous one is this part done */
-export const WORD_WAVE_OVERLAP = 0.5;
+export const WORD_WAVE_STEP_MS_PER_CHAR = 0.9;
+/** Short words still need some step, ms */
+export const WORD_WAVE_MIN_STEP_MS = 4;
+/** Fade-in duration of a word is this times its step */
+export const WORD_DURATION_TO_STEP = 10;
 
 export interface WaveRunPiece {
   /** Index of the run this piece belongs to */
@@ -69,8 +70,8 @@ export function chunksWordsChars(chunks: WaveChunk[]): number[] {
   return words;
 }
 
-export function wordWaveDuration(chars: number) {
-  return Math.max(WORD_WAVE_MIN_WORD_MS, chars * WORD_WAVE_MS_PER_CHAR);
+export function wordWaveStep(chars: number) {
+  return Math.max(WORD_WAVE_MIN_STEP_MS, chars * WORD_WAVE_STEP_MS_PER_CHAR);
 }
 
 export interface WordTiming {
@@ -95,9 +96,9 @@ export function computeWordWaveSchedule(
       return null;
     }
     return line.words.map((chars) => {
-      const duration = wordWaveDuration(chars);
-      const timing = { delay: start, duration };
-      start += duration * WORD_WAVE_OVERLAP;
+      const step = wordWaveStep(chars);
+      const timing = { delay: start, duration: step * WORD_DURATION_TO_STEP };
+      start += step;
       return timing;
     });
   });
