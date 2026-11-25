@@ -514,7 +514,10 @@ export function QuestPlay({
       ) : null}
 
       {isMusic && uistate.soundName ? (
-        <Sound url={transformMedianameToUrl(uistate.soundName, "sound")} />
+        <Sound
+          url={transformMedianameToUrl(uistate.soundName, "sound")}
+          playId={gameState.performedJumps.length}
+        />
       ) : null}
     </>
   );
