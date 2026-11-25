@@ -6,11 +6,11 @@
 /**
  * Delay from the start of a word to the start of the next word, per visible
  * character, ms. Tuned so in a medium location text (~500 visible chars,
- * ~75 words) the last word starts at ~450 ms.
+ * ~75 words) the last word starts at ~950 ms.
  */
-export const WORD_WAVE_STEP_MS_PER_CHAR = 0.9;
+export const WORD_WAVE_STEP_MS_PER_CHAR = 1.8;
 /** Short words still need some step, ms */
-export const WORD_WAVE_MIN_STEP_MS = 4;
+export const WORD_WAVE_MIN_STEP_MS = 8;
 /** Fade-in duration of a word is this times its step */
 export const WORD_DURATION_TO_STEP = 10;
 
