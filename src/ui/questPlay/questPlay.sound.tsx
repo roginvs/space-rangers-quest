@@ -1,16 +1,15 @@
 import * as React from "react";
 
-export function Sound({ url }: { url: string | null }) {
+export function Sound({ url, playId }: { url: string | null; playId: number }) {
   const audioElement = React.useRef<HTMLAudioElement | null>(null);
   React.useEffect(() => {
-    const play = () => {
-      if (!audioElement.current) {
-        return;
-      }
-      void audioElement.current.play();
-    };
-    play();
-  }, [url]);
+    const el = audioElement.current;
+    if (!el || !url) {
+      return;
+    }
+    el.currentTime = 0;
+    void el.play();
+  }, [url, playId]);
 
   if (!url) {
     return null;
