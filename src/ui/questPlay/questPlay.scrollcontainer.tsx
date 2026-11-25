@@ -36,11 +36,13 @@ const WORKAROUND_GAP = 5;
  * It takes 100% height
  *
  * Currently it is not using resize observer so use key prop to force rerender
- * Same applies to scrollToTop - just use key prop
+ * Same applies to scrollToTop - just use key prop, or change scrollToTopOn prop
+ * to keep children mounted
  */
 export const ScrollableContainer: React.FC<{
   forceMeRecalculateHeight?: unknown;
-}> = ({ children, forceMeRecalculateHeight }) => {
+  scrollToTopOn?: unknown;
+}> = ({ children, forceMeRecalculateHeight, scrollToTopOn }) => {
   const browserScrollWidth = React.useMemo(() => getDefaultScrollBarWidth() + WORKAROUND_GAP, []);
 
   const ref = React.useRef<HTMLDivElement>(null);
@@ -76,6 +78,13 @@ export const ScrollableContainer: React.FC<{
   }, []);
 
   React.useEffect(() => updateBarTop(), [updateBarTop]);
+
+  React.useLayoutEffect(() => {
+    if (ref.current) {
+      ref.current.scrollTop = 0;
+    }
+    updateBarTop();
+  }, [scrollToTopOn]);
 
   //console.info("render", barHeight, barTop);
 

@@ -691,7 +691,12 @@ export function QuestPlay({
               frameBorderY={frameBorderY}
             >
               <div style={{ padding: 5, paddingBottom: 10, height: "100%" }}>
-                <ScrollableContainer key={uistate.text}>{locationText}</ScrollableContainer>
+                <ScrollableContainer
+                  forceMeRecalculateHeight={uistate.text}
+                  scrollToTopOn={uistate.text}
+                >
+                  {locationText}
+                </ScrollableContainer>
               </div>
             </QuestPlayFrameText>
           </div>
