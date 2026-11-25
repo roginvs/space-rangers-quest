@@ -5,6 +5,7 @@ import { initGame, performJump, JUMP_I_AGREE } from "../../lib/qmplayer";
 import { DEFAULT_RUS_PLAYER, Player } from "../../lib/qmplayer/player";
 import { Loader, DivFadeinCss, ErrorInfo } from "../common";
 import { QuestReplaceTags } from "../questReplaceTags";
+import { QuestTextWave } from "./questPlay.text";
 import classnames from "classnames";
 
 import "./questPlay.css";
@@ -412,14 +413,13 @@ export function QuestPlay({
   );
 
   const locationText = (
-    <DivFadeinCss
-      key={`${uistate.text}#${gameState.performedJumps.length}`}
+    <div
       style={{
         overflowX: "auto",
       }}
     >
-      <QuestReplaceTags str={uistate.text} onLinkClick={onLinkJumpsClick} />
-    </DivFadeinCss>
+      <QuestTextWave str={uistate.text} onLinkClick={onLinkJumpsClick} />
+    </div>
   );
 
   const choices = (

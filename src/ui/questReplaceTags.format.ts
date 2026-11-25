@@ -135,3 +135,20 @@ export function formatTokens(parsed: StringTokenTags[]): StringTokens {
 
   return out;
 }
+
+/**
+ * Splits formatted tokens into paragraphs by newline tokens. Every paragraph except
+ * the first one starts with its newline token. Because styles are already resolved,
+ * tags which span several lines keep their style on every paragraph.
+ */
+export function splitTokensToParagraphs(tokens: StringTokens): StringTokens[] {
+  const paragraphs: StringTokens[] = [[]];
+  for (const token of tokens) {
+    if (token.type === "newline") {
+      paragraphs.push([token]);
+    } else {
+      paragraphs[paragraphs.length - 1].push(token);
+    }
+  }
+  return paragraphs;
+}
