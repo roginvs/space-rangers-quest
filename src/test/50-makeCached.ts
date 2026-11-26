@@ -22,6 +22,18 @@ describe("makeCached", function () {
     assert.strictEqual(size(), 2);
   });
 
+  it("Caches a function that returns undefined", () => {
+    let calls = 0;
+    const { cached, size } = makeCached((_n: number) => {
+      calls++;
+      return undefined;
+    });
+    assert.strictEqual(cached(1), undefined);
+    assert.strictEqual(cached(1), undefined);
+    assert.strictEqual(calls, 1);
+    assert.strictEqual(size(), 1);
+  });
+
   it("Does not cache errors", () => {
     let calls = 0;
     const { cached, size } = makeCached((s: string) => {

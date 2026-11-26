@@ -8,18 +8,22 @@ export function makeCached<A, R>(
   fn: (arg: A) => R,
   maxEntries = 10000,
 ): { cached: (arg: A) => R; clear: () => void; size: () => number } {
-  const cache = new Map<A, R>();
+  // Map.get returns R | undefined, and has() does not narrow the following get().
+  // Storing a wrapper does a single lookup, avoids a cast, and correctly caches
+  // functions that legitimately return undefined.
+  const cache = new Map<A, { value: R }>();
 
   function cached(arg: A): R {
-    if (cache.has(arg)) {
-      return cache.get(arg) as R;
+    const hit = cache.get(arg);
+    if (hit) {
+      return hit.value;
     }
     const result = fn(arg);
     if (cache.size >= maxEntries) {
       cache.clear();
       console.info(`[cache] cleared: reached ${maxEntries} entries`);
     }
-    cache.set(arg, result);
+    cache.set(arg, { value: result });
     return result;
   }
 
