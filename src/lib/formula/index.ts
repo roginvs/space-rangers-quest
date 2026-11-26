@@ -4,7 +4,7 @@ import { createScanner } from "./scanner";
 import { parseExpression } from "./parser";
 import { calculateAst } from "./calculator";
 import { RandomFunc } from "../randomFunc";
-import { parseCached } from "./parseCache";
+import { makeCached } from "../makeCached";
 
 export { MAX_NUMBER } from "./consts";
 
@@ -15,8 +15,12 @@ export function parse(str: string) {
   // console.info(JSON.stringify(ast, null, 4));
   return ast;
 }
+
+const { cached: parseCached, clear: clearParseCache, size: getParseCacheSize } = makeCached(parse);
+export { parseCached, clearParseCache, getParseCacheSize };
+
 export function calculate(str: string, params: ParamValues = [], random: RandomFunc) {
-  const ast = parseCached(str, parse);
+  const ast = parseCached(str);
   const value = calculateAst(ast, params, random);
   return Math.round(value);
 }

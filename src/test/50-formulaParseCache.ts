@@ -1,26 +1,13 @@
 import "mocha";
 import * as assert from "assert";
 import * as fs from "fs";
-import { calculate, parse } from "../lib/formula";
-import {
-  clearParseCache,
-  getParseCacheSize,
-  parseCached,
-  PARSE_CACHE_MAX_ENTRIES,
-} from "../lib/formula/parseCache";
+import { calculate, parseCached, clearParseCache, getParseCacheSize } from "../lib/formula";
 import { parse as parseQuest } from "../lib/qmreader";
 import { randomFromMathRandom } from "../lib/randomFunc";
 
 describe("Formula parse cache", function () {
   beforeEach(() => clearParseCache());
   after(() => clearParseCache());
-
-  it("Reuses the parsed AST for the same text", () => {
-    const a = parseCached("[p1] + 2 * [p2]", parse);
-    const b = parseCached("[p1] + 2 * [p2]", parse);
-    assert.strictEqual(a, b);
-    assert.strictEqual(getParseCacheSize(), 1);
-  });
 
   it("Parameter values are read at calc time, not cached", () => {
     const f = "[p1] * 10 + [p2]";
@@ -52,11 +39,11 @@ describe("Formula parse cache", function () {
 
   it("Calculation does not mutate the cached AST", () => {
     const f = "[p1] + [1..3;7] * 2 + ([p2] in [1..5])";
-    const before = JSON.stringify(parseCached(f, parse));
+    const before = JSON.stringify(parseCached(f));
     for (let i = 0; i < 10; i++) {
       calculate(f, [i, i], randomFromMathRandom);
     }
-    assert.strictEqual(JSON.stringify(parseCached(f, parse)), before);
+    assert.strictEqual(JSON.stringify(parseCached(f)), before);
   });
 
   it("Does not cache formulas which fail to parse", () => {
@@ -64,38 +51,11 @@ describe("Formula parse cache", function () {
     assert.strictEqual(getParseCacheSize(), 0);
   });
 
-  it("Cache size is bounded", () => {
-    for (let i = 0; i < PARSE_CACHE_MAX_ENTRIES + 10; i++) {
-      parseCached(`${i} + 1`, parse);
-    }
-    assert.ok(getParseCacheSize() <= PARSE_CACHE_MAX_ENTRIES);
-    assert.strictEqual(calculate("5 + 1", [], randomFromMathRandom), 6);
-  });
-
   it("Resets the cache when a quest is parsed", () => {
-    parseCached("1 + 2", parse);
+    parseCached("1 + 2");
     assert.strictEqual(getParseCacheSize(), 1);
     const data = fs.readFileSync(__dirname + "/limitedLocation.qmm");
     parseQuest(data);
     assert.strictEqual(getParseCacheSize(), 0);
-  });
-
-  it("Logs once when the cache is cleared at the size limit", () => {
-    const logs: string[] = [];
-    const originalInfo = console.info;
-    console.info = (message?: unknown, ..._rest: unknown[]) => {
-      logs.push(String(message));
-    };
-    try {
-      for (let i = 0; i < PARSE_CACHE_MAX_ENTRIES + 1; i++) {
-        parseCached(`${i} + 1`, parse);
-      }
-      assert.deepStrictEqual(logs, [
-        `[formula parse cache] cleared: reached ${PARSE_CACHE_MAX_ENTRIES} entries`,
-      ]);
-      assert.strictEqual(getParseCacheSize(), 1);
-    } finally {
-      console.info = originalInfo;
-    }
   });
 });

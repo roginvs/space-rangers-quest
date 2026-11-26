@@ -1,4 +1,4 @@
-import { clearParseCache } from "./formula/parseCache";
+import { clearParseCache } from "./formula";
 export const LOCATION_TEXTS = 10;
 
 /** Exported only for tests */
