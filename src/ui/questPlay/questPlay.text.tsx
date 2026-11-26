@@ -1,35 +1,36 @@
 import * as React from "react";
 import { QuestReplaceTags } from "../questReplaceTags";
 import { formatTokens } from "../questReplaceTags.format";
+import { paragraphSignature, splitTokensToParagraphs } from "../questReplaceTags.paragraphs";
 import { splitStringToTokens } from "../questReplaceTags.split";
 import { useWordWave, WordWaveMemory } from "../wordWave/wordWave";
-import { splitTokensToParagraphs } from "./questPlay.text.paragraphs";
 
 /**
  * Same as QuestReplaceTags, but words of the changed paragraphs fade in with a wave.
- * The markup is QuestReplaceTags markup, only the text of tokens is wrapped into word spans,
- * so every link is still a single element.
  *
- * @param memory Keeps paragraphs of the previous text, pass the same ref on every render
+ * @param prevParagraphs Optional storage for paragraphs of the previous text,
+ *   needed when this component is remounted on every text change
  */
 export function QuestTextWave(props: {
   str: string;
   onLinkClick?: (jumps: string[]) => void;
-  memory: WordWaveMemory;
+  prevParagraphs?: WordWaveMemory;
 }) {
   const paragraphs = splitTokensToParagraphs(formatTokens(splitStringToTokens(props.str)));
-  const lines = useWordWave(
+  const renderRun = useWordWave(
     paragraphs.map((paragraph) => ({
-      signature: JSON.stringify(paragraph.tokens),
+      signature: paragraphSignature(paragraph.tokens),
       runs: paragraph.tokens.map((token) => (token.type === "text" ? token.text : "")),
     })),
-    props.memory,
+    props.prevParagraphs,
   );
 
-  const tokensContent: React.ReactNode[][] = [];
-  paragraphs.forEach((paragraph, lineIndex) =>
-    lines[lineIndex].forEach((content, run) => {
-      tokensContent[paragraph.start + run] = content;
+  // QuestReplaceTags parses the same string with the same functions, so its token
+  // indexes are the same as here: token `start + run` is run `run` of the paragraph
+  const tokenParagraph: { line: number; run: number }[] = [];
+  paragraphs.forEach((paragraph, line) =>
+    paragraph.tokens.forEach((_, run) => {
+      tokenParagraph[paragraph.start + run] = { line, run };
     }),
   );
 
@@ -37,7 +38,10 @@ export function QuestTextWave(props: {
     <QuestReplaceTags
       str={props.str}
       onLinkClick={props.onLinkClick}
-      renderText={(text, index) => tokensContent[index] || text}
+      renderText={(text, index) => {
+        const pos = tokenParagraph[index];
+        return pos ? renderRun(pos.line, pos.run) : text;
+      }}
     />
   );
 }

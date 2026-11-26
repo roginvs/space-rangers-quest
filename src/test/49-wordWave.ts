@@ -4,7 +4,7 @@ import * as React from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { QuestReplaceTags } from "../ui/questReplaceTags";
 import { formatTokens } from "../ui/questReplaceTags.format";
-import { splitTokensToParagraphs } from "../ui/questPlay/questPlay.text.paragraphs";
+import { paragraphSignature, splitTokensToParagraphs } from "../ui/questReplaceTags.paragraphs";
 import { splitStringToTokens } from "../ui/questReplaceTags.split";
 import {
   chunksWordsChars,
@@ -38,6 +38,24 @@ describe("Word wave", () => {
     assert.ok(d.type === "text" && d.text === " d" && !d.isClr);
     assert.strictEqual(paragraphs[2].tokens[0].type, "newline");
     assert.ok(paragraphs[2].tokens.every((token) => token.type === "newline" || token.text === ""));
+  });
+
+  it("Paragraph signature changes with text, styles and links", () => {
+    const sig = (str: string) => {
+      const paragraphs = splitTokensToParagraphs(formatTokens(splitStringToTokens(str)));
+      assert.strictEqual(paragraphs.length, 1);
+      return paragraphSignature(paragraphs[0].tokens);
+    };
+    const base = sig("a <clr>bc<clrEnd> d");
+    assert.strictEqual(sig("a <clr>bc<clrEnd> d"), base);
+    assert.notStrictEqual(sig("a <clr>b<clrEnd>c d"), base, "same text, other highlight");
+    assert.notStrictEqual(sig("a <clr>bc<clrEnd> e"), base);
+    assert.notStrictEqual(sig("<fix>a <clr>bc<clrEnd> d</fix>"), base);
+    assert.notStrictEqual(sig("<color=1,2,3>a <clr>bc<clrEnd> d</color>"), base);
+    assert.notStrictEqual(sig("<link=X>a</link>"), sig("<link=Y>a</link>"));
+    assert.notStrictEqual(sig("<link=X;Y>a</link>"), sig("<link=X>a</link>"));
+    assert.notStrictEqual(sig("<link=X>a</link>"), sig("a"));
+    assert.notStrictEqual(sig("ab"), sig("a<clr><clrEnd>b"), "token boundaries count");
   });
 
   it("Splits runs into words, a word can span several runs", () => {
@@ -119,7 +137,7 @@ describe("Word wave", () => {
         React.createElement(QuestTextWave, {
           str,
           onLinkClick: () => {},
-          memory: { current: prev },
+          prevParagraphs: { current: prev },
         }),
       );
     const withoutWordSpans = (html: string) =>
@@ -148,7 +166,7 @@ describe("Word wave", () => {
     it("Does not animate paragraphs which are the same as in the previous text", () => {
       const str = "first paragraph\nsecond paragraph";
       const paragraphs = splitTokensToParagraphs(formatTokens(splitStringToTokens(str)));
-      const prev = [JSON.stringify(paragraphs[0].tokens), "old"];
+      const prev = [paragraphSignature(paragraphs[0].tokens), "old"];
       const html = render(str, prev);
       assert.ok(!/word-wave-word[^>]*>first/.test(html), html);
       assert.ok(/word-wave-word[^>]*>second/.test(html), html);

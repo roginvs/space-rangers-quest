@@ -9,8 +9,8 @@ import {
 import "./wordWave.css";
 
 /**
- * Signatures of the lines from the previous render. It is owned by the caller
- * so it survives remounts of the animated text.
+ * Signatures of the lines from the previous render. By default it is kept inside the
+ * component, pass your own ref if the animated text can be remounted.
  */
 export type WordWaveMemory = React.MutableRefObject<string[] | undefined>;
 
@@ -21,16 +21,21 @@ export interface WaveLine {
   runs: string[];
 }
 
+/** Returns the content of one run of one line: plain whitespace and word spans */
+export type WordWaveRenderRun = (line: number, run: number) => React.ReactNode[];
+
 /**
  * Splits lines into words and schedules the word wave: words of the changed lines
  * fade in one by one, from the left to the right and from the top to the bottom.
- *
- * Returns the content for every run of every line: `result[line][run]`.
  * A word which spans several runs gets the same timing in every run.
  */
-export function useWordWave(lines: WaveLine[], memory: WordWaveMemory): React.ReactNode[][][] {
+export function useWordWave(lines: WaveLine[], memory?: WordWaveMemory): WordWaveRenderRun {
+  const ownMemory: WordWaveMemory = React.useRef<string[]>();
+  const prev = memory || ownMemory;
+
   const signatures = lines.map((line) => line.signature);
-  const signaturesKey = JSON.stringify(signatures);
+  // Length-prefixed, so different lists of signatures always give different keys
+  const signaturesKey = signatures.map((signature) => `${signature.length}:${signature}`).join("");
   const chunks = lines.map((line) => splitRunsIntoChunks(line.runs));
 
   const schedule = React.useMemo(
@@ -40,17 +45,18 @@ export function useWordWave(lines: WaveLine[], memory: WordWaveMemory): React.Re
           signature: signatures[index],
           words: chunksWordsChars(lineChunks),
         })),
-        memory.current,
+        prev.current,
       ),
     [signaturesKey],
   );
   React.useEffect(() => {
-    memory.current = signatures;
+    prev.current = signatures;
   }, [signaturesKey]);
 
-  return lines.map((line, lineIndex) =>
+  const rendered = lines.map((line, lineIndex) =>
     renderWaveLine(line, chunks[lineIndex], schedule[lineIndex]),
   );
+  return (line, run) => rendered[line][run];
 }
 
 function renderWaveLine(line: WaveLine, chunks: WaveChunk[], timings: WordTiming[] | null) {

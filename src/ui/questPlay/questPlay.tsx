@@ -400,7 +400,8 @@ export function QuestPlay({
   const onFullscreenButtonClick = React.useCallback(() => {
     toggleFullscreen();
   }, []);
-  const textWaveMemory = React.useRef<string[]>();
+  // Previous paragraphs for QuestTextWave, here since ScrollableContainer remounts on text change
+  const prevText = React.useRef<string[]>();
 
   if (!gameState) {
     return null;
@@ -419,7 +420,7 @@ export function QuestPlay({
         overflowX: "auto",
       }}
     >
-      <QuestTextWave str={uistate.text} onLinkClick={onLinkJumpsClick} memory={textWaveMemory} />
+      <QuestTextWave str={uistate.text} onLinkClick={onLinkJumpsClick} prevParagraphs={prevText} />
     </div>
   );
 
