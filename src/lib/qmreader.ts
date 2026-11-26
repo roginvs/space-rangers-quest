@@ -1,3 +1,4 @@
+import { clearParseCache } from "./formula";
 export const LOCATION_TEXTS = 10;
 
 /** Exported only for tests */
@@ -942,6 +943,7 @@ function parseJumpQmm(r: Reader, paramsCount: number, questParams: QMParam[]): J
 }
 
 export function parse(data: Buffer): QM {
+  clearParseCache();
   const r = new Reader(data);
   const header = r.int32() as HeaderMagic;
 
