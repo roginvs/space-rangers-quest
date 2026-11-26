@@ -15,9 +15,15 @@ import { splitStringToTokens } from "./questReplaceTags.split";
  *     The link does not add any visual formatting by itself,
  *     only the mouse cursor becomes a pointer.
  */
-export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: string[]) => void }) {
+export function QuestReplaceTags(props: {
+  str: string;
+  onLinkClick?: (jumps: string[]) => void;
+  /** Custom content for the text token with this index, for example animated words */
+  renderText?: (text: string, index: number) => React.ReactNode;
+}) {
   const tags = formatTokens(splitStringToTokens(props.str));
   const onLinkClick = props.onLinkClick;
+  const renderText = props.renderText || ((text: string) => text);
 
   const nbsp = "\u00A0";
 
@@ -77,7 +83,7 @@ export function QuestReplaceTags(props: { str: string; onLinkClick?: (jumps: str
             }
           >
             {tag.type === "text" ? (
-              tag.text
+              renderText(tag.text, index)
             ) : (
               <>
                 <br />
