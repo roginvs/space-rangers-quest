@@ -10,13 +10,11 @@ import {
   chunksWordsChars,
   computeWordWaveSchedule,
   splitRunsIntoChunks,
-  wordWaveDuration,
-  wordWaveStep,
+  wordWaveMsPerChar,
   wordWaveTotalDuration,
-  WORD_WAVE_MAX_STEP_MS,
-  WORD_WAVE_MIN_DURATION_MS,
-  WORD_WAVE_MIN_STEP_MS,
-  WORD_WAVE_TOTAL_MS,
+  WORD_WAVE_DURATION_MS,
+  WORD_WAVE_MAX_MS,
+  WORD_WAVE_MS_PER_CHAR,
 } from "../ui/wordWave/wordWave.schedule";
 
 describe("Word wave", () => {
@@ -78,14 +76,10 @@ describe("Word wave", () => {
     assert.deepStrictEqual(splitRunsIntoChunks([]), []);
   });
 
-  it("Step is the same for all words and shrinks for long texts", () => {
-    assert.strictEqual(wordWaveStep(1), WORD_WAVE_MAX_STEP_MS);
-    assert.strictEqual(wordWaveStep(0), WORD_WAVE_MAX_STEP_MS);
-    assert.strictEqual(wordWaveStep(100), WORD_WAVE_TOTAL_MS / 100);
-    assert.strictEqual(wordWaveStep(100000), WORD_WAVE_MIN_STEP_MS);
-    assert.strictEqual(wordWaveDuration(WORD_WAVE_MAX_STEP_MS), WORD_WAVE_MAX_STEP_MS * 5);
-    assert.strictEqual(wordWaveDuration(WORD_WAVE_MIN_STEP_MS), WORD_WAVE_MIN_DURATION_MS);
-    assert.strictEqual(wordWaveDuration(40), 200);
+  it("Beam has a fixed speed, a very long text is limited", () => {
+    assert.strictEqual(wordWaveMsPerChar(0), WORD_WAVE_MS_PER_CHAR);
+    assert.strictEqual(wordWaveMsPerChar(100), WORD_WAVE_MS_PER_CHAR);
+    assert.strictEqual(wordWaveMsPerChar(100000), WORD_WAVE_MAX_MS / 100000);
   });
 
   it("Animates everything on first render as one continuous wave", () => {
@@ -97,45 +91,48 @@ describe("Word wave", () => {
       ],
       undefined,
     );
-    const step = wordWaveStep(3);
-    const duration = wordWaveDuration(step);
+    const k = WORD_WAVE_MS_PER_CHAR;
+    const duration = WORD_WAVE_DURATION_MS;
     assert.deepStrictEqual(schedule, [
       [
         { delay: 0, duration },
-        { delay: step, duration },
+        { delay: 11 * k, duration },
       ],
       [],
-      [{ delay: 2 * step, duration }],
+      [{ delay: 13 * k, duration }],
     ]);
-    assert.strictEqual(wordWaveTotalDuration(schedule), 2 * step + duration);
+    assert.strictEqual(wordWaveTotalDuration(schedule), 13 * k + duration);
   });
 
-  it("Skips unchanged lines (by index) and does not count them in delays or step", () => {
+  it("Skips unchanged lines (by index) and does not count them in delays", () => {
     const schedule = computeWordWaveSchedule(
       [
         { signature: "same", words: [10, 10, 10] },
-        { signature: "changed", words: [10] },
+        { signature: "changed", words: [4] },
         { signature: "same2", words: [10] },
         { signature: "new", words: [10] },
       ],
       ["same", "old", "same2"],
     );
-    const step = wordWaveStep(2);
-    const duration = wordWaveDuration(step);
+    const duration = WORD_WAVE_DURATION_MS;
     assert.deepStrictEqual(schedule, [
       null,
       [{ delay: 0, duration }],
       null,
-      [{ delay: step, duration }],
+      [{ delay: 5 * WORD_WAVE_MS_PER_CHAR, duration }],
     ]);
     assert.strictEqual(wordWaveTotalDuration([null, null]), 0);
   });
 
-  it("A long text appears in about the total time", () => {
-    const words = new Array(110).fill(5);
-    const schedule = computeWordWaveSchedule([{ signature: "x", words }], undefined);
-    const total = wordWaveTotalDuration(schedule);
-    assert.ok(total >= WORD_WAVE_TOTAL_MS && total <= WORD_WAVE_TOTAL_MS + 350, `${total}`);
+  it("Speed does not depend on the text length, a very long text is limited", () => {
+    const line = (words: number) => ({ signature: `${words}`, words: new Array(words).fill(5) });
+    const short = wordWaveTotalDuration(computeWordWaveSchedule([line(10)], undefined));
+    const long = wordWaveTotalDuration(computeWordWaveSchedule([line(100)], undefined));
+    const k = WORD_WAVE_MS_PER_CHAR;
+    assert.strictEqual(short, 9 * 6 * k + WORD_WAVE_DURATION_MS);
+    assert.strictEqual(long, 99 * 6 * k + WORD_WAVE_DURATION_MS);
+    const huge = wordWaveTotalDuration(computeWordWaveSchedule([line(10000)], undefined));
+    assert.ok(huge <= WORD_WAVE_MAX_MS + WORD_WAVE_DURATION_MS, `${huge}`);
   });
 
   describe("QuestTextWave rendering", () => {

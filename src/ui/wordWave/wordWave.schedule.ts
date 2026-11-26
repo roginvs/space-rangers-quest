@@ -3,15 +3,16 @@
  * Knows nothing about quests or tags: a line is a list of styled runs of text.
  */
 
-/** A long text appears in about this time, ms */
-export const WORD_WAVE_TOTAL_MS = 2200;
-/** Delay from the start of a word to the start of the next word is the same for all words */
-export const WORD_WAVE_MIN_STEP_MS = 14;
-export const WORD_WAVE_MAX_STEP_MS = 45;
-/** Fade-in of a word lasts this many steps, so ~5 words fade in at once */
-export const WORD_DURATION_TO_STEP = 5;
-/** Very short fade-in is not visible */
-export const WORD_WAVE_MIN_DURATION_MS = 150;
+/**
+ * The wave is a beam with a fixed speed: a word starts this many ms after the previous
+ * word per character passed (the word and a space), so one short line appears quickly
+ * and a long text takes proportionally longer.
+ */
+export const WORD_WAVE_MS_PER_CHAR = 3;
+/** A very long text is not longer than this, ms: the beam goes faster */
+export const WORD_WAVE_MAX_MS = 4000;
+/** Fade-in of every word, ms */
+export const WORD_WAVE_DURATION_MS = 200;
 
 export interface WaveRunPiece {
   /** Index of the run this piece belongs to */
@@ -69,19 +70,9 @@ export function chunksWordsChars(chunks: WaveChunk[]): number[] {
   return words;
 }
 
-const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
-
-/** Step between words when the wave goes through this count of words */
-export function wordWaveStep(wordsCount: number) {
-  return clamp(
-    WORD_WAVE_TOTAL_MS / Math.max(wordsCount, 1),
-    WORD_WAVE_MIN_STEP_MS,
-    WORD_WAVE_MAX_STEP_MS,
-  );
-}
-
-export function wordWaveDuration(step: number) {
-  return Math.max(WORD_WAVE_MIN_DURATION_MS, step * WORD_DURATION_TO_STEP);
+/** Beam speed for this count of characters, ms per character */
+export function wordWaveMsPerChar(chars: number) {
+  return Math.min(WORD_WAVE_MS_PER_CHAR, WORD_WAVE_MAX_MS / Math.max(chars, 1));
 }
 
 export interface WordTiming {
@@ -92,10 +83,10 @@ export interface WordTiming {
 /**
  * Computes timings for words of changed lines. A line is unchanged when it has the
  * same signature as the line with the same index in the previous text, such lines
- * get `null` and are not taken into account. The wave goes through all changed lines,
- * one word after another with the same step: the more words, the shorter the step.
+ * get `null` and are not taken into account. The wave goes through all changed lines
+ * with the same speed in characters.
  *
- * @param lines Visible characters count of every word (only the count is used), and signature
+ * @param lines Visible characters count of every word, and signature for every line
  */
 export function computeWordWaveSchedule(
   lines: { signature: string; words: number[] }[],
@@ -104,20 +95,21 @@ export function computeWordWaveSchedule(
   const changed = lines.map(
     (line, index) => !prevSignatures || prevSignatures[index] !== line.signature,
   );
-  const wordsCount = lines.reduce(
-    (sum, line, index) => sum + (changed[index] ? line.words.length : 0),
+  // Every word is followed by a space
+  const chars = lines.reduce(
+    (sum, line, index) =>
+      changed[index] ? line.words.reduce((lineSum, word) => lineSum + word + 1, sum) : sum,
     0,
   );
-  const step = wordWaveStep(wordsCount);
-  const duration = wordWaveDuration(step);
+  const msPerChar = wordWaveMsPerChar(chars);
   let start = 0;
   return lines.map((line, index) => {
     if (!changed[index]) {
       return null;
     }
-    return line.words.map(() => {
-      const timing = { delay: start, duration };
-      start += step;
+    return line.words.map((wordChars) => {
+      const timing = { delay: start, duration: WORD_WAVE_DURATION_MS };
+      start += (wordChars + 1) * msPerChar;
       return timing;
     });
   });
