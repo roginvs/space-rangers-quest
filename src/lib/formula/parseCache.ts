@@ -27,6 +27,7 @@ export function parseCached(str: string, parse: (str: string) => Expression): Ex
   const ast = parse(str);
   if (cache.size >= PARSE_CACHE_MAX_ENTRIES) {
     cache.clear();
+    console.info(`[formula parse cache] cleared: reached ${PARSE_CACHE_MAX_ENTRIES} entries`);
   }
   cache.set(str, ast);
   return ast;
@@ -37,7 +38,7 @@ export function getParseCacheSize() {
   return cache.size;
 }
 
-/** For tests */
+/** Called when a new quest is loaded, and from tests. */
 export function clearParseCache() {
   cache.clear();
 }
