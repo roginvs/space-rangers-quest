@@ -11,8 +11,8 @@
 export const WORD_WAVE_MS_PER_CHAR = 3;
 /** A very long text is not longer than this, ms: the beam goes faster */
 export const WORD_WAVE_MAX_MS = 4000;
-/** Fade-in of every word, ms */
-export const WORD_WAVE_DURATION_MS = 200;
+/** Whole animation of every word, ms: a 25% flash (opacity to 1, brightness peak), then cooling down to normal brightness */
+export const WORD_WAVE_DURATION_MS = 400;
 
 export interface WaveRunPiece {
   /** Index of the run this piece belongs to */

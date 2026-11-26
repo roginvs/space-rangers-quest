@@ -1,9 +1,17 @@
 @keyframes word-wave-fadein {
-  from {
+  0% {
     opacity: 0;
+    filter: brightness(1);
+    animation-timing-function: ease-out;
   }
-  to {
+  25% {
     opacity: 1;
+    filter: brightness(1.5);
+    animation-timing-function: ease-out;
+  }
+  100% {
+    opacity: 1;
+    filter: brightness(1);
   }
 }
 
