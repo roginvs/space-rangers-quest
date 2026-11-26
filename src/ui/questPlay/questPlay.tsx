@@ -27,6 +27,7 @@ import {
 } from "./questPlay.consts";
 import { GamePlayButton } from "./questPlay.button";
 import { useDarkTheme } from "./questPlay.metatheme";
+import { useNoMultiClickSelection } from "./questPlay.noMultiClickSelection";
 import { toggleFullscreen } from "./fullscreen";
 import { copyToClipboard } from "../copyToClipboard";
 import { performLinkJumps } from "../questLinkPerform";
@@ -218,6 +219,7 @@ export function QuestPlay({
   }, []);
 
   useDarkTheme();
+  useNoMultiClickSelection();
 
   const [reallyRestart, setReallyRestart] = React.useState(false);
 
