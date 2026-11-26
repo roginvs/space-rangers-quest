@@ -1,6 +1,10 @@
 import * as assert from "assert";
 import "mocha";
-import { formatTokens, splitTokensToParagraphs } from "../ui/questReplaceTags.format";
+import * as React from "react";
+import { renderToStaticMarkup } from "react-dom/server";
+import { QuestReplaceTags } from "../ui/questReplaceTags";
+import { formatTokens } from "../ui/questReplaceTags.format";
+import { splitTokensToParagraphs } from "../ui/questPlay/questPlay.text.paragraphs";
 import { splitStringToTokens } from "../ui/questReplaceTags.split";
 import {
   chunksWordsChars,
@@ -15,20 +19,25 @@ import {
 
 describe("Word wave", () => {
   it("Splits formatted tokens into paragraphs keeping styles across lines", () => {
-    const paragraphs = splitTokensToParagraphs(
-      formatTokens(splitStringToTokens("a <clr>b\nc<clrEnd> d\n\ne")),
-    );
+    const tokens = formatTokens(splitStringToTokens("a <clr>b\nc<clrEnd> d\n\ne"));
+    const paragraphs = splitTokensToParagraphs(tokens);
     assert.strictEqual(paragraphs.length, 4);
+    paragraphs.forEach((paragraph) =>
+      paragraph.tokens.forEach((token, i) =>
+        assert.strictEqual(tokens[paragraph.start + i], token),
+      ),
+    );
+    const second = paragraphs[1].tokens;
     assert.deepStrictEqual(
-      paragraphs[1].map((token) => token.type),
+      second.map((token) => token.type),
       ["newline", "text", "text"],
     );
-    const c = paragraphs[1][1];
+    const c = second[1];
     assert.ok(c.type === "text" && c.text === "c" && c.isClr);
-    const d = paragraphs[1][2];
+    const d = second[2];
     assert.ok(d.type === "text" && d.text === " d" && !d.isClr);
-    assert.strictEqual(paragraphs[2][0].type, "newline");
-    assert.ok(paragraphs[2].every((token) => token.type === "newline" || token.text === ""));
+    assert.strictEqual(paragraphs[2].tokens[0].type, "newline");
+    assert.ok(paragraphs[2].tokens.every((token) => token.type === "newline" || token.text === ""));
   });
 
   it("Splits runs into words, a word can span several runs", () => {
@@ -98,5 +107,52 @@ describe("Word wave", () => {
       ],
     ]);
     assert.strictEqual(wordWaveTotalDuration([null, null]), 0);
+  });
+
+  describe("QuestTextWave rendering", () => {
+    // wordWave.tsx imports css, which is handled by webpack only
+    // tslint:disable-next-line:deprecation
+    require.extensions[".css"] = () => undefined;
+    const { QuestTextWave } = require("../ui/questPlay/questPlay.text");
+    const render = (str: string, prev?: string[]) =>
+      renderToStaticMarkup(
+        React.createElement(QuestTextWave, {
+          str,
+          onLinkClick: () => {},
+          memory: { current: prev },
+        }),
+      );
+    const withoutWordSpans = (html: string) =>
+      html.replace(/<span( class="word-wave-word" style="[^"]*")?>([^<]*)<\/span>/g, "$2");
+
+    it("Keeps a multi-word link as a single focusable element", () => {
+      const html = render("Go <link=Open>Open the door</link> now");
+      assert.strictEqual(html.split('role="link"').length - 1, 1);
+      assert.strictEqual(html.split('tabindex="0"').length - 1, 1);
+      const link = /<span[^>]*role="link"[^>]*>(.*?)<\/span><span/.exec(html);
+      assert.ok(link, html);
+      assert.strictEqual(link![1].split("word-wave-word").length - 1, 3);
+      assert.strictEqual(withoutWordSpans(link![1]), "Open the door");
+    });
+
+    it("Renders the same markup as QuestReplaceTags apart from word spans", () => {
+      const str = "a <clr>b\nc<clrEnd> d <link=X>e f</link>\n\n<fix>g</fix>  h";
+      const html = render(str);
+      assert.ok(html.includes("word-wave-word"));
+      assert.strictEqual(
+        withoutWordSpans(html),
+        renderToStaticMarkup(React.createElement(QuestReplaceTags, { str, onLinkClick: () => {} })),
+      );
+    });
+
+    it("Does not animate paragraphs which are the same as in the previous text", () => {
+      const str = "first paragraph\nsecond paragraph";
+      const paragraphs = splitTokensToParagraphs(formatTokens(splitStringToTokens(str)));
+      const prev = [JSON.stringify(paragraphs[0].tokens), "old"];
+      const html = render(str, prev);
+      assert.ok(!/word-wave-word[^>]*>first/.test(html), html);
+      assert.ok(/word-wave-word[^>]*>second/.test(html), html);
+      assert.ok(/animation-delay:0ms[^>]*>second/.test(html), html);
+    });
   });
 });

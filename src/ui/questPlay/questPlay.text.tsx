@@ -1,34 +1,43 @@
 import * as React from "react";
-import { renderQuestTextToken } from "../questReplaceTags";
-import { formatTokens, splitTokensToParagraphs } from "../questReplaceTags.format";
+import { QuestReplaceTags } from "../questReplaceTags";
+import { formatTokens } from "../questReplaceTags.format";
 import { splitStringToTokens } from "../questReplaceTags.split";
-import { WaveLine, WordWave } from "../wordWave/wordWave";
+import { useWordWave, WordWaveMemory } from "../wordWave/wordWave";
+import { splitTokensToParagraphs } from "./questPlay.text.paragraphs";
 
-const nbsp = "\u00A0";
-
-/** Same as QuestReplaceTags, but changed paragraphs appear with a word wave animation */
-export function QuestTextWave(props: { str: string; onLinkClick?: (jumps: string[]) => void }) {
-  const { onLinkClick } = props;
+/**
+ * Same as QuestReplaceTags, but words of the changed paragraphs fade in with a wave.
+ * The markup is QuestReplaceTags markup, only the text of tokens is wrapped into word spans,
+ * so every link is still a single element.
+ *
+ * @param memory Keeps paragraphs of the previous text, pass the same ref on every render
+ */
+export function QuestTextWave(props: {
+  str: string;
+  onLinkClick?: (jumps: string[]) => void;
+  memory: WordWaveMemory;
+}) {
   const paragraphs = splitTokensToParagraphs(formatTokens(splitStringToTokens(props.str)));
+  const lines = useWordWave(
+    paragraphs.map((paragraph) => ({
+      signature: JSON.stringify(paragraph.tokens),
+      runs: paragraph.tokens.map((token) => (token.type === "text" ? token.text : "")),
+    })),
+    props.memory,
+  );
 
-  const lines = paragraphs.map((paragraph): WaveLine => {
-    const firstText = paragraph.find((token) => token.type === "text" && token.text.length > 0);
-    const startsWithFix = !!firstText && !!firstText.isFix;
-    const newline = paragraph[0] && paragraph[0].type === "newline" ? paragraph[0] : undefined;
-    return {
-      signature: JSON.stringify(paragraph),
-      prefix: renderQuestTextToken(
-        newline || { type: "text", text: "" },
-        "prefix",
-        undefined,
-        startsWithFix ? null : nbsp,
-      ),
-      runs: paragraph.map((token) => ({
-        text: token.type === "text" ? token.text : "",
-        render: (text, key) => renderQuestTextToken(token, key, onLinkClick, text),
-      })),
-    };
-  });
+  const tokensContent: React.ReactNode[][] = [];
+  paragraphs.forEach((paragraph, lineIndex) =>
+    lines[lineIndex].forEach((content, run) => {
+      tokensContent[paragraph.start + run] = content;
+    }),
+  );
 
-  return <WordWave lines={lines} />;
+  return (
+    <QuestReplaceTags
+      str={props.str}
+      onLinkClick={props.onLinkClick}
+      renderText={(text, index) => tokensContent[index] || text}
+    />
+  );
 }

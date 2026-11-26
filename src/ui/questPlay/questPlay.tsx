@@ -400,6 +400,7 @@ export function QuestPlay({
   const onFullscreenButtonClick = React.useCallback(() => {
     toggleFullscreen();
   }, []);
+  const textWaveMemory = React.useRef<string[]>();
 
   if (!gameState) {
     return null;
@@ -418,7 +419,7 @@ export function QuestPlay({
         overflowX: "auto",
       }}
     >
-      <QuestTextWave str={uistate.text} onLinkClick={onLinkJumpsClick} />
+      <QuestTextWave str={uistate.text} onLinkClick={onLinkJumpsClick} memory={textWaveMemory} />
     </div>
   );
 
@@ -691,12 +692,7 @@ export function QuestPlay({
               frameBorderY={frameBorderY}
             >
               <div style={{ padding: 5, paddingBottom: 10, height: "100%" }}>
-                <ScrollableContainer
-                  forceMeRecalculateHeight={uistate.text}
-                  scrollToTopOn={uistate.text}
-                >
-                  {locationText}
-                </ScrollableContainer>
+                <ScrollableContainer key={uistate.text}>{locationText}</ScrollableContainer>
               </div>
             </QuestPlayFrameText>
           </div>
