@@ -4,6 +4,7 @@ import { createScanner } from "./scanner";
 import { parseExpression } from "./parser";
 import { calculateAst } from "./calculator";
 import { RandomFunc } from "../randomFunc";
+import { parseCached } from "./parseCache";
 
 export { MAX_NUMBER } from "./consts";
 
@@ -15,7 +16,7 @@ export function parse(str: string) {
   return ast;
 }
 export function calculate(str: string, params: ParamValues = [], random: RandomFunc) {
-  const ast = parse(str);
+  const ast = parseCached(str, parse);
   const value = calculateAst(ast, params, random);
   return Math.round(value);
 }
