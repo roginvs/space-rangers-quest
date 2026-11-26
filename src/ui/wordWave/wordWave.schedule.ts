@@ -3,16 +3,15 @@
  * Knows nothing about quests or tags: a line is a list of styled runs of text.
  */
 
-/**
- * Delay from the start of a word to the start of the next word, per visible
- * character, ms. Tuned so in a medium location text (~500 visible chars,
- * ~75 words) the last word starts at ~950 ms.
- */
-export const WORD_WAVE_STEP_MS_PER_CHAR = 1.8;
-/** Short words still need some step, ms */
-export const WORD_WAVE_MIN_STEP_MS = 8;
-/** Fade-in duration of a word is this times its step */
-export const WORD_DURATION_TO_STEP = 10;
+/** A long text appears in about this time, ms */
+export const WORD_WAVE_TOTAL_MS = 2200;
+/** Delay from the start of a word to the start of the next word is the same for all words */
+export const WORD_WAVE_MIN_STEP_MS = 14;
+export const WORD_WAVE_MAX_STEP_MS = 45;
+/** Fade-in of a word lasts this many steps, so ~5 words fade in at once */
+export const WORD_DURATION_TO_STEP = 5;
+/** Very short fade-in is not visible */
+export const WORD_WAVE_MIN_DURATION_MS = 150;
 
 export interface WaveRunPiece {
   /** Index of the run this piece belongs to */
@@ -70,8 +69,19 @@ export function chunksWordsChars(chunks: WaveChunk[]): number[] {
   return words;
 }
 
-export function wordWaveStep(chars: number) {
-  return Math.max(WORD_WAVE_MIN_STEP_MS, chars * WORD_WAVE_STEP_MS_PER_CHAR);
+const clamp = (value: number, min: number, max: number) => Math.max(min, Math.min(max, value));
+
+/** Step between words when the wave goes through this count of words */
+export function wordWaveStep(wordsCount: number) {
+  return clamp(
+    WORD_WAVE_TOTAL_MS / Math.max(wordsCount, 1),
+    WORD_WAVE_MIN_STEP_MS,
+    WORD_WAVE_MAX_STEP_MS,
+  );
+}
+
+export function wordWaveDuration(step: number) {
+  return Math.max(WORD_WAVE_MIN_DURATION_MS, step * WORD_DURATION_TO_STEP);
 }
 
 export interface WordTiming {
@@ -82,22 +92,31 @@ export interface WordTiming {
 /**
  * Computes timings for words of changed lines. A line is unchanged when it has the
  * same signature as the line with the same index in the previous text, such lines
- * get `null` and are not taken into account. The wave goes through all changed lines.
+ * get `null` and are not taken into account. The wave goes through all changed lines,
+ * one word after another with the same step: the more words, the shorter the step.
  *
- * @param lines Visible characters count of every word, and signature for every line
+ * @param lines Visible characters count of every word (only the count is used), and signature
  */
 export function computeWordWaveSchedule(
   lines: { signature: string; words: number[] }[],
   prevSignatures: string[] | undefined,
 ): (WordTiming[] | null)[] {
+  const changed = lines.map(
+    (line, index) => !prevSignatures || prevSignatures[index] !== line.signature,
+  );
+  const wordsCount = lines.reduce(
+    (sum, line, index) => sum + (changed[index] ? line.words.length : 0),
+    0,
+  );
+  const step = wordWaveStep(wordsCount);
+  const duration = wordWaveDuration(step);
   let start = 0;
   return lines.map((line, index) => {
-    if (prevSignatures && prevSignatures[index] === line.signature) {
+    if (!changed[index]) {
       return null;
     }
-    return line.words.map((chars) => {
-      const step = wordWaveStep(chars);
-      const timing = { delay: start, duration: step * WORD_DURATION_TO_STEP };
+    return line.words.map(() => {
+      const timing = { delay: start, duration };
       start += step;
       return timing;
     });

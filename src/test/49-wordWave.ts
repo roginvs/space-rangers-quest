@@ -10,11 +10,13 @@ import {
   chunksWordsChars,
   computeWordWaveSchedule,
   splitRunsIntoChunks,
+  wordWaveDuration,
   wordWaveStep,
   wordWaveTotalDuration,
-  WORD_DURATION_TO_STEP,
+  WORD_WAVE_MAX_STEP_MS,
+  WORD_WAVE_MIN_DURATION_MS,
   WORD_WAVE_MIN_STEP_MS,
-  WORD_WAVE_STEP_MS_PER_CHAR,
+  WORD_WAVE_TOTAL_MS,
 } from "../ui/wordWave/wordWave.schedule";
 
 describe("Word wave", () => {
@@ -78,6 +80,16 @@ describe("Word wave", () => {
     assert.deepStrictEqual(splitRunsIntoChunks([]), []);
   });
 
+  it("Step is the same for all words and shrinks for long texts", () => {
+    assert.strictEqual(wordWaveStep(1), WORD_WAVE_MAX_STEP_MS);
+    assert.strictEqual(wordWaveStep(0), WORD_WAVE_MAX_STEP_MS);
+    assert.strictEqual(wordWaveStep(100), WORD_WAVE_TOTAL_MS / 100);
+    assert.strictEqual(wordWaveStep(100000), WORD_WAVE_MIN_STEP_MS);
+    assert.strictEqual(wordWaveDuration(WORD_WAVE_MAX_STEP_MS), WORD_WAVE_MAX_STEP_MS * 5);
+    assert.strictEqual(wordWaveDuration(WORD_WAVE_MIN_STEP_MS), WORD_WAVE_MIN_DURATION_MS);
+    assert.strictEqual(wordWaveDuration(40), 200);
+  });
+
   it("Animates everything on first render as one continuous wave", () => {
     const schedule = computeWordWaveSchedule(
       [
@@ -87,44 +99,45 @@ describe("Word wave", () => {
       ],
       undefined,
     );
-    const s10 = 10 * WORD_WAVE_STEP_MS_PER_CHAR;
-    const s1 = WORD_WAVE_MIN_STEP_MS;
-    const s20 = 20 * WORD_WAVE_STEP_MS_PER_CHAR;
-    const k = WORD_DURATION_TO_STEP;
-    assert.strictEqual(wordWaveStep(1), s1);
+    const step = wordWaveStep(3);
+    const duration = wordWaveDuration(step);
     assert.deepStrictEqual(schedule, [
       [
-        { delay: 0, duration: s10 * k },
-        { delay: s10, duration: s1 * k },
+        { delay: 0, duration },
+        { delay: step, duration },
       ],
       [],
-      [{ delay: s10 + s1, duration: s20 * k }],
+      [{ delay: 2 * step, duration }],
     ]);
-    assert.strictEqual(wordWaveTotalDuration(schedule), s10 + s1 + s20 * k);
+    assert.strictEqual(wordWaveTotalDuration(schedule), 2 * step + duration);
   });
 
-  it("Skips unchanged lines (by index) and does not count them in delays", () => {
+  it("Skips unchanged lines (by index) and does not count them in delays or step", () => {
     const schedule = computeWordWaveSchedule(
       [
-        { signature: "same", words: [10] },
+        { signature: "same", words: [10, 10, 10] },
         { signature: "changed", words: [10] },
         { signature: "same2", words: [10] },
         { signature: "new", words: [10] },
       ],
       ["same", "old", "same2"],
     );
+    const step = wordWaveStep(2);
+    const duration = wordWaveDuration(step);
     assert.deepStrictEqual(schedule, [
       null,
-      [{ delay: 0, duration: 10 * WORD_WAVE_STEP_MS_PER_CHAR * WORD_DURATION_TO_STEP }],
+      [{ delay: 0, duration }],
       null,
-      [
-        {
-          delay: 10 * WORD_WAVE_STEP_MS_PER_CHAR,
-          duration: 10 * WORD_WAVE_STEP_MS_PER_CHAR * WORD_DURATION_TO_STEP,
-        },
-      ],
+      [{ delay: step, duration }],
     ]);
     assert.strictEqual(wordWaveTotalDuration([null, null]), 0);
+  });
+
+  it("A long text appears in about the total time", () => {
+    const words = new Array(110).fill(5);
+    const schedule = computeWordWaveSchedule([{ signature: "x", words }], undefined);
+    const total = wordWaveTotalDuration(schedule);
+    assert.ok(total >= WORD_WAVE_TOTAL_MS && total <= WORD_WAVE_TOTAL_MS + 350, `${total}`);
   });
 
   describe("QuestTextWave rendering", () => {

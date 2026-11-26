@@ -9,7 +9,7 @@
 
 .word-wave-word {
   animation-name: word-wave-fadein;
-  animation-timing-function: ease-in;
+  animation-timing-function: ease-out;
   animation-fill-mode: both;
 }
 
