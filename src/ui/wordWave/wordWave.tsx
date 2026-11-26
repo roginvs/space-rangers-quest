@@ -47,7 +47,9 @@ export function useWordWave(lines: WaveLine[], memory?: WordWaveMemory): WordWav
         })),
         prev.current,
       ),
-    [signaturesKey],
+    // Runs also count: when tags change without changing the text, the word spans
+    // are remounted, they must not get the timings of the previous change
+    [signaturesKey, lines.map((line) => line.runs.map((run) => run.length).join()).join(";")],
   );
   React.useEffect(() => {
     prev.current = signatures;

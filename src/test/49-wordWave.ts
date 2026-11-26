@@ -40,22 +40,20 @@ describe("Word wave", () => {
     assert.ok(paragraphs[2].tokens.every((token) => token.type === "newline" || token.text === ""));
   });
 
-  it("Paragraph signature changes with text, styles and links", () => {
+  it("Paragraph signature is its text, tags do not count", () => {
     const sig = (str: string) => {
       const paragraphs = splitTokensToParagraphs(formatTokens(splitStringToTokens(str)));
       assert.strictEqual(paragraphs.length, 1);
       return paragraphSignature(paragraphs[0].tokens);
     };
     const base = sig("a <clr>bc<clrEnd> d");
-    assert.strictEqual(sig("a <clr>bc<clrEnd> d"), base);
-    assert.notStrictEqual(sig("a <clr>b<clrEnd>c d"), base, "same text, other highlight");
+    assert.strictEqual(base, "a bc d");
+    assert.strictEqual(sig("a <clr>b<clrEnd>c d"), base);
+    assert.strictEqual(sig("a bc d"), base);
+    assert.strictEqual(sig("<fix>a <color=1,2,3>bc</color> d</fix>"), base);
+    assert.strictEqual(sig("<link=X>a bc</link> d"), base);
     assert.notStrictEqual(sig("a <clr>bc<clrEnd> e"), base);
-    assert.notStrictEqual(sig("<fix>a <clr>bc<clrEnd> d</fix>"), base);
-    assert.notStrictEqual(sig("<color=1,2,3>a <clr>bc<clrEnd> d</color>"), base);
-    assert.notStrictEqual(sig("<link=X>a</link>"), sig("<link=Y>a</link>"));
-    assert.notStrictEqual(sig("<link=X;Y>a</link>"), sig("<link=X>a</link>"));
-    assert.notStrictEqual(sig("<link=X>a</link>"), sig("a"));
-    assert.notStrictEqual(sig("ab"), sig("a<clr><clrEnd>b"), "token boundaries count");
+    assert.notStrictEqual(sig("a <clr>bc<clrEnd>  d"), base);
   });
 
   it("Splits runs into words, a word can span several runs", () => {
@@ -171,6 +169,15 @@ describe("Word wave", () => {
       assert.ok(!/word-wave-word[^>]*>first/.test(html), html);
       assert.ok(/word-wave-word[^>]*>second/.test(html), html);
       assert.ok(/animation-delay:0ms[^>]*>second/.test(html), html);
+    });
+
+    it("Does not animate a paragraph when only its tags changed", () => {
+      const prev = ["first a b", "second"];
+      const html = render("first <clr>a</clr> <link=X>b</link>\nsecond!");
+      assert.ok(html.includes("word-wave-word"), html);
+      const withPrev = render("first <clr>a</clr> <link=X>b</link>\nsecond!", prev);
+      assert.ok(!/word-wave-word[^>]*>(first|a|b)</.test(withPrev), withPrev);
+      assert.ok(/word-wave-word[^>]*>second!</.test(withPrev), withPrev);
     });
   });
 });

@@ -1,4 +1,4 @@
-import { StringTokens, StringTokenStyle } from "./questReplaceTags.format";
+import { StringTokens } from "./questReplaceTags.format";
 
 export interface TokensParagraph {
   /** Index of the first token of this paragraph in the formatted tokens */
@@ -23,23 +23,10 @@ export function splitTokensToParagraphs(tokens: StringTokens): TokensParagraph[]
   return paragraphs;
 }
 
-/** Length-prefixed, so any text can be inside */
-const str = (value: string) => `${value.length}:${value}`;
-
-function tokenSignature(token: StringTokenStyle) {
-  if (token.type === "newline") {
-    return `n${token.isFix ? "f" : ""}`;
-  }
-  const color = token.color ? `${token.color.r},${token.color.g},${token.color.b}` : "";
-  const links = token.links ? `${token.links.length}:${token.links.map(str).join("")}` : "-";
-  return `t${token.isClr ? "c" : ""}${token.isFix ? "f" : ""}/${color}/${links}/${str(token.text)}`;
-}
-
 /**
- * Two paragraphs with the same signature look and behave the same.
- * It covers styles and links, not only the text: for example a quest can
- * highlight a part of a line with <clr> without changing any character.
+ * A paragraph counts as changed only when its characters change. Tags are not compared:
+ * for example a quest highlights a part of a line with <clr> without changing any character.
  */
 export function paragraphSignature(tokens: StringTokens) {
-  return tokens.map(tokenSignature).join(" ");
+  return tokens.map((token) => (token.type === "text" ? token.text : "")).join("");
 }
