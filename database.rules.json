@@ -1,0 +1,72 @@
+{
+  "rules": {
+    "usersPublic": {
+      "$uid": {
+        ".read": "$uid === auth.uid",
+        "info": {
+          ".write": "$uid === auth.uid"
+        },
+        "gamesWonCount": {
+          ".write": "$uid === auth.uid"
+        },
+        "gamesWonProofs": {
+          "$gameName": {
+            "$aleaSeed": {
+              ".write": "$uid === auth.uid",
+              ".validate": "newData.hasChild('created') && newData.child('created').val() === now && data.val() === null"
+            }
+          }
+        }
+      },
+      ".indexOn": ["gamesWonCount"]
+    },
+    "usersPrivate": {
+      "$uid": {
+        ".write": "$uid === auth.uid",
+        ".read": "$uid === auth.uid"
+      }
+    },
+    "customQuests": {
+      "$user_id": {
+        ".read": "$user_id === auth.uid",
+        "$quest_name": {
+          ".write": "$user_id === auth.uid",
+          ".read": "$user_id === auth.uid || data.child('isPublic').val() == true"
+        }
+      }
+    },
+    "wonProofs": {
+      ".indexOn": ["userId", "gameName", "aleaSeed"],
+      ".read": "query.orderByChild === 'userId' && query.equalTo !== null",
+      "$proofId": {
+        ".write": "newData.hasChild('userId') && newData.child('userId').val() === auth.uid && newData.hasChild('createdAt') && newData.child('createdAt').val() === now && ! newData.hasChild('validated')",
+        ".validate": "data.val() == null"
+      }
+    },
+    "champions": {
+      ".read": true,
+      ".indexOn": ["gamesWonCount"],
+      "$uid": {
+        ".write": "$uid === auth.uid",
+        ".validate": "newData.hasChildren(['name', 'gamesWonCount', 'gameNames', 'updatedAt']) && newData.child('name').isString() && newData.child('gamesWonCount').isNumber() && newData.child('updatedAt').val() === now",
+        "name": {
+          ".validate": "newData.isString()"
+        },
+        "gamesWonCount": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "gameNames": {
+          "$gameName": {
+            ".validate": "newData.val() === true"
+          }
+        },
+        "updatedAt": {
+          ".validate": "newData.val() === now"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}

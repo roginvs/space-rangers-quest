@@ -1,6 +1,82 @@
-@keyframes champions-blinker {  
-    50% { opacity: 0.3; }
-}  
+@keyframes champions-blinker {
+  50% {
+    opacity: 0.3;
+  }
+}
 .champions-blink {
-    animation: champions-blinker 0.5s linear infinite;
+  animation: champions-blinker 0.5s linear infinite;
+}
+
+.champions-you td {
+  background-color: rgba(255, 216, 99, 0.07);
+}
+
+.champions-count {
+  color: #ffd863;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.champions-games a,
+.champions-table .games a {
+  color: #9eacac;
+}
+
+.champions-games a:hover,
+.champions-table .games a:hover {
+  color: #ffd863;
+  text-decoration: none;
+}
+
+.champions-note {
+  color: #60696b;
+  font-style: italic;
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+.champions-table .verify .btn {
+  padding: 0.3rem 0.7rem;
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .champions-table thead {
+    display: none;
+  }
+  .champions-table,
+  .champions-table tbody,
+  .champions-table tr,
+  .champions-table td {
+    display: block;
+    width: 100%;
+    border: 0;
+  }
+  .champions-table tr {
+    border-bottom: 1px solid #555555;
+    padding: 0.7rem 0;
+  }
+  .champions-table tr:last-child {
+    border-bottom: 0;
+  }
+  .champions-table td.name {
+    font-size: 1.05rem;
+    padding-bottom: 0.15rem;
+  }
+  .champions-table td.count {
+    padding-top: 0;
+    padding-bottom: 0.35rem;
+  }
+  .champions-table td.count::before {
+    content: attr(data-label);
+    color: #60696b;
+    margin-right: 0.35rem;
+  }
+  .champions-table td.games {
+    padding-top: 0;
+    overflow-wrap: anywhere;
+  }
+  .champions-table td.verify {
+    padding-top: 0.45rem;
+  }
 }

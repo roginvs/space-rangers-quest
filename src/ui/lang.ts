@@ -116,7 +116,7 @@ const RUS = {
   championsDisabled: "Таблица чемпионов временно не работает из-за лимитов firebase",
   championName: "Имя рейнджера",
   championWonGames: "Пройдено квестов",
-  championGameNames: "Список пройденный квестов",
+  championGameNames: "Список пройденных квестов",
   championNoName: "<Имя не задано>",
   validatingQuest: "Проверяем прохождение",
   questValidationErrorsInfo:
@@ -124,6 +124,12 @@ const RUS = {
     "квест был пройден на старой браузерозависимой версии движка и нужно пройти этот квест еще раз",
   championsTotal: "Загружено чемпионов:",
   championsLoading: "Загрузка списка чемпионов",
+  championVerify: "Проверить",
+  championVerifying: "Проверяем",
+  championsEmpty: "Пока никто не синхронизировал прохождения",
+  championsFillHint: "Таблица пополняется, когда рейнджер входит в профиль",
+  championsShownPrefix: "Показаны до 100 рейнджеров · загружено:",
+  championsAndMore: "и ещё {n}",
 
   pwaInstallHeader: "Веб-приложение",
   pwaInstallInfoLink: "Нажми здесь",
@@ -257,7 +263,7 @@ const ENG: LangTexts = {
   championsDisabled: "Championship table is temporarely disabled due to firebase limits",
   championName: "Ranger's name",
   championWonGames: "Amount of passed quests",
-  championGameNames: "Список пройденный квестов",
+  championGameNames: "List of passed quests",
   championNoName: "<Name is not set>",
   validatingQuest: "Checking passing",
   questValidationErrorsInfo:
@@ -265,6 +271,12 @@ const ENG: LangTexts = {
     "the quest was passed using old brower-depend engine and it needs to be passed again",
   championsTotal: "Loaded champions:",
   championsLoading: "Loading list of champions",
+  championVerify: "Verify",
+  championVerifying: "Verifying",
+  championsEmpty: "Nobody has synced their completions yet",
+  championsFillHint: "The table is filled when a ranger signs in to their profile",
+  championsShownPrefix: "Showing up to 100 rangers · loaded:",
+  championsAndMore: "and {n} more",
 
   pwaInstallHeader: "Web application",
   pwaInstallInfoLink: "Click here",

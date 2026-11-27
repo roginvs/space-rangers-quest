@@ -1,0 +1,48 @@
+{
+  "rules": {
+    "usersPublic": {
+      "$uid": {
+        "info": {
+          ".write": "$uid === auth.uid"
+        },
+        "gamesWonCount": {
+          ".write": "$uid === auth.uid"
+        },
+        "gamesWonProofs": {
+          "$gameName": {
+            "$aleaSeed": {
+              ".write": "$uid === auth.uid",
+              ".validate": "newData.hasChild('created') && newData.child('created').val() === now && data.val() === null"
+            }
+          }
+        }
+      },
+      ".read": true,
+      ".indexOn": ["gamesWonCount"]
+    },
+    "usersPrivate": {
+      "$uid": {
+        ".write": "$uid === auth.uid",
+        ".read": true
+      }
+    },
+    "customQuests": {
+      "$user_id": {
+        ".read": "$user_id === auth.uid",
+        "$quest_name": {
+          ".write": "$user_id === auth.uid",
+          ".read": "$user_id === auth.uid || data.child('isPublic').val() == true"
+        }
+      }
+    },
+    "wonProofs": {
+      "$proofId": {
+        ".write": "newData.hasChild('userId') && newData.child('userId').val() === auth.uid && newData.hasChild('createdAt') && newData.child('createdAt').val() === now && ! newData.hasChild('validated')",
+        ".validate": "data.val() == null",
+        ".read": true
+      },
+      ".indexOn": ["userId", "gameName", "aleaSeed"],
+      ".read": true
+    }
+  }
+}

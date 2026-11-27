@@ -13,8 +13,11 @@ import {
   FirebasePublic,
   ConfigLocalOnly,
   FIREBASE_CUSTOM_QUESTS,
+  FIREBASE_CHAMPIONS,
+  ChampionPublic,
 } from "./defs";
 import { WonProofTableRow } from "./defs";
+import { buildChampionPayload, readChampionsLeaderboard, writeOwnChampionNode } from "./champions";
 import { FirebaseCustomQuest } from "../editor/defs";
 
 /*
@@ -387,6 +390,12 @@ export async function getDb(app: firebase.app.App) {
 
   async function setOwnHighscoresName(name: string) {
     await setFirebaseThisUser(FIREBASE_USERS_PUBLIC, "info/name", name);
+    const allLocalWons = (await getAllLocal(INDEXEDDB_WON_STORE_NAME)) || {};
+    const gameNames = Object.keys(allLocalWons).filter((gameName) => {
+      const proofs = allLocalWons[gameName];
+      return proofs && typeof proofs === "object" && Object.keys(proofs).length >= 1;
+    });
+    await updateOwnChampionNode(name, gameNames);
   }
 
   async function getFirebasePublicHighscores() {
@@ -557,6 +566,9 @@ orderByChild('createdAt').once("value")).val();
         }
       }
       debug(`Updating public highscores done`);
+      const localConfig = await getConfigLocal("player");
+      const rangerName = localConfig ? localConfig.Ranger || "" : "";
+      await updateOwnChampionNode(rangerName, Object.keys(newProofs));
     } catch (e: any) {
       console.warn(`public wining state sync error`, e, e.stack);
     }
@@ -730,6 +742,33 @@ orderByChild('createdAt').once("value")).val();
       debug(`Sync with firebase finished`);
     } finally {
       firebaseGoOffline();
+    }
+  }
+
+  async function updateOwnChampionNode(name: string, gameNames: string[]) {
+    const uid = firebaseUser ? firebaseUser.uid : undefined;
+    if (!uid) {
+      return;
+    }
+    try {
+      await firebaseOnline(() =>
+        writeOwnChampionNode(
+          app.database(),
+          uid,
+          buildChampionPayload(name, gameNames, firebase.database.ServerValue.TIMESTAMP),
+        ),
+      );
+    } catch (e) {
+      console.warn(`champion node update error`, e);
+    }
+  }
+
+  async function getChampionsLeaderboard(): Promise<ChampionPublic[] | null> {
+    try {
+      return await firebaseOnline(() => readChampionsLeaderboard(app.database(), 100));
+    } catch (e) {
+      console.warn(e);
+      return null;
     }
   }
 
@@ -911,6 +950,7 @@ orderByChild('createdAt').once("value")).val();
     setGamePassing,
 
     getFirebasePublicHighscores,
+    getChampionsLeaderboard,
 
     saveGame,
     getLocalSaving,
