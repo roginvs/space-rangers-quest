@@ -9,6 +9,7 @@ import {
 } from "../../ui/db/defs";
 import {
   adminGet,
+  adminSet,
   assertFails,
   assertSucceeds,
   clearEmulator,
@@ -22,6 +23,7 @@ import {
   withOnline,
   RulesMode,
 } from "./helpers";
+import { ChampionsPage } from "../../ui/db/championsPage";
 
 function currentClientSuite(mode: RulesMode) {
   describe(`current client on ${mode} rules`, () => {
@@ -368,5 +370,64 @@ describe("Firebase new client on new rules", () => {
     const row = await adminGet(`${FIREBASE_CHAMPIONS}/${alice.uid}`);
     assert.strictEqual(row.name, "Алиса");
     await deleteApp(bobApp);
+  });
+
+  it("pages the champions leaderboard in order without duplicates", async () => {
+    const total = 120;
+    const now = Date.now();
+    const seed: { [uid: string]: object } = {};
+    const expectedOrder: string[] = [];
+    for (let n = 40; n >= 1; n--) {
+      for (const suffix of ["c", "b", "a"]) {
+        const uid = `uid-${String(n).padStart(2, "0")}-${suffix}`;
+        const gameNames: { [name: string]: true } = {};
+        for (let k = 0; k < n; k++) {
+          gameNames[`g${k}`] = true;
+        }
+        seed[uid] = {
+          name: "Ranger " + uid,
+          gamesWonCount: n,
+          gameNames,
+          updatedAt: now,
+        };
+        expectedOrder.push(uid);
+      }
+    }
+    assert.strictEqual(expectedOrder.length, total);
+    await adminSet(FIREBASE_CHAMPIONS, seed);
+
+    const anon = createApp();
+    const anonDb = await openDb(anon);
+    const loaded: string[] = [];
+    const counts: number[] = [];
+    let cursor: { gamesWonCount: number; userId: string } | null = null;
+    let pages = 0;
+    let hasMore = true;
+    while (hasMore) {
+      const page: ChampionsPage | null = await assertSucceeds(anonDb.getChampionsPage(cursor));
+      assert.ok(page);
+      if (!page) {
+        throw new Error("missing page");
+      }
+      pages += 1;
+      for (const row of page.rows) {
+        loaded.push(row.userId);
+        counts.push(row.gamesWonCount);
+      }
+      cursor = page.cursor;
+      hasMore = page.hasMore;
+      if (pages > 10) {
+        throw new Error("too many pages");
+      }
+    }
+    await deleteApp(anon);
+
+    assert.strictEqual(pages, 3);
+    assert.strictEqual(loaded.length, total);
+    assert.deepStrictEqual(loaded, expectedOrder);
+    assert.strictEqual(new Set(loaded).size, total);
+    for (let i = 1; i < counts.length; i++) {
+      assert.ok(counts[i - 1] >= counts[i], `order broken at ${i}`);
+    }
   });
 });

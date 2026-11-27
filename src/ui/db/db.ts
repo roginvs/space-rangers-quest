@@ -18,6 +18,7 @@ import {
 } from "./defs";
 import { WonProofTableRow } from "./defs";
 import { buildChampionPayload, readChampionsLeaderboard, writeOwnChampionNode } from "./champions";
+import { ChampionsCursor, ChampionsPage, readChampionsPage } from "./championsPage";
 import { FirebaseCustomQuest } from "../editor/defs";
 
 /*
@@ -772,6 +773,15 @@ orderByChild('createdAt').once("value")).val();
     }
   }
 
+  async function getChampionsPage(cursor?: ChampionsCursor | null): Promise<ChampionsPage | null> {
+    try {
+      return await firebaseOnline(() => readChampionsPage(app.database(), cursor));
+    } catch (e) {
+      console.warn(e);
+      return null;
+    }
+  }
+
   async function isGamePassedLocal(gameName: string) {
     const values = await getLocal(INDEXEDDB_WON_STORE_NAME, gameName);
     if (values && typeof values === "object" && Object.keys(values).length >= 1) {
@@ -951,6 +961,7 @@ orderByChild('createdAt').once("value")).val();
 
     getFirebasePublicHighscores,
     getChampionsLeaderboard,
+    getChampionsPage,
 
     saveGame,
     getLocalSaving,

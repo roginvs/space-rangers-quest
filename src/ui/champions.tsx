@@ -11,6 +11,8 @@ import { DATA_DIR } from "./consts";
 import { WorkerPromise } from "./worker";
 import { assertNever } from "../assertNever";
 import { gameNamesList } from "./db/champions";
+import { ChampionsCursor } from "./db/championsPage";
+import { NearBottomSentinel } from "./nearBottomSentinel";
 
 import "./champions.css";
 
@@ -66,6 +68,16 @@ export class ChampionsTabContainer extends React.Component<
   @observable
   verifyByUserId: { [userId: string]: VerifyState } = {};
 
+  @observable
+  hasMore = false;
+
+  @observable
+  loadingMore = false;
+
+  private cursor: ChampionsCursor | null = null;
+  private loadInFlight = false;
+  private firstPageLoaded = false;
+
   private mounted = false;
   private readonly worker: WorkerPromise = new WorkerPromise("worker.js");
   private readonly onUnmount: (() => void)[] = [
@@ -78,19 +90,52 @@ export class ChampionsTabContainer extends React.Component<
 
   componentDidMount() {
     this.mounted = true;
-    this.props.store.db
-      .getChampionsLeaderboard()
-      .catch((e) => {
-        console.warn(e);
-        return null;
-      })
-      .then((champions) => {
-        if (!this.mounted) {
-          return;
+    this.loadMore().catch((e) => console.error(e));
+  }
+
+  private async loadMore() {
+    if (this.loadInFlight) {
+      return;
+    }
+    if (this.firstPageLoaded && !this.hasMore) {
+      return;
+    }
+    this.loadInFlight = true;
+    if (this.firstPageLoaded) {
+      this.loadingMore = true;
+    }
+    try {
+      const page = await this.props.store.db.getChampionsPage(this.cursor);
+      if (!this.mounted) {
+        return;
+      }
+      if (!page) {
+        if (!this.firstPageLoaded) {
+          this.champions = null;
         }
-        this.champions = champions;
-      })
-      .catch((e) => console.error(e));
+        this.hasMore = false;
+        return;
+      }
+      const existing = this.champions || [];
+      const seen: { [userId: string]: true } = {};
+      for (const row of existing) {
+        seen[row.userId] = true;
+      }
+      const added = page.rows.filter((row) => !seen[row.userId]);
+      this.champions = existing.concat(added);
+      this.cursor = page.cursor;
+      this.hasMore = page.hasMore;
+      this.firstPageLoaded = true;
+    } catch (e) {
+      console.warn(e);
+      if (!this.firstPageLoaded) {
+        this.champions = null;
+      }
+      this.hasMore = false;
+    } finally {
+      this.loadInFlight = false;
+      this.loadingMore = false;
+    }
   }
 
   async verifyPlayer(champion: ChampionPublic) {
@@ -259,6 +304,24 @@ export class ChampionsTabContainer extends React.Component<
             })}
           </tbody>
         </table>
+        <NearBottomSentinel
+          enabled={this.hasMore && !this.loadingMore}
+          onNearBottom={() => this.loadMore()}
+        >
+          <button
+            type="button"
+            className="btn btn-sm"
+            disabled={this.loadingMore}
+            onClick={() => this.loadMore()}
+          >
+            {l.championsLoadMore}
+          </button>
+        </NearBottomSentinel>
+        {this.loadingMore ? (
+          <p className="champions-note">
+            <i className="fa fa-spin fa-spinner" /> {l.championsLoading}
+          </p>
+        ) : null}
         <p className="champions-note">
           {l.championsShownPrefix} {champions.length}
           <br />

@@ -80,3 +80,17 @@
     padding-top: 0.45rem;
   }
 }
+
+.champions-sentinel {
+  height: 1px;
+  width: 100%;
+}
+
+.champions-load-more {
+  margin-top: 0.75rem;
+  text-align: center;
+}
+
+.champions-load-more .btn {
+  padding: 0.3rem 0.7rem;
+}

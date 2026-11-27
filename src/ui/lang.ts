@@ -128,8 +128,9 @@ const RUS = {
   championVerifying: "Проверяем",
   championsEmpty: "Пока никто не синхронизировал прохождения",
   championsFillHint: "Таблица пополняется, когда рейнджер входит в профиль",
-  championsShownPrefix: "Показаны до 100 рейнджеров · загружено:",
+  championsShownPrefix: "Загружено:",
   championsAndMore: "и ещё {n}",
+  championsLoadMore: "Загрузить ещё",
 
   pwaInstallHeader: "Веб-приложение",
   pwaInstallInfoLink: "Нажми здесь",
@@ -275,8 +276,9 @@ const ENG: LangTexts = {
   championVerifying: "Verifying",
   championsEmpty: "Nobody has synced their completions yet",
   championsFillHint: "The table is filled when a ranger signs in to their profile",
-  championsShownPrefix: "Showing up to 100 rangers · loaded:",
+  championsShownPrefix: "Loaded:",
   championsAndMore: "and {n} more",
+  championsLoadMore: "Load more",
 
   pwaInstallHeader: "Web application",
   pwaInstallInfoLink: "Click here",
