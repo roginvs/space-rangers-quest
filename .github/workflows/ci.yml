@@ -1,0 +1,35 @@
+name: CI
+
+"on":
+  pull_request:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: npm
+
+      - run: npm ci --legacy-peer-deps
+
+      # GitHub does not contain the quest files that GitLab keeps in-repo
+      # (borrowed/qm is gitignored here). Empty dirs let the borrowed-quest
+      # mocha suites load with no cases, and let pack-game-data scan folders.
+      - run: mkdir -p built-web borrowed/qm borrowed/img borrowed/sound borrowed/track
+
+      - run: npm run prettier-check
+
+      - run: npm run test
+
+      - run: npm run lint
+
+      - run: npm run pack-game-data
+
+      - run: npm run build
