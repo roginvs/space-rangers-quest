@@ -19,6 +19,11 @@ jobs:
 
       - run: npm ci --legacy-peer-deps
 
+      # GitHub does not contain the quest files that GitLab keeps in-repo
+      # (borrowed/qm is gitignored here). Empty dirs let the borrowed-quest
+      # mocha suites load with no cases, and let pack-game-data scan folders.
+      - run: mkdir -p built-web borrowed/qm borrowed/img borrowed/sound borrowed/track
+
       - run: npm run prettier-check
 
       - run: npm run test
