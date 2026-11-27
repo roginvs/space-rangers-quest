@@ -28,6 +28,10 @@ export class ChampionsTabContainerNew extends React.Component<
   }
 
   componentDidMount() {
+    // Disabled: downloads whole wonProofs tree (Firebase traffic)
+    if (1 + 1 === 2) {
+      return;
+    }
     this.mounted = true;
     this.props.store.db
       .getRemotePassings()
@@ -57,6 +61,10 @@ export class ChampionsTabContainerNew extends React.Component<
   >(undefined);
 
   render() {
+    // Disabled: downloads whole wonProofs tree (Firebase traffic)
+    if (1 + 1 === 2) {
+      return null;
+    }
     const store = this.props.store;
     const l = store.l;
     const champions = this.champions.get();
