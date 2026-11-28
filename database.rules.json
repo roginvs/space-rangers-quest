@@ -1,5 +1,11 @@
 {
   "rules": {
+    /* usersPublic is "public" only by name: the old champions table listed
+       everyone with orderByChild("gamesWonCount").limitToLast(100).
+       Each user node also stores gamesWonProofs — full playthrough logs
+       (every jump). That query therefore downloaded megabytes and exposed
+       the whole tree. Read is now owner-only. The public leaderboard is
+       the thin "champions" node below. */
     "usersPublic": {
       "$uid": {
         ".read": "$uid === auth.uid",
@@ -20,12 +26,21 @@
       },
       ".indexOn": ["gamesWonCount"]
     },
+
+    /* usersPrivate holds the signed-in player's personal data, synced
+       across devices: config (ranger name, language, options) and
+       wongames (private copies of win proofs). It is not a public list.
+       Read and write are owner-only. Previously .read was true on $uid,
+       so anyone who knew a uid could read that user's private node. */
     "usersPrivate": {
       "$uid": {
         ".write": "$uid === auth.uid",
         ".read": "$uid === auth.uid"
       }
     },
+
+    /* customQuests is unchanged. A user can read and write their own
+       custom quests; anyone can read a quest marked isPublic. */
     "customQuests": {
       "$user_id": {
         ".read": "$user_id === auth.uid",
@@ -35,6 +50,13 @@
         }
       }
     },
+
+    /* wonProofs is a flat table of win proofs, indexed by userId.
+       Public read is allowed only for a bounded query:
+       orderByChild("userId") and equalTo(<uid>) — one player at a time
+       (own sync, or Verify on a champion). An unfiltered read of the
+       whole tree is denied. A player may write only their own new proof
+       with a server timestamp and without a "validated" field. */
     "wonProofs": {
       ".indexOn": ["userId", "gameName", "aleaSeed"],
       ".read": "query.orderByChild === 'userId' && query.equalTo !== null",
@@ -43,6 +65,13 @@
         ".validate": "data.val() == null"
       }
     },
+
+    /* champions is the thin public leaderboard (no proofs).
+       name — ranger display name
+       gamesWonCount — how many quests this player has passed
+       gameNames — map of quest name -> true (the list shown in the table)
+       updatedAt — must be the server timestamp
+       Written by the owner on sync or win. Extra fields are rejected. */
     "champions": {
       ".read": true,
       ".indexOn": ["gamesWonCount"],
