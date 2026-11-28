@@ -14,6 +14,7 @@ import { DEFAULT_DAYS_TO_PASS_QUEST } from "../lib/qmplayer/defs";
 import { SRDateToString } from "../lib/qmplayer/funcs";
 import { QuestReplaceTags } from "./questReplaceTags";
 import { getMagicSlots } from "./questList.magicSlots";
+import { getQuestPassedInfo } from "./questPassed";
 import { computed } from "mobx";
 import { GameStyleFrame, GameStyleFrameSmall } from "./menu/gameStyle";
 
@@ -59,30 +60,10 @@ export class QuestList extends React.Component<
       .filter((quest) => quest.lang === this.props.store.player.lang)
       .map((quest) => ({
         ...quest,
-        passedAt: (() => {
-          // Returns:
-          //  - undefined if still loading
-          //  - false if not passed
-          //  - Date object when first passed
-          //  - true is passed but date is unknown
-
-          if (!passedQuests) {
-            return undefined;
-          }
-          const passed = passedQuests.get(quest.gameName);
-          if (typeof passed !== "object" || Object.keys(passed).length < 1) {
-            return false;
-          }
-          const firstPassedAt = Math.min(
-            ...Object.keys(passed).map(
-              (key) => passed[key].performedJumps.slice(-1).pop()?.dateUnix || Infinity,
-            ),
-          );
-          if (firstPassedAt === Infinity) {
-            return true;
-          }
-          return new Date(firstPassedAt);
-        })(),
+        passedAt: getQuestPassedInfo(
+          passedQuests ? passedQuests.get(quest.gameName) : undefined,
+          !!passedQuests,
+        ).passedAt,
         taskText: getGameTaskText(quest.taskText, this.props.store.player),
       }));
   }
