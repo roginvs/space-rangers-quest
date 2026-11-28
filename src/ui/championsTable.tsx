@@ -168,7 +168,7 @@ export class ChampionsTabContainer extends React.Component<
           ) : gameInfo.validateStatus === "failed" ? (
             <s>{gameInfo.gameName}</s>
           ) : (
-            <span>{gameInfo.gameName}</span>
+            <span className="text-muted">{gameInfo.gameName}</span>
           );
         return (
           <span key={gameInfo.gameName}>
