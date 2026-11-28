@@ -1,7 +1,6 @@
 import * as React from "react";
 import { Loader, DivFadeinCss, Redirect } from "./common";
 import { LangTexts } from "./lang";
-import { WonProofs, GameWonProofs } from "./db/defs";
 import { Player, Lang } from "../lib/qmplayer/player";
 import {
   GameState,
@@ -31,6 +30,7 @@ import {
   QuestStartLineParts,
 } from "../lib/questStartLine";
 import { toggleFullscreen } from "./questPlay/fullscreen";
+import { getQuestPassedInfo } from "./questPassed";
 
 function QuestStartLineView({ parts }: { parts: QuestStartLineParts }) {
   const chunks: React.ReactNode[] = [];
@@ -100,9 +100,10 @@ export class QuestInfo extends React.Component<
     if (!game) {
       return <Redirect to="#/" />;
     }
-    const passedQuest = this.props.store.wonProofs
-      ? this.props.store.wonProofs.get(gameName)
-      : null;
+    const passedInfo = getQuestPassedInfo(
+      this.props.store.wonProofs ? this.props.store.wonProofs.get(gameName) : undefined,
+      !!this.props.store.wonProofs,
+    );
 
     return (
       <DivFadeinCss className="container">
@@ -146,61 +147,16 @@ export class QuestInfo extends React.Component<
           })()}
           <div>
             <small>
-              {(() => {
-                // copy-paste from questList
-                if (passedQuest === undefined) {
-                  return <i className="text-muted fa fa-spin fa-circle-o-notch" />;
-                }
-
-                if (
-                  passedQuest === null ||
-                  // tslint:disable-next-line:strict-type-predicates
-                  typeof passedQuest !== "object" ||
-                  Object.keys(passedQuest).length < 1
-                ) {
-                  return;
-                }
-                return Object.keys(passedQuest)
-                  .map((k) => {
-                    const log = passedQuest[k];
-                    const firstStep = log.performedJumps.slice(0).shift();
-                    const lastStep = log.performedJumps.slice(-1).shift();
-                    if (!firstStep || !lastStep) {
-                      return null;
-                    }
-                    const durationsMins = Math.ceil(
-                      (new Date(lastStep.dateUnix).getTime() -
-                        new Date(firstStep.dateUnix).getTime()) /
-                        (1000 * 60),
-                    );
-                    return {
-                      started: firstStep.dateUnix,
-                      end: lastStep.dateUnix,
-                      durationsMins,
-                      k,
-                    };
-                  })
-                  .filter((x) => x)
-                  .sort((a, b) => {
-                    if (a === null || b === null) {
-                      return 0;
-                    } else {
-                      return a.started - b.started;
-                    }
-                  })
-                  .map((x) =>
-                    x ? (
-                      <div key={x.k}>
-                        {l.passed} {new Date(x.end).toLocaleString()} ({x.durationsMins}{" "}
-                        {l.minutesShort})
-                        {/*
-                                                        {new Date(x.started).toLocaleString()} - {
-                                                            new Date(x.end).toLocaleString()}
-                                                        */}
-                      </div>
-                    ) : null,
-                  );
-              })()}
+              {passedInfo.loading ? (
+                <i className="text-muted fa fa-spin fa-circle-o-notch" />
+              ) : (
+                passedInfo.passings.map((x) => (
+                  <div key={x.seed}>
+                    {l.passed} {new Date(x.end).toLocaleString()} ({x.durationsMins}{" "}
+                    {l.minutesShort})
+                  </div>
+                ))
+              )}
             </small>
           </div>
         </div>
