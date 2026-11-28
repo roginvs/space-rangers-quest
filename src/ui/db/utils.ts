@@ -126,6 +126,17 @@ export function gameNamesList(record: { games?: { [gameName: string]: unknown } 
   return Object.keys(record.games).sort();
 }
 
+/**
+ * Names from a champions row that are still in the known quest index,
+ * in the same order as gameNamesList. Does not change the stored row.
+ */
+export function knownGameNamesList(
+  record: { games?: { [gameName: string]: unknown } },
+  knownNames: { has(name: string): boolean },
+): string[] {
+  return gameNamesList(record).filter((name) => knownNames.has(name));
+}
+
 /** Seeds of a quest from a champions row, oldest first */
 export function championSeeds(
   record: { games?: { [gameName: string]: unknown } },
