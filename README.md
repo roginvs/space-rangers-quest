@@ -24,7 +24,7 @@
 
 ```
 rm -R built-web || true
-npm install --legacy-peer-deps
+npm ci
 npm run lint
 npm run test
 mkdir built-web

@@ -27,7 +27,7 @@ build:
   stage: build
   script:
     - rm -R built-web || true
-    - npm install --legacy-peer-deps
+    - npm ci
     - mkdir built-web
     - npm run prettier-check
     - npm run test
@@ -70,7 +70,7 @@ firebase-rules:
   before_script:
     - apt-get update -qq
     - apt-get install -y --no-install-recommends default-jre-headless
-    - npm ci --legacy-peer-deps
+    - npm ci
   script:
     - npm run test:firebase
 

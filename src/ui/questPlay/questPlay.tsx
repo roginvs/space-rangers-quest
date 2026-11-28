@@ -402,6 +402,16 @@ export function QuestPlay({
   const onFullscreenButtonClick = React.useCallback(() => {
     toggleFullscreen();
   }, []);
+  /*
+   * Scroll behavior of the location text (intended, keep it when changing the text animation):
+   * - Desktop: the text is inside ScrollableContainer with key={uistate.text}. Any change of the
+   *   text (even one char or a tag) remounts it, so both vertical and horizontal scroll jump
+   *   to the top-left instantly. If the text is exactly the same, the scroll position is kept.
+   *   The choices container is also reset when the choices change; the params one is never reset.
+   * - Mobile: the whole page scrolls; after every choice click it smoothly scrolls to top: 58.
+   *   The text block is not remounted, so its horizontal scroll (overflowX) is kept between steps.
+   * The word wave animation must not change this: it only runs inside the (re)mounted container.
+   */
   // Previous paragraphs for QuestTextWave, here since ScrollableContainer remounts on text change
   const prevText = React.useRef<string[]>();
 
