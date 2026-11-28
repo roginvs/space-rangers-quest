@@ -27,8 +27,9 @@ import { checkCustomQuests, checkLocalOnlyFunctions, seedOldClientPlayer } from 
   DELETE AFTER DEPLOY, together with legacy/dbMaster.ts and fixtures/.
   The deployed client (master, legacy/dbMaster.ts).
   "current" — the rules that are live now: everything works.
-  "new" — the rules of this PR: only what touches wonProofs and
-  usersPrivate/<uid>/wongames stops working, the rest still works.
+  "new" — the rules of this PR: writes and reads of wonProofs,
+  usersPrivate/<uid>/wongames, usersPublic info/name and gamesWonCount
+  are denied; config, customQuests and local functions still work.
 */
 function oldClientSuite(mode: RulesMode) {
   const isNew = mode === "new";
@@ -77,15 +78,25 @@ function oldClientSuite(mode: RulesMode) {
       await deleteApp(app2);
     });
 
-    it("setOwnHighscoresName writes usersPublic info/name", async () => {
-      const app = createApp();
-      const user = await signUp(app, "alice");
-      const db = await openMasterDb(app);
-      await assertSucceeds(db.setOwnHighscoresName("НовоеИмя"));
-      const info = await adminGet(`${FIREBASE_USERS_PUBLIC}/${user.uid}/info`);
-      assert.strictEqual(info.name, "НовоеИмя");
-      await deleteApp(app);
-    });
+    it(
+      isNew
+        ? "setOwnHighscoresName does not write usersPublic info/name (expected)"
+        : "setOwnHighscoresName writes usersPublic info/name",
+      async () => {
+        const app = createApp();
+        const user = await signUp(app, "alice");
+        const db = await openMasterDb(app);
+        // setFirebase swallows permission errors, so the call itself resolves
+        await assertSucceeds(db.setOwnHighscoresName("НовоеИмя"));
+        const info = await adminGet(`${FIREBASE_USERS_PUBLIC}/${user.uid}/info`);
+        if (isNew) {
+          assert.strictEqual(info, null);
+        } else {
+          assert.strictEqual(info.name, "НовоеИмя");
+        }
+        await deleteApp(app);
+      },
+    );
 
     it(
       isNew
@@ -164,9 +175,10 @@ function oldClientSuite(mode: RulesMode) {
         const pub = await adminGet(`${FIREBASE_USERS_PUBLIC}/${user.uid}`);
         if (isNew) {
           assert.strictEqual(local, false);
-          // The old client counts wins from usersPrivate/wongames, which it can
-          // not read any more. The new client writes the right count on its sync.
-          assert.strictEqual(pub.gamesWonCount, 0);
+          // The old client cannot read wongames or write gamesWonCount /
+          // info/name anymore. Seeded public data is left untouched.
+          assert.strictEqual(pub.gamesWonCount, 1);
+          assert.strictEqual(pub.info.name, "Старожил");
           assert.ok(pub.gamesWonProofs["Гладиатор"]["seed-g"], "proofs are not lost");
         } else {
           assert.ok(local && local["seed-g"]);

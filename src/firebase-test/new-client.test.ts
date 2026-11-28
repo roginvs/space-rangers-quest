@@ -351,14 +351,25 @@ describe("Firebase: new client on new rules", () => {
   });
 
   describe("rules", () => {
-    it("usersPublic: owner reads own node; nobody reads someone else's node or the list", async () => {
+    it("usersPublic: owner reads own proofs; info and gamesWonCount are closed; nobody reads someone else's node or the list", async () => {
       await seedOldClientPlayer("uid-alice", [{ gameName: "Феи", seed: "seed-a" }]);
       const aliceProof = `${FIREBASE_USERS_PUBLIC}/uid-alice/gamesWonProofs/Феи/seed-a`;
 
       const bobApp = createApp();
       const bob = await signUp(bobApp, "bob");
-      await rawSet(bobApp, `${FIREBASE_USERS_PUBLIC}/${bob.uid}/info/name`, "Боб");
-      assert.ok(await assertSucceeds(rawGet(bobApp, `${FIREBASE_USERS_PUBLIC}/${bob.uid}`)));
+      const bobPub = `${FIREBASE_USERS_PUBLIC}/${bob.uid}`;
+      await assertFails(rawSet(bobApp, `${bobPub}/info/name`, "Боб"));
+      await assertFails(rawSet(bobApp, `${bobPub}/gamesWonCount`, 1));
+      await assertSucceeds(
+        rawSet(bobApp, `${bobPub}/gamesWonProofs/Феи/s1`, {
+          ...sampleProof("s1"),
+          created: SV_NOW,
+        }),
+      );
+      assert.ok(await assertSucceeds(rawGet(bobApp, `${bobPub}/gamesWonProofs`)));
+      await assertFails(rawGet(bobApp, bobPub));
+      await assertFails(rawGet(bobApp, `${bobPub}/info`));
+      await assertFails(rawGet(bobApp, `${bobPub}/gamesWonCount`));
       await assertFails(rawGet(bobApp, `${FIREBASE_USERS_PUBLIC}/uid-alice`));
       await assertFails(rawGet(bobApp, `${FIREBASE_USERS_PUBLIC}/uid-alice/info`));
       await assertFails(rawGet(bobApp, `${FIREBASE_USERS_PUBLIC}/uid-alice/gamesWonProofs`));
@@ -402,11 +413,12 @@ describe("Firebase: new client on new rules", () => {
       await deleteApp(app);
     });
 
-    it("legacy wonProofs and usersPrivate/<uid>/wongames are closed even for the owner", async () => {
+    it("legacy wonProofs, wongames, info/name and gamesWonCount are closed even for the owner", async () => {
       const app = createApp();
       const user = await signUp(app, "alice");
       await seedOldClientPlayer(user.uid, [{ gameName: "Феи", seed: "seed-a" }]);
       const wongames = `${FIREBASE_USERS_PRIVATE}/${user.uid}/wongames`;
+      const pub = `${FIREBASE_USERS_PUBLIC}/${user.uid}`;
       await assertFails(rawGet(app, wongames));
       await assertFails(rawGet(app, `${wongames}/Феи/seed-a`));
       await assertFails(rawSet(app, `${wongames}/Феи/seed-new`, sampleProof("seed-new")));
@@ -431,7 +443,17 @@ describe("Firebase: new client on new rules", () => {
           userId: user.uid,
         }),
       );
+      await assertFails(rawGet(app, pub));
+      await assertFails(rawGet(app, `${pub}/info`));
+      await assertFails(rawGet(app, `${pub}/info/name`));
+      await assertFails(rawSet(app, `${pub}/info/name`, "Хакер"));
+      await assertFails(rawGet(app, `${pub}/gamesWonCount`));
+      await assertFails(rawSet(app, `${pub}/gamesWonCount`, 99));
+      assert.ok(await assertSucceeds(rawGet(app, `${pub}/gamesWonProofs`)));
       assert.ok(await adminGet(`${wongames}/Феи/seed-a`), "legacy data stays in the database");
+      assert.strictEqual(await adminGet(`${pub}/info/name`), "Старожил");
+      assert.strictEqual(await adminGet(`${pub}/gamesWonCount`), 1);
+      assert.ok(await adminGet(`${FIREBASE_PUBLIC_WON_PROOF}/seed-a`));
       await deleteApp(app);
     });
 

@@ -4,22 +4,46 @@
        where win proofs are stored and synced between devices. A proof is
        the full playthrough log (aleaSeed + every jump) plus the server
        "created" timestamp; it is written once and never overwritten.
-       The whole usersPublic/<uid> node is readable only by its owner and
-       nobody can list usersPublic. One proof is public by its exact path:
-       the champions row gives the uid, the quest and the seed, and Verify
-       downloads only that proof.
-       info/name and gamesWonCount are written only by the old client; the
-       current client keeps the name and the count in champions/<uid>. */
+       The owner can read their own gamesWonProofs tree; nobody can list
+       usersPublic. One proof is public by its exact path: the champions
+       row gives the uid, the quest and the seed, and Verify downloads
+       only that proof.
+
+       Until 2026 the whole usersPublic tree was public, for the old
+       leaderboard query orderByChild(gamesWonCount).limitToLast(100):
+         ".read": true,
+         ".indexOn": ["gamesWonCount"]
+       That query also downloaded every user's proofs and went over the
+       download limit, so the table had to be turned off. Those two
+       rules are disabled: the list is closed and the index now lives
+       on champions. The data in the database is kept for a possible
+       rollback. There is no .read on $uid itself, because a parent
+       grant would also open the disabled info and gamesWonCount
+       children. */
     "usersPublic": {
       "$uid": {
-        ".read": "$uid === auth.uid",
         "info": {
-          ".write": "$uid === auth.uid"
+          /* usersPublic/<uid>/info/name was the public ranger name
+             (August 2018, first championship table). The old client
+             wrote it from setOwnHighscoresName and from sync.
+             Disabled: the name now lives in champions/<uid>/name.
+             The old client is expected to break for a short window
+             while the new rules and the new site are deployed.
+             Data is kept in the database for a possible rollback. */
+          ".read": false,
+          ".write": false
         },
         "gamesWonCount": {
-          ".write": "$uid === auth.uid"
+          /* usersPublic/<uid>/gamesWonCount was the public win counter
+             used to sort the old leaderboard (August 2018). The old
+             client wrote it from updateFirebaseOwnHighscore.
+             Disabled: the count is now champions/<uid>/gamesWonCount.
+             Data is kept in the database for a possible rollback. */
+          ".read": false,
+          ".write": false
         },
         "gamesWonProofs": {
+          ".read": "$uid === auth.uid",
           "$gameName": {
             "$aleaSeed": {
               ".read": true,
@@ -32,14 +56,22 @@
     },
 
     /* usersPrivate/<uid> is the player's settings synced between devices
-       (config: ranger name, music, last played quest). Owner-only.
-       usersPrivate/<uid>/wongames is old data: earlier clients kept one
-       more copy of every win proof there. The current client does not use
-       it; the data is left in the database just in case. It has no rules,
-       so it is closed for reading and writing ($other does not match it). */
+       (config: ranger name, music, last played quest). Owner-only. */
     "usersPrivate": {
       "$uid": {
-        "wongames": {},
+        "wongames": {
+          /* usersPrivate/<uid>/wongames was a private copy of every win
+             proof, added in July 2018 to sync IndexedDB wins across
+             devices. Later the same proofs were also written to
+             usersPublic/gamesWonProofs and to wonProofs.
+             Disabled: the current client syncs proofs only from
+             usersPublic/gamesWonProofs. This named node stays here so
+             the $other wildcard does not match it and accidentally
+             reopen it for the owner. Data is kept in the database for
+             a possible rollback. */
+          ".read": false,
+          ".write": false
+        },
         "$other": {
           ".read": "$uid === auth.uid",
           ".write": "$uid === auth.uid"
@@ -59,10 +91,26 @@
       }
     },
 
-    /* wonProofs (a flat table of win proofs from an unfinished 2019
-       redesign) is old data too: not used by the current client, left in
-       the database just in case. No rules here, so it is closed for
-       reading and writing. */
+    "wonProofs": {
+      /* wonProofs was a flat public table of win proofs
+         (wonProofs/<seed> = {userId, gameName, proof, createdAt, ...}),
+         added in June 2019 as an unfinished redesign (champions.new,
+         #/logs). It was publicly readable and indexed on userId,
+         gameName and aleaSeed; a write had to be a new row with
+         userId === auth.uid and createdAt === now:
+           "$proofId": {
+             ".write": "newData.hasChild('userId') && newData.child('userId').val() === auth.uid && newData.hasChild('createdAt') && newData.child('createdAt').val() === now && ! newData.hasChild('validated')",
+             ".validate": "data.val() == null",
+             ".read": true
+           },
+           ".indexOn": ["userId", "gameName", "aleaSeed"],
+           ".read": true
+         Disabled: the current client does not use it, and the old
+         #/logs view is already off. Data is kept in the database for
+         a possible rollback. */
+      ".read": false,
+      ".write": false
+    },
 
     /* champions/<uid> is the public leaderboard row (no proofs):
          name          — ranger name

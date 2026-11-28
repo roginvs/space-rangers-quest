@@ -29,7 +29,8 @@ import { FirebaseCustomQuest } from "../editor/defs";
 /*
 Firebase rules are in database.rules.json, see the comments there.
 Win proofs are stored only in usersPublic/<uid>/gamesWonProofs/<quest>/<seed>.
-usersPrivate/<uid>/wongames and wonProofs are old data and are not used.
+usersPrivate/<uid>/wongames, wonProofs, usersPublic info/name and
+gamesWonCount are old data and are not used.
 */
 const INDEXEDDB_NAME = "spaceranges2";
 const INDEXEDDB_CONFIG_STORE_NAME = "config";
