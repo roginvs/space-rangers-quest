@@ -149,7 +149,7 @@ export class QuestInfo extends React.Component<
               {(() => {
                 // copy-paste from questList
                 if (passedQuest === undefined) {
-                  return <i className="text-muted fa fa-spin circle-o-notch" />;
+                  return <i className="text-muted fa fa-spin fa-circle-o-notch" />;
                 }
 
                 if (
