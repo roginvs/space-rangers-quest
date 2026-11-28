@@ -149,17 +149,19 @@ export class Store {
       return;
     }
     this.firebaseSyncing = true;
-    await this.db.syncWithFirebase();
+    try {
+      await this.db.syncWithFirebase();
 
-    // console.info: renew all cached values
-    const player = await this.db.getConfigLocal("player");
-    if (player) {
-      this.player = player;
+      // console.info: renew all cached values
+      const player = await this.db.getConfigLocal("player");
+      if (player) {
+        this.player = player;
+      }
+
+      await this.loadWinProofsFromLocal();
+    } finally {
+      this.firebaseSyncing = false;
     }
-
-    await this.loadWinProofsFromLocal();
-
-    this.firebaseSyncing = false;
   }
 
   lastQuestListScroll: number = 0;
