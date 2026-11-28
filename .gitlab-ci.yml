@@ -27,7 +27,7 @@ build:
   stage: build
   script:
     - rm -R built-web || true
-    - npm install --legacy-peer-deps
+    - npm ci
     - mkdir built-web
     - npm run prettier-check
     - npm run test
