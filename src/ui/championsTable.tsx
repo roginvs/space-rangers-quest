@@ -183,9 +183,9 @@ export class ChampionsTabContainer extends React.Component<
     const expanded = !!this.expandedUserIds.get(champion.userId);
     const visible = expanded ? names : names.slice(0, VISIBLE_GAME_NAMES);
     const hidden = names.length - visible.length;
-    const toggle = (e: React.SyntheticEvent) => {
+    const expand = (e: React.SyntheticEvent) => {
       e.preventDefault();
-      this.expandedUserIds.set(champion.userId, !expanded);
+      this.expandedUserIds.set(champion.userId, true);
     };
     return (
       <span className="champions-games">
@@ -195,17 +195,17 @@ export class ChampionsTabContainer extends React.Component<
             <a href={`#/quests/${gameName}`}>{gameName}</a>
           </span>
         ))}
-        {hidden > 0 || expanded ? (
+        {hidden > 0 ? (
           <>
             {" "}
             <span
               role="button"
               tabIndex={0}
               className="champions-more text-muted"
-              onClick={toggle}
-              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggle(e)}
+              onClick={expand}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && expand(e)}
             >
-              {expanded ? l.championsCollapse : l.championsAndMore.replace("{n}", String(hidden))}
+              {l.championsAndMore.replace("{n}", String(hidden))}
             </span>
           </>
         ) : null}

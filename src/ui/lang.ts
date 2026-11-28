@@ -123,7 +123,6 @@ const RUS = {
   championsFillHint: "Таблица пополняется, когда рейнджер входит в профиль",
   championsShownPrefix: "Загружено:",
   championsAndMore: "и ещё {n}",
-  championsCollapse: "свернуть",
 
   pwaInstallHeader: "Веб-приложение",
   pwaInstallInfoLink: "Нажми здесь",
@@ -264,7 +263,6 @@ const ENG: LangTexts = {
   championsFillHint: "The table is filled when a ranger signs in to their profile",
   championsShownPrefix: "Loaded:",
   championsAndMore: "and {n} more",
-  championsCollapse: "collapse",
 
   pwaInstallHeader: "Web application",
   pwaInstallInfoLink: "Click here",
