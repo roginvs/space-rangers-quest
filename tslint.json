@@ -20,6 +20,12 @@
     "no-unused-expression": [true],
     "no-use-before-declare": true,
     "object-literal-shorthand": true,
-    "prefer-const": true
+    "prefer-const": true,
+    "ban-imports": [
+      true,
+      {
+        "(^|/)editor(?:/index(?:\\.[jt]sx?)?)?$": "Quest editor must be loaded via dynamic import() in editorLazy.tsx"
+      }
+    ]
   }
 }

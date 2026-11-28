@@ -48,7 +48,7 @@ import { AboutTabContainer } from "./about";
 import { ChampionsTabContainer } from "./champions";
 import { firebaseConfig } from "./firebaseConfig";
 import { ChampionsTabContainerNew } from "./champions.new";
-import { EditorContainer } from "./editor";
+import { LazyEditorContainer as EditorContainer } from "./editorLazy";
 import { QuestPlayUserQuestController } from "./questPlayUserQuestController";
 import { GameStyleFrame } from "./menu/gameStyle";
 console.info(`Starting the app (buildAt=${new Date(__VERSION__).toISOString()})`);
