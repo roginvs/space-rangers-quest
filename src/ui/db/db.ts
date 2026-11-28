@@ -6,24 +6,25 @@ import { GameLog, GameState } from "../../lib/qmplayer/funcs";
 import { resolve } from "path";
 import {
   ConfigBoth,
-  FIREBASE_PUBLIC_WON_PROOF,
   FIREBASE_USERS_PRIVATE,
   WonProofs,
   GameWonProofs,
   FIREBASE_USERS_PUBLIC,
-  FirebasePublic,
   ConfigLocalOnly,
   FIREBASE_CUSTOM_QUESTS,
+  ChampionsCursor,
+  ChampionsPage,
 } from "./defs";
-import { WonProofTableRow } from "./defs";
+import { readOwnChampionGames, writeOwnChampionName, writeOwnChampionNode } from "./champions";
 import {
+  ProofsByGame,
   buildChampionPayload,
-  readOwnChampionGames,
-  writeOwnChampionName,
-  writeOwnChampionNode,
-} from "./champions";
-import { ProofsByGame, championGames, proofForLocal, proofsMissingIn } from "./proofs";
-import { ChampionsCursor, ChampionsPage, readChampionsPage } from "./championsPage";
+  championGames,
+  proofForLocal,
+  proofsMissingIn,
+  withTimeout,
+} from "./utils";
+import { readChampionsPage } from "./championsPage";
 import { FirebaseCustomQuest } from "../editor/defs";
 
 /*
@@ -32,6 +33,7 @@ Win proofs are stored only in usersPublic/<uid>/gamesWonProofs/<quest>/<seed>.
 usersPrivate/<uid>/wongames, wonProofs, usersPublic info/name and
 gamesWonCount are old data and are not used.
 */
+const FIREBASE_TIMEOUT_MS = 60000;
 const INDEXEDDB_NAME = "spaceranges2";
 const INDEXEDDB_CONFIG_STORE_NAME = "config";
 const INDEXEDDB_SAVED_STORE_NAME = "savedgames";
@@ -41,7 +43,6 @@ const INDEXEDDB_CUSTOM_SAVED_STORE_NAME = "customsavedgames";
 type FirebaseStoreType =
   | typeof FIREBASE_USERS_PRIVATE
   | typeof FIREBASE_USERS_PUBLIC
-  | typeof FIREBASE_PUBLIC_WON_PROOF
   | typeof FIREBASE_CUSTOM_QUESTS;
 // export interface GameLogDatabase extends GameLog {
 //   created: number;
@@ -358,40 +359,6 @@ export async function getDb(app: firebase.app.App) {
     }
   }
 
-  async function getFirebasePublicHighscores() {
-    firebaseGoOnline();
-    try {
-      const data = await new Promise<FirebasePublic[] | null>((resolve, reject) => {
-        const allUsersRef = app.database().ref(FIREBASE_USERS_PUBLIC);
-        allUsersRef
-          .orderByChild("gamesWonCount")
-          .limitToLast(100)
-          .once("value", (snapshot) => {
-            if (snapshot) {
-              const champions: FirebasePublic[] = [];
-              snapshot.forEach((champion) => {
-                champions.push({
-                  ...champion.val(),
-                  userId: champion.key,
-                });
-                return undefined; // Typescript needs this for some unknown reasons
-              });
-              resolve(champions.reverse());
-            } else {
-              resolve(null);
-            }
-          })
-          .catch((e) => reject(e));
-      });
-      return data;
-    } catch (e) {
-      console.warn(e);
-      return null;
-    } finally {
-      firebaseGoOffline();
-    }
-  }
-
   /*
     async function getLocalAndFirebase(storeName: string, key: string) {
         const localResult = await getLocal(storeName, key);
@@ -431,6 +398,7 @@ export async function getDb(app: firebase.app.App) {
     );
   }
 
+  // Used only for lastLocation, whose restore in index.tsx is disabled (commented out): no effect now
   async function setConfigLocal(key: keyof ConfigLocalOnly, value: ConfigLocalOnly[typeof key]) {
     debug(`setConfig key=${key} value=${JSON.stringify(value)}`);
     await setLocal(INDEXEDDB_CONFIG_STORE_NAME, key, value);
@@ -439,6 +407,7 @@ export async function getDb(app: firebase.app.App) {
   // async function getBoth<T extends keyof Config>(key: T): Promise<Config[T] | null> {
   //    return getLocalAndFirebase(INDEXEDDB_CONFIG_STORE_NAME, key);
   //}
+  // Reads any config from IndexedDB; synced keys are pulled there by syncWithFirebase
   async function getConfigLocal<T extends keyof ConfigBoth>(key: T): Promise<ConfigBoth[T] | null> {
     return getLocal(INDEXEDDB_CONFIG_STORE_NAME, key);
   }
@@ -446,30 +415,10 @@ export async function getDb(app: firebase.app.App) {
   async function firebaseOnline<T>(f: () => Promise<T>) {
     firebaseGoOnline();
     try {
-      return await f();
+      return await withTimeout(f(), FIREBASE_TIMEOUT_MS);
     } finally {
       firebaseGoOffline();
     }
-  }
-
-  /** Old flat table, closed by the rules. Used only by the hidden #/logs page */
-  async function getRemotePassings(userId?: string) {
-    /*
-
-store.app.database().goOnline();
-const firebaseUser = store.app.auth().currentUser;
-const FIREBASE_PUBLIC_WON_PROOF = 'wonProofs';
-
-(await store.app.database().ref("wonProofs").
-orderByChild('createdAt').once("value")).val();
-
-      */
-    return await firebaseOnline(async () => {
-      const ref = app.database().ref(FIREBASE_PUBLIC_WON_PROOF);
-      const query = userId ? ref.orderByChild("userId").equalTo(userId) : ref;
-      const data = (await query.once("value")).val() as Record<string, WonProofTableRow> | null;
-      return data;
-    });
   }
 
   /** One proof by its exact path, readable by anyone */
@@ -779,7 +728,6 @@ orderByChild('createdAt').once("value")).val();
     isGamePassedLocal,
     setGamePassing,
 
-    getFirebasePublicHighscores,
     getChampionsPage,
 
     saveGame,
@@ -790,7 +738,6 @@ orderByChild('createdAt').once("value")).val();
 
     setOwnHighscoresName,
 
-    getRemotePassings,
     getChampionProof,
 
     getAllMyCustomQuests,

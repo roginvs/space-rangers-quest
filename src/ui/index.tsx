@@ -48,7 +48,6 @@ import { AboutTabContainer } from "./about";
 import { ChampionsTabContainer } from "./championsTable";
 import { firebaseConfig } from "./firebaseConfig";
 import { connectFirebaseEmulatorsIfNeeded } from "./firebaseEmulator";
-import { ChampionsTabContainerNew } from "./champions.new";
 import { EditorContainer } from "./editor";
 import { QuestPlayUserQuestController } from "./questPlayUserQuestController";
 import { GameStyleFrame } from "./menu/gameStyle";
@@ -276,14 +275,6 @@ class MainLoader extends React.Component<{}> {
         <AppNavbar store={store}>
           <GameStyleFrame>
             <ChampionsTabContainer store={store} />
-          </GameStyleFrame>
-        </AppNavbar>
-      );
-    } else if (tab0 === "logs") {
-      return (
-        <AppNavbar store={store}>
-          <GameStyleFrame>
-            <ChampionsTabContainerNew store={store} />
           </GameStyleFrame>
         </AppNavbar>
       );

@@ -1,8 +1,16 @@
 import * as assert from "assert";
 import "mocha";
-import { championGames, proofForLocal, proofsMissingIn, proofTime } from "../ui/db/proofs";
-import { buildChampionPayload, championSeeds, gameNamesList } from "../ui/db/champions";
-import { verifyChampionGame } from "../ui/championsVerify";
+import {
+  buildChampionPayload,
+  championGames,
+  championSeeds,
+  gameNamesList,
+  proofForLocal,
+  proofsMissingIn,
+  proofTime,
+  verifyChampionGame,
+  withTimeout,
+} from "../ui/db/utils";
 import { observable } from "mobx";
 
 function proof(seed: string, finishedAt: number) {
@@ -89,5 +97,20 @@ describe("Champions: win proofs helpers", () => {
       async () => "validated",
     );
     assert.deepStrictEqual(none, { result: "failed", seed: null });
+  });
+});
+
+describe("Champions: withTimeout", () => {
+  it("passes the value and the error through", async () => {
+    assert.strictEqual(await withTimeout(Promise.resolve(5), 1000), 5);
+    await assert.rejects(withTimeout(Promise.reject(new Error("boom")), 1000), /boom/);
+  });
+
+  it("rejects when the promise never settles (dead network)", async () => {
+    const started = Date.now();
+    // tslint:disable-next-line:promise-must-complete
+    const hanging = new Promise<void>(() => undefined);
+    await assert.rejects(withTimeout(hanging, 30), /Timed out/);
+    assert.ok(Date.now() - started < 1000);
   });
 });

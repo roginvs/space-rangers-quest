@@ -111,18 +111,11 @@ const RUS = {
   builtAt: "Сборка",
   linkForBugreports: "Сообщения об ошибках можно оставлять в багтрекере Github-а или на Pikabu",
 
-  validatingInfo: "Прохождения проверяются, это займёт какое-то время",
-  validationComplete: "Проверка завершена. Показываются проверенные результаты",
-  championsDisabled: "Таблица чемпионов временно не работает из-за лимитов firebase",
   championName: "Имя рейнджера",
   championWonGames: "Пройдено квестов",
   championGameNames: "Список пройденных квестов",
   championNoName: "<Имя не задано>",
   validatingQuest: "Проверяем прохождение",
-  questValidationErrorsInfo:
-    "Есть ошибки валидации. Это означает что " +
-    "квест был пройден на старой браузерозависимой версии движка и нужно пройти этот квест еще раз",
-  championsTotal: "Загружено чемпионов:",
   championsLoading: "Загрузка списка чемпионов",
   championVerify: "Проверить",
   championVerifying: "Проверяем",
@@ -130,6 +123,7 @@ const RUS = {
   championsFillHint: "Таблица пополняется, когда рейнджер входит в профиль",
   championsShownPrefix: "Загружено:",
   championsAndMore: "и ещё {n}",
+  championsCollapse: "свернуть",
 
   pwaInstallHeader: "Веб-приложение",
   pwaInstallInfoLink: "Нажми здесь",
@@ -258,18 +252,11 @@ const ENG: LangTexts = {
   builtAt: "Built at",
   linkForBugreports: "You can add a bugreport into Github bug tracker or into Pikabu",
 
-  validatingInfo: "Quest game passing is validating. Please be patient",
-  validationComplete: "Validation is complete. Only validated results are shown now",
-  championsDisabled: "Championship table is temporarely disabled due to firebase limits",
   championName: "Ranger's name",
   championWonGames: "Amount of passed quests",
   championGameNames: "List of passed quests",
   championNoName: "<Name is not set>",
   validatingQuest: "Checking passing",
-  questValidationErrorsInfo:
-    "Validation errors are present. This means that " +
-    "the quest was passed using old brower-depend engine and it needs to be passed again",
-  championsTotal: "Loaded champions:",
   championsLoading: "Loading list of champions",
   championVerify: "Verify",
   championVerifying: "Verifying",
@@ -277,6 +264,7 @@ const ENG: LangTexts = {
   championsFillHint: "The table is filled when a ranger signs in to their profile",
   championsShownPrefix: "Loaded:",
   championsAndMore: "and {n} more",
+  championsCollapse: "collapse",
 
   pwaInstallHeader: "Web application",
   pwaInstallInfoLink: "Click here",

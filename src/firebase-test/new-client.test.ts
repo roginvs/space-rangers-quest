@@ -6,9 +6,8 @@ import {
   FIREBASE_USERS_PRIVATE,
   FIREBASE_USERS_PUBLIC,
 } from "../ui/db/defs";
-import { ChampionsPage } from "../ui/db/championsPage";
-import { championSeeds } from "../ui/db/champions";
-import { verifyChampionGame } from "../ui/championsVerify";
+import { ChampionsPage } from "../ui/db/defs";
+import { championSeeds, verifyChampionGame } from "../ui/db/utils";
 import {
   adminGet,
   adminSet,
@@ -333,16 +332,6 @@ describe("Firebase: new client on new rules", () => {
       assert.ok(page && page.rows.length === 1 && page.rows[0].userId === user.uid);
       assert.deepStrictEqual(page && page.rows[0].games, { Бомба: ["seed-pub"] });
       await deleteApp(anon);
-    });
-
-    it("old helpers are closed: getRemotePassings denied, getFirebasePublicHighscores null", async () => {
-      const app = createApp();
-      await signUp(app, "alice");
-      const db = await openDb(app);
-      await assertFails(db.getRemotePassings());
-      await assertFails(db.getRemotePassings(db.getMyUserId() || ""));
-      assert.strictEqual(await db.getFirebasePublicHighscores(), null);
-      await deleteApp(app);
     });
 
     it("customQuests: owner read/write, public quest readable by others", async () => {

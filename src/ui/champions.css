@@ -22,6 +22,17 @@
   text-decoration: none;
 }
 
+/* The "and N more" toggle looks like the dim text, brightens like the links */
+.champions-more {
+  cursor: pointer;
+  user-select: none;
+}
+.champions-more:hover,
+.champions-more:focus {
+  color: #dadada;
+  outline: none;
+}
+
 .champions-sentinel {
   height: 1px;
   width: 100%;

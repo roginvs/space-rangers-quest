@@ -4,12 +4,10 @@ import { Loader, DivFadeinCss } from "./common";
 import { observer } from "mobx-react";
 import { observable, ObservableMap } from "mobx";
 import { Store } from "./store";
-import { ChampionPublic } from "./db/defs";
+import { ChampionPublic, ChampionsCursor } from "./db/defs";
 import { DATA_DIR } from "./consts";
 import { WorkerPromise } from "./worker";
-import { championSeeds, gameNamesList } from "./db/champions";
-import { verifyChampionGame } from "./championsVerify";
-import { ChampionsCursor } from "./db/championsPage";
+import { championSeeds, gameNamesList, verifyChampionGame } from "./db/utils";
 import { NearBottomSentinel } from "./nearBottomSentinel";
 
 import "./champions.css";
@@ -21,7 +19,7 @@ interface VerifyState {
   games: { gameName: string; validateStatus: QuestValidateStatus }[];
 }
 
-const VISIBLE_GAME_NAMES = 6;
+const VISIBLE_GAME_NAMES = 10;
 
 @observer
 export class ChampionsTabContainer extends React.Component<
@@ -35,6 +33,10 @@ export class ChampionsTabContainer extends React.Component<
 
   @observable
   verifyByUserId: ObservableMap<string, VerifyState> = observable.map();
+
+  /** Rows whose full list of quests is shown instead of the first VISIBLE_GAME_NAMES */
+  @observable
+  expandedUserIds: ObservableMap<string, boolean> = observable.map();
 
   @observable
   hasMore = false;
@@ -178,8 +180,13 @@ export class ChampionsTabContainer extends React.Component<
     }
 
     const names = gameNamesList(champion);
-    const visible = names.slice(0, VISIBLE_GAME_NAMES);
+    const expanded = !!this.expandedUserIds.get(champion.userId);
+    const visible = expanded ? names : names.slice(0, VISIBLE_GAME_NAMES);
     const hidden = names.length - visible.length;
+    const toggle = (e: React.SyntheticEvent) => {
+      e.preventDefault();
+      this.expandedUserIds.set(champion.userId, !expanded);
+    };
     return (
       <span className="champions-games">
         {visible.map((gameName, idx) => (
@@ -188,8 +195,19 @@ export class ChampionsTabContainer extends React.Component<
             <a href={`#/quests/${gameName}`}>{gameName}</a>
           </span>
         ))}
-        {hidden > 0 ? (
-          <span className="text-muted"> {l.championsAndMore.replace("{n}", String(hidden))}</span>
+        {hidden > 0 || expanded ? (
+          <>
+            {" "}
+            <span
+              role="button"
+              tabIndex={0}
+              className="champions-more text-muted"
+              onClick={toggle}
+              onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggle(e)}
+            >
+              {expanded ? l.championsCollapse : l.championsAndMore.replace("{n}", String(hidden))}
+            </span>
+          </>
         ) : null}
       </span>
     );

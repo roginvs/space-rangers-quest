@@ -52,3 +52,14 @@ export interface ChampionRecord {
 export interface ChampionPublic extends ChampionRecord {
   userId: string;
 }
+
+export interface ChampionsCursor {
+  gamesWonCount: number;
+  userId: string;
+}
+
+export interface ChampionsPage {
+  rows: ChampionPublic[];
+  cursor: ChampionsCursor | null;
+  hasMore: boolean;
+}

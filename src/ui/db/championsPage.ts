@@ -1,18 +1,7 @@
 import firebase from "firebase/app";
-import { FIREBASE_CHAMPIONS, ChampionPublic } from "./defs";
+import { FIREBASE_CHAMPIONS, ChampionPublic, ChampionsCursor, ChampionsPage } from "./defs";
 
 export const CHAMPIONS_PAGE_SIZE = 50;
-
-export interface ChampionsCursor {
-  gamesWonCount: number;
-  userId: string;
-}
-
-export interface ChampionsPage {
-  rows: ChampionPublic[];
-  cursor: ChampionsCursor | null;
-  hasMore: boolean;
-}
 
 /**
  * One descending page of the public champions leaderboard.
