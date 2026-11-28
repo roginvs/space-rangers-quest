@@ -5,6 +5,7 @@ import {
   championGames,
   championSeeds,
   gameNamesList,
+  knownGameNamesList,
   proofForLocal,
   proofsMissingIn,
   proofTime,
@@ -58,6 +59,15 @@ describe("Champions: win proofs helpers", () => {
       updatedAt: 7,
     });
     assert.deepStrictEqual(gameNamesList(payload), ["Бомба", "Феи"]);
+  });
+
+  it("knownGameNamesList drops quests missing from the index and keeps the sort", () => {
+    const record = { games: { IT95: ["a"], Бомба: ["b"], Феи: ["c"] } };
+    const known = new Set(["Феи", "Бомба"]);
+    assert.deepStrictEqual(knownGameNamesList(record, known), ["Бомба", "Феи"]);
+    assert.strictEqual(knownGameNamesList(record, known).length, 2);
+    assert.deepStrictEqual(knownGameNamesList({ games: { IT95: ["a"] } }, known), []);
+    assert.deepStrictEqual(knownGameNamesList({}, known), []);
   });
 
   it("championSeeds reads arrays and array-like objects, ignores junk", () => {

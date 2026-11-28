@@ -7,7 +7,7 @@ import { Store } from "./store";
 import { ChampionPublic, ChampionsCursor } from "./db/defs";
 import { DATA_DIR } from "./consts";
 import { WorkerPromise } from "./worker";
-import { championSeeds, gameNamesList, verifyChampionGame } from "./db/utils";
+import { championSeeds, knownGameNamesList, verifyChampionGame } from "./db/utils";
 import { NearBottomSentinel } from "./nearBottomSentinel";
 
 import "./champions.css";
@@ -47,6 +47,11 @@ export class ChampionsTabContainer extends React.Component<
   private cursor: ChampionsCursor | null = null;
   private loadInFlight = false;
   private firstPageLoaded = false;
+
+  /** QMM index names; unknown quests in a champions row are not shown or verified */
+  private knownQuestNames(): Set<string> {
+    return new Set(this.props.store.index.quests.map((q) => q.gameName));
+  }
 
   private mounted = false;
   private readonly worker: WorkerPromise = new WorkerPromise("worker.js");
@@ -113,7 +118,7 @@ export class ChampionsTabContainer extends React.Component<
     if (existing && existing.status === "running") {
       return;
     }
-    const initialGames = gameNamesList(champion).map((gameName) => ({
+    const initialGames = knownGameNamesList(champion, this.knownQuestNames()).map((gameName) => ({
       gameName,
       validateStatus: "unknown" as QuestValidateStatus,
     }));
@@ -179,7 +184,7 @@ export class ChampionsTabContainer extends React.Component<
       });
     }
 
-    const names = gameNamesList(champion);
+    const names = knownGameNamesList(champion, this.knownQuestNames());
     const expanded = !!this.expandedUserIds.get(champion.userId);
     const visible = expanded ? names : names.slice(0, VISIBLE_GAME_NAMES);
     const hidden = names.length - visible.length;
@@ -256,7 +261,9 @@ export class ChampionsTabContainer extends React.Component<
                 <tr key={champion.userId} className={itIsYou ? "champions-you" : undefined}>
                   <td className="name">{itIsYou ? <b>{name}</b> : name}</td>
                   <td className="count" data-label={l.championWonGames + ":"}>
-                    <span className="game-menu-row-passed">{champion.gamesWonCount}</span>
+                    <span className="game-menu-row-passed">
+                      {knownGameNamesList(champion, this.knownQuestNames()).length}
+                    </span>
                   </td>
                   <td className="games">{this.renderGameNames(champion, verify)}</td>
                   <td className="verify">
