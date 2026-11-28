@@ -4,7 +4,7 @@ import { LangTexts } from "./lang";
 import { Progress } from "reactstrap";
 
 import { observer } from "mobx-react";
-import { observable, computed } from "mobx";
+import { observable, computed, ObservableMap } from "mobx";
 import { Store } from "./store";
 import { ChampionPublic, FirebasePublic, GameWonProofs, WonProofTableRow } from "./db/defs";
 import { DATA_DIR } from "./consts";
@@ -66,7 +66,7 @@ export class ChampionsTabContainer extends React.Component<
   champions: ChampionPublic[] | null | undefined = undefined;
 
   @observable
-  verifyByUserId: { [userId: string]: VerifyState } = {};
+  verifyByUserId: ObservableMap<string, VerifyState> = observable.map();
 
   @observable
   hasMore = false;
@@ -139,7 +139,7 @@ export class ChampionsTabContainer extends React.Component<
   }
 
   async verifyPlayer(champion: ChampionPublic) {
-    const existing = this.verifyByUserId[champion.userId];
+    const existing = this.verifyByUserId.get(champion.userId);
     if (existing && existing.status === "running") {
       return;
     }
@@ -147,7 +147,7 @@ export class ChampionsTabContainer extends React.Component<
       gameName,
       validateStatus: "unknown" as QuestValidateStatus,
     }));
-    this.verifyByUserId[champion.userId] = { status: "running", games: initialGames };
+    this.verifyByUserId.set(champion.userId, { status: "running", games: initialGames });
 
     try {
       const proofs = await this.props.store.db.getRemotePassings(champion.userId);
@@ -159,7 +159,7 @@ export class ChampionsTabContainer extends React.Component<
         gameName,
         validateStatus: "unknown" as QuestValidateStatus,
       }));
-      this.verifyByUserId[champion.userId] = { status: "running", games };
+      this.verifyByUserId.set(champion.userId, { status: "running", games });
 
       for (const gameInfo of games) {
         const game = this.props.store.index.quests.find((x) => x.gameName === gameInfo.gameName);
@@ -184,12 +184,12 @@ export class ChampionsTabContainer extends React.Component<
         }
       }
       if (this.mounted) {
-        this.verifyByUserId[champion.userId] = { status: "done", games };
+        this.verifyByUserId.set(champion.userId, { status: "done", games });
       }
     } catch (e) {
       console.warn(e);
       if (this.mounted) {
-        this.verifyByUserId[champion.userId] = { status: "done", games: initialGames };
+        this.verifyByUserId.set(champion.userId, { status: "done", games: initialGames });
       }
     }
   }
@@ -271,7 +271,7 @@ export class ChampionsTabContainer extends React.Component<
           </thead>
           <tbody>
             {champions.map((champion) => {
-              const verify = this.verifyByUserId[champion.userId];
+              const verify = this.verifyByUserId.get(champion.userId);
               const itIsYou =
                 !!store.firebaseLoggedIn && champion.userId === store.firebaseLoggedIn.uid;
               const name = champion.name || l.championNoName;
