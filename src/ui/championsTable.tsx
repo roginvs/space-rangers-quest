@@ -202,7 +202,7 @@ export class ChampionsTabContainer extends React.Component<
 
     if (champions === undefined) {
       return (
-        <DivFadeinCss key="champions" className="text-center">
+        <DivFadeinCss key="champions" className="text-center container my-3">
           <Loader text={l.championsLoading} />
         </DivFadeinCss>
       );
@@ -210,15 +210,15 @@ export class ChampionsTabContainer extends React.Component<
 
     if (!champions || champions.length === 0) {
       return (
-        <DivFadeinCss key="champions" className="text-center">
+        <DivFadeinCss key="champions" className="text-center container my-3">
           <div className="alert alert-primary">{l.championsEmpty}</div>
-          <p className="champions-note">{l.championsFillHint}</p>
+          <p className="text-muted my-3">{l.championsFillHint}</p>
         </DivFadeinCss>
       );
     }
 
     return (
-      <DivFadeinCss key="champions" className="text-center">
+      <DivFadeinCss key="champions" className="text-center container my-3">
         <table className="table champions-table">
           <thead>
             <tr>
@@ -239,7 +239,7 @@ export class ChampionsTabContainer extends React.Component<
                 <tr key={champion.userId} className={itIsYou ? "champions-you" : undefined}>
                   <td className="name">{itIsYou ? <b>{name}</b> : name}</td>
                   <td className="count" data-label={l.championWonGames + ":"}>
-                    <span className="champions-count">{champion.gamesWonCount}</span>
+                    <span className="game-menu-row-passed">{champion.gamesWonCount}</span>
                   </td>
                   <td className="games">{this.renderGameNames(champion, verify)}</td>
                   <td className="verify">
@@ -268,11 +268,11 @@ export class ChampionsTabContainer extends React.Component<
           onNearBottom={() => this.loadMore()}
         />
         {this.loadingMore ? (
-          <p className="champions-note">
+          <p className="text-muted my-3">
             <i className="fa fa-spin fa-spinner" /> {l.championsLoading}
           </p>
         ) : null}
-        <p className="champions-note">
+        <p className="text-muted my-3">
           {l.championsShownPrefix} {champions.length}
           <br />
           {l.championsFillHint}
