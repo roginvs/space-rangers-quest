@@ -280,10 +280,7 @@ export async function getDb(app: firebase.app.App) {
       if (targetUserId) {
         const fullRefPath = `${store}/${targetUserId}/${userPath}`;
         debug(`Firebase SET fullRefPath=${fullRefPath} value=${JSON.stringify(value)}`);
-        const setResult = await Promise.race([
-          app.database().ref(fullRefPath).set(value),
-          new Promise<void>((r) => setTimeout(r, 60000)).then(() => Promise.reject("Timed out")),
-        ]);
+        await withTimeout(app.database().ref(fullRefPath).set(value), FIREBASE_TIMEOUT_MS);
       }
     } catch (e) {
       console.error(`Error with firebase: `, e);
@@ -303,7 +300,7 @@ export async function getDb(app: firebase.app.App) {
   ) {
     try {
       firebaseGoOnline();
-      const firebaseResult = await Promise.race([
+      const firebaseResult = await withTimeout(
         new Promise<any | null>((resolve, reject) => {
           const targetUserId = userId || (firebaseUser ? firebaseUser.uid : null);
           targetUserId
@@ -327,10 +324,8 @@ export async function getDb(app: firebase.app.App) {
                 )
             : resolve(null);
         }),
-        new Promise<null>((r) => setTimeout(() => r(null), 60000)).then(() =>
-          Promise.reject("Firebase read timeout"),
-        ),
-      ]);
+        FIREBASE_TIMEOUT_MS,
+      );
 
       return firebaseResult;
     } catch (e) {
