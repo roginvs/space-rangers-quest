@@ -24,7 +24,7 @@ class StorageUsedInfo extends React.Component<
   componentWillMount() {
     this.timer = window.setInterval(this.updateInfo, 1000);
   }
-  componendWillUnmount() {
+  componentWillUnmount() {
     clearInterval(this.timer);
   }
   updateInfo = () => {
