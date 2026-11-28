@@ -79,6 +79,8 @@ pages:
     # only its artifacts, so it is enough to override its script
     - job: build
       artifacts: true
+    - job: firebase-rules
+      artifacts: false
   script:
     - rm -rf public
     - mv built-web public
