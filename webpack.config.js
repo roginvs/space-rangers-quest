@@ -92,6 +92,23 @@ const config = (env, argv) => {
         },
 
         {
+          // bezier-js is published as ES2015, IE11 needs it to be transpiled
+          test: /\.c?js$/,
+          include: /node_modules[\\/]bezier-js[\\/]/,
+          loader: "ts-loader",
+          options: {
+            transpileOnly: true,
+            compilerOptions: {
+              allowJs: true,
+              target: "es5",
+              downlevelIteration: true,
+              module: "ESNext",
+              moduleResolution: "node",
+            },
+          },
+        },
+
+        {
           test: /\.css$/,
           use: [MiniCssExtractPlugin.loader, "css-loader"],
         },

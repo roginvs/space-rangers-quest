@@ -17,7 +17,7 @@ jobs:
           node-version: "24"
           cache: npm
 
-      - run: npm ci --legacy-peer-deps
+      - run: npm ci
 
       # GitHub does not contain the quest files that GitLab keeps in-repo
       # (borrowed/qm is gitignored here). Empty dirs let the borrowed-quest
