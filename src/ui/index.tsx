@@ -45,15 +45,18 @@ import { QuestInfo } from "./questInfo";
 import { Store } from "./store";
 import { QuestPlayController } from "./questPlayController";
 import { AboutTabContainer } from "./about";
-import { ChampionsTabContainer } from "./champions";
+import { ChampionsTabContainer } from "./championsTable";
 import { firebaseConfig } from "./firebaseConfig";
-import { ChampionsTabContainerNew } from "./champions.new";
+import { connectFirebaseEmulatorsIfNeeded } from "./firebaseEmulator";
 import { EditorContainer } from "./editor";
 import { QuestPlayUserQuestController } from "./questPlayUserQuestController";
 import { GameStyleFrame } from "./menu/gameStyle";
 console.info(`Starting the app (buildAt=${new Date(__VERSION__).toISOString()})`);
 
 const app = firebase.initializeApp(firebaseConfig);
+if (process.env.NODE_ENV !== "production") {
+  connectFirebaseEmulatorsIfNeeded(app);
+}
 // const app = firebase.initializeApp({} as typeof config);
 
 function debug(...args: any) {
@@ -272,14 +275,6 @@ class MainLoader extends React.Component<{}> {
         <AppNavbar store={store}>
           <GameStyleFrame>
             <ChampionsTabContainer store={store} />
-          </GameStyleFrame>
-        </AppNavbar>
-      );
-    } else if (tab0 === "logs") {
-      return (
-        <AppNavbar store={store}>
-          <GameStyleFrame>
-            <ChampionsTabContainerNew store={store} />
           </GameStyleFrame>
         </AppNavbar>
       );

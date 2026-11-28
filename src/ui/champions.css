@@ -1,6 +1,81 @@
-@keyframes champions-blinker {  
-    50% { opacity: 0.3; }
-}  
+@keyframes champions-blinker {
+  50% {
+    opacity: 0.3;
+  }
+}
 .champions-blink {
-    animation: champions-blinker 0.5s linear infinite;
+  animation: champions-blinker 0.5s linear infinite;
+}
+
+/* Own row: same accent as .game-menu-row-passed, at low opacity */
+.champions-you td {
+  background-color: rgba(255, 216, 99, 0.07);
+}
+
+.champions-table .count .game-menu-row-passed {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hover matches .game-menu-row a:hover in gameMenu.css */
+.champions-table .games a:hover {
+  color: #dadada;
+  text-decoration: none;
+}
+
+/* The "and N more" toggle looks like the dim text, brightens like the links */
+.champions-more {
+  cursor: pointer;
+  user-select: none;
+}
+.champions-more:hover,
+.champions-more:focus {
+  color: #dadada;
+  outline: none;
+}
+
+.champions-sentinel {
+  height: 1px;
+  width: 100%;
+}
+
+@media (max-width: 767px) {
+  .champions-table thead {
+    display: none;
+  }
+  .champions-table,
+  .champions-table tbody,
+  .champions-table tr,
+  .champions-table td {
+    display: block;
+    width: 100%;
+    border: 0;
+  }
+  .champions-table tr {
+    border-bottom: 1px solid #555555;
+    padding: 0.7rem 0;
+  }
+  .champions-table tr:last-child {
+    border-bottom: 0;
+  }
+  .champions-table td.name {
+    font-size: 1.05rem;
+    padding-bottom: 0.15rem;
+  }
+  .champions-table td.count {
+    padding-top: 0;
+    padding-bottom: 0.35rem;
+  }
+  /* Label uses the same dim colour as .text-muted in gameMenu.css */
+  .champions-table td.count::before {
+    content: attr(data-label);
+    color: #60696b;
+    margin-right: 0.35rem;
+  }
+  .champions-table td.games {
+    padding-top: 0;
+    overflow-wrap: anywhere;
+  }
+  .champions-table td.verify {
+    padding-top: 0.45rem;
+  }
 }

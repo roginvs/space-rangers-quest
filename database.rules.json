@@ -1,0 +1,152 @@
+{
+  "rules": {
+    /* usersPublic/<uid>/gamesWonProofs/<quest>/<seed> is the only place
+       where win proofs are stored and synced between devices. A proof is
+       the full playthrough log (aleaSeed + every jump) plus the server
+       "created" timestamp; it is written once and never overwritten.
+       The owner can read their own gamesWonProofs tree; nobody can list
+       usersPublic. One proof is public by its exact path: the champions
+       row gives the uid, the quest and the seed, and Verify downloads
+       only that proof.
+
+       Until 2026 the whole usersPublic tree was public, for the old
+       leaderboard query orderByChild(gamesWonCount).limitToLast(100):
+         ".read": true,
+         ".indexOn": ["gamesWonCount"]
+       That query also downloaded every user's proofs and went over the
+       download limit, so the table had to be turned off. Those two
+       rules are disabled: the list is closed and the index now lives
+       on champions. The data in the database is kept for a possible
+       rollback. There is no .read on $uid itself, because a parent
+       grant would also open the disabled info and gamesWonCount
+       children. */
+    "usersPublic": {
+      "$uid": {
+        "info": {
+          /* usersPublic/<uid>/info/name was the public ranger name
+             (August 2018, first championship table). The old client
+             wrote it from setOwnHighscoresName and from sync.
+             Disabled: the name now lives in champions/<uid>/name.
+             The old client is expected to break for a short window
+             while the new rules and the new site are deployed.
+             Data is kept in the database for a possible rollback. */
+          ".read": false,
+          ".write": false
+        },
+        "gamesWonCount": {
+          /* usersPublic/<uid>/gamesWonCount was the public win counter
+             used to sort the old leaderboard (August 2018). The old
+             client wrote it from updateFirebaseOwnHighscore.
+             Disabled: the count is now champions/<uid>/gamesWonCount.
+             Data is kept in the database for a possible rollback. */
+          ".read": false,
+          ".write": false
+        },
+        "gamesWonProofs": {
+          ".read": "$uid === auth.uid",
+          "$gameName": {
+            "$aleaSeed": {
+              ".read": true,
+              ".write": "$uid === auth.uid",
+              ".validate": "newData.hasChild('created') && newData.child('created').val() === now && data.val() === null"
+            }
+          }
+        }
+      }
+    },
+
+    /* usersPrivate/<uid> is the player's settings synced between devices
+       (config: ranger name, music, last played quest). Owner-only. */
+    "usersPrivate": {
+      "$uid": {
+        "wongames": {
+          /* usersPrivate/<uid>/wongames was a private copy of every win
+             proof, added in July 2018 to sync IndexedDB wins across
+             devices. Later the same proofs were also written to
+             usersPublic/gamesWonProofs and to wonProofs.
+             Disabled: the current client syncs proofs only from
+             usersPublic/gamesWonProofs. This named node stays here so
+             the $other wildcard does not match it and accidentally
+             reopen it for the owner. Data is kept in the database for
+             a possible rollback. */
+          ".read": false,
+          ".write": false
+        },
+        "$other": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid"
+        }
+      }
+    },
+
+    /* customQuests is unchanged. A user can read and write their own
+       custom quests; anyone can read a quest marked isPublic. */
+    "customQuests": {
+      "$user_id": {
+        ".read": "$user_id === auth.uid",
+        "$quest_name": {
+          ".write": "$user_id === auth.uid",
+          ".read": "$user_id === auth.uid || data.child('isPublic').val() == true"
+        }
+      }
+    },
+
+    "wonProofs": {
+      /* wonProofs was a flat public table of win proofs
+         (wonProofs/<seed> = {userId, gameName, proof, createdAt, ...}),
+         added in June 2019 as an unfinished redesign (champions.new,
+         #/logs). It was publicly readable and indexed on userId,
+         gameName and aleaSeed; a write had to be a new row with
+         userId === auth.uid and createdAt === now:
+           "$proofId": {
+             ".write": "newData.hasChild('userId') && newData.child('userId').val() === auth.uid && newData.hasChild('createdAt') && newData.child('createdAt').val() === now && ! newData.hasChild('validated')",
+             ".validate": "data.val() == null",
+             ".read": true
+           },
+           ".indexOn": ["userId", "gameName", "aleaSeed"],
+           ".read": true
+         Disabled: the current client does not use it, and the old
+         #/logs view is already off. Data is kept in the database for
+         a possible rollback. */
+      ".read": false,
+      ".write": false
+    },
+
+    /* champions/<uid> is the public leaderboard row (no proofs):
+         name          — ranger name
+         gamesWonCount — number of quests in "games"
+         games/<quest> — array of seeds of won games (oldest first); Verify
+                         takes them from the end and reads
+                         usersPublic/<uid>/gamesWonProofs/<quest>/<seed>
+         updatedAt     — must be the server timestamp
+       Public read, owner write. Extra fields are rejected. */
+    "champions": {
+      ".read": true,
+      ".indexOn": ["gamesWonCount"],
+      "$uid": {
+        ".write": "$uid === auth.uid",
+        ".validate": "newData.hasChildren(['name', 'gamesWonCount', 'games', 'updatedAt'])",
+        "name": {
+          ".validate": "newData.isString()"
+        },
+        "gamesWonCount": {
+          ".validate": "newData.isNumber() && newData.val() >= 0"
+        },
+        "games": {
+          "$gameName": {
+            ".validate": "newData.hasChildren()",
+            "$index": {
+              ".validate": "newData.isString()"
+            }
+          }
+        },
+        "updatedAt": {
+          ".validate": "newData.val() === now"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}

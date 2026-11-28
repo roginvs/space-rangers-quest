@@ -51,6 +51,29 @@ build:
     paths:
       - built-web
 
+
+# Firebase Auth + RTDB emulator tests (rules and db.ts flows).
+# Separate from `build` so the site job does not depend on Java or emulator binaries.
+firebase-rules:
+  stage: test
+  needs: []
+  # GitLab caches only paths inside the project: keep npm and the emulator
+  # jars (firebase-tools uses $XDG_CACHE_HOME/firebase) there
+  variables:
+    XDG_CACHE_HOME: "$CI_PROJECT_DIR/.cache"
+    npm_config_cache: "$CI_PROJECT_DIR/.npm"
+  cache:
+    key: firebase-emulators
+    paths:
+      - .cache/firebase
+      - .npm
+  before_script:
+    - apt-get update -qq
+    - apt-get install -y --no-install-recommends default-jre-headless
+    - npm ci
+  script:
+    - npm run test:firebase
+
 # Deploys the build above. Needs allows this job to download artifacts of any
 # previous job without being limited by stages, see
 # https://docs.gitlab.com/ci/yaml/needs/
@@ -61,6 +84,8 @@ pages:
     # only its artifacts, so it is enough to override its script
     - job: build
       artifacts: true
+    - job: firebase-rules
+      artifacts: false
   script:
     - rm -rf public
     - mv built-web public

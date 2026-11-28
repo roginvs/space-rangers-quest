@@ -53,7 +53,8 @@
     "typestrict": "0.0.9",
     "webpack": "^4.34.0",
     "webpack-cli": "^3.3.4",
-    "webpack-dev-server": "^3.11.3"
+    "webpack-dev-server": "^3.11.3",
+    "fake-indexeddb": "^4.0.2"
   },
   "scripts": {
     "tsc": "tsc",
@@ -62,7 +63,9 @@
     "prettier-check": "prettier --list-different \"src/**/*.ts*(x)\"",
     "build": "NODE_OPTIONS=--openssl-legacy-provider webpack --mode production --devtool source-map --progress",
     "start": "NODE_OPTIONS=--openssl-legacy-provider webpack-dev-server --mode development --open --devtool cheap-module-source-map",
-    "pack-game-data": "ts-node src/packGameData/packGameData.ts"
+    "pack-game-data": "ts-node src/packGameData/packGameData.ts",
+    "test:firebase": "npx --yes firebase-tools@13.35.1 emulators:exec --only auth,database --project test-project-5f054 \"npm run test:firebase:mocha\"",
+    "test:firebase:mocha": "mocha --require ts-node/register --timeout 60000 --bail --exit \"src/firebase-test/**/*.test.ts\""
   },
   "repository": {
     "type": "git",
