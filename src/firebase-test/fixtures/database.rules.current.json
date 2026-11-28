@@ -1,3 +1,4 @@
+/* DELETE AFTER DEPLOY: the rules that are live before this PR */
 {
   "rules": {
     "usersPublic": {

@@ -1,11 +1,15 @@
 {
   "rules": {
-    /* usersPublic is "public" only by name: the old champions table listed
-       everyone with orderByChild("gamesWonCount").limitToLast(100).
-       Each user node also stores gamesWonProofs — full playthrough logs
-       (every jump). That query therefore downloaded megabytes and exposed
-       the whole tree. Read is now owner-only. The public leaderboard is
-       the thin "champions" node below. */
+    /* usersPublic/<uid>/gamesWonProofs/<quest>/<seed> is the only place
+       where win proofs are stored and synced between devices. A proof is
+       the full playthrough log (aleaSeed + every jump) plus the server
+       "created" timestamp; it is written once and never overwritten.
+       The whole usersPublic/<uid> node is readable only by its owner and
+       nobody can list usersPublic. One proof is public by its exact path:
+       the champions row gives the uid, the quest and the seed, and Verify
+       downloads only that proof.
+       info/name and gamesWonCount are written only by the old client; the
+       current client keeps the name and the count in champions/<uid>. */
     "usersPublic": {
       "$uid": {
         ".read": "$uid === auth.uid",
@@ -18,24 +22,28 @@
         "gamesWonProofs": {
           "$gameName": {
             "$aleaSeed": {
+              ".read": true,
               ".write": "$uid === auth.uid",
               ".validate": "newData.hasChild('created') && newData.child('created').val() === now && data.val() === null"
             }
           }
         }
-      },
-      ".indexOn": ["gamesWonCount"]
+      }
     },
 
-    /* usersPrivate holds the signed-in player's personal data, synced
-       across devices: config (ranger name, language, options) and
-       wongames (private copies of win proofs). It is not a public list.
-       Read and write are owner-only. Previously .read was true on $uid,
-       so anyone who knew a uid could read that user's private node. */
+    /* usersPrivate/<uid> is the player's settings synced between devices
+       (config: ranger name, music, last played quest). Owner-only.
+       usersPrivate/<uid>/wongames is old data: earlier clients kept one
+       more copy of every win proof there. The current client does not use
+       it; the data is left in the database just in case. It has no rules,
+       so it is closed for reading and writing ($other does not match it). */
     "usersPrivate": {
       "$uid": {
-        ".write": "$uid === auth.uid",
-        ".read": "$uid === auth.uid"
+        "wongames": {},
+        "$other": {
+          ".read": "$uid === auth.uid",
+          ".write": "$uid === auth.uid"
+        }
       }
     },
 
@@ -51,42 +59,37 @@
       }
     },
 
-    /* wonProofs is a flat table of win proofs, indexed by userId.
-       Public read is allowed only for a bounded query:
-       orderByChild("userId") and equalTo(<uid>) — one player at a time
-       (own sync, or Verify on a champion). An unfiltered read of the
-       whole tree is denied. A player may write only their own new proof
-       with a server timestamp and without a "validated" field. */
-    "wonProofs": {
-      ".indexOn": ["userId", "gameName", "aleaSeed"],
-      ".read": "query.orderByChild === 'userId' && query.equalTo !== null",
-      "$proofId": {
-        ".write": "newData.hasChild('userId') && newData.child('userId').val() === auth.uid && newData.hasChild('createdAt') && newData.child('createdAt').val() === now && ! newData.hasChild('validated')",
-        ".validate": "data.val() == null"
-      }
-    },
+    /* wonProofs (a flat table of win proofs from an unfinished 2019
+       redesign) is old data too: not used by the current client, left in
+       the database just in case. No rules here, so it is closed for
+       reading and writing. */
 
-    /* champions is the thin public leaderboard (no proofs).
-       name — ranger display name
-       gamesWonCount — how many quests this player has passed
-       gameNames — map of quest name -> true (the list shown in the table)
-       updatedAt — must be the server timestamp
-       Written by the owner on sync or win. Extra fields are rejected. */
+    /* champions/<uid> is the public leaderboard row (no proofs):
+         name          — ranger name
+         gamesWonCount — number of quests in "games"
+         games/<quest> — array of seeds of won games (oldest first); Verify
+                         takes them from the end and reads
+                         usersPublic/<uid>/gamesWonProofs/<quest>/<seed>
+         updatedAt     — must be the server timestamp
+       Public read, owner write. Extra fields are rejected. */
     "champions": {
       ".read": true,
       ".indexOn": ["gamesWonCount"],
       "$uid": {
         ".write": "$uid === auth.uid",
-        ".validate": "newData.hasChildren(['name', 'gamesWonCount', 'gameNames', 'updatedAt']) && newData.child('name').isString() && newData.child('gamesWonCount').isNumber() && newData.child('updatedAt').val() === now",
+        ".validate": "newData.hasChildren(['name', 'gamesWonCount', 'games', 'updatedAt'])",
         "name": {
           ".validate": "newData.isString()"
         },
         "gamesWonCount": {
           ".validate": "newData.isNumber() && newData.val() >= 0"
         },
-        "gameNames": {
+        "games": {
           "$gameName": {
-            ".validate": "newData.val() === true"
+            ".validate": "newData.hasChildren()",
+            "$index": {
+              ".validate": "newData.isString()"
+            }
           }
         },
         "updatedAt": {

@@ -9,74 +9,27 @@ import {
   FIREBASE_PUBLIC_WON_PROOF,
   FIREBASE_USERS_PRIVATE,
   WonProofs,
+  GameWonProofs,
   FIREBASE_USERS_PUBLIC,
   FirebasePublic,
   ConfigLocalOnly,
   FIREBASE_CUSTOM_QUESTS,
-  FIREBASE_CHAMPIONS,
-  ChampionPublic,
 } from "./defs";
 import { WonProofTableRow } from "./defs";
-import { buildChampionPayload, readChampionsLeaderboard, writeOwnChampionNode } from "./champions";
+import {
+  buildChampionPayload,
+  readOwnChampionGames,
+  writeOwnChampionName,
+  writeOwnChampionNode,
+} from "./champions";
+import { ProofsByGame, championGames, proofForLocal, proofsMissingIn } from "./proofs";
 import { ChampionsCursor, ChampionsPage, readChampionsPage } from "./championsPage";
 import { FirebaseCustomQuest } from "../editor/defs";
 
 /*
-Here is firebase rules:
-
-{
-  "rules": {
-    "usersPublic": {
-      "$uid": {
-        "info": {
-          ".write": "$uid === auth.uid",
-        },
-        "gamesWonCount": {
-          ".write": "$uid === auth.uid",
-        },
-        "gamesWonProofs": {
-          "$gameName": {
-            "$aleaSeed": {
-              ".write": "$uid === auth.uid",
-              ".validate": "newData.hasChild('created') && newData.child('created').val() === now && data.val() === null",
-            }
-          }
-        }        
-      },
-      ".read": true,
-      ".indexOn": ["gamesWonCount"]
-    },
-     
-    "usersPrivate": {
-      "$uid": {
-        ".write": "$uid === auth.uid",
-        ".read": true,
-      }
-    }, 
-
-    "customQuests": {
-      "$user_id": {
-        ".read": "$user_id === auth.uid",
-        "$quest_name": {
-          ".write": "$user_id === auth.uid",
-          ".read": "$user_id === auth.uid || data.child('isPublic').val() == true",
-        }
-      }
-    },
-      
-    "wonProofs": {
-      "$proofId": {
-        ".write": "newData.hasChild('userId') && newData.child('userId').val() === auth.uid && newData.hasChild('createdAt') && newData.child('createdAt').val() === now && ! newData.hasChild('validated')",
-        ".validate": "data.val() == null",
-        ".read": true,
-      },
-      ".indexOn": ["userId", "gameName", "aleaSeed"],
-      ".read": true,
-    }
-  }
-}
-
-
+Firebase rules are in database.rules.json, see the comments there.
+Win proofs are stored only in usersPublic/<uid>/gamesWonProofs/<quest>/<seed>.
+usersPrivate/<uid>/wongames and wonProofs are old data and are not used.
 */
 const INDEXEDDB_NAME = "spaceranges2";
 const INDEXEDDB_CONFIG_STORE_NAME = "config";
@@ -390,13 +343,18 @@ export async function getDb(app: firebase.app.App) {
   }
 
   async function setOwnHighscoresName(name: string) {
-    await setFirebaseThisUser(FIREBASE_USERS_PUBLIC, "info/name", name);
-    const allLocalWons = (await getAllLocal(INDEXEDDB_WON_STORE_NAME)) || {};
-    const gameNames = Object.keys(allLocalWons).filter((gameName) => {
-      const proofs = allLocalWons[gameName];
-      return proofs && typeof proofs === "object" && Object.keys(proofs).length >= 1;
-    });
-    await updateOwnChampionNode(name, gameNames);
+    const uid = firebaseUser ? firebaseUser.uid : undefined;
+    if (!uid) {
+      return;
+    }
+    try {
+      await firebaseOnline(() =>
+        writeOwnChampionName(app.database(), uid, name, firebase.database.ServerValue.TIMESTAMP),
+      );
+    } catch (e) {
+      // No champions row yet (no wins): the name is written with the first win
+      debug(`champion name not written`, e);
+    }
   }
 
   async function getFirebasePublicHighscores() {
@@ -493,6 +451,7 @@ export async function getDb(app: firebase.app.App) {
     }
   }
 
+  /** Old flat table, closed by the rules. Used only by the hidden #/logs page */
   async function getRemotePassings(userId?: string) {
     /*
 
@@ -512,67 +471,22 @@ orderByChild('createdAt').once("value")).val();
     });
   }
 
-  function setRemoteWon(key: string, row: WonProofTableRow) {
-    return firebaseOnline(() =>
-      app
-        .database()
-        .ref(FIREBASE_PUBLIC_WON_PROOF + "/" + key)
-        .set(row),
+  /** One proof by its exact path, readable by anyone */
+  async function getChampionProof(userId: string, gameName: string, seed: string) {
+    const proof: GameWonProofs[string] | null = await getFirebase(
+      FIREBASE_USERS_PUBLIC,
+      userId,
+      `gamesWonProofs/${gameName}/${seed}`,
     );
+    return proof;
   }
 
-  async function updateFirebaseOwnHighscore() {
-    try {
-      const allRemotePrivateWons =
-        (await getFirebaseThisUser(FIREBASE_USERS_PRIVATE, `${INDEXEDDB_WON_STORE_NAME}`)) || {};
-      let newCount = 0;
-      const newProofs: WonProofs = {};
-      for (const gameName of Object.keys(allRemotePrivateWons)) {
-        const proofs = allRemotePrivateWons[gameName];
-        if (!proofs || Object.keys(proofs).length < 1) {
-          continue;
-        }
-        newProofs[gameName] = proofs;
-        newCount++;
-      }
-
-      const allRemotePublicWons =
-        (await getFirebaseThisUser(FIREBASE_USERS_PUBLIC, `gamesWonProofs`)) || {};
-      debug(`Updating public highscores newCount=${newCount}`);
-      await setFirebaseThisUser(FIREBASE_USERS_PUBLIC, `gamesWonCount`, newCount);
-      /*
-            await setFirebase(
-                FIREBASE_USERS_PUBLIC,
-                `gamesWonProofs`,
-                newProofs
-            );
-            */
-      for (const gameName of Object.keys(newProofs)) {
-        for (const aleaSeed of Object.keys(newProofs[gameName])) {
-          if (!allRemotePublicWons[gameName] || !allRemotePublicWons[gameName][aleaSeed]) {
-            const gameLog = newProofs[gameName][aleaSeed];
-            const created = firebase.database.ServerValue.TIMESTAMP;
-
-            debug(`Updating firebase public won game=${gameName} seed=${aleaSeed}`);
-
-            await setFirebaseThisUser(
-              FIREBASE_USERS_PUBLIC,
-              `gamesWonProofs/${gameName}/${aleaSeed}`,
-              {
-                ...gameLog,
-                created,
-              },
-            );
-          }
-        }
-      }
-      debug(`Updating public highscores done`);
-      const localConfig = await getConfigLocal("player");
-      const rangerName = localConfig ? localConfig.Ranger || "" : "";
-      await updateOwnChampionNode(rangerName, Object.keys(newProofs));
-    } catch (e: any) {
-      console.warn(`public wining state sync error`, e, e.stack);
-    }
+  async function pushProof(gameName: string, seed: string, proof: GameLog) {
+    debug(`Pushing won proof game=${gameName} seed=${seed}`);
+    await setFirebaseThisUser(FIREBASE_USERS_PUBLIC, `gamesWonProofs/${gameName}/${seed}`, {
+      ...proof,
+      created: firebase.database.ServerValue.TIMESTAMP,
+    });
   }
 
   async function syncWithFirebase() {
@@ -623,122 +537,37 @@ orderByChild('createdAt').once("value")).val();
         debug(`Sync syncWithFirebase local savings done`);
         */
       try {
-        debug(`Sync old syncWithFirebase passed games started`);
-        const allLocalWons = await getAllLocal(INDEXEDDB_WON_STORE_NAME);
-        const allRemoteWons =
-          (await getFirebaseThisUser(FIREBASE_USERS_PRIVATE, `${INDEXEDDB_WON_STORE_NAME}`)) || {};
-
-        const allGameNames = Object.keys({
-          ...allLocalWons,
-          ...allRemoteWons,
-        });
-        for (const gameName of allGameNames) {
-          const thisGameLocalWons = allLocalWons[gameName] || {};
-          const thisGameRemoteWons = allRemoteWons[gameName] || {};
-
-          for (const localSeed of Object.keys(thisGameLocalWons)) {
-            const localProof = thisGameLocalWons[localSeed];
-            if (!localProof) {
-              continue;
-            }
-            if (!thisGameRemoteWons[localSeed]) {
-              debug(
-                `Sync with firebase: gameName=${gameName} pushing seed=${localSeed} into firebase`,
-              );
-              await setFirebaseThisUser(
-                FIREBASE_USERS_PRIVATE,
-                `${INDEXEDDB_WON_STORE_NAME}/${gameName}/${localSeed}`,
-                localProof,
-              );
-            }
+        debug(`Sync passed games started`);
+        // The only read of own proofs; local and remote are merged both ways
+        const remote: ProofsByGame =
+          (await getFirebaseThisUser(FIREBASE_USERS_PUBLIC, `gamesWonProofs`)) || {};
+        const local = ((await getAllLocal(INDEXEDDB_WON_STORE_NAME)) || {}) as ProofsByGame;
+        for (const { gameName, seed, proof } of proofsMissingIn(local, remote)) {
+          await pushProof(gameName, seed, proof);
+        }
+        for (const gameName of Object.keys(remote)) {
+          const localGame = local[gameName] || {};
+          const toPull = proofsMissingIn(
+            { [gameName]: remote[gameName] },
+            { [gameName]: localGame },
+          );
+          if (toPull.length === 0) {
+            continue;
           }
-
-          for (const remoteSeed of Object.keys(thisGameRemoteWons)) {
-            const remoteProof = thisGameRemoteWons[remoteSeed];
-            if (!remoteProof) {
-              continue;
-            }
-            if (!thisGameLocalWons[remoteSeed]) {
-              debug(
-                `Sync with firebase: gameName=${gameName} fetching seed=${remoteSeed} from firebase`,
-              );
-
-              const values = await getLocal(INDEXEDDB_WON_STORE_NAME, gameName);
-              const newValues = {
-                ...values,
-                [remoteProof.aleaSeed]: remoteProof,
-              };
-              await setLocal(INDEXEDDB_WON_STORE_NAME, gameName, newValues);
-            }
+          const newValues = { ...localGame };
+          for (const { seed, proof } of toPull) {
+            debug(`Sync with firebase: gameName=${gameName} fetching seed=${seed}`);
+            newValues[seed] = proofForLocal(proof);
           }
+          await setLocal(INDEXEDDB_WON_STORE_NAME, gameName, newValues);
         }
       } catch (e: any) {
         console.warn(`wining state sync error`, e, e.stack);
       }
-      debug(`Sync old syncWithFirebase passed games done`);
+      debug(`Sync passed games done`);
 
-      debug(`Sync flat syncWithFirebase passed games started`);
-
-      const localConfig = await getConfigLocal("player");
-      const rangerName = localConfig ? localConfig.Ranger : "";
-
-      try {
-        const allLocalWons = (await getAllLocal(INDEXEDDB_WON_STORE_NAME)) as WonProofs;
-        const allRemoteWons = (await getRemotePassings(userId)) || {};
-
-        for (const gameName of Object.keys(allLocalWons)) {
-          const proofs = allLocalWons[gameName];
-          for (const aleaSeed of Object.keys(proofs)) {
-            const proof = proofs[aleaSeed];
-            if (!allRemoteWons[aleaSeed]) {
-              debug(`Pushing ${aleaSeed} into remote wons`);
-              await setRemoteWon(aleaSeed, {
-                rangerName,
-                createdAt: firebase.database.ServerValue.TIMESTAMP as any as number,
-                gameName,
-                proof,
-                userId,
-              });
-            }
-          }
-        }
-
-        for (const aleaSeed of Object.keys(allRemoteWons)) {
-          const row = allRemoteWons[aleaSeed];
-          if (row.userId !== userId) {
-            throw new Error(`Unexpected userId ${row.userId}, expected ${userId}`);
-          }
-          const gameName = row.gameName;
-          const values = (await getLocal(INDEXEDDB_WON_STORE_NAME, gameName)) || {};
-          if (!values[aleaSeed]) {
-            debug(`Polling ${aleaSeed} from remote wons`);
-            const newValues = {
-              ...values,
-              [aleaSeed]: row.proof,
-            };
-            await setLocal(INDEXEDDB_WON_STORE_NAME, gameName, newValues);
-          }
-        }
-        /*
-          TODO: 
-          - Make local db flat view
-          - Sync with firebase (both directions)
-          - Write a method for writing passed game and add it into "gamePassed"
-
-        */
-      } catch (e: any) {
-        console.warn(`wining state sync error`, e, e.stack);
-      }
-      debug(`Sync flat syncWithFirebase passed games done`);
-
-      await updateFirebaseOwnHighscore();
-      debug(`Own highscores synced`);
-
-      const localName = await getConfigLocal("player");
-      if (localName) {
-        await setOwnHighscoresName(localName.Ranger || "");
-      }
-      debug(`Public ranger name synced`);
+      await updateOwnChampionNode();
+      debug(`Own champions row synced`);
 
       debug(`Sync with firebase finished`);
     } finally {
@@ -746,30 +575,35 @@ orderByChild('createdAt').once("value")).val();
     }
   }
 
-  async function updateOwnChampionNode(name: string, gameNames: string[]) {
+  /**
+   * champions/<uid>: quests already in the row (other devices may have added
+   * some since the last sync here) plus the last local seed of every quest
+   */
+  async function updateOwnChampionNode() {
     const uid = firebaseUser ? firebaseUser.uid : undefined;
     if (!uid) {
       return;
     }
+    const allLocalWons = ((await getAllLocal(INDEXEDDB_WON_STORE_NAME)) || {}) as ProofsByGame;
+    const localConfig = await getConfigLocal("player");
+    const name = localConfig ? localConfig.Ranger || "" : "";
     try {
-      await firebaseOnline(() =>
-        writeOwnChampionNode(
+      await firebaseOnline(async () => {
+        const games = {
+          ...(await readOwnChampionGames(app.database(), uid)),
+          ...championGames(allLocalWons),
+        };
+        if (Object.keys(games).length === 0) {
+          return;
+        }
+        await writeOwnChampionNode(
           app.database(),
           uid,
-          buildChampionPayload(name, gameNames, firebase.database.ServerValue.TIMESTAMP),
-        ),
-      );
+          buildChampionPayload(name, games, firebase.database.ServerValue.TIMESTAMP),
+        );
+      });
     } catch (e) {
       console.warn(`champion node update error`, e);
-    }
-  }
-
-  async function getChampionsLeaderboard(): Promise<ChampionPublic[] | null> {
-    try {
-      return await firebaseOnline(() => readChampionsLeaderboard(app.database(), 100));
-    } catch (e) {
-      console.warn(e);
-      return null;
     }
   }
 
@@ -798,24 +632,9 @@ orderByChild('createdAt').once("value")).val();
       [proof.aleaSeed]: proof,
     };
     await setLocal(INDEXEDDB_WON_STORE_NAME, gameName, newValues);
-    await setFirebaseThisUser(
-      FIREBASE_USERS_PRIVATE,
-      `${INDEXEDDB_WON_STORE_NAME}/${gameName}/${proof.aleaSeed}`,
-      proof,
-    );
-    const localConfig = await getConfigLocal("player");
-    const rangerName = localConfig ? localConfig.Ranger : "";
-    const userId = firebaseUser ? firebaseUser.uid : undefined;
-    if (userId) {
-      await setRemoteWon(proof.aleaSeed, {
-        rangerName,
-        createdAt: firebase.database.ServerValue.TIMESTAMP as any as number,
-        gameName,
-        proof,
-        userId,
-      });
-    }
-    await updateFirebaseOwnHighscore();
+    // Only the new proof is written; no full read of own proofs
+    await pushProof(gameName, proof.aleaSeed, proof);
+    await updateOwnChampionNode();
   }
 
   async function saveGame(gameName: string, saving: GameState | null) {
@@ -960,7 +779,6 @@ orderByChild('createdAt').once("value")).val();
     setGamePassing,
 
     getFirebasePublicHighscores,
-    getChampionsLeaderboard,
     getChampionsPage,
 
     saveGame,
@@ -972,6 +790,7 @@ orderByChild('createdAt').once("value")).val();
     setOwnHighscoresName,
 
     getRemotePassings,
+    getChampionProof,
 
     getAllMyCustomQuests,
     saveCustomQuest,

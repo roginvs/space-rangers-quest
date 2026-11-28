@@ -45,7 +45,8 @@ export interface WonProofTableRow {
 export interface ChampionRecord {
   name: string;
   gamesWonCount: number;
-  gameNames: { [gameName: string]: true };
+  /** Quest name -> seeds of won games, oldest first */
+  games: { [gameName: string]: string[] };
   updatedAt: number;
 }
 export interface ChampionPublic extends ChampionRecord {

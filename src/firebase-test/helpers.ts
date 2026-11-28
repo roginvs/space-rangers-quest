@@ -2,19 +2,21 @@ import * as assert from "assert";
 import * as fs from "fs";
 import * as path from "path";
 import "fake-indexeddb/auto";
+import { IDBFactory as FakeIDBFactory } from "fake-indexeddb";
 import firebase from "firebase/app";
 import "firebase/auth";
 import "firebase/database";
-import { getDb, DB } from "../../ui/db/db";
-import { DEFAULT_RUS_PLAYER } from "../../lib/qmplayer/player";
-import { GameLog } from "../../lib/qmplayer/funcs";
+import { getDb, DB } from "../ui/db/db";
+import { getDb as getMasterDb } from "./legacy/dbMaster";
+import { DEFAULT_RUS_PLAYER } from "../lib/qmplayer/player";
+import { GameLog } from "../lib/qmplayer/funcs";
 
 export const PROJECT_ID = "test-project-5f054";
 export const DATABASE_EMULATOR_HOST =
   process.env.FIREBASE_DATABASE_EMULATOR_HOST || "127.0.0.1:9000";
 export const AUTH_EMULATOR_HOST = process.env.FIREBASE_AUTH_EMULATOR_HOST || "127.0.0.1:9099";
 
-const RULES_NEW = path.resolve(__dirname, "../../../database.rules.json");
+const RULES_NEW = path.resolve(__dirname, "../../database.rules.json");
 const RULES_CURRENT = path.resolve(__dirname, "fixtures/database.rules.current.json");
 
 export type RulesMode = "current" | "new";
@@ -137,8 +139,21 @@ export async function signUp(app: firebase.app.App, prefix: string): Promise<fir
   return cred.user;
 }
 
+/** The client deployed now (master before this PR) */
+export type MasterDB = typeof getMasterDb extends (app: any) => Promise<infer T> ? T : never;
+
 export async function openDb(app: firebase.app.App): Promise<DB> {
-  const db = await getDb(app);
+  return waitForUser(app, await getDb(app));
+}
+
+export async function openMasterDb(app: firebase.app.App): Promise<MasterDB> {
+  return waitForUser(app, await getMasterDb(app));
+}
+
+async function waitForUser<T extends { getMyUserId(): string | null }>(
+  app: firebase.app.App,
+  db: T,
+): Promise<T> {
   if (!app.auth().currentUser) {
     return db;
   }
@@ -152,17 +167,35 @@ export async function openDb(app: firebase.app.App): Promise<DB> {
   throw new Error("Timed out waiting for getDb to see the signed-in user");
 }
 
-export function sampleProof(seed: string): GameLog {
+export function sampleProof(seed: string, finishedAt = 1_700_000_000_100): GameLog {
   return {
     aleaSeed: seed,
     performedJumps: [
-      { dateUnix: 1_700_000_000_000, jumpId: 1 },
-      { dateUnix: 1_700_000_000_100, jumpId: 2 },
+      { dateUnix: finishedAt - 100, jumpId: 1 },
+      { dateUnix: finishedAt, jumpId: 2 },
     ],
   };
 }
 
-export async function seedPlayerName(db: DB, rangerName: string): Promise<void> {
+/** Signs in on another app as an existing user (a second device) */
+export async function signInAs(app: firebase.app.App, user: firebase.User): Promise<void> {
+  await app.auth().signInWithEmailAndPassword(user.email as string, "password123");
+}
+
+/** Raw SDK read as the app's current user */
+export function rawGet(app: firebase.app.App, dbPath: string): Promise<any> {
+  return withOnline(app, async () => (await app.database().ref(dbPath).once("value")).val());
+}
+
+/** Raw SDK write as the app's current user */
+export function rawSet(app: firebase.app.App, dbPath: string, value: any): Promise<void> {
+  return withOnline(app, () => app.database().ref(dbPath).set(value));
+}
+
+export async function seedPlayerName(
+  db: Pick<DB, "setConfigBoth">,
+  rangerName: string,
+): Promise<void> {
   await db.setConfigBoth("player", {
     ...DEFAULT_RUS_PLAYER,
     Ranger: rangerName,
@@ -218,7 +251,13 @@ export async function withOnline<T>(app: firebase.app.App, fn: () => Promise<T>)
   }
 }
 
-async function clearLocalIdb(): Promise<void> {
+/** A separate empty IndexedDB for the next getDb: another device that stays open */
+export function useNewDeviceStorage(): void {
+  (global as any).indexedDB = new FakeIDBFactory();
+}
+
+/** Empties the local IndexedDB: the next getDb behaves like a new device */
+export async function clearLocalIdb(): Promise<void> {
   await new Promise<void>((resolve, reject) => {
     const req = indexedDB.open("spaceranges2");
     req.onerror = () => resolve();

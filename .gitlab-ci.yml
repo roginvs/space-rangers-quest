@@ -57,6 +57,11 @@ build:
 firebase-rules:
   stage: test
   needs: []
+  # GitLab caches only paths inside the project: keep npm and the emulator
+  # jars (firebase-tools uses $XDG_CACHE_HOME/firebase) there
+  variables:
+    XDG_CACHE_HOME: "$CI_PROJECT_DIR/.cache"
+    npm_config_cache: "$CI_PROJECT_DIR/.npm"
   cache:
     key: firebase-emulators
     paths:
@@ -65,7 +70,7 @@ firebase-rules:
   before_script:
     - apt-get update -qq
     - apt-get install -y --no-install-recommends default-jre-headless
-    - npm install --legacy-peer-deps
+    - npm ci --legacy-peer-deps
   script:
     - npm run test:firebase
 

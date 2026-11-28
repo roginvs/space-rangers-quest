@@ -45,7 +45,7 @@ import { QuestInfo } from "./questInfo";
 import { Store } from "./store";
 import { QuestPlayController } from "./questPlayController";
 import { AboutTabContainer } from "./about";
-import { ChampionsTabContainer } from "./champions";
+import { ChampionsTabContainer } from "./championsTable";
 import { firebaseConfig } from "./firebaseConfig";
 import { connectFirebaseEmulatorsIfNeeded } from "./firebaseEmulator";
 import { ChampionsTabContainerNew } from "./champions.new";
@@ -55,7 +55,9 @@ import { GameStyleFrame } from "./menu/gameStyle";
 console.info(`Starting the app (buildAt=${new Date(__VERSION__).toISOString()})`);
 
 const app = firebase.initializeApp(firebaseConfig);
-connectFirebaseEmulatorsIfNeeded(app);
+if (process.env.NODE_ENV !== "production") {
+  connectFirebaseEmulatorsIfNeeded(app);
+}
 // const app = firebase.initializeApp({} as typeof config);
 
 function debug(...args: any) {

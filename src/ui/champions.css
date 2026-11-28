@@ -1,10 +1,8 @@
-@keyframes champions-blinker {
-  50% {
-    opacity: 0.3;
-  }
-}
+@keyframes champions-blinker {  
+    50% { opacity: 0.3; }
+}  
 .champions-blink {
-  animation: champions-blinker 0.5s linear infinite;
+    animation: champions-blinker 0.5s linear infinite;
 }
 
 .champions-you td {
@@ -84,13 +82,4 @@
 .champions-sentinel {
   height: 1px;
   width: 100%;
-}
-
-.champions-load-more {
-  margin-top: 0.75rem;
-  text-align: center;
-}
-
-.champions-load-more .btn {
-  padding: 0.3rem 0.7rem;
 }
