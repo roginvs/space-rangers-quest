@@ -252,7 +252,6 @@ export class ChampionsTabContainer extends React.Component<
               const itIsYou =
                 !!store.firebaseLoggedIn && champion.userId === store.firebaseLoggedIn.uid;
               const name = champion.name || l.championNoName;
-              const verifying = verify && verify.status === "running";
               return (
                 <tr key={champion.userId} className={itIsYou ? "champions-you" : undefined}>
                   <td className="name">{itIsYou ? <b>{name}</b> : name}</td>
@@ -261,20 +260,15 @@ export class ChampionsTabContainer extends React.Component<
                   </td>
                   <td className="games">{this.renderGameNames(champion, verify)}</td>
                   <td className="verify">
-                    <button
-                      type="button"
-                      className="btn btn-sm"
-                      disabled={verifying}
-                      onClick={() => this.verifyPlayer(champion)}
-                    >
-                      {verifying ? (
-                        <>
-                          <i className="fa fa-spin fa-spinner" /> {l.championVerifying}
-                        </>
-                      ) : (
-                        l.championVerify
-                      )}
-                    </button>
+                    {verify ? null : (
+                      <button
+                        type="button"
+                        className="btn btn-sm"
+                        onClick={() => this.verifyPlayer(champion)}
+                      >
+                        {l.championVerify}
+                      </button>
+                    )}
                   </td>
                 </tr>
               );
