@@ -11,8 +11,7 @@ import { JUMP_I_AGREE } from "../lib/qmplayer/defs";
 import { Game } from "../packGameData/defs";
 
 import { DATA_DIR } from "./consts";
-import { parse } from "../lib/qmreader";
-import * as pako from "pako";
+import { loadQuestFromUrl } from "../lib/parseQuestGz";
 
 import { observer } from "mobx-react";
 import { Store } from "./store";
@@ -65,33 +64,11 @@ export class QuestPlayController extends React.Component<
       noMusic,
     });
 
-    const questArrayBuffer = await new Promise<ArrayBuffer>((resolv, reject) => {
-      const xhr = new XMLHttpRequest();
-      const url = DATA_DIR + game.filename;
-      xhr.open("GET", url);
-
-      xhr.responseType = "arraybuffer";
-
-      xhr.onload = (e) => {
-        if (xhr.status <= 299) {
-          resolv(xhr.response);
-        } else {
-          reject(new Error(`Url ${url} ${xhr.status}`));
-        }
-      };
-
-      xhr.onerror = (e) => {
-        reject(new Error(`${xhr.statusText}`));
-      };
-
-      xhr.onprogress = (e) => {
-        this.setState({
-          questLoadProgress: e.loaded / e.total,
-        });
-      };
-      xhr.send();
-    });
-    const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer)))) as Quest;
+    const quest = (await loadQuestFromUrl(DATA_DIR + game.filename, (progress) => {
+      this.setState({
+        questLoadProgress: progress,
+      });
+    })) as Quest;
 
     const gameState = await this.props.store.db.getLocalSaving(this.props.gameName);
 

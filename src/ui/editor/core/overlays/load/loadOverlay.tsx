@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { Nav, NavItem, NavLink, TabContent, TabPane } from "reactstrap";
 import { Quest } from "../../../../../lib/qmplayer/funcs";
 import { parse } from "../../../../../lib/qmreader";
+import { loadQuestFromUrl } from "../../../../../lib/parseQuestGz";
 import { Game } from "../../../../../packGameData/defs";
 import { DATA_DIR } from "../../../../consts";
 import { QuestWithMetadata } from "../../idb";
@@ -37,10 +38,8 @@ export function LoadOverlay({
   const [existingId, setExistingId] = React.useState(0);
 
   const loadExisting = React.useCallback(() => {
-    fetch(DATA_DIR + questsToLoad[existingId].filename)
-      .then((res) => res.arrayBuffer())
-      .then((questArrayBuffer) => {
-        const quest = parse(Buffer.from(pako.ungzip(Buffer.from(questArrayBuffer))));
+    loadQuestFromUrl(DATA_DIR + questsToLoad[existingId].filename)
+      .then((quest) => {
         onClose({
           ...quest,
           filename: getBasenameWithoutExtension(questsToLoad[existingId].filename),
