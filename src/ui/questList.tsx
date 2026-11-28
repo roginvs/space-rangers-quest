@@ -260,7 +260,7 @@ export class QuestList extends React.Component<
                       <h5>{quest.gameName}</h5>
                       <small>
                         {quest.passedAt === undefined ? (
-                          <i className="text-muted fa fa-spin circle-o-notch" />
+                          <i className="text-muted fa fa-spin fa-circle-o-notch" />
                         ) : quest.passedAt !== false ? (
                           <span className="game-menu-row-passed">
                             <i className="fa fa-fw fa-check" /> {l.passed}
