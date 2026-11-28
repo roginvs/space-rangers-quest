@@ -364,6 +364,7 @@ describe("Firebase: new client on new rules", () => {
       await assertFails(rawGet(bobApp, `${FIREBASE_USERS_PUBLIC}/uid-alice/gamesWonProofs`));
       await assertFails(rawGet(bobApp, `${FIREBASE_USERS_PUBLIC}/uid-alice/gamesWonProofs/Феи`));
       await assertFails(rawGet(bobApp, FIREBASE_USERS_PUBLIC));
+      // Old public highscores list: last 100 usersPublic nodes by gamesWonCount. Now denied.
       await assertFails(
         withOnline(bobApp, () =>
           bobApp
@@ -413,6 +414,7 @@ describe("Firebase: new client on new rules", () => {
       await assertFails(rawSet(app, `${wongames}/Феи/seed-new`, sampleProof("seed-new")));
       await assertFails(rawGet(app, FIREBASE_PUBLIC_WON_PROOF));
       await assertFails(rawGet(app, `${FIREBASE_PUBLIC_WON_PROOF}/seed-a`));
+      // Old getRemotePassings(uid): all wonProofs rows of one user. Now denied.
       await assertFails(
         withOnline(app, () =>
           app
